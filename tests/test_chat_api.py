@@ -24,19 +24,19 @@ async def test_new_session_id_generated_per_session(make_client):
 
 async def test_client_session_id_confirmed_and_reused(make_client):
     client, _ = await make_client(fake_chat("答一", "答二"))
-    e1 = await post_chat_sse(client, {"message": "一", "session_id": "s-1"})
-    e2 = await post_chat_sse(client, {"message": "二", "session_id": "s-1"})
-    assert e1[0]["session_id"] == "s-1"
-    assert e2[0]["session_id"] == "s-1"
+    e1 = await post_chat_sse(client, {"message": "一", "session_id": 101})
+    e2 = await post_chat_sse(client, {"message": "二", "session_id": 101})
+    assert e1[0]["session_id"] == 101
+    assert e2[0]["session_id"] == 101
 
 
 async def test_reply_persisted_after_done(make_client):
     client, app = await make_client(fake_chat("在的 亲"))
     events = await post_chat_sse(client, {"message": "在吗"})
     sid = events[0]["session_id"]
-    data = await app.state.sessions.get(sid)
-    assert [m["role"] for m in data.messages] == ["user", "assistant"]
-    assert data.messages[1]["content"] == "在的 亲"
+    history = await app.state.store.get_history(sid)
+    assert [m["role"] for m in history] == ["user", "assistant"]
+    assert history[1]["content"] == "在的 亲"
 
 
 async def test_upstream_error_emits_error_and_not_persisted(make_client):
@@ -53,8 +53,8 @@ async def test_upstream_error_emits_error_and_not_persisted(make_client):
     assert "done" not in types
     err = next(e for e in events if e["type"] == "error")
     assert "boom" in err["message"]
-    data = await app.state.sessions.get(events[0]["session_id"])
-    assert data.messages == []
+    history = await app.state.store.get_history(events[0]["session_id"])
+    assert history == []
 
 
 async def test_message_over_budget_returns_400(make_client):
@@ -103,9 +103,9 @@ async def test_second_round_prompt_carries_system_and_history(make_client):
 
     model = RecordingChatModel("第一答")
     client, _ = await make_client(model)
-    await post_chat_sse(client, {"message": "第一问", "session_id": "rec"})
+    await post_chat_sse(client, {"message": "第一问", "session_id": 202})
     model.reply = "第二答"  # RecordingChatModel 不是迭代器型,直接改返回值即可
-    await post_chat_sse(client, {"message": "第二问", "session_id": "rec"})
+    await post_chat_sse(client, {"message": "第二问", "session_id": 202})
 
     seen = model.seen
     assert isinstance(seen[0], SystemMessage) and "小帮" in seen[0].content
@@ -132,7 +132,7 @@ async def test_client_disconnect_before_done_not_persisted(make_client):
 
     client, app = await make_client(SlowUpstream())
     async with client.stream(
-        "POST", "/api/chat", json={"message": "你好", "session_id": "disc"}
+        "POST", "/api/chat", json={"message": "你好", "session_id": 303}
     ) as resp:
         assert resp.status_code == 200
         first_chunk = None
@@ -142,5 +142,5 @@ async def test_client_disconnect_before_done_not_persisted(make_client):
         assert first_chunk is not None
     await asyncio.sleep(0.1)  # 留出取消传播时间
 
-    data = await app.state.sessions.get("disc")
-    assert data.messages == []
+    history = await app.state.store.get_history(303)
+    assert history == []

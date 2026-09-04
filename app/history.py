@@ -27,7 +27,7 @@ def trim_history(messages: list[dict], budget: int) -> list[dict]:
     kept: list[dict] = []
     total = 0
     for msg in reversed(history):
-        cost = estimate_tokens(msg["content"])
+        cost = estimate_tokens(msg.get("content") or "")  # 纯工具调用消息 content 为空,不计费
         if total + cost > budget:
             break
         kept.append(msg)

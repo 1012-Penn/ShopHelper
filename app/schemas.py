@@ -6,16 +6,18 @@ from pydantic import BaseModel, Field
 
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, description="用户本轮输入")
-    session_id: str | None = Field(default=None, description="会话 id,缺省则服务端新建")
+    session_id: int | None = Field(default=None, description="会话 id,缺省则服务端新建")
 
 
 class MessageItem(BaseModel):
-    role: Literal["user", "assistant"]
-    content: str
+    role: Literal["user", "assistant", "tool"]
+    content: str | None = None
+    tool_calls: list | None = None
+    tool_call_id: str | None = None
 
 
 class HistoryResponse(BaseModel):
-    session_id: str
+    session_id: int
     messages: list[MessageItem]
 
 
