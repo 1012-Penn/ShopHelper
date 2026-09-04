@@ -5,9 +5,16 @@ from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 
 
+class FakeChatWithTools(GenericFakeChatModel):
+    """GenericFakeChatModel 不实现 bind_tools(基类 NotImplementedError);替身直接返回自身。"""
+
+    def bind_tools(self, tools, **kwargs):
+        return self
+
+
 def fake_chat(*reply_texts: str) -> GenericFakeChatModel:
     """每个回复一条 AIMessage;调用顺序消费。**每个测试新建**,迭代器一次性。"""
-    return GenericFakeChatModel(messages=iter(AIMessage(content=t) for t in reply_texts))
+    return FakeChatWithTools(messages=iter(AIMessage(content=t) for t in reply_texts))
 
 
 class StubExtractModel:

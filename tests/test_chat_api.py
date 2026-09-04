@@ -41,6 +41,9 @@ async def test_reply_persisted_after_done(make_client):
 
 async def test_upstream_error_emits_error_and_not_persisted(make_client):
     class Exploding:
+        def bind_tools(self, tools):
+            return self
+
         async def astream(self, messages):
             yield AIMessageChunk(content="部分")
             raise RuntimeError("boom")
@@ -93,6 +96,9 @@ class RecordingChatModel:
         self.reply = reply
         self.seen: list = []
 
+    def bind_tools(self, tools):
+        return self
+
     async def astream(self, messages):
         self.seen = list(messages)
         yield AIMessageChunk(content=self.reply)
@@ -125,6 +131,9 @@ async def test_client_disconnect_before_done_not_persisted(make_client):
     """spec §4.1:客户端提前断开,本轮 user/assistant 两条都不落库。"""
 
     class SlowUpstream:
+        def bind_tools(self, tools):
+            return self
+
         async def astream(self, messages):
             yield AIMessageChunk(content="开头")
             await asyncio.sleep(5)

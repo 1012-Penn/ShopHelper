@@ -5,7 +5,13 @@ from app.models import Base, Conversation, Faq, Message, Ticket
 
 
 def create_memory_engine():
-    engine = create_engine("sqlite:///:memory:")
+    from sqlalchemy.pool import StaticPool
+
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,  # 全线程共享一条连接,工具在工作线程执行时也能看到数据
+    )
     Base.metadata.create_all(engine)
     return engine
 

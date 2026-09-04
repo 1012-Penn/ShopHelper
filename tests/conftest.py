@@ -8,6 +8,7 @@ import pytest
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
 from app.config import Settings
 from app.main import create_app
@@ -19,7 +20,13 @@ from tests.helpers import StubExtractModel
 
 
 def make_session_factory():
-    engine = create_engine("sqlite:///:memory:")
+    # StaticPool:内存库全线程共享一条连接——registry 用 to_thread 在工作线程执行工具,
+    # 默认按线程分连接会拿到另一个空库
+    engine = create_engine(
+        "sqlite:///:memory:",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
     Base.metadata.create_all(engine)
     return sessionmaker(bind=engine, expire_on_commit=False)
 
