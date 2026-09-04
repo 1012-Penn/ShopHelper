@@ -1,3 +1,6 @@
+import asyncio
+
+import pytest
 from langchain_core.messages import AIMessageChunk
 
 from tests.helpers import fake_chat, post_chat_sse
@@ -81,3 +84,63 @@ def test_prompt_messages_include_system_and_history():
     assert isinstance(msgs[1], HumanMessage) and msgs[1].content == "旧问"
     assert isinstance(msgs[2], AIMessage) and msgs[2].content == "旧答"
     assert isinstance(msgs[-1], HumanMessage) and msgs[-1].content == "新问"
+
+
+class RecordingChatModel:
+    """记录每轮实际收到的 prompt;reply 可变,非迭代器型,每轮 astream 都重新取值。"""
+
+    def __init__(self, reply: str):
+        self.reply = reply
+        self.seen: list = []
+
+    async def astream(self, messages):
+        self.seen = list(messages)
+        yield AIMessageChunk(content=self.reply)
+
+
+async def test_second_round_prompt_carries_system_and_history(make_client):
+    from langchain_core.messages import HumanMessage, SystemMessage
+
+    model = RecordingChatModel("第一答")
+    client, _ = await make_client(model)
+    await post_chat_sse(client, {"message": "第一问", "session_id": "rec"})
+    model.reply = "第二答"  # RecordingChatModel 不是迭代器型,直接改返回值即可
+    await post_chat_sse(client, {"message": "第二问", "session_id": "rec"})
+
+    seen = model.seen
+    assert isinstance(seen[0], SystemMessage) and "小帮" in seen[0].content
+    contents = [(type(m).__name__, m.content) for m in seen]
+    assert ("HumanMessage", "第一问") in contents
+    assert ("AIMessage", "第一答") in contents
+    assert isinstance(seen[-1], HumanMessage) and seen[-1].content == "第二问"
+
+
+@pytest.mark.xfail(
+    reason="httpx 0.28.1 ASGITransport 在返回 Response 前完整运行 app 并缓冲全部响应体,"
+    "客户端提前断开无法传播给应用;断开不落库契约(spec §4.1)在真实 ASGI 服务器下成立,"
+    "本测试传输层无法模拟。详见 .superpowers/sdd/2026-09-04-ch01-pure-chat/final-fix-report.md",
+    strict=True,
+)
+async def test_client_disconnect_before_done_not_persisted(make_client):
+    """spec §4.1:客户端提前断开,本轮 user/assistant 两条都不落库。"""
+
+    class SlowUpstream:
+        async def astream(self, messages):
+            yield AIMessageChunk(content="开头")
+            await asyncio.sleep(5)
+            yield AIMessageChunk(content="结尾")
+
+    client, app = await make_client(SlowUpstream())
+    async with client.stream(
+        "POST", "/api/chat", json={"message": "你好", "session_id": "disc"}
+    ) as resp:
+        assert resp.status_code == 200
+        first_chunk = None
+        async for chunk in resp.aiter_text():  # 只读第一个 chunk 即退出(提前断开)
+            first_chunk = chunk
+            break
+        assert first_chunk is not None
+    await asyncio.sleep(0.1)  # 留出取消传播时间
+
+    data = await app.state.sessions.get("disc")
+    assert data.messages == []
