@@ -1,0 +1,8 @@
+{"text": "我的订单号是2026090112345,收到的杯子碎了一地,我要换货", "expected": {"order_no": "2026090112345", "issue_type": "exchange", "expected_resolution": "换货"}}
+{"text": "昨天买的连衣裙太大了,想退钱,订单 7896541230", "expected": {"order_no": "7896541230", "issue_type": "refund", "expected_resolution": "退款"}}
+{"text": "快递三天了还卡在杭州不动,运单 8817202609,帮我查查", "expected": {"order_no": "8817202609", "issue_type": "logistics", "expected_resolution": "查件催派"}}
+{"text": "蓝牙耳机左耳没声音,还在保修期内,帮我报修", "expected": {"order_no": null, "issue_type": "repair", "expected_resolution": "保修维修"}}
+{"text": "我要退款!订单ORD-2026-8888,三天不处理就投诉", "expected": {"order_no": "ORD-2026-8888", "issue_type": "refund", "expected_resolution": "退款"}}
+{"text": "你们这款保温杯是304不锈钢的吗?能装开水吗?", "expected": {"order_no": null, "issue_type": "other", "expected_resolution": "解答售前咨询"}}
+{"text": "手机壳发错颜色了,我要黑色,这单 7766554433,给我换", "expected": {"order_no": "7766554433", "issue_type": "exchange", "expected_resolution": "换货"}}
+{"text": "下单两小时了,订单 5566778899,收货地址填错了想改一下", "expected": {"order_no": "5566778899", "issue_type": "other", "expected_resolution": "修改收货地址"}}
