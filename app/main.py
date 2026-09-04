@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 from app.config import Settings
 from app.llm import make_chat_model, make_extract_model
-from app.routers import chat
+from app.routers import chat, sessions
 from app.schemas import AfterSaleExtraction
 from app.sessions import session_store
 
@@ -17,6 +17,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         AfterSaleExtraction, method="function_calling"
     )
     app.include_router(chat.router)
+    app.include_router(sessions.router)
     return app
 
 
