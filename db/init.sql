@@ -6,6 +6,9 @@
 -- 建表顺序:先 conversations,再依赖它的 messages / tickets
 -- =============================================================
 
+-- 入口脚本默认用 latin1 连接执行本文件,必须先声明字符集,否则 ENUM 中文会双层编码存坏
+SET NAMES utf8mb4;
+
 -- 会话壳:一通对话的统一身份,messages / tickets 都引用它
 CREATE TABLE conversations (
   id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '会话主键',
