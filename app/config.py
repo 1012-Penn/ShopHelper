@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     openai_api_key: str
     openai_base_url: str = "https://api.deepseek.com/v1"
     openai_model: str = "deepseek-chat"
+    database_url: str = "mysql+pymysql://shophelper:shophelper@127.0.0.1:3306/shophelper?charset=utf8mb4"
     history_token_budget: int = 3000
     chat_temperature: float = 0.7
     extract_temperature: float = 0
