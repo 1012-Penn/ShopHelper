@@ -1,0 +1,20 @@
+# pyproject.toml
+[project]
+name = "shophelper"
+version = "0.1.0"
+description = "电商智能客服系统——ch01:纯对话"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi==0.141.1",
+    "uvicorn==0.52.4",
+    "langchain==1.4.0",
+    "langchain-openai==1.6.0",
+    "pydantic-settings==2.15.0",
+    "httpx==0.28.1",
+    "pytest==9.1.1",
+    "pytest-asyncio==1.4.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
