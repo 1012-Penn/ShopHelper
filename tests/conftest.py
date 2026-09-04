@@ -1,3 +1,9 @@
+import os
+
+# 模块级 app = create_app() 在导入期构造 Settings,而 openai_api_key 必填;
+# setdefault 只在环境缺失时兜底,真实 .env / 显式环境变量不受影响
+os.environ.setdefault("OPENAI_API_KEY", "sk-test")
+
 import pytest
 from httpx import ASGITransport, AsyncClient
 
