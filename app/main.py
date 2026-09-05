@@ -5,12 +5,14 @@ from fastapi.responses import FileResponse
 
 from app.config import Settings
 from app.db import make_engine, make_session_factory
+from app.embedding import make_embedder
 from app.llm import make_chat_model, make_extract_model
 from app.routers import chat, extract, sessions
 from app.schemas import AfterSaleExtraction
 from app.store import ConversationStore
 from app.tools.definitions import build_tools
 from app.tools.registry import ToolRegistry
+from app.vector_store import KnowledgeVectorStore
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 
@@ -23,7 +25,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     session_factory = make_session_factory(make_engine(settings))
     app.state.session_factory = session_factory
     app.state.store = ConversationStore(session_factory)
-    app.state.registry = ToolRegistry(build_tools(session_factory))
+    embedder = make_embedder(settings)
+    vectors = KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)
+    app.state.registry = ToolRegistry(build_tools(
+        session_factory, embedder=embedder, vectors=vectors, top_k=settings.retrieval_top_k,
+    ))
     app.state.chat_model = make_chat_model(settings)
     app.state.extract_model = make_extract_model(settings).with_structured_output(
         AfterSaleExtraction, method="function_calling"

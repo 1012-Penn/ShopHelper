@@ -2,9 +2,12 @@ import json
 
 from sqlalchemy import select
 
+from app.chunking import Chunk
 from app.db import make_session_factory
+from app.kb import KnowledgeBaseStore, vectorize_pending
 from app.models import Faq, Ticket
 from app.tools.definitions import TOOL_LABELS, build_tools
+from tests.helpers import FakeEmbedding, FakeVectorStore
 from tests.test_models import create_memory_engine
 
 
@@ -18,6 +21,22 @@ def _make():
         ])
         s.commit()
     return build_tools(factory), factory
+
+
+def _make_vector_tools(factory, *, vectors=None):
+    """向量知识库 + 替身嵌入,驱动的 query_faq。"""
+    kb = KnowledgeBaseStore(factory)
+    chunks = [
+        Chunk("退货政策", "邮费与运费", "普通订单邮费 8 元,满 99 元包邮;质量问题退货,运费由商家承担。",
+              "退货政策.md > 退货政策 > 邮费与运费", "policy", True),
+        Chunk("售后", "怎么申请退货?", "订单详情页点击「申请售后」提交。",
+              "商品FAQ.md > 商品FAQ > 售后 > 怎么申请退货?", "faq", False),
+    ]
+    _, ids = kb.replace_doc_chunks("docs", chunks)
+    vectors = vectors or FakeVectorStore()
+    vectorize_pending(kb, vectors, FakeEmbedding())
+    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=3)
+    return tools, kb, ids
 
 
 def test_build_tools_names_and_labels():
@@ -38,13 +57,41 @@ def test_mock_tools_return_structured_json():
     assert logistics["order_id"] == "1001" and len(logistics["traces"]) >= 1
 
 
-def test_query_faq_hit_and_miss():
-    tools, _ = _make()
+def test_query_faq_paraphrase_hit():
+    """验收 1 的替身版:「快递费多少钱」(换说法)必须召回运费说明。"""
+    factory = make_session_factory(create_memory_engine())
+    tools, _, _ = _make_vector_tools(factory)
     by_name = {t.name: t for t in tools}
-    hit = json.loads(by_name["query_faq"].invoke({"keyword": "退货"}))
-    assert len(hit["items"]) == 1 and "七天无理由" in hit["items"][0]["answer"]
-    miss = json.loads(by_name["query_faq"].invoke({"keyword": "邮费"}))
-    assert miss["items"] == []
+    out = json.loads(by_name["query_faq"].invoke({"keyword": "快递费多少钱"}))
+    assert out["items"], "换说法必须命中"
+    assert out["items"][0]["question"] == "邮费与运费"
+    assert "满 99 元包邮" in out["items"][0]["answer"]
+    assert out["items"][0]["category"] == "退货政策"
+
+
+def test_query_faq_contract_shape_and_miss():
+    factory = make_session_factory(create_memory_engine())
+    tools, _, _ = _make_vector_tools(factory)
+    by_name = {t.name: t for t in tools}
+    hit = json.loads(by_name["query_faq"].invoke({"keyword": "怎么申请退货"}))
+    assert hit["items"][0] == {
+        "question": "怎么申请退货?", "answer": "订单详情页点击「申请售后」提交。", "category": "售后",
+    }
+    miss = json.loads(by_name["query_faq"].invoke({"keyword": "量子力学"}))
+    assert miss == {"items": []}
+
+
+def test_query_faq_never_raises_on_backend_failure():
+    class ExplodingEmbedder:
+        def embed(self, texts):
+            raise RuntimeError("嵌入服务挂了")
+
+    factory = make_session_factory(create_memory_engine())
+    tools, _, _ = _make_vector_tools(factory, vectors=FakeVectorStore())
+    by_name = {t.name: t for t in tools}
+    tools2 = build_tools(factory, embedder=ExplodingEmbedder(), vectors=FakeVectorStore(), top_k=3)
+    faq = {t.name: t for t in tools2}["query_faq"]
+    assert json.loads(faq.invoke({"keyword": "退货"})) == {"items": []}  # 异常收敛为空结果
 
 
 def test_create_ticket_persists():

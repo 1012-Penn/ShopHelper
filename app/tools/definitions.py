@@ -1,4 +1,4 @@
-"""五个业务工具:三个 mock(不接真实 API、不建表)+ query_faq(LIKE 查表)+ create_ticket(写表)。"""
+"""五个业务工具:三个 mock(不接真实 API、不建表)+ query_faq(向量语义检索)+ create_ticket(写表)。"""
 import json
 import random
 from datetime import datetime
@@ -8,6 +8,7 @@ from langchain.tools import tool
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 
+from app.kb import KnowledgeBaseStore
 from app.models import Faq, Ticket
 
 
@@ -26,9 +27,26 @@ TOOL_LABELS = {
 
 CITIES = ["北京", "上海", "广州", "杭州", "成都"]
 
+# 相似度下限:低于此分的命中直接丢弃,不进 items(与 prompt 的「对不上就如实说明」双保险)
+RETRIEVAL_SCORE_FLOOR = 0.5
 
-def build_tools(session_factory) -> list:
-    """session_factory 由调用方注入;返回 tool 对象列表(供 bind_tools 与 registry)。"""
+
+def build_tools(session_factory, embedder=None, vectors=None, top_k: int | None = None) -> list:
+    """session_factory 由调用方注入;embedder / vectors 缺省时按 Settings 构造真实现(测试注入替身)。
+
+    query_faq 自 ch03 起走向量语义检索:问题 embed → Milvus Top-K → MySQL 回取原文。
+    工具入参出参契约与 ch02 保持不变;top_k 缺省真实现走配置、替身默认 3。
+    """
+    if embedder is None or vectors is None:
+        from app.config import Settings
+        from app.embedding import make_embedder
+        from app.vector_store import KnowledgeVectorStore
+
+        settings = Settings()
+        embedder = embedder or make_embedder(settings)
+        vectors = vectors or KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)
+        top_k = top_k or settings.retrieval_top_k
+    kb = KnowledgeBaseStore(session_factory)
 
     @tool
     def query_order(order_id: str) -> str:
@@ -68,15 +86,25 @@ def build_tools(session_factory) -> list:
 
     @tool
     def query_faq(keyword: str) -> str:
-        """按关键词检索常见问题库(FAQ)。用户问退货政策、发货时间等常见问题时使用。"""
-        with session_factory() as session:
-            rows = session.scalars(
-                select(Faq).where(Faq.question.like(f"%{keyword}%")).limit(3)
-            ).all()
-            return json.dumps(
-                {"items": [{"question": r.question, "answer": r.answer, "category": r.category} for r in rows]},
-                ensure_ascii=False,
-            )
+        """按语义检索常见问题知识库。用户问退货政策、发货时间、邮费运费、付款、发票、会员等常见问题时使用。"""
+        try:
+            qvec = embedder.embed([keyword])[0]
+            hits = [(cid, score) for cid, score in vectors.search(qvec, top_k=top_k)
+                    if score >= RETRIEVAL_SCORE_FLOOR]
+            items = []
+            if hits:
+                rows = kb.get_chunks([h[0] for h in hits])
+                items = [
+                    {
+                        "question": r.questions.splitlines()[0],
+                        "answer": r.answer,
+                        "category": r.category,
+                    }
+                    for r in rows
+                ]
+        except Exception:
+            items = []  # 契约:任何异常收敛为空结果,不抛错
+        return json.dumps({"items": items}, ensure_ascii=False)
 
     @tool(args_schema=CreateTicketInput)
     def create_ticket(conversation_id: int, description: str, ticket_type: str) -> str:
