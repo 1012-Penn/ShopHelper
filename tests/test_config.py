@@ -14,6 +14,19 @@ def test_settings_defaults():
     assert s.extract_temperature == 0
 
 
+def test_ch03_defaults():
+    s = Settings(openai_api_key="sk-test", _env_file=None)
+    assert s.embedding_api_base == "https://api.siliconflow.cn/v1"
+    assert s.embedding_model == "BAAI/bge-m3"
+    assert s.embedding_dim == 1024
+    assert s.embedding_batch_size == 16
+    assert s.milvus_db_path == "./data/milvus_knowledge.db"
+    assert s.retrieval_top_k == 3
+    assert s.chunk_max_chars == 500
+    assert s.chunk_overlap_chars == 80
+    assert s.dedup_threshold == 0.88
+
+
 def test_settings_reads_env(monkeypatch):
     monkeypatch.setenv("OPENAI_MODEL", "my-model")
     monkeypatch.setenv("HISTORY_TOKEN_BUDGET", "100")

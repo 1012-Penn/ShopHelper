@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from app.models import Base, Conversation, Faq, Message, Ticket
+from app.models import Base, Conversation, Faq, KnowledgeChunk, Message, QaStaging, Ticket
 
 
 def create_memory_engine():
@@ -47,3 +47,19 @@ def test_models_roundtrip():
         assert [m.role for m in msgs] == ["user", "assistant", "tool"]
         assert msgs[2].tool_call_id == "call_1"
         assert session.get(Ticket, "T20260904001").status == "待处理"
+
+
+def test_knowledge_chunk_and_staging_roundtrip():
+    engine = create_memory_engine()
+    with Session(engine) as session:
+        chunk = KnowledgeChunk(category="售后", questions="运费说明", answer="邮费 8 元")
+        session.add(chunk)
+        session.commit()
+        assert chunk.id is not None
+        assert chunk.vectorize_status == "pending"
+        assert chunk.is_key_clause == 0
+
+        staged = QaStaging(batch_no="b1", source_ref="1", question="q", answer="a")
+        session.add(staged)
+        session.commit()
+        assert staged.status == "extracted"

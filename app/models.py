@@ -63,3 +63,47 @@ class Ticket(Base):
     ticket_type: Mapped[str] = mapped_column(Enum("售后", "投诉", "咨询", name="ticket_type"), nullable=False)
     status: Mapped[str] = mapped_column(Enum("待处理", "已处理", name="ticket_status"), default="待处理")
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class KnowledgeChunk(Base):
+    __tablename__ = "knowledge_chunks"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    category: Mapped[str] = mapped_column(String(255), nullable=False)
+    questions: Mapped[str] = mapped_column(Text, nullable=False)
+    answer: Mapped[str] = mapped_column(Text, nullable=False)
+    section_path: Mapped[str | None] = mapped_column(String(512), nullable=True)
+    content_type: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    is_key_clause: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), default=0
+    )
+    prev_chunk_id: Mapped[int | None] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), nullable=True
+    )
+    next_chunk_id: Mapped[int | None] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), nullable=True
+    )
+    vector_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    vectorize_status: Mapped[str] = mapped_column(
+        Enum("pending", "done", name="vectorize_status"), default="pending"
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class QaStaging(Base):
+    __tablename__ = "qa_extraction_staging"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    batch_no: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_ref: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    question: Mapped[str] = mapped_column(Text, nullable=False)
+    answer: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(
+        Enum("extracted", "kept", "discarded", name="qa_staging_status"), default="extracted"
+    )
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
