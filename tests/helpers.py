@@ -101,3 +101,30 @@ class FakeEmbedding:
     def _token_vec(self, tok: str) -> list[float]:
         digest = hashlib.sha512(tok.encode()).digest()  # 64 字节 = 64 维,字节独立近似正交
         return [b / 255.0 - 0.5 for b in digest]
+
+
+class FakeVectorStore:
+    """内存向量库,接口与 app.vector_store.KnowledgeVectorStore 一致。"""
+
+    def __init__(self, dim: int = 64):
+        self.dim = dim
+        self._vectors: dict[int, list[float]] = {}
+
+    def ensure_collection(self) -> None:
+        pass
+
+    def upsert(self, ids, vectors):
+        for i, v in zip(ids, vectors):
+            self._vectors[i] = v
+
+    def search(self, vector, top_k):
+        scored = [(i, cosine(vector, v)) for i, v in self._vectors.items()]
+        scored.sort(key=lambda x: -x[1])
+        return scored[:top_k]
+
+    def delete(self, ids):
+        for i in ids:
+            self._vectors.pop(i, None)
+
+    def count(self):
+        return len(self._vectors)
