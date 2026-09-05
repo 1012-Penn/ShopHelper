@@ -1,7 +1,7 @@
 # ch03 设计文档:RAG 基础——知识库 + 向量语义检索
 
 日期:2026-09-05
-状态:已对齐(需求四问以推荐项拍板,异步模式下用户未否决,列于 §9 供 veto)
+状态:已对齐(四问已拍板:BGE-M3 走硅基流动 API、挖知识独立脚本、防幻觉纳入;Milvus 形态用户未答,按推荐项 Milvus Lite 执行,见 §9)
 
 ## 1. 目标
 
@@ -9,10 +9,10 @@
 
 ## 2. 技术栈(定死)
 
-- 嵌入模型 **BGE-M3**(`BAAI/bge-m3`,dense 1024 维),本地 sentence-transformers + torch CPU 版运行(HF 可达已验证;环境无 GPU,单条编码约 1-2s,演示规模无压力)
+- 嵌入模型 **BGE-M3**(`BAAI/bge-m3`,dense 1024 维),走**硅基流动 OpenAI 兼容 embeddings API**(用户拍板提供 key;已实测:批量入参、1024 维、「邮费是多少」vs「运费怎么算」余弦 0.78)。key 只进 `.env`(gitignore),`.env.example` 放占位符。
 - 向量库 **Milvus**,运行形态 **Milvus Lite**(pip 内嵌,官方 `MilvusClient` API;Docker Hub 实锤拉不到 Standalone 三镜像,上生产只改连接串)
 - MySQL 8 知识原文权威源(复用 ch02 docker compose);FastAPI + SQLAlchemy 2.x + LangChain 1.x 沿用
-- 动手前用 Context7 核对 pymilvus / sentence-transformers / langchain 最新 API
+- 动手前用 Context7 核对 pymilvus 最新 API;嵌入客户端用 httpx 直连 `/v1/embeddings`(避开 langchain-openai 对非 OpenAI 模型的 tiktoken 分词陷阱,httpx 已是现有依赖)
 
 ## 3. 数据层
 
@@ -96,9 +96,13 @@
 
 `dev-notes/ch03.md` 每阶段追记(已开篇);涉及库 API 动手前 Context7 核对;完结交付演示命令 + 测试结果 + dev-notes 路径。
 
-## 9. 拍板记录(异步默认,veto 点)
+## 9. 拍板记录
 
-四项决策向用户提问未获即时应答,按推荐项执行:Milvus Lite / 本地 sentence-transformers / 独立脚本 + crontab / 防幻觉纳入。技术选型本身(BGE-M3、Milvus、MySQL 权威源、dense 单路)未动。
+- **BGE-M3 走硅基流动 API**:用户原话「这是我硅基流动的API key……你看看是不是从中可以获得 bge-M3 模型」——已实测:批量入参、1024 维、「邮费是多少」vs「运费怎么算」余弦 0.78(低于去重阈值 0.88,换说法不会被误判重复)。
+- **挖知识定时任务 = 独立批处理脚本**(推荐项,用户确认)。
+- **防幻觉纳入本章**(推荐项,用户确认)。
+- **Milvus 形态 = Milvus Lite**:用户把 key 贴进了这题(自述「好像没太理解你的意思,可能答得驴头不对马嘴」),澄清后补充定位——「这一章只跑通『向量检索』这一条路径,让 query_faq 先能查着,更精细的检索优化留到下一章」,随后明确选 Milvus Lite。
+- 技术选型本身(BGE-M3、Milvus、MySQL 权威源、dense 单路)全程未动。
 
 ## 10. 明确不做
 
