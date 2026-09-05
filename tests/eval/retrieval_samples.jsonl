@@ -1,0 +1,12 @@
+{"query": "邮费是多少", "expect_doc": "退货政策.md", "expect_keywords": ["邮费", "包邮"]}
+{"query": "快递费怎么算", "expect_doc": ["退货政策.md", "售后手册.md"], "expect_keywords": ["邮费", "运费"]}
+{"query": "寄到偏远地区要加钱吗", "expect_doc": ["退货政策.md", "售后手册.md"], "expect_keywords": ["偏远"]}
+{"query": "退货的规定是什么", "expect_doc": "商品FAQ.md", "expect_keywords": ["七天无理由"]}
+{"query": "啥时候能发货啊", "expect_doc": "商品FAQ.md", "expect_keywords": ["48 小时"]}
+{"query": "几天能到货", "expect_doc": "商品FAQ.md", "expect_keywords": ["3-5 天"]}
+{"query": "能用微信付钱吗", "expect_doc": "商品FAQ.md", "expect_keywords": ["微信"]}
+{"query": "怎么开发票", "expect_doc": "商品FAQ.md", "expect_keywords": ["电子发票"]}
+{"query": "会员有什么好处", "expect_doc": "商品FAQ.md", "expect_keywords": ["95 折"]}
+{"query": "东西坏了不想修了想退", "expect_doc": "商品FAQ.md", "expect_keywords": ["质量问题"]}
+{"query": "退货的钱多久退回来", "expect_doc": "退货政策.md", "expect_keywords": ["退款", "工作日"]}
+{"query": "哪些东西不能退", "expect_doc": "退货政策.md", "expect_keywords": ["不予退货", "定制"]}

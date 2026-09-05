@@ -7,6 +7,9 @@ Context7 核对(pymilvus 3.0.1):
 - COSINE 度量下 hit["distance"] 实测即相似度(同向量 1.0、正交 0.0,越大越像;pymilvus 3.0.1 + milvus-lite 3.2.1 真库校准)
 - get_collection_stats(collection)["row_count"] 计数
 """
+import os
+from pathlib import Path
+
 from pymilvus import DataType, MilvusClient
 
 
@@ -19,6 +22,9 @@ class KnowledgeVectorStore:
 
     def _get_client(self) -> MilvusClient:
         if self._client is None:
+            parent = Path(self._db_path).parent
+            if str(parent) not in ("", "."):
+                os.makedirs(parent, exist_ok=True)  # milvus-lite 要求父目录先存在
             self._client = MilvusClient(uri=self._db_path)
         return self._client
 
@@ -44,10 +50,15 @@ class KnowledgeVectorStore:
         self._get_client().upsert(self._collection, data)
 
     def search(self, vector: list[float], top_k: int) -> list[tuple[int, float]]:
-        """→ [(chunk_id, 相似度)] 相似度降序;集合不存在返回空。"""
+        """→ [(chunk_id, 相似度)] 相似度降序;集合不存在返回空。
+
+        跨进程重开文件库时集合处于 released 态,search 前需 load(load 幂等,已加载时为空操作)。
+        """
         if not self._exists():
             return []
-        results = self._get_client().search(
+        client = self._get_client()
+        client.load_collection(self._collection)
+        results = client.search(
             self._collection, data=[vector], limit=top_k, output_fields=["id"]
         )
         return [(int(hit["id"]), float(hit["distance"])) for hit in results[0]]
