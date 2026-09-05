@@ -28,6 +28,10 @@ class KnowledgeBaseStore:
             ).all()
             return list(rows)
 
+    def doc_chunk_ids_all(self) -> list[int]:
+        with self._factory() as session:
+            return list(session.scalars(select(KnowledgeChunk.id)).all())
+
     def replace_doc_chunks(self, doc_name: str, chunks: list[Chunk]) -> tuple[list[int], list[int]]:
         """按文档重建(幂等):删旧块 → 插新块(pending)→ 回填 prev/next。返回 (旧 id, 新 id)。"""
         with self._factory() as session:
