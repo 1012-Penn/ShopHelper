@@ -19,6 +19,10 @@ class KnowledgeBaseStore:
     def __init__(self, session_factory: sessionmaker) -> None:
         self._factory = session_factory
 
+    @property
+    def session_factory(self) -> sessionmaker:
+        return self._factory
+
     # ---------- knowledge_chunks ----------
 
     def doc_chunk_ids(self, doc_name: str) -> list[int]:

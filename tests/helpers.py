@@ -3,8 +3,12 @@ import hashlib
 import json
 import math
 
+from app.embedding import cosine  # 公共余弦工具,生产/测试同源
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
+
+__all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse",
+           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList"]
 
 
 class FakeChatWithTools(GenericFakeChatModel):
@@ -48,12 +52,6 @@ async def post_chat_sse(client, payload: dict) -> list[dict]:
         async for chunk in resp.aiter_text():
             raw += chunk
     return parse_sse(raw)
-
-
-def cosine(a: list[float], b: list[float]) -> float:
-    na = math.sqrt(sum(x * x for x in a)) or 1.0
-    nb = math.sqrt(sum(x * x for x in b)) or 1.0
-    return sum(x * y for x, y in zip(a, b)) / (na * nb)
 
 
 class FakeEmbedding:
@@ -128,3 +126,24 @@ class FakeVectorStore:
 
     def count(self):
         return len(self._vectors)
+
+
+class StubQAList:
+    """with_structured_output 产物的列表壳:mine 只消费 .items。"""
+
+    def __init__(self, items):
+        self.items = items
+
+
+class StubMineModel:
+    """按对话文本里的关键词返回预置 QA(dict 形式,同 structured output 的 dict 形态);未命中返回空。"""
+
+    def __init__(self, mapping: dict[str, list[tuple[str, str]]]):
+        self.mapping = mapping
+
+    def invoke(self, text, config=None, **kwargs):
+        items: list[dict] = []
+        for key, qas in self.mapping.items():
+            if key in text:
+                items.extend({"question": q, "answer": a} for q, a in qas)
+        return StubQAList(items=items)

@@ -1,7 +1,15 @@
 """BGE-M3 嵌入客户端:硅基流动 OpenAI 兼容 /embeddings,httpx 直连(批量按 batch_size 切批)。"""
+import math
+
 import httpx
 
 from app.config import Settings
+
+
+def cosine(a: list[float], b: list[float]) -> float:
+    na = math.sqrt(sum(x * x for x in a)) or 1.0
+    nb = math.sqrt(sum(x * x for x in b)) or 1.0
+    return sum(x * y for x, y in zip(a, b)) / (na * nb)
 
 
 class SiliconFlowEmbedder:
