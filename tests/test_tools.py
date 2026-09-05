@@ -87,11 +87,26 @@ def test_query_faq_never_raises_on_backend_failure():
             raise RuntimeError("嵌入服务挂了")
 
     factory = make_session_factory(create_memory_engine())
-    tools, _, _ = _make_vector_tools(factory, vectors=FakeVectorStore())
-    by_name = {t.name: t for t in tools}
     tools2 = build_tools(factory, embedder=ExplodingEmbedder(), vectors=FakeVectorStore(), top_k=3)
     faq = {t.name: t for t in tools2}["query_faq"]
     assert json.loads(faq.invoke({"keyword": "退货"})) == {"items": []}  # 异常收敛为空结果
+
+
+def test_build_tools_injects_default_top_k():
+    """评审修复回归:注入替身但漏传 top_k 时,search 必须拿到 3 而不是 None。"""
+    factory = make_session_factory(create_memory_engine())
+    captured = {}
+
+    class RecordingVectorStore(FakeVectorStore):
+        def search(self, vector, top_k):
+            captured["top_k"] = top_k
+            return super().search(vector, top_k)
+
+    tools, _, _ = _make_vector_tools(factory, vectors=RecordingVectorStore())
+    faq = {t.name: t for t in tools}["query_faq"]
+    out = json.loads(faq.invoke({"keyword": "快递费多少钱"}))
+    assert captured["top_k"] == 3
+    assert out["items"]  # 漏传 top_k 不应变成静默空结果
 
 
 def test_create_ticket_persists():

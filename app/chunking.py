@@ -3,10 +3,10 @@ import re
 from dataclasses import dataclass
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*#*\s*$")
-SENTENCE_END = "。!?;;…"
+SENTENCE_END = "。!?;！？；…"  # 半角 + 全角 !?!;
 KEY_CLAUSE_WORDS = ("必须", "不得", "禁止", "仅限", "不予", "免费", "七天无理由")
 ALIAS_MARK = "其他问法:"
-_SENTENCE_SEPS = ("。", "!", "?", ";", ";", "…")
+_SENTENCE_SEPS = ("。", "!", "?", ";", ";", "！", "？", "；", "…")  # 中英文句读全收(评审修复:此前漏全角 !?!;)
 
 
 @dataclass

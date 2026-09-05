@@ -46,6 +46,7 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k: int | None 
         embedder = embedder or make_embedder(settings)
         vectors = vectors or KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)
         top_k = top_k or settings.retrieval_top_k
+    top_k = top_k or 3  # 注入替身但未传 top_k 的兜底:None 传进 search 会静默挂掉
     kb = KnowledgeBaseStore(session_factory)
 
     @tool

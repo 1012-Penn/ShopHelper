@@ -7,8 +7,8 @@
    超过阈值判重复置 discarded,存活置 kept 并入 knowledge_chunks(pending);
 4. 收尾复用 build_kb 的向量化循环。
 
-定时:crontab 外挂调度,示例(每小时一次):
-  0 * * * * cd /path/to/ShopHelper && .venv/bin/python -m scripts.mine_qa >> logs/mine_qa.log 2>&1
+定时:crontab 外挂调度,示例(每小时一次;先 mkdir -p logs):
+  0 * * * * cd /path/to/ShopHelper && mkdir -p logs && .venv/bin/python -m scripts.mine_qa >> logs/mine_qa.log 2>&1
 """
 import argparse
 from datetime import datetime

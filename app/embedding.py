@@ -32,14 +32,23 @@ class SiliconFlowEmbedder:
         self._batch_size = batch_size
 
     def embed(self, texts: list[str]) -> list[list[float]]:
-        """批量嵌入;返回顺序与入参一致。HTTP 非 200 抛 RuntimeError(调用方自行收敛)。"""
+        """批量嵌入;返回顺序与入参一致。
+
+        非 200 或返回格式/条数异常一律抛 RuntimeError——按 index 对齐错位会把向量
+        upsert 到错误的 chunk id 上(静默的知识库错配),必须在客户端挡住。
+        """
         out: list[list[float]] = []
         for i in range(0, len(texts), self._batch_size):
             batch = texts[i : i + self._batch_size]
             resp = self._client.post("/embeddings", json={"model": self._model, "input": batch})
             if resp.status_code != 200:
                 raise RuntimeError(f"嵌入 API 调用失败:HTTP {resp.status_code} {resp.text[:200]}")
-            data = sorted(resp.json()["data"], key=lambda d: d["index"])
+            try:
+                data = sorted(resp.json()["data"], key=lambda d: d["index"])
+            except (ValueError, KeyError, TypeError) as exc:
+                raise RuntimeError(f"嵌入 API 返回格式异常:{exc}") from exc
+            if len(data) != len(batch):
+                raise RuntimeError(f"嵌入 API 返回条数不匹配:期望 {len(batch)},实得 {len(data)}")
             out.extend(d["embedding"] for d in data)
         return out
 

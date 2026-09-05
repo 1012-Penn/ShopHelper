@@ -47,7 +47,7 @@ docker compose up -d        # 等约 30 秒初始化
 挖知识定时化(示例,每小时一批):
 
 ```cron
-0 * * * * cd /path/to/ShopHelper && .venv/bin/python -m scripts.mine_qa >> logs/mine_qa.log 2>&1
+0 * * * * cd /path/to/ShopHelper && mkdir -p logs && .venv/bin/python -m scripts.mine_qa >> logs/mine_qa.log 2>&1
 ```
 
 ## 跑测试
