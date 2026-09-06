@@ -26,3 +26,12 @@ class Settings(BaseSettings):
     chunk_max_chars: int = 500
     chunk_overlap_chars: int = 80
     dedup_threshold: float = 0.88
+
+    # ch04:混合检索 + 重排(rerank 与嵌入同走硅基流动;key 缺省回落 embedding_api_key)
+    rerank_api_base: str = "https://api.siliconflow.cn/v1"
+    rerank_api_key: str = ""
+    rerank_model: str = "BAAI/bge-reranker-v2-m3"
+    rerank_score_floor: float = 0.30  # 精排 Top-1 低于此判「证据置信度低」,以评估集分数分布校准
+    hybrid_candidates: int = 50       # dense/BM25 各自召回数(hybrid_search limit)
+    retrieval_final_top_k: int = 10   # 精排后进入 prompt 的条数
+    query_rewrite_enabled: bool = True

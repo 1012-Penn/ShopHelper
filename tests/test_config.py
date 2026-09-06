@@ -27,6 +27,16 @@ def test_ch03_defaults():
     assert s.dedup_threshold == 0.88
 
 
+def test_ch04_defaults():
+    s = Settings(openai_api_key="sk-test", _env_file=None)
+    assert s.rerank_api_base == "https://api.siliconflow.cn/v1"
+    assert s.rerank_model == "BAAI/bge-reranker-v2-m3"
+    assert s.rerank_score_floor == 0.30
+    assert s.hybrid_candidates == 50 and s.retrieval_final_top_k == 10
+    assert s.query_rewrite_enabled is True
+    assert s.rerank_api_key == ""
+
+
 def test_settings_reads_env(monkeypatch):
     monkeypatch.setenv("OPENAI_MODEL", "my-model")
     monkeypatch.setenv("HISTORY_TOKEN_BUDGET", "100")

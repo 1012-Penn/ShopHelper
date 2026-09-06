@@ -1,7 +1,17 @@
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
-from app.models import Base, Conversation, Faq, KnowledgeChunk, Message, QaStaging, Ticket
+from app.models import (
+    Base,
+    Conversation,
+    Faq,
+    FaithCase,
+    KnowledgeChunk,
+    LowConfidenceQuestion,
+    Message,
+    QaStaging,
+    Ticket,
+)
 
 
 def create_memory_engine():
@@ -63,3 +73,24 @@ def test_knowledge_chunk_and_staging_roundtrip():
         session.add(staged)
         session.commit()
         assert staged.status == "extracted"
+
+
+def test_low_confidence_question_roundtrip():
+    engine = create_memory_engine()
+    with Session(engine) as session:
+        session.add(LowConfidenceQuestion(conversation_id=None, raw_question="量子力学怎么退货",
+                                          source="self_check", reason="模型自评证据不足"))
+        session.commit()
+        row = session.query(LowConfidenceQuestion).one()
+    assert row.source == "self_check"
+    assert row.created_at is not None
+
+
+def test_faith_case_roundtrip():
+    engine = create_memory_engine()
+    with Session(engine) as session:
+        session.add(FaithCase(eval_id="A01", bucket="A_policy", query="q", answer="a", reason="r",
+                              citations=[{"n": 1, "chunk_id": 7}], judge_model="deepseek-chat"))
+        session.commit()
+        row = session.query(FaithCase).one()
+    assert row.status == "未解决" and row.seen_count == 1 and row.strategy == "hybrid_rerank"
