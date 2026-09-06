@@ -3,11 +3,11 @@
 双写契约(spec §5):先写 knowledge_chunks(pending),向量化成功后回填 vector_id 转 done;
 Milvus 主键 = chunk 主键,upsert 覆盖天然幂等,中断重跑只补 pending。
 """
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.chunking import Chunk
-from app.models import Conversation, KnowledgeChunk, Message, QaStaging
+from app.models import Conversation, FaithCase, KnowledgeChunk, Message, QaStaging
 
 
 def vector_text(category: str, questions: str, answer: str) -> str:
@@ -158,6 +158,32 @@ class KnowledgeBaseStore:
             session.add_all(rows)
             session.commit()
             return [r.id for r in rows]
+
+
+class FaithCaseLedger:
+    """忠实度编造个案台账(ch04):一题一行,跨轮累加,复发退回未解决。"""
+
+    def __init__(self, session_factory: sessionmaker) -> None:
+        self._factory = session_factory
+
+    def upsert_case(self, *, eval_id: str, bucket: str, query: str, strategy: str,
+                    answer: str, reason: str, citations: list | None, judge_model: str | None) -> None:
+        with self._factory() as session:
+            row = session.scalars(select(FaithCase).where(FaithCase.eval_id == eval_id)).first()
+            if row is None:
+                session.add(FaithCase(eval_id=eval_id, bucket=bucket, query=query[:512],
+                                      strategy=strategy, answer=answer, reason=reason,
+                                      citations=citations, judge_model=judge_model, seen_count=1))
+            else:
+                row.bucket, row.query, row.strategy = bucket, query[:512], strategy
+                row.answer, row.reason = answer, reason
+                row.citations, row.judge_model = citations, judge_model
+                row.seen_count = (row.seen_count or 0) + 1
+                row.last_seen_at = func.now()
+                if row.status != "未解决":  # 复发:退回未解决、清处置;resolved_at 保留作复发标记
+                    row.status = "未解决"
+                    row.resolution = None
+            session.commit()
 
 
 def vectorize_pending(kb: KnowledgeBaseStore, vectors, embedder, *, max_chunks: int | None = None, batch_size: int = 16) -> int:
