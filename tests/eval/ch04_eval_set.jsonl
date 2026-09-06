@@ -1,0 +1,32 @@
+{"id": "A01", "bucket": "A_policy", "query": "普通订单的邮费是多少", "expect_doc": "退货政策.md", "expect_keywords": ["邮费", "8 元"], "notes": "运费说明"}
+{"id": "A02", "bucket": "A_policy", "query": "满多少包邮", "expect_doc": "退货政策.md", "expect_keywords": ["99", "包邮"], "notes": "包邮门槛"}
+{"id": "A03", "bucket": "A_policy", "query": "质量问题的退货运费谁出", "expect_doc": ["退货政策.md", "商品FAQ.md"], "expect_keywords": ["商家"], "notes": "质量退货运费"}
+{"id": "A04", "bucket": "A_policy", "query": "哪些商品不支持七天无理由退货", "expect_doc": "退货政策.md", "expect_keywords": ["不予退货", "定制"], "notes": "负面条款"}
+{"id": "A05", "bucket": "A_policy", "query": "退款多久能原路退回", "expect_doc": "退货政策.md", "expect_keywords": ["退款", "工作日"], "notes": "退款时效"}
+{"id": "A06", "bucket": "A_policy", "query": "寄到偏远地区要加钱吗", "expect_doc": ["退货政策.md", "售后手册.md"], "expect_keywords": ["偏远"], "notes": "偏远加收"}
+{"id": "A07", "bucket": "A_policy", "query": "退货申请审核要多久", "expect_doc": "商品FAQ.md", "expect_keywords": ["24 小时", "审核"], "notes": "审核时限"}
+{"id": "A08", "bucket": "A_policy", "query": "发票多久能开出来", "expect_doc": "商品FAQ.md", "expect_keywords": ["电子发票", "24 小时"], "notes": "开票时限"}
+{"id": "B01", "bucket": "B_model", "query": "SH-E300 支持主动降噪吗", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-E300", "主动降噪"], "notes": "型号+功能"}
+{"id": "B02", "bucket": "B_model", "query": "SH-E300 多少钱", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-E300", "299"], "notes": "型号+价格"}
+{"id": "B03", "bucket": "B_model", "query": "SH-E120 有降噪功能吗", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-E120", "主动降噪"], "notes": "型号+否定参数"}
+{"id": "B04", "bucket": "B_model", "query": "SH-K870 是什么轴的", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-K870", "青轴"], "notes": "型号+参数"}
+{"id": "B05", "bucket": "B_model", "query": "SH-K104 卖多少", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-K104", "219"], "notes": "型号+价格"}
+{"id": "B06", "bucket": "B_model", "query": "SH-B5 能监测睡眠吗", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-B5", "睡眠"], "notes": "型号+功能"}
+{"id": "B07", "bucket": "B_model", "query": "SH-W20 续航怎么样", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-W20", "7 天"], "notes": "型号+续航"}
+{"id": "B08", "bucket": "B_model", "query": "SH-K870 是 87 键还是 104 键", "expect_doc": "商品FAQ.md", "expect_keywords": ["SH-K870", "87 键"], "notes": "型号辨析"}
+{"id": "C01", "bucket": "C_colloquial", "query": "耳机戴了两天耳朵疼想退了", "expect_doc": "商品FAQ.md", "expect_keywords": ["七天无理由"], "notes": "口语改写靶"}
+{"id": "C02", "bucket": "C_colloquial", "query": "钱啥时候能回来啊", "expect_doc": "退货政策.md", "expect_keywords": ["工作日"], "notes": "口语改写靶"}
+{"id": "C03", "bucket": "C_colloquial", "query": "发啥快递啊一般几天到", "expect_doc": "商品FAQ.md", "expect_keywords": ["3-5 天"], "notes": "口语改写靶"}
+{"id": "C04", "bucket": "C_colloquial", "query": "这个东西能便宜点不", "expect_doc": "商品FAQ.md", "expect_keywords": ["95 折"], "notes": "口语→会员权益"}
+{"id": "C05", "bucket": "C_colloquial", "query": "开胶了算不算质量问题啊", "expect_doc": "商品FAQ.md", "expect_keywords": ["质量"], "notes": "口语改写靶"}
+{"id": "C06", "bucket": "C_colloquial", "query": "用微信给钱行不行", "expect_doc": "商品FAQ.md", "expect_keywords": ["微信"], "notes": "口语改写靶"}
+{"id": "C07", "bucket": "C_colloquial", "query": "买东西能开票不", "expect_doc": "商品FAQ.md", "expect_keywords": ["电子发票"], "notes": "口语改写靶"}
+{"id": "C08", "bucket": "C_colloquial", "query": "住得太远寄过来是不是要加钱", "expect_doc": ["退货政策.md", "售后手册.md"], "expect_keywords": ["偏远"], "notes": "口语改写靶"}
+{"id": "E01", "bucket": "E_multi", "query": "98 块的订单不包邮,那我再凑一件够 99 行吗", "expect_doc": "退货政策.md", "expect_keywords": ["99", "包邮"], "notes": "门槛+动作"}
+{"id": "E02", "bucket": "E_multi", "query": "质量问题退货的话运费谁出、退款多久到", "expect_doc": ["退货政策.md", "商品FAQ.md"], "expect_keywords": ["商家", "工作日"], "notes": "双约束"}
+{"id": "E03", "bucket": "E_multi", "query": "定制商品过了七天还能退吗", "expect_doc": "退货政策.md", "expect_keywords": ["定制", "不予退货"], "notes": "条款叠加"}
+{"id": "E04", "bucket": "E_multi", "query": "SH-E300 用了六天降噪坏了能退吗", "expect_doc": ["商品FAQ.md", "退货政策.md"], "expect_keywords": ["七天无理由", "SH-E300"], "notes": "型号+政策跨文档"}
+{"id": "E05", "bucket": "E_multi", "query": "预售的商品也是 48 小时内发货吗", "expect_doc": "商品FAQ.md", "expect_keywords": ["48 小时", "预售"], "notes": "条件辨析"}
+{"id": "E06", "bucket": "E_multi", "query": "会员买 SH-B5 手环是多少钱", "expect_doc": ["商品FAQ.md"], "expect_keywords": ["95 折", "SH-B5"], "notes": "会员+型号"}
+{"id": "E07", "bucket": "E_multi", "query": "质量问题退货运费商家出,那七天无理由的呢", "expect_doc": ["退货政策.md", "商品FAQ.md"], "expect_keywords": ["商家", "运费"], "notes": "对照条款"}
+{"id": "E08", "bucket": "E_multi", "query": "满 99 包邮对偏远地区也适用吗", "expect_doc": ["退货政策.md", "售后手册.md"], "expect_keywords": ["偏远", "包邮"], "notes": "条款叠加"}
