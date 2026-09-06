@@ -120,3 +120,29 @@ def test_rerank_failure_degrades_to_rrf():
                            reranker=ExplodingReranker())
     r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
     assert r.items and not r.low_confidence  # 降级仍有候选
+
+
+def test_category_injection_sanitized_and_falls_back(service):
+    """评审修复:LLM 传来的 category 带引号/反斜杠 → 剥离;expr 仍炸则异常感知回退无过滤。"""
+    r = service.retrieve("退货的规定是什么", strategy="hybrid_rerank",
+                         category='x" or category != "x')
+    assert r.items and r.filter_fallback is True  # 坏 expr 不炸穿,回退无过滤
+
+
+def test_degraded_flag_on_missing_reranker():
+    """评审修复:reranker 缺失降级 RRF 序时 degraded=True,证据质量降档可辨。"""
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False},
+                           poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+    factory = sessionmaker(bind=engine, expire_on_commit=False)
+    kb = KnowledgeBaseStore(factory)
+    kb.replace_doc_chunks("t.md", [
+        Chunk(category=cat, questions=q, answer=a, section_path=f"t.md > {q}",
+              content_type="faq", is_key_clause=False)
+        for cat, q, a in DOCS
+    ])
+    vectors = FakeVectorStore()
+    vectorize_pending(kb, vectors, FakeEmbedding())
+    svc = RetrievalService(FakeEmbedding(), vectors, kb, rewriter=None, reranker=None)
+    r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
+    assert r.items and r.degraded is True

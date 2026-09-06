@@ -243,3 +243,61 @@ async def test_refusal_without_tool_call_pools(make_client):
     rows = _pool_rows(app.state.session_factory)
     assert [r["source"] for r in rows] == ["self_check"]
     assert "模型自评证据不足" in rows[0]["reason"]
+
+
+class TwoCallToolModel:
+    """第一段一次吐两个 tool_call(两次 query_faq),第二段收敛;测引用编号续排。"""
+
+    def bind_tools(self, tools):
+        return self
+
+    async def astream(self, messages):
+        self.last_messages = list(messages)
+        if getattr(self, "_first_done", False):
+            for piece in "综合两条|结果如下".split("|"):
+                yield Chunk(text=piece)
+        else:
+            self._first_done = True
+            yield Chunk(tool_call_chunks=[
+                {"name": "query_faq", "args": '{"keyword": "邮费是多少"}', "id": "call_1",
+                 "index": 0, "type": "tool_call_chunk"},
+                {"name": "query_faq", "args": '{"keyword": "怎么申请退货"}', "id": "call_2",
+                 "index": 1, "type": "tool_call_chunk"},
+            ])
+
+
+async def test_citations_renumbered_across_multiple_tool_calls(make_client):
+    """评审修复:同轮两次 query_faq,第二次的 n 续排不与第一次冲突;回灌给模型的工具结果同步重写。"""
+    client, app = await make_client(TwoCallToolModel())
+    _seed_shipping_kb(app)
+    from app.chunking import Chunk
+    from app.kb import KnowledgeBaseStore, vectorize_pending
+
+    kb = KnowledgeBaseStore(app.state.session_factory)
+    kb.replace_doc_chunks("d2.md", [Chunk(category="售后政策", questions="怎么申请退货",
+                                          answer="订单详情页点击「申请售后」提交。",
+                                          section_path="d2.md > 申请退货",
+                                          content_type="faq", is_key_clause=False)])
+    # 同一向量库追加灌第二批(d2.md replace 会清掉同前缀,直接再灌一次并补第一份)
+    from app.kb import KnowledgeBaseStore as KB
+    kb2 = KB(app.state.session_factory)
+    kb2.replace_doc_chunks("d.md", [Chunk(category="售后政策", questions="邮费是多少",
+                                          answer="普通订单邮费 8 元,满 99 元包邮。",
+                                          section_path="d.md > 邮费与运费",
+                                          content_type="faq", is_key_clause=False)])
+    vectorize_pending(kb2, app.state.vectors, FakeEmbedding())
+
+    events = await post_chat_sse(client, {"message": "邮费多少,退货怎么申请"})
+    cites = [e for e in events if e["type"] == "citations"]
+    assert len(cites) == 1
+    ns = [it["n"] for it in cites[0]["items"]]
+    assert ns == list(range(1, len(ns) + 1)) and len(ns) >= 2  # 续排:从 1 连续无冲突
+    # 回灌给模型的 tool 消息里 n 也已重写,与 citations 帧一致
+    conv_id = events[0]["session_id"]
+    history = await app.state.store.get_history(conv_id)
+    tool_msgs = [m for m in history if m["role"] == "tool"]
+    import json as _json
+    ns_in_tool = [it["n"] for m in tool_msgs
+                  for it in (_json.loads(m["content"]).get("items") or [])]
+    assert ns_in_tool == list(range(1, len(ns_in_tool) + 1))
+    assert set(ns_in_tool) == set(ns)

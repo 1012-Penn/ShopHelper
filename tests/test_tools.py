@@ -92,7 +92,7 @@ def test_query_faq_never_raises_on_backend_failure():
     faq = {t.name: t for t in tools2}["query_faq"]
     out = json.loads(faq.invoke({"keyword": "退货"}))
     assert out["items"] == [] and out["low_confidence"] is True  # 异常收敛为空 + 低置信标志
-    assert "检索失败" in out["reason"]
+    assert "检索服务暂不可用" in out["reason"]
 
 
 def test_build_tools_injects_default_top_k():
@@ -210,4 +210,4 @@ def test_query_faq_v3_exception_converges():
     tools = build_tools(factory, embedder=FakeEmbedding(), vectors=Broken(), top_k=3,
                         rewriter=FakeRewriter(), reranker=FakeReranker())
     out = json.loads({t.name: t for t in tools}["query_faq"].invoke({"keyword": "邮费"}))
-    assert out["items"] == [] and out["low_confidence"] is True and "检索失败" in out["reason"]
+    assert out["items"] == [] and out["low_confidence"] is True and "检索服务暂不可用" in out["reason"]

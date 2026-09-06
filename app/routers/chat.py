@@ -95,6 +95,7 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
         # 整轮消息先攒在 pending,全部成功才落库;中途出错/断开不落库(spec §4.1)
         pending: list[dict] = [{"role": "user", "content": body.message}]
         citations: list[dict] = []
+        n_offset = 0  # 同轮多次 query_faq 时引用编号续排,防 [n] 冲突指错来源
         try:
             # 第一段:绑工具流式调用。文本边收边吐,tool_call_chunks 静默拼装
             bound = model.bind_tools(registry.tools)
@@ -127,9 +128,15 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
                                 "retrieval_low_conf", session_id, body.message,
                                 str(parsed.get("reason") or ""),
                             )
-                        for it in parsed.get("items") or []:
-                            if isinstance(it, dict) and "n" in it:
+                        tool_items = [it for it in parsed.get("items") or []
+                                      if isinstance(it, dict) and "n" in it]
+                        if tool_items:
+                            # 同轮多次检索编号续排,重写工具结果回灌,模型角标与 citations 帧一致
+                            for it in tool_items:
+                                it["n"] = n_offset + it["n"]
                                 citations.append(it)
+                            n_offset += len(tool_items)
+                            result = json.dumps(parsed, ensure_ascii=False)
                     pending.append({"role": "tool", "content": result, "tool_call_id": tc["id"]})
                     prompt_messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
                 # 引用证据在最终答案流之前下发,前端渲染可点角标(spec §6.1)

@@ -7,6 +7,8 @@
   .venv/bin/python scripts/eval_retrieval.py --no-rewrite          # 关改写对照
 前提:MySQL 已建库、Milvus v2 集合已灌(python -m scripts.build_kb)、.env key 有效。
 退出码:0 全中 / 1 有用例 Recall@10 未命中 / 2 向量库为空。
+注:当前已知硬题 C04(「这个东西能便宜点不」→ 95 折)四策略均未命中,全量跑固定退出 1;
+以报告数字为准,退出码只作 CI 严格模式参考。
 """
 import argparse
 import json

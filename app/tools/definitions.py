@@ -1,5 +1,6 @@
 """五个业务工具:三个 mock(不接真实 API、不建表)+ query_faq(混合检索精排)+ create_ticket(写表)。"""
 import json
+import logging
 import random
 from datetime import datetime
 from typing import Literal
@@ -11,8 +12,10 @@ from sqlalchemy import select
 from app.kb import KnowledgeBaseStore
 from app.models import Faq, Ticket
 from app.rerank import make_reranker
-from app.retrieval import RETRIEVAL_SCORE_FLOOR, RetrievalService, lost_in_middle_order
+from app.retrieval import RetrievalService, lost_in_middle_order
 from app.rewrite import make_rewriter
+
+logger = logging.getLogger(__name__)
 
 
 class CreateTicketInput(BaseModel):
@@ -120,11 +123,13 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k=None,
                 "low_confidence": result.low_confidence,
                 "reason": result.reason,
                 "filter_fallback": result.filter_fallback,
+                "degraded": result.degraded,
             }, ensure_ascii=False)
-        except Exception as exc:
+        except Exception:
+            logger.warning("query_faq 检索失败", exc_info=True)
             return json.dumps({
-                "items": [], "low_confidence": True, "reason": f"检索失败:{exc}",
-                "filter_fallback": False,
+                "items": [], "low_confidence": True,
+                "reason": "检索服务暂不可用,请稍后重试", "filter_fallback": False,
             }, ensure_ascii=False)
 
     @tool(args_schema=CreateTicketInput)

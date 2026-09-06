@@ -1,9 +1,12 @@
 -- =============================================================
--- ch02 · Function Calling 工具链 · 建表 DDL
--- 本章新建:faq / conversations / messages / tickets 四张表
+-- ShopHelper · 建表 DDL
+-- ch01:—
+-- ch02 新建:faq / conversations / messages / tickets 四张表
+-- ch03 新建:knowledge_chunks / qa_extraction_staging
+-- ch04 新建:low_confidence_questions / faith_cases
 -- 商品、订单、物流走工具内 mock,不建表
 -- 全库统一 ENGINE=InnoDB、CHARSET=utf8mb4
--- 建表顺序:先 conversations,再依赖它的 messages / tickets
+-- 建表顺序:先 conversations,再依赖它的 messages / tickets / low_confidence_questions
 -- =============================================================
 
 -- 入口脚本默认用 latin1 连接执行本文件,必须先声明字符集,否则 ENUM 中文会双层编码存坏

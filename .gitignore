@@ -18,3 +18,4 @@ dist/
 # ch03:Milvus Lite 本地数据文件目录
 data/
 reports/
+logs/
