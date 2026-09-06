@@ -2,7 +2,14 @@
 import pytest
 from pydantic import ValidationError
 
-from app.prompts import SERVICE_PROMPT_TEMPLATE
+from app.guard import REFUSAL_MARKER
+from app.prompts import (
+    FAITHFULNESS_JUDGE_PROMPT,
+    RAG_ANSWER_PROMPT,
+    FaithfulnessVerdict,
+    SERVICE_PROMPT_TEMPLATE,
+    build_evidence_block,
+)
 from app.schemas import AfterSaleExtraction, ChatRequest
 
 
@@ -11,6 +18,41 @@ def test_service_prompt_renders():
     assert "小帮" in text
     assert "客服" in text
     assert "转人工" in text
+
+
+def test_service_prompt_has_citation_rule():
+    t = SERVICE_PROMPT_TEMPLATE.template
+    assert "[n]" in t and "严禁编造" in t and "给定的编号" in t
+
+
+def test_service_prompt_has_refusal_self_check():
+    t = SERVICE_PROMPT_TEMPLATE.template
+    assert REFUSAL_MARKER in t and "自评" in t
+
+
+def test_service_prompt_has_negative_knowledge():
+    t = SERVICE_PROMPT_TEMPLATE.template
+    assert "退款到账" in t and "送达日期" in t and "赔付" in t and "型号参数" in t
+
+
+def test_rag_answer_prompt_slots():
+    block = build_evidence_block([
+        {"n": 1, "section_path": "d > a", "question": "q1", "answer": "a1"},
+        {"n": 2, "section_path": "d > b", "question": "q2", "answer": "a2"},
+    ])
+    assert "[1] (d > a) 问:q1 答:a1" in block
+    out = RAG_ANSWER_PROMPT.format(evidence=block, query="邮费多少")
+    assert "邮费多少" in out and "[1]" in out
+
+
+def test_faithfulness_judge_prompt_slots():
+    out = FAITHFULNESS_JUDGE_PROMPT.format(query="q", evidence="[1] (d) 问:x 答:y", answer="a [1]")
+    assert "忠实度裁判" in out and "q" in out and "a [1]" in out
+
+
+def test_faithfulness_verdict_shape():
+    v = FaithfulnessVerdict(fabricated=True, reason="r", fabricated_claims=["x"])
+    assert v.fabricated and v.fabricated_claims == ["x"]
 
 
 def test_chat_request_rejects_empty_message():
