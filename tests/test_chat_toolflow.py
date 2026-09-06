@@ -5,7 +5,7 @@ import pytest
 
 from app.models import Faq
 from app.store import ConversationStore
-from tests.helpers import fake_chat, post_chat_sse
+from tests.helpers import FakeEmbedding, fake_chat, post_chat_sse
 
 
 def _seed_faq(app):
@@ -26,10 +26,11 @@ class Chunk:
 class FakeToolChatModel:
     """第 1 次 astream 吐 tool_call_chunks,第 2 次吐文本;记录 bind_tools / astream 次数。"""
 
-    def __init__(self, second_reply="支持七天无理由退货"):
+    def __init__(self, second_reply="支持七天无理由退货", tool_args='{"keyword": "退货"}'):
         self.bind_calls = 0
         self.astream_calls = 0
         self.second_reply = second_reply
+        self.tool_args = tool_args
 
     def bind_tools(self, tools):
         self.bind_calls += 1
@@ -40,7 +41,7 @@ class FakeToolChatModel:
         self.last_messages = list(messages)
         if self.astream_calls == 1:
             yield Chunk(tool_call_chunks=[{
-                "name": "query_faq", "args": '{"keyword": "退货"}', "id": "call_1",
+                "name": "query_faq", "args": self.tool_args, "id": "call_1",
                 "index": 0, "type": "tool_call_chunk",
             }])
         else:
@@ -148,3 +149,77 @@ async def test_multi_tool_calls_all_fed_back(make_client):
     history = await app.state.store.get_history(events[0]["session_id"])
     assert [m["role"] for m in history] == ["user", "assistant", "tool", "tool", "assistant"]
     assert [m["tool_call_id"] for m in history[2:4]] == ["c1", "c2"]
+
+
+# ---------- ch04:citations 帧 + 低置信度池 ----------
+
+def _pool_rows(factory):
+    from app.models import LowConfidenceQuestion
+
+    with factory() as s:
+        return [{"source": r.source, "raw_question": r.raw_question, "reason": r.reason or ""}
+                for r in s.query(LowConfidenceQuestion).all()]
+
+
+def _seed_shipping_kb(app):
+    """灌一条运费知识(questions 与 query 同形,FakeReranker 高分不误触低置信)。"""
+    from app.chunking import Chunk
+    from app.kb import KnowledgeBaseStore, vectorize_pending
+
+    kb = KnowledgeBaseStore(app.state.session_factory)
+    kb.replace_doc_chunks("d.md", [Chunk(category="售后政策", questions="邮费是多少",
+                                         answer="普通订单邮费 8 元,满 99 元包邮。",
+                                         section_path="d.md > 邮费与运费",
+                                         content_type="faq", is_key_clause=False)])
+    vectorize_pending(kb, app.state.vectors, FakeEmbedding())
+
+
+def _seed_return_kb(app):
+    """灌一条退货政策知识(配拒答用例:检索命中但模型自评拒答)。"""
+    from app.chunking import Chunk
+    from app.kb import KnowledgeBaseStore, vectorize_pending
+
+    kb = KnowledgeBaseStore(app.state.session_factory)
+    kb.replace_doc_chunks("d.md", [Chunk(category="售后政策", questions="退货政策是什么",
+                                         answer="支持七天无理由退货,商品需保持完好。",
+                                         section_path="d.md > 退货政策",
+                                         content_type="faq", is_key_clause=False)])
+    vectorize_pending(kb, app.state.vectors, FakeEmbedding())
+
+
+async def test_citations_frame_before_tokens(make_client):
+    model = FakeToolChatModel("邮费一般8元|满99包邮", tool_args='{"keyword": "邮费是多少"}')
+    client, app = await make_client(model)
+    _seed_shipping_kb(app)
+
+    events = await post_chat_sse(client, {"message": "邮费是多少"})
+    cites = [e for e in events if e["type"] == "citations"]
+    assert len(cites) == 1
+    items = cites[0]["items"]
+    assert items and items[0]["n"] == 1 and "section_path" in items[0]
+    types = [e["type"] for e in events]
+    assert types.index("citations") < types.index("token")  # 帧在答案流之前
+    assert _pool_rows(app.state.session_factory) == []      # 正常轮不落池
+
+
+async def test_low_confidence_tool_result_pools(make_client):
+    model = FakeToolChatModel("这个我查不到|建议转人工")
+    client, app = await make_client(model)  # 空向量库 → query_faq low_confidence=true
+    events = await post_chat_sse(client, {"message": "量子力学怎么退货"})
+    assert [e for e in events if e["type"] == "citations"] == []
+    rows = _pool_rows(app.state.session_factory)
+    assert len(rows) == 1
+    assert rows[0]["source"] == "retrieval_low_conf"
+    assert rows[0]["raw_question"] == "量子力学怎么退货"
+
+
+async def test_refusal_answer_pools_self_check(make_client):
+    """检索有结果、但模型自评答不了 → 只落 self_check 一条。"""
+    model = FakeToolChatModel("【无法回答】知识库中的依据不足以回答|建议转人工",
+                              tool_args='{"keyword": "退货政策是什么"}')
+    client, app = await make_client(model)
+    _seed_return_kb(app)
+    await post_chat_sse(client, {"message": "退货政策是什么"})
+    rows = _pool_rows(app.state.session_factory)
+    assert [r["source"] for r in rows] == ["self_check"]
+    assert "模型自评证据不足" in rows[0]["reason"]

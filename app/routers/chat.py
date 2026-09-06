@@ -4,6 +4,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
+from app.guard import is_refusal
 from app.history import estimate_tokens, trim_history
 from app.prompts import SERVICE_PROMPT_TEMPLATE
 from app.schemas import ChatRequest
@@ -13,6 +14,14 @@ router = APIRouter()
 
 def sse_frame(event: dict) -> str:
     return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+
+def _safe_json(raw: str) -> dict | None:
+    try:
+        obj = json.loads(raw)
+    except (json.JSONDecodeError, TypeError):
+        return None
+    return obj if isinstance(obj, dict) else None
 
 
 def _merge_tool_call_chunks(chunks: list[dict]) -> list[dict]:
@@ -85,6 +94,7 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
         yield sse_frame({"type": "session", "session_id": session_id})
         # 整轮消息先攒在 pending,全部成功才落库;中途出错/断开不落库(spec §4.1)
         pending: list[dict] = [{"role": "user", "content": body.message}]
+        citations: list[dict] = []
         try:
             # 第一段:绑工具流式调用。文本边收边吐,tool_call_chunks 静默拼装
             bound = model.bind_tools(registry.tools)
@@ -109,15 +119,36 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
                         "label": registry.labels().get(tc["name"], tc["name"]),
                     })
                     result = await registry.execute(tc["name"], json.dumps(tc["args"], ensure_ascii=False))
+                    parsed = _safe_json(result)
+                    if isinstance(parsed, dict):
+                        # 检索低置信 → 落池(spec §6.2);items 带 n 的收集为引用证据
+                        if parsed.get("low_confidence"):
+                            request.app.state.pool.insert(
+                                "retrieval_low_conf", session_id, body.message,
+                                str(parsed.get("reason") or ""),
+                            )
+                        for it in parsed.get("items") or []:
+                            if isinstance(it, dict) and "n" in it:
+                                citations.append(it)
                     pending.append({"role": "tool", "content": result, "tool_call_id": tc["id"]})
                     prompt_messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
+                # 引用证据在最终答案流之前下发,前端渲染可点角标(spec §6.1)
+                if citations:
+                    yield sse_frame({"type": "citations", "items": citations})
                 # 第二段:不绑工具,强制单轮收敛;最终回答逐 token 流式吐出
                 final_parts: list[str] = []
                 async for chunk in model.astream(prompt_messages):
                     if chunk.text:
                         final_parts.append(chunk.text)
                         yield sse_frame({"type": "token", "content": chunk.text})
-                pending.append({"role": "assistant", "content": "".join(final_parts)})
+                final_text = "".join(final_parts)
+                if is_refusal(final_text):
+                    # 模型自评证据不足拒答 → 落池 self_check(spec §6.2)
+                    request.app.state.pool.insert(
+                        "self_check", session_id, body.message,
+                        "模型自评证据不足:" + final_text[:200],
+                    )
+                pending.append({"role": "assistant", "content": final_text})
             else:
                 pending.append({"role": "assistant", "content": "".join(parts)})
 

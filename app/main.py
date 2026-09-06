@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 
 from app.config import Settings
 from app.db import make_engine, make_session_factory
+from app.guard import LowConfidencePool
 from app.llm import make_chat_model, make_extract_model
 from app.routers import chat, extract, sessions
 from app.schemas import AfterSaleExtraction
@@ -23,6 +24,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     session_factory = make_session_factory(make_engine(settings))
     app.state.session_factory = session_factory
     app.state.store = ConversationStore(session_factory)
+    app.state.pool = LowConfidencePool(session_factory)
     # build_tools 生产路径:内部构造真 embedder/向量库(v2)/rewriter/reranker
     app.state.registry = ToolRegistry(build_tools(
         session_factory, top_k=settings.retrieval_final_top_k,
