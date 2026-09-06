@@ -12,6 +12,7 @@ dependencies = [
     "pydantic-settings==2.15.0",
     "httpx==0.28.1",
     "pymilvus[milvus-lite]==3.0.1",
+    "jieba==0.42.1",
     "pytest==9.1.1",
     "pytest-asyncio==1.4.0",
 ]

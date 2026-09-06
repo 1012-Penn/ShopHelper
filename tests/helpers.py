@@ -2,6 +2,7 @@
 import hashlib
 import json
 import math
+import re
 
 from app.embedding import cosine  # 公共余弦工具,生产/测试同源
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
@@ -102,30 +103,65 @@ class FakeEmbedding:
 
 
 class FakeVectorStore:
-    """内存向量库,接口与 app.vector_store.KnowledgeVectorStore 一致。"""
+    """内存向量库,接口与 v2 KnowledgeVectorStore 一致;expr 仅支持 category == "X" 形态。"""
 
     def __init__(self, dim: int = 64):
         self.dim = dim
-        self._vectors: dict[int, list[float]] = {}
+        self._rows: dict[int, dict] = {}  # id -> {vector, text, category}
 
     def ensure_collection(self) -> None:
         pass
 
-    def upsert(self, ids, vectors):
-        for i, v in zip(ids, vectors):
-            self._vectors[i] = v
+    def upsert(self, rows):
+        for r in rows:
+            self._rows[r["id"]] = {"vector": r["vector"], "text": r["text"], "category": r["category"]}
 
-    def search(self, vector, top_k):
-        scored = [(i, cosine(vector, v)) for i, v in self._vectors.items()]
+    @staticmethod
+    def _category_of(expr):
+        if not expr:
+            return None
+        m = re.match(r'^category == "(.*)"$', expr.strip())
+        return m.group(1) if m else None
+
+    def _filtered(self, expr):
+        cat = self._category_of(expr)
+        if cat is None:
+            return self._rows
+        return {i: r for i, r in self._rows.items() if r["category"] == cat}
+
+    def dense_search(self, vector, top_k, filter_expr=None):
+        scored = [(i, cosine(vector, r["vector"])) for i, r in self._filtered(filter_expr).items()]
         scored.sort(key=lambda x: -x[1])
         return scored[:top_k]
 
+    def bm25_search(self, query_text, top_k, filter_expr=None):
+        toks = query_text.split()
+        scored = []
+        for i, r in self._filtered(filter_expr).items():
+            hits = sum(r["text"].count(t) for t in toks)
+            if hits:
+                scored.append((i, -float(hits)))  # 仿真 BM25 负分:值越小越靠前
+        scored.sort(key=lambda x: x[1])
+        return scored[:top_k]
+
+    def hybrid_search(self, vector, query_text, top_k, filter_expr=None):
+        K = 60.0
+        fused: dict[int, float] = {}
+        for rank, (i, _s) in enumerate(self.dense_search(vector, top_k, filter_expr)):
+            fused[i] = fused.get(i, 0.0) + 1.0 / (K + rank + 1)
+        for rank, (i, _s) in enumerate(self.bm25_search(query_text, top_k, filter_expr)):
+            fused[i] = fused.get(i, 0.0) + 1.0 / (K + rank + 1)
+        return sorted(fused.items(), key=lambda x: -x[1])[:top_k]
+
+    def search(self, vector, top_k):  # ch03 兼容壳,Task 7 随 query_faq 换核移除
+        return self.dense_search(vector, top_k)
+
     def delete(self, ids):
         for i in ids:
-            self._vectors.pop(i, None)
+            self._rows.pop(i, None)
 
     def count(self):
-        return len(self._vectors)
+        return len(self._rows)
 
 
 class StubQAList:

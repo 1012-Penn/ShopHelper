@@ -56,7 +56,7 @@ def test_vectorize_upsert_overwrite_no_duplicate(db_session_factory):
     vectors = FakeVectorStore()
     kb.replace_doc_chunks("退货政策.md", [_chunk("q1", "a1")])
     kb.replace_doc_chunks("退货政策.md", [_chunk("q1", "a1")])  # 重建:旧向量遗留 Milvus
-    vectors.upsert([999], [[0.1] * 64])  # 干扰项
+    vectors.upsert([{"id": 999, "vector": [0.1] * 64, "text": "干扰", "category": "x"}])  # 干扰项
     vectorize_pending(kb, vectors, FakeEmbedding())
     assert vectors.count() == 2  # 1 真块 + 1 干扰项,无重复
 

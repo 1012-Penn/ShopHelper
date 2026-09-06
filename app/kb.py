@@ -175,7 +175,10 @@ def vectorize_pending(kb: KnowledgeBaseStore, vectors, embedder, *, max_chunks: 
         rows = rows[:limit]
         texts = [vector_text(r.category, r.questions, r.answer) for r in rows]
         vecs = embedder.embed(texts)
-        vectors.upsert([r.id for r in rows], vecs)
+        vectors.upsert([
+            {"id": r.id, "vector": v, "text": t, "category": r.category}
+            for r, v, t in zip(rows, vecs, texts)
+        ])
         kb.mark_vectorized([r.id for r in rows])
         done += len(rows)
     return done
