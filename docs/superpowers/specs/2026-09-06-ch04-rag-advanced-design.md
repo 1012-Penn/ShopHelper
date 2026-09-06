@@ -81,7 +81,7 @@
 }
 ```
 
-- **低置信判定**:`items` 为空,或精排 Top-1 分数 < `RERANK_SCORE_FLOOR` → `low_confidence=true`、`reason` 写明(如「知识库无相关内容」「证据置信度低」)。阈值默认 0.30,实现期拿评估集 rerank 分数分布校准定稿。
+- **低置信判定**:`items` 为空,或精排 Top-1 分数 < `RERANK_SCORE_FLOOR` → `low_confidence=true`、`reason` 写明(如「知识库无相关内容」「证据置信度低」)。阈值默认 0.30,实现期拿评估集 rerank 分数分布校准定稿。**【校准定稿 2026-09-06】0.30 会误杀合法口语题(真模型分布:合法题 Top-1 ∈ [0.039, 0.99],纯噪声 junk = 0.0,词面重叠 junk ≈ 0.17)→ 定稿 `0.03`;词面重叠 junk 交给生成自评拒答兜底(分层防御)。**
 - 任何内部异常仍收敛为 `{"items": [], "low_confidence": true, "reason": …}`(契约:不抛错,但本章起空结果明确标低置信,不再静默)。
 - `build_tools` 注入面扩展:rewriter / reranker 可注入,缺省按 Settings 构造真实现。
 

@@ -223,3 +223,23 @@ async def test_refusal_answer_pools_self_check(make_client):
     rows = _pool_rows(app.state.session_factory)
     assert [r["source"] for r in rows] == ["self_check"]
     assert "模型自评证据不足" in rows[0]["reason"]
+
+
+async def test_refusal_without_tool_call_pools(make_client):
+    """ch04 验收补丁:模型不调工具直接拒答(超范围题)同样落 self_check 池。"""
+
+    class DirectRefusalModel:
+        """不吐 tool_calls,第一段直接流式给出拒答文本。"""
+
+        def bind_tools(self, tools):
+            return self
+
+        async def astream(self, messages):
+            yield Chunk("【无法回答】量子力学不在店铺服务范围内|建议咨询专业渠道")
+
+    client, app = await make_client(DirectRefusalModel())
+    events = await post_chat_sse(client, {"message": "量子力学怎么退货"})
+    assert [e for e in events if e["type"] == "citations"] == []
+    rows = _pool_rows(app.state.session_factory)
+    assert [r["source"] for r in rows] == ["self_check"]
+    assert "模型自评证据不足" in rows[0]["reason"]

@@ -142,16 +142,17 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
                         final_parts.append(chunk.text)
                         yield sse_frame({"type": "token", "content": chunk.text})
                 final_text = "".join(final_parts)
-                if is_refusal(final_text):
-                    # 模型自评证据不足拒答 → 落池 self_check(spec §6.2)
-                    request.app.state.pool.insert(
-                        "self_check", session_id, body.message,
-                        "模型自评证据不足:" + final_text[:200],
-                    )
                 pending.append({"role": "assistant", "content": final_text})
             else:
                 pending.append({"role": "assistant", "content": "".join(parts)})
 
+            # 模型自评证据不足拒答 → 落池 self_check(spec §6.2);工具直答与不调工具两分支都覆盖
+            final_content = pending[-1].get("content") or ""
+            if pending[-1]["role"] == "assistant" and is_refusal(final_content):
+                request.app.state.pool.insert(
+                    "self_check", session_id, body.message,
+                    "模型自评证据不足:" + final_content[:200],
+                )
             await store.append(session_id, pending)
             yield sse_frame({"type": "done"})
         except Exception as exc:  # 上游/内部错误:下发 error 后收流,本轮不落库

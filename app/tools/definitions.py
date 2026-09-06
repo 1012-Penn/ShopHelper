@@ -58,7 +58,7 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k=None,
         candidates=settings.hybrid_candidates if production else 50,
         final_top_k=top_k,
         # 非生产路径(替身注入)固定 0.30:FakeReranker 的内容字覆盖率口径下
-        # junk 题 ≤0.25、相关题≈1.0,该阈值可分;生产路径走 config(真模型口径,可配)。
+        # junk 题 ≤0.25、相关题≈1.0,该阈值可分;生产路径走 config(真模型校准值 0.03)。
         rerank_score_floor=settings.rerank_score_floor if production else 0.30,
     )
 

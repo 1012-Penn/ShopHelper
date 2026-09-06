@@ -2,7 +2,7 @@
 [project]
 name = "shophelper"
 version = "0.1.0"
-description = "电商智能客服系统——ch01:纯对话"
+description = "电商智能客服系统——ch04:混合检索+重排+评估体系"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi==0.141.1",

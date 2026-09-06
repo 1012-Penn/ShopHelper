@@ -31,7 +31,9 @@ class Settings(BaseSettings):
     rerank_api_base: str = "https://api.siliconflow.cn/v1"
     rerank_api_key: str = ""
     rerank_model: str = "BAAI/bge-reranker-v2-m3"
-    rerank_score_floor: float = 0.30  # 精排 Top-1 低于此判「证据置信度低」,以评估集分数分布校准
+    # 精排 Top-1 低于此判「证据置信度低」。校准依据(ch04 评估集真模型分布,2026-09-06):
+    # 合法题 Top-1 ∈ [0.039, 0.99],纯噪声 junk = 0.0,词面重叠 junk ≈ 0.17(交给生成自评兜底)
+    rerank_score_floor: float = 0.03
     hybrid_candidates: int = 50       # dense/BM25 各自召回数(hybrid_search limit)
     retrieval_final_top_k: int = 10   # 精排后进入 prompt 的条数
     query_rewrite_enabled: bool = True
