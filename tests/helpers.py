@@ -9,7 +9,7 @@ from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 
 __all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse",
-           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList"]
+           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker"]
 
 
 class FakeChatWithTools(GenericFakeChatModel):
@@ -169,6 +169,22 @@ class StubQAList:
 
     def __init__(self, items):
         self.items = items
+
+
+class FakeReranker:
+    """确定性假重排:按 query 字符在文档中的覆盖率打分(|query∩doc| / |query unique|),
+    降序返回 (下标, 分)。按 query 口径而非 doc 口径,短问法命中关键词即可得高分。"""
+
+    def rerank(self, query: str, documents: list[str], top_n: int | None = None) -> list[tuple[int, float]]:
+        q = set(query)
+
+        def score(doc: str) -> float:
+            if not q:
+                return 0.0
+            return sum(1 for ch in q if ch in doc) / len(q)
+
+        out = sorted(((i, score(doc)) for i, doc in enumerate(documents)), key=lambda x: -x[1])
+        return out[:top_n] if top_n else out
 
 
 class StubMineModel:
