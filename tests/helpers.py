@@ -9,7 +9,7 @@ from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 
 __all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse",
-           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker"]
+           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker", "FakeRewriter"]
 
 
 class FakeChatWithTools(GenericFakeChatModel):
@@ -185,6 +185,21 @@ class FakeReranker:
 
         out = sorted(((i, score(doc)) for i, doc in enumerate(documents)), key=lambda x: -x[1])
         return out[:top_n] if top_n else out
+
+
+class FakeRewriter:
+    """映射表命中返回预置归一,否则恒等;测试检索改写链路用。"""
+
+    def __init__(self, mapping: dict[str, tuple[str, list[str]]] | None = None):
+        self.mapping = mapping or {}
+
+    def rewrite(self, query: str):
+        from app.rewrite import QueryRewrite
+
+        if query in self.mapping:
+            n, syn = self.mapping[query]
+            return QueryRewrite(normalized=n, synonyms=list(syn))
+        return QueryRewrite(normalized=query, synonyms=[])
 
 
 class StubMineModel:
