@@ -153,9 +153,6 @@ class FakeVectorStore:
             fused[i] = fused.get(i, 0.0) + 1.0 / (K + rank + 1)
         return sorted(fused.items(), key=lambda x: -x[1])[:top_k]
 
-    def search(self, vector, top_k):  # ch03 兼容壳,Task 7 随 query_faq 换核移除
-        return self.dense_search(vector, top_k)
-
     def delete(self, ids):
         for i in ids:
             self._rows.pop(i, None)
@@ -172,19 +169,30 @@ class StubQAList:
 
 
 class FakeReranker:
-    """确定性假重排:按 query 字符在文档中的覆盖率打分(|query∩doc| / |query unique|),
-    降序返回 (下标, 分)。按 query 口径而非 doc 口径,短问法命中关键词即可得高分。"""
+    """确定性假重排:同义词归一(FakeEmbedding 同款映射)+ 去疑问词后,
+    按 query 内容字在文档中的覆盖率打分(0~1)。
+    口径设计:相关题(换说法/同话题)≈1.0,库外 junk 题 ≤0.25,
+    与真 rerank 的分数梯度(不相关≈0、相关>0.8)近似,0.30 阈值可分。"""
+
+    STOP_CHARS = set("的什么怎么样多少钱财吗呢哪吧啊咋整")
 
     def rerank(self, query: str, documents: list[str], top_n: int | None = None) -> list[tuple[int, float]]:
-        q = set(query)
+        qset = {ch for ch in self._canon(query) if ch not in self.STOP_CHARS}
 
         def score(doc: str) -> float:
-            if not q:
+            if not qset:
                 return 0.0
-            return sum(1 for ch in q if ch in doc) / len(q)
+            d = self._canon(doc)
+            return sum(1 for ch in qset if ch in d) / len(qset)
 
         out = sorted(((i, score(doc)) for i, doc in enumerate(documents)), key=lambda x: -x[1])
         return out[:top_n] if top_n else out
+
+    @staticmethod
+    def _canon(text: str) -> str:
+        for src, dst in FakeEmbedding.SYNONYMS.items():
+            text = text.replace(src, dst)
+        return text
 
 
 class FakeRewriter:

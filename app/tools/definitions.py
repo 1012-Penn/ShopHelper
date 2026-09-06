@@ -1,4 +1,4 @@
-"""五个业务工具:三个 mock(不接真实 API、不建表)+ query_faq(向量语义检索)+ create_ticket(写表)。"""
+"""五个业务工具:三个 mock(不接真实 API、不建表)+ query_faq(混合检索精排)+ create_ticket(写表)。"""
 import json
 import random
 from datetime import datetime
@@ -10,6 +10,9 @@ from sqlalchemy import select
 
 from app.kb import KnowledgeBaseStore
 from app.models import Faq, Ticket
+from app.rerank import make_reranker
+from app.retrieval import RETRIEVAL_SCORE_FLOOR, RetrievalService, lost_in_middle_order
+from app.rewrite import make_rewriter
 
 
 class CreateTicketInput(BaseModel):
@@ -27,17 +30,16 @@ TOOL_LABELS = {
 
 CITIES = ["北京", "上海", "广州", "杭州", "成都"]
 
-# 相似度下限:低于此分的命中直接丢弃,不进 items(与 prompt 的「对不上就如实说明」双保险)
-RETRIEVAL_SCORE_FLOOR = 0.5
 
-
-def build_tools(session_factory, embedder=None, vectors=None, top_k: int | None = None) -> list:
-    """session_factory 由调用方注入;embedder / vectors 缺省时按 Settings 构造真实现(测试注入替身)。
-
-    query_faq 自 ch03 起走向量语义检索:问题 embed → Milvus Top-K → MySQL 回取原文。
-    工具入参出参契约与 ch02 保持不变;top_k 缺省真实现走配置、替身默认 3。
-    """
-    if embedder is None or vectors is None:
+def build_tools(session_factory, embedder=None, vectors=None, top_k=None,
+                rewriter=None, reranker=None) -> list:
+    """注入面(ch04 扩展):只有生产路径(embedder/vectors 未注入)才按 Settings 构造真实现,
+    含真 rewriter/reranker;测试部分注入(embedder/vectors 给替身、rewriter/reranker 缺省)时
+    保持 None → 无改写、hybrid_rerank 降级 RRF 序,测试不出网。top_k 显式传入优先。
+    query_faq 自 ch04 起走 retrieval.RetrievalService(hybrid_rerank)。"""
+    production = embedder is None or vectors is None
+    settings = None
+    if production:
         from app.config import Settings
         from app.embedding import make_embedder
         from app.vector_store import KnowledgeVectorStore
@@ -45,9 +47,20 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k: int | None 
         settings = Settings()
         embedder = embedder or make_embedder(settings)
         vectors = vectors or KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)
-        top_k = top_k or settings.retrieval_top_k
-    top_k = top_k or 3  # 注入替身但未传 top_k 的兜底:None 传进 search 会静默挂掉
+    top_k = top_k or (settings.retrieval_final_top_k if production else 3)
+    if production:
+        if settings.query_rewrite_enabled:
+            rewriter = rewriter or make_rewriter(settings)
+        reranker = reranker if reranker is not None else make_reranker(settings)
     kb = KnowledgeBaseStore(session_factory)
+    service = RetrievalService(
+        embedder, vectors, kb, rewriter=rewriter, reranker=reranker,
+        candidates=settings.hybrid_candidates if production else 50,
+        final_top_k=top_k,
+        # 非生产路径(替身注入)固定 0.30:FakeReranker 的内容字覆盖率口径下
+        # junk 题 ≤0.25、相关题≈1.0,该阈值可分;生产路径走 config(真模型口径,可配)。
+        rerank_score_floor=settings.rerank_score_floor if production else 0.30,
+    )
 
     @tool
     def query_order(order_id: str) -> str:
@@ -86,26 +99,33 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k: int | None 
         }, ensure_ascii=False)
 
     @tool
-    def query_faq(keyword: str) -> str:
-        """按语义检索常见问题知识库。用户问退货政策、发货时间、邮费运费、付款、发票、会员等常见问题时使用。"""
+    def query_faq(keyword: str, category: str | None = None) -> str:
+        """语义检索常见问题知识库并精排。用户问退货政策、发货时间、邮费运费、付款、发票、会员等常见问题,或问具体商品型号(如 SH-E300)的参数、价格时使用;能从用户话里明确判断品类时传 category,判断不了不要传。"""
         try:
-            qvec = embedder.embed([keyword])[0]
-            hits = [(cid, score) for cid, score in vectors.search(qvec, top_k=top_k)
-                    if score >= RETRIEVAL_SCORE_FLOOR]
-            items = []
-            if hits:
-                rows = kb.get_chunks([h[0] for h in hits])
-                items = [
-                    {
-                        "question": r.questions.splitlines()[0],
-                        "answer": r.answer,
-                        "category": r.category,
-                    }
-                    for r in rows
-                ]
-        except Exception:
-            items = []  # 契约:任何异常收敛为空结果,不抛错
-        return json.dumps({"items": items}, ensure_ascii=False)
+            result = service.retrieve(keyword, strategy="hybrid_rerank", category=category)
+            rows = kb.get_chunks([r.chunk_id for r in result.items])
+            evidence = [
+                {
+                    "n": i + 1,  # n = 精排名次,[1] 恒为最强证据
+                    "chunk_id": r.chunk_id,
+                    "question": row.questions.splitlines()[0],
+                    "answer": row.answer,
+                    "category": row.category,
+                    "section_path": row.section_path or "",
+                }
+                for i, (r, row) in enumerate(zip(result.items, rows))
+            ]
+            return json.dumps({
+                "items": lost_in_middle_order(evidence),
+                "low_confidence": result.low_confidence,
+                "reason": result.reason,
+                "filter_fallback": result.filter_fallback,
+            }, ensure_ascii=False)
+        except Exception as exc:
+            return json.dumps({
+                "items": [], "low_confidence": True, "reason": f"检索失败:{exc}",
+                "filter_fallback": False,
+            }, ensure_ascii=False)
 
     @tool(args_schema=CreateTicketInput)
     def create_ticket(conversation_id: int, description: str, ticket_type: str) -> str:

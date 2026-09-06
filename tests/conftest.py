@@ -12,12 +12,14 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app.config import Settings
+from app.guard import LowConfidencePool
 from app.main import create_app
 from app.store import ConversationStore
 from app.tools.definitions import build_tools
 from app.tools.registry import ToolRegistry
 from app.models import Base
-from tests.helpers import FakeEmbedding, FakeVectorStore, StubExtractModel
+from tests.helpers import (FakeEmbedding, FakeReranker, FakeRewriter, FakeVectorStore,
+                           StubExtractModel)
 
 
 def make_session_factory():
@@ -52,8 +54,12 @@ async def make_client():
         factory = make_session_factory()
         app.state.session_factory = factory
         app.state.store = ConversationStore(factory)
+        app.state.pool = LowConfidencePool(factory)
+        vectors_stub = FakeVectorStore()
+        app.state.vectors = vectors_stub
         app.state.registry = ToolRegistry(build_tools(
-            factory, embedder=FakeEmbedding(), vectors=FakeVectorStore(), top_k=3,
+            factory, embedder=FakeEmbedding(), vectors=vectors_stub, top_k=3,
+            rewriter=FakeRewriter(), reranker=FakeReranker(),
         ))
         app.state.chat_model = chat_model
         app.state.extract_model = extract_model or StubExtractModel()

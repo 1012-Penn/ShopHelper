@@ -7,7 +7,7 @@ from app.db import make_session_factory
 from app.kb import KnowledgeBaseStore, vectorize_pending
 from app.models import Faq, Ticket
 from app.tools.definitions import TOOL_LABELS, build_tools
-from tests.helpers import FakeEmbedding, FakeVectorStore
+from tests.helpers import FakeEmbedding, FakeReranker, FakeRewriter, FakeVectorStore
 from tests.test_models import create_memory_engine
 
 
@@ -24,7 +24,7 @@ def _make():
 
 
 def _make_vector_tools(factory, *, vectors=None):
-    """向量知识库 + 替身嵌入,驱动的 query_faq。"""
+    """向量知识库 + 全替身注入,驱动 query_faq(含 FakeReranker 质量闸门)。"""
     kb = KnowledgeBaseStore(factory)
     chunks = [
         Chunk("退货政策", "邮费与运费", "普通订单邮费 8 元,满 99 元包邮;质量问题退货,运费由商家承担。",
@@ -35,7 +35,8 @@ def _make_vector_tools(factory, *, vectors=None):
     _, ids = kb.replace_doc_chunks("docs", chunks)
     vectors = vectors or FakeVectorStore()
     vectorize_pending(kb, vectors, FakeEmbedding())
-    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=3)
+    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=3,
+                        rewriter=FakeRewriter(), reranker=FakeReranker())
     return tools, kb, ids
 
 
@@ -74,11 +75,11 @@ def test_query_faq_contract_shape_and_miss():
     tools, _, _ = _make_vector_tools(factory)
     by_name = {t.name: t for t in tools}
     hit = json.loads(by_name["query_faq"].invoke({"keyword": "怎么申请退货"}))
-    assert hit["items"][0] == {
-        "question": "怎么申请退货?", "answer": "订单详情页点击「申请售后」提交。", "category": "售后",
-    }
+    first = hit["items"][0]
+    assert {"n", "chunk_id", "question", "answer", "category", "section_path"} <= set(first)
+    assert first["question"] == "怎么申请退货?" and first["n"] == 1
     miss = json.loads(by_name["query_faq"].invoke({"keyword": "量子力学"}))
-    assert miss == {"items": []}
+    assert miss["items"] == [] and miss["low_confidence"] is True and miss["reason"]
 
 
 def test_query_faq_never_raises_on_backend_failure():
@@ -89,23 +90,25 @@ def test_query_faq_never_raises_on_backend_failure():
     factory = make_session_factory(create_memory_engine())
     tools2 = build_tools(factory, embedder=ExplodingEmbedder(), vectors=FakeVectorStore(), top_k=3)
     faq = {t.name: t for t in tools2}["query_faq"]
-    assert json.loads(faq.invoke({"keyword": "退货"})) == {"items": []}  # 异常收敛为空结果
+    out = json.loads(faq.invoke({"keyword": "退货"}))
+    assert out["items"] == [] and out["low_confidence"] is True  # 异常收敛为空 + 低置信标志
+    assert "检索失败" in out["reason"]
 
 
 def test_build_tools_injects_default_top_k():
-    """评审修复回归:注入替身但漏传 top_k 时,search 必须拿到 3 而不是 None。"""
+    """评审修复回归:注入替身但漏传 top_k 时,检索拿到的候选上限必须是正整数而非 None。"""
     factory = make_session_factory(create_memory_engine())
     captured = {}
 
     class RecordingVectorStore(FakeVectorStore):
-        def search(self, vector, top_k):
+        def hybrid_search(self, vector, query_text, top_k, filter_expr=None):
             captured["top_k"] = top_k
-            return super().search(vector, top_k)
+            return super().hybrid_search(vector, query_text, top_k, filter_expr)
 
     tools, _, _ = _make_vector_tools(factory, vectors=RecordingVectorStore())
     faq = {t.name: t for t in tools}["query_faq"]
     out = json.loads(faq.invoke({"keyword": "快递费多少钱"}))
-    assert captured["top_k"] == 3
+    assert isinstance(captured["top_k"], int) and captured["top_k"] > 0
     assert out["items"]  # 漏传 top_k 不应变成静默空结果
 
 
@@ -134,3 +137,77 @@ def test_create_ticket_rejects_bad_type():
     except Exception:
         raised = True
     assert raised
+
+
+def _make_v3_tools(factory, *, vectors=None, top_k=3):
+    """v3 全替身注入(rewriter/reranker 显式给),驱动精排与反漏斗断言。"""
+    kb = KnowledgeBaseStore(factory)
+    chunks = [
+        Chunk("售后政策", "退货的规定是什么", "支持七天无理由退货,商品需保持完好。",
+              "d.md > 退货的规定是什么", "faq", False),
+        Chunk("数码配件", "SH-E300 无线降噪耳机", "SH-E300 售价 299 元,支持主动降噪。",
+              "d.md > SH-E300", "faq", False),
+    ]
+    kb.replace_doc_chunks("d.md", chunks)
+    vectors = vectors or FakeVectorStore()
+    vectorize_pending(kb, vectors, FakeEmbedding())
+    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=top_k,
+                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    return tools, kb, vectors
+
+
+def test_query_faq_v3_contract():
+    factory = make_session_factory(create_memory_engine())
+    tools, _, _ = _make_v3_tools(factory)
+    out = json.loads({t.name: t for t in tools}["query_faq"].invoke({"keyword": "SH-E300 降噪"}))
+    assert out["low_confidence"] is False and out["filter_fallback"] is False
+    assert [it["n"] for it in out["items"]] == list(range(1, len(out["items"]) + 1))  # n 连续从 1
+    first = out["items"][0]
+    assert first["chunk_id"] == 2 and first["section_path"] == "d.md > SH-E300"
+
+
+def test_query_faq_v3_category_passthrough():
+    factory = make_session_factory(create_memory_engine())
+    tools, _, _ = _make_v3_tools(factory)
+    faq = {t.name: t for t in tools}["query_faq"]
+    # 品类过滤不命中 → 回退无过滤,filter_fallback=true
+    out = json.loads(faq.invoke({"keyword": "退货", "category": "不存在的品类"}))
+    assert out["filter_fallback"] is True and out["items"]
+    # 品类过滤命中 → 只剩该品类
+    out2 = json.loads(faq.invoke({"keyword": "退货", "category": "售后政策"}))
+    assert out2["filter_fallback"] is False
+    assert all(it["category"] == "售后政策" for it in out2["items"])
+
+
+def test_query_faq_v3_lost_in_middle_arrangement():
+    """精排名次 n 与摆放解耦:n=1 在首位、n=2 在末位(4 条证据时摆放序 [1,3,4,2])。"""
+    factory = make_session_factory(create_memory_engine())
+    kb = KnowledgeBaseStore(factory)
+    chunks = [Chunk("售后政策", f"退货问题{i}", f"退货说明{i},七天无理由。",
+                    f"d.md > 退货问题{i}", "faq", False) for i in range(1, 4)]
+    chunks.append(Chunk("售后政策", "退货政策是什么", "支持七天无理由退货,需保持完好。",
+                        "d.md > 退货政策是什么", "faq", False))
+    kb.replace_doc_chunks("d.md", chunks)
+    vectors = FakeVectorStore()
+    vectorize_pending(kb, vectors, FakeEmbedding())
+    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=4,
+                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    out = json.loads({t.name: t for t in tools}["query_faq"].invoke({"keyword": "退货"}))
+    ns = [it["n"] for it in out["items"]]
+    assert len(ns) == 4 and ns[0] == 1 and ns[-1] == 2  # 反漏斗:n=1 首位、n=2 末位
+
+
+def test_query_faq_v3_exception_converges():
+    """内部异常(如 milvus 库锁)收敛为空结果 + low_confidence,不抛错。"""
+    class Broken:
+        def ensure_collection(self):
+            raise RuntimeError("db lock")
+
+        def __getattr__(self, name):
+            raise RuntimeError("db lock")
+
+    factory = make_session_factory(create_memory_engine())
+    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=Broken(), top_k=3,
+                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    out = json.loads({t.name: t for t in tools}["query_faq"].invoke({"keyword": "邮费"}))
+    assert out["items"] == [] and out["low_confidence"] is True and "检索失败" in out["reason"]

@@ -90,19 +90,26 @@ class RetrievalService:
         if strategy == "hybrid":
             return RetrievalResult(cand, False, "", fallback, rewritten, search_text)
 
-        # hybrid_rerank:精排 Top-N;reranker 缺失降级 RRF 序(质量掉档,记 warning)
+        # hybrid_rerank:精排 Top-N;reranker 缺失或调用失败降级 RRF 序(质量掉档,记 warning)
         if self._reranker is None:
             logger.warning("reranker 未配置,hybrid_rerank 降级为 RRF 序")
             return RetrievalResult(cand[: self._final_top_k], False, "", fallback, rewritten, search_text)
         texts = self._chunk_texts([r.chunk_id for r in cand])
-        ranked = self._reranker.rerank(rewritten, [texts.get(r.chunk_id, "") for r in cand],
-                                       top_n=self._final_top_k)
+        try:
+            ranked = self._reranker.rerank(rewritten, [texts.get(r.chunk_id, "") for r in cand],
+                                           top_n=self._final_top_k)
+        except Exception as exc:
+            logger.warning("重排失败,降级 RRF 序:%s", exc)
+            return RetrievalResult(cand[: self._final_top_k], False, "", fallback, rewritten, search_text)
         items = [Retrieved(chunk_id=cand[idx].chunk_id, score=score) for idx, score in ranked]
         if not items:
             return RetrievalResult([], True, "知识库无相关内容", fallback, rewritten, search_text)
         low = items[0].score < self._rerank_floor
-        reason = f"证据置信度低(最高 {items[0].score:.2f})" if low else ""
-        return RetrievalResult(items, low, reason, fallback, rewritten, search_text)
+        if low:
+            # 低置信不出证据:别把零分候选递给生成层当编造素材(spec §5 拒答语义)
+            reason = f"证据置信度低(最高 {items[0].score:.2f})"
+            return RetrievalResult([], True, reason, fallback, rewritten, search_text)
+        return RetrievalResult(items, False, "", fallback, rewritten, search_text)
 
     # ---- 单路封装 ----
 

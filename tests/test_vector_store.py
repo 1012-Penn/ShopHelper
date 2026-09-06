@@ -79,10 +79,6 @@ def test_legacy_collection_recreated(tmp_path):
     assert {"text", "sparse", "category"} <= names
 
 
-def test_search_legacy_alias(store):
-    assert store.search(V_HEAR, 3)[0][0] in (1, 3)
-
-
 def test_delete(store):
     store.delete([1])
     assert store.count() == 2

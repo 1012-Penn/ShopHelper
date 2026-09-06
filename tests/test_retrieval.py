@@ -96,3 +96,27 @@ def test_unknown_strategy_raises(service):
 
 def test_dense_floor_constant():
     assert RETRIEVAL_SCORE_FLOOR == 0.5
+
+
+def test_rerank_failure_degrades_to_rrf():
+    """rerank API 挂掉 → 降级 RRF 序(有结果、不低置信、不抛错),spec §4 降级语义。"""
+    class ExplodingReranker:
+        def rerank(self, query, documents, top_n=None):
+            raise RuntimeError("rerank api down")
+
+    engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False},
+                           poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+    factory = sessionmaker(bind=engine, expire_on_commit=False)
+    kb = KnowledgeBaseStore(factory)
+    kb.replace_doc_chunks("t.md", [
+        Chunk(category=cat, questions=q, answer=a, section_path=f"t.md > {q}",
+              content_type="faq", is_key_clause=False)
+        for cat, q, a in DOCS
+    ])
+    vectors = FakeVectorStore()
+    vectorize_pending(kb, vectors, FakeEmbedding())
+    svc = RetrievalService(FakeEmbedding(), vectors, kb, rewriter=None,
+                           reranker=ExplodingReranker())
+    r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
+    assert r.items and not r.low_confidence  # 降级仍有候选

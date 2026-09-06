@@ -117,10 +117,6 @@ class KnowledgeVectorStore:
                                        ranker=RRFRanker(), limit=top_k, output_fields=["id"])
         return [(int(h["id"]), float(h["distance"])) for h in results[0]]
 
-    def search(self, vector: list[float], top_k: int) -> list[tuple[int, float]]:
-        """ch03 旧接口兼容壳(= dense 语义);query_faq 换 v3 后移除。"""
-        return self.dense_search(vector, top_k)
-
     def delete(self, ids: list[int]) -> None:
         if not ids or not self._exists():
             return
