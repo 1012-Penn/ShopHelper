@@ -34,3 +34,9 @@ class AfterSaleExtraction(BaseModel):
         description="诉求类型:refund 退款、exchange 换货、repair 报修、logistics 物流问题、other 其他"
     )
     expected_resolution: str = Field(description="用户期望的处理方式,一句话概括")
+
+
+class TicketRequest(BaseModel):
+    session_id: int | None = Field(default=None, description="会话 id,缺省则新建")
+    description: str = Field(min_length=1, description="工单问题描述")
+    ticket_type: Literal["投诉", "售后", "咨询"] = Field(default="投诉", description="工单类型")
