@@ -108,3 +108,7 @@ agent → log → END
 3. 「我要投诉」→ 两按钮,转人工本地展示、建工单写表,互不绑定;
 4. 闲聊固定话术;
 5. 「先查订单 1001 再告诉我物流」ReAct 多步。
+
+## 实现期偏差记录(2026-09-07,Task 6)
+
+**流式传输机制变更**:`get_stream_writer()`/StreamWriter 注入在 Python 3.10 async 上下文不可用——langgraph 源码 `config.py::get_config` 显式守卫"Python 3.11 or later required to use this in an async context"(已实测复现,且为官方已知问题 langchain-ai/langgraph#5927 同根因)。技术选型不变(仍是 LangGraph 图 + checkpointer + 确定性编排),仅节点向外发帧的通道改为:路由层建 `asyncio.Queue` 放入 `config["configurable"]["sink"]`,节点经注入的 writer 闭包 `put_nowait` 发帧,路由层并发排空转 SSE。节点单测接口(`writer` 可调用对象)不变。
