@@ -1,168 +1,61 @@
+"""ch05:/api/chat 内部替换为跑 LangGraph 图,SSE 帧契约对前端保持兼容 + 新增 actions 帧。"""
+import asyncio
 import json
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
-from app.guard import is_refusal
+from app.graph.builder import initial_state
 from app.history import estimate_tokens, trim_history
 from app.prompts import SERVICE_PROMPT_TEMPLATE
 from app.schemas import ChatRequest
 
 router = APIRouter()
 
+_QUEUE_DONE = object()  # 队列终结哨兵:图任务结束(含异常)后补投,排空循环据此收尾
+
 
 def sse_frame(event: dict) -> str:
     return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
-
-
-def _safe_json(raw: str) -> dict | None:
-    try:
-        obj = json.loads(raw)
-    except (json.JSONDecodeError, TypeError):
-        return None
-    return obj if isinstance(obj, dict) else None
-
-
-def _merge_tool_call_chunks(chunks: list[dict]) -> list[dict]:
-    """流式 tool_call_chunks 按 index 拼装 → [{"name","args"(dict),"id"}]。"""
-    merged: dict[int, dict] = {}
-    for c in chunks:
-        slot = merged.setdefault(c.get("index", 0), {"name": None, "args": "", "id": None})
-        if c.get("name"):
-            slot["name"] = c["name"]
-        if c.get("args"):
-            slot["args"] += c["args"]
-        if c.get("id"):
-            slot["id"] = c["id"]
-    calls = []
-    for slot in merged.values():
-        try:
-            args = json.loads(slot["args"] or "{}")
-        except json.JSONDecodeError:
-            args = {}
-        calls.append({"name": slot["name"] or "", "args": args, "id": slot["id"] or ""})
-    return calls
-
-
-def _to_prompt_messages(trimmed: list[dict], new_user_content: str) -> list:
-    """裁剪后的完整消息列表(System 在首位)→ LangChain 消息对象;新 user 消息追加在尾部。
-
-    完整还原工具轨迹:assistant(tool_calls) + tool(tool_call_id),跨轮回灌不失真。
-    """
-    messages: list = []
-    for m in trimmed:
-        if m["role"] == "system":
-            messages.append(SystemMessage(content=m["content"]))
-        elif m["role"] == "user":
-            messages.append(HumanMessage(content=m["content"]))
-        elif m["role"] == "assistant":
-            if m.get("tool_calls"):
-                messages.append(AIMessage(content=m.get("content") or "", tool_calls=m["tool_calls"]))
-            elif m.get("content"):
-                messages.append(AIMessage(content=m["content"]))
-        elif m["role"] == "tool":
-            messages.append(ToolMessage(content=m.get("content") or "", tool_call_id=m.get("tool_call_id") or ""))
-    messages.append(HumanMessage(content=new_user_content))
-    return messages
 
 
 @router.post("/api/chat")
 async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
     settings = request.app.state.settings
     store = request.app.state.store
-    registry = request.app.state.registry
-    model = request.app.state.chat_model
+    graph = request.app.state.graph
 
     if estimate_tokens(body.message) > settings.history_token_budget:
         raise HTTPException(status_code=400, detail="消息过长,超出会话历史预算")
 
     session_id = await store.resolve(body.session_id)
     history = await store.get_history(session_id)
-    # System 拼在 [0] 一起交给 trim_history,满足其"messages[0] 永不裁剪"的契约,
-    # 且 System 不计入预算(spec §6)
-    full_history = [
-        {"role": "system", "content": SERVICE_PROMPT_TEMPLATE.format()},
-        *history,
-    ]
-    prompt_messages = _to_prompt_messages(
-        trim_history(full_history, settings.history_token_budget),
-        body.message,
-    )
+    # System 拼在 [0] 交给 trim_history 满足"messages[0] 永不裁剪";System 不下发,由 Agent 节点自拼
+    trimmed = trim_history([{"role": "system", "content": SERVICE_PROMPT_TEMPLATE.format()},
+                            *history], settings.history_token_budget)
 
     async def event_stream():
         yield sse_frame({"type": "session", "session_id": session_id})
-        # 整轮消息先攒在 pending,全部成功才落库;中途出错/断开不落库(spec §4.1)
-        pending: list[dict] = [{"role": "user", "content": body.message}]
-        citations: list[dict] = []
-        n_offset = 0  # 同轮多次 query_faq 时引用编号续排,防 [n] 冲突指错来源
+        queue: asyncio.Queue = asyncio.Queue()
+        config = {"configurable": {"thread_id": str(session_id), "sink": queue}}
+
+        async def run_graph():
+            try:
+                await graph.ainvoke(
+                    initial_state(session_id, body.message, trimmed[1:]), config)
+            finally:
+                await queue.put(_QUEUE_DONE)  # 先冲刷已产帧再终结,异常也不丢序
+
+        task = asyncio.create_task(run_graph())
         try:
-            # 第一段:绑工具流式调用。文本边收边吐,tool_call_chunks 静默拼装
-            bound = model.bind_tools(registry.tools)
-            parts: list[str] = []
-            call_chunks: list[dict] = []
-            async for chunk in bound.astream(prompt_messages):
-                if chunk.text:
-                    parts.append(chunk.text)
-                    yield sse_frame({"type": "token", "content": chunk.text})
-                call_chunks.extend(getattr(chunk, "tool_call_chunks", None) or [])
-            tool_calls = _merge_tool_call_chunks(call_chunks)
-
-            if tool_calls:
-                pending.append({
-                    "role": "assistant", "content": "".join(parts) or None, "tool_calls": tool_calls,
-                })
-                prompt_messages.append(AIMessage(content="".join(parts), tool_calls=tool_calls))
-                for tc in tool_calls:
-                    yield sse_frame({
-                        "type": "tool_status",
-                        "name": tc["name"],
-                        "label": registry.labels().get(tc["name"], tc["name"]),
-                    })
-                    result = await registry.execute(tc["name"], json.dumps(tc["args"], ensure_ascii=False))
-                    parsed = _safe_json(result)
-                    if isinstance(parsed, dict):
-                        # 检索低置信 → 落池(spec §6.2);items 带 n 的收集为引用证据
-                        if parsed.get("low_confidence"):
-                            request.app.state.pool.insert(
-                                "retrieval_low_conf", session_id, body.message,
-                                str(parsed.get("reason") or ""),
-                            )
-                        tool_items = [it for it in parsed.get("items") or []
-                                      if isinstance(it, dict) and "n" in it]
-                        if tool_items:
-                            # 同轮多次检索编号续排,重写工具结果回灌,模型角标与 citations 帧一致
-                            for it in tool_items:
-                                it["n"] = n_offset + it["n"]
-                                citations.append(it)
-                            n_offset += len(tool_items)
-                            result = json.dumps(parsed, ensure_ascii=False)
-                    pending.append({"role": "tool", "content": result, "tool_call_id": tc["id"]})
-                    prompt_messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
-                # 引用证据在最终答案流之前下发,前端渲染可点角标(spec §6.1)
-                if citations:
-                    yield sse_frame({"type": "citations", "items": citations})
-                # 第二段:不绑工具,强制单轮收敛;最终回答逐 token 流式吐出
-                final_parts: list[str] = []
-                async for chunk in model.astream(prompt_messages):
-                    if chunk.text:
-                        final_parts.append(chunk.text)
-                        yield sse_frame({"type": "token", "content": chunk.text})
-                final_text = "".join(final_parts)
-                pending.append({"role": "assistant", "content": final_text})
-            else:
-                pending.append({"role": "assistant", "content": "".join(parts)})
-
-            # 模型自评证据不足拒答 → 落池 self_check(spec §6.2);工具直答与不调工具两分支都覆盖
-            final_content = pending[-1].get("content") or ""
-            if pending[-1]["role"] == "assistant" and is_refusal(final_content):
-                request.app.state.pool.insert(
-                    "self_check", session_id, body.message,
-                    "模型自评证据不足:" + final_content[:200],
-                )
-            await store.append(session_id, pending)
+            while True:
+                frame = await queue.get()
+                if frame is _QUEUE_DONE:
+                    break
+                yield sse_frame(frame)
+            await task  # 传播图内异常
             yield sse_frame({"type": "done"})
-        except Exception as exc:  # 上游/内部错误:下发 error 后收流,本轮不落库
+        except Exception as exc:  # 图内节点异常:下发 error 后收流,本轮不落库(log 未达)
             yield sse_frame({"type": "error", "message": str(exc)})
 
     return StreamingResponse(

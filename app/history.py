@@ -1,4 +1,5 @@
 """token 估算与历史裁剪——纯函数,宁大勿小。"""
+from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
 
 def _is_wide(ch: str) -> bool:

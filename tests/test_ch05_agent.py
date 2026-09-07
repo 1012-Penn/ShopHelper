@@ -8,7 +8,7 @@ from app.config import Settings
 from app.graph.agent import make_agent_node
 from tests.helpers import FakeChatWithTools, FakeEmbedding, FakeVectorStore
 from tests.test_ch05_entry import _state
-from tests.test_chat_toolflow import Chunk
+from tests.helpers import ChunkStub as Chunk
 
 
 class ScriptedToolModel(FakeChatWithTools):

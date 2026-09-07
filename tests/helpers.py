@@ -7,6 +7,7 @@ import re
 from app.embedding import cosine  # 公共余弦工具,生产/测试同源
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
+from pydantic import Field
 
 __all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse",
            "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker", "FakeRewriter"]
@@ -222,3 +223,47 @@ class StubMineModel:
             if key in text:
                 items.extend({"question": q, "answer": a} for q, a in qas)
         return StubQAList(items=items)
+
+
+class ChunkStub:
+    """与 AIMessageChunk 契约一致的极简替身:.text / .tool_call_chunks。"""
+
+    def __init__(self, text="", tool_call_chunks=None):
+        self.text = text
+        self.tool_call_chunks = tool_call_chunks or []
+
+
+class GraphChatModel(FakeChatWithTools):
+    """ch05 图契约替身:ainvoke 供意图节点(消费 intent_reply),astream 供 Agent 逐轮流式。
+
+    turns 元素 ("tools", [tool_call_chunks]) 或 ("text", "分|段|文本");每轮 astream 弹一个,
+    弹尽后固定吐"默认回答。";prompts 记录每轮收到的消息,prompts[0][0] 即 System。
+    pydantic 模型:类属性即字段,Field(default_factory=list) 给可变默认。
+    """
+
+    intent_reply: str = "{}"
+    turns: list = Field(default_factory=list)
+    prompts: list = Field(default_factory=list)
+    bind_calls: int = 0
+
+    def __init__(self, intent_reply="{}", turns=()):
+        super().__init__(messages=iter([AIMessage(content=intent_reply)]))
+        self.intent_reply = intent_reply
+        self.turns = list(turns)
+
+    async def ainvoke(self, messages, **kwargs):
+        # 意图节点每轮都调:恒返 intent_reply,不消耗 messages 迭代器
+        return AIMessage(content=self.intent_reply)
+
+    def bind_tools(self, tools, **kwargs):
+        self.bind_calls += 1
+        return self
+
+    async def astream(self, messages, **kwargs):
+        self.prompts.append(list(messages))
+        kind, payload = self.turns.pop(0) if self.turns else ("text", "默认回答。")
+        if kind == "tools":
+            yield ChunkStub(tool_call_chunks=payload)
+        else:
+            for piece in payload.split("|"):
+                yield ChunkStub(text=piece)

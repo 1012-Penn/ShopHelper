@@ -5,7 +5,10 @@ from app.config import Settings
 from app.llm import make_chat_model
 
 
-def test_settings_defaults():
+def test_settings_defaults(monkeypatch):
+    # pymilvus 导入期会把 .env 灌进 os.environ(环境变量优先级高于代码默认值),先剥掉
+    monkeypatch.delenv("OPENAI_BASE_URL", raising=False)
+    monkeypatch.delenv("OPENAI_MODEL", raising=False)
     s = Settings(openai_api_key="sk-test", _env_file=None)
     assert s.openai_base_url == "https://api.deepseek.com/v1"
     assert s.openai_model == "deepseek-chat"

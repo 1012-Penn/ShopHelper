@@ -1,13 +1,18 @@
 import asyncio
 
 import pytest
-from langchain_core.messages import AIMessageChunk
+from langchain_core.messages import AIMessage, HumanMessage, AIMessageChunk, SystemMessage
 
-from tests.helpers import fake_chat, post_chat_sse
+from tests.helpers import GraphChatModel, post_chat_sse
+
+
+def _plain(turns):
+    """业务意图(不检索)+ 纯文本回复:最短路径替身。"""
+    return GraphChatModel('{"intent": "订单"}', [("text", t) for t in turns])
 
 
 async def test_stream_event_sequence(make_client):
-    client, _ = await make_client(fake_chat("你好 欢迎 光临"))
+    client, _ = await make_client(_plain(["你好 欢迎 光临"]))
     events = await post_chat_sse(client, {"message": "在吗"})
     assert events[0] == {"type": "session", "session_id": events[0]["session_id"]}
     assert all(e["type"] == "token" for e in events[1:-1])
@@ -16,14 +21,14 @@ async def test_stream_event_sequence(make_client):
 
 
 async def test_new_session_id_generated_per_session(make_client):
-    client, _ = await make_client(fake_chat("嗯", "好"))
+    client, _ = await make_client(_plain(["嗯", "好"]))
     e1 = await post_chat_sse(client, {"message": "a"})
     e2 = await post_chat_sse(client, {"message": "b"})
     assert e1[0]["session_id"] != e2[0]["session_id"]
 
 
 async def test_client_session_id_confirmed_and_reused(make_client):
-    client, _ = await make_client(fake_chat("答一", "答二"))
+    client, _ = await make_client(_plain(["答一", "答二"]))
     e1 = await post_chat_sse(client, {"message": "一", "session_id": 101})
     e2 = await post_chat_sse(client, {"message": "二", "session_id": 101})
     assert e1[0]["session_id"] == 101
@@ -31,7 +36,7 @@ async def test_client_session_id_confirmed_and_reused(make_client):
 
 
 async def test_reply_persisted_after_done(make_client):
-    client, app = await make_client(fake_chat("在的 亲"))
+    client, app = await make_client(_plain(["在的 亲"]))
     events = await post_chat_sse(client, {"message": "在吗"})
     sid = events[0]["session_id"]
     history = await app.state.store.get_history(sid)
@@ -40,15 +45,13 @@ async def test_reply_persisted_after_done(make_client):
 
 
 async def test_upstream_error_emits_error_and_not_persisted(make_client):
-    class Exploding:
-        def bind_tools(self, tools):
-            return self
-
-        async def astream(self, messages):
+    class Exploding(GraphChatModel):
+        async def astream(self, messages, **kwargs):
+            self.prompts.append(list(messages))
             yield AIMessageChunk(content="部分")
             raise RuntimeError("boom")
 
-    client, app = await make_client(Exploding())
+    client, app = await make_client(Exploding('{"intent": "订单"}'))
     events = await post_chat_sse(client, {"message": "你好"})
     types = [e["type"] for e in events]
     assert types[0] == "session"
@@ -61,59 +64,44 @@ async def test_upstream_error_emits_error_and_not_persisted(make_client):
 
 
 async def test_message_over_budget_returns_400(make_client):
-    client, _ = await make_client(fake_chat("x"))
+    client, _ = await make_client(_plain(["x"]))
     resp = await client.post("/api/chat", json={"message": "超" * 3001})
     assert resp.status_code == 400
 
 
 async def test_empty_message_rejected_422(make_client):
-    client, _ = await make_client(fake_chat("x"))
+    client, _ = await make_client(_plain(["x"]))
     resp = await client.post("/api/chat", json={"message": ""})
     assert resp.status_code == 422
 
 
-def test_prompt_messages_include_system_and_history():
-    from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
+def test_history_to_messages_restores_tool_trace():
+    from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
-    from app.routers.chat import _to_prompt_messages
+    from app.history import history_to_messages
 
-    trimmed = [
-        {"role": "system", "content": "SYS"},
-        {"role": "user", "content": "旧问"},
-        {"role": "assistant", "content": "旧答"},
+    history = [
+        {"role": "user", "content": "旧问", "tool_calls": None, "tool_call_id": None},
+        {"role": "assistant", "content": None,
+         "tool_calls": [{"name": "query_order", "args": {"order_id": "1"}, "id": "c1"}],
+         "tool_call_id": None},
+        {"role": "tool", "content": '{"order_id": "1"}', "tool_calls": None, "tool_call_id": "c1"},
+        {"role": "assistant", "content": "旧答", "tool_calls": None, "tool_call_id": None},
     ]
-    msgs = _to_prompt_messages(trimmed, "新问")
-    assert isinstance(msgs[0], SystemMessage) and msgs[0].content == "SYS"
-    assert isinstance(msgs[1], HumanMessage) and msgs[1].content == "旧问"
-    assert isinstance(msgs[2], AIMessage) and msgs[2].content == "旧答"
-    assert isinstance(msgs[-1], HumanMessage) and msgs[-1].content == "新问"
+    msgs = history_to_messages(history)
+    assert isinstance(msgs[0], HumanMessage)
+    assert isinstance(msgs[1], AIMessage) and msgs[1].tool_calls[0]["id"] == "c1"
+    assert isinstance(msgs[2], ToolMessage) and msgs[2].tool_call_id == "c1"
+    assert isinstance(msgs[3], AIMessage)
 
 
-class RecordingChatModel:
-    """记录每轮实际收到的 prompt;reply 可变,非迭代器型,每轮 astream 都重新取值。"""
-
-    def __init__(self, reply: str):
-        self.reply = reply
-        self.seen: list = []
-
-    def bind_tools(self, tools):
-        return self
-
-    async def astream(self, messages):
-        self.seen = list(messages)
-        yield AIMessageChunk(content=self.reply)
-
-
-async def test_second_round_prompt_carries_system_and_history(make_client):
-    from langchain_core.messages import HumanMessage, SystemMessage
-
-    model = RecordingChatModel("第一答")
+async def test_agent_prompt_carries_system_and_history(make_client):
+    model = GraphChatModel('{"intent": "订单"}', [("text", "第一答"), ("text", "第二答")])
     client, _ = await make_client(model)
     await post_chat_sse(client, {"message": "第一问", "session_id": 202})
-    model.reply = "第二答"  # RecordingChatModel 不是迭代器型,直接改返回值即可
     await post_chat_sse(client, {"message": "第二问", "session_id": 202})
 
-    seen = model.seen
+    seen = model.prompts[1]  # 第二轮 Agent 的 prompt
     assert isinstance(seen[0], SystemMessage) and "小帮" in seen[0].content
     contents = [(type(m).__name__, m.content) for m in seen]
     assert ("HumanMessage", "第一问") in contents
@@ -123,23 +111,22 @@ async def test_second_round_prompt_carries_system_and_history(make_client):
 
 @pytest.mark.xfail(
     reason="httpx 0.28.1 ASGITransport 在返回 Response 前完整运行 app 并缓冲全部响应体,"
-    "客户端提前断开无法传播给应用;断开不落库契约(spec §4.1)在真实 ASGI 服务器下成立,"
-    "本测试传输层无法模拟。详见 .superpowers/sdd/2026-09-04-ch01-pure-chat/final-fix-report.md",
+           "客户端提前断开无法传播给应用;断开不落库契约在真实 ASGI 服务器下成立"
+           "(图语义下由 error 分支不达 log 节点保证),本测试传输层无法模拟。ch04 沿袭。",
     strict=True,
 )
 async def test_client_disconnect_before_done_not_persisted(make_client):
-    """spec §4.1:客户端提前断开,本轮 user/assistant 两条都不落库。"""
+    """客户端提前断开,本轮 user/assistant 两条都不落库。"""
+    from langchain_core.messages import AIMessage
 
-    class SlowUpstream:
-        def bind_tools(self, tools):
-            return self
-
-        async def astream(self, messages):
+    class SlowUpstream(GraphChatModel):
+        async def astream(self, messages, **kwargs):
+            self.prompts.append(list(messages))
             yield AIMessageChunk(content="开头")
             await asyncio.sleep(5)
             yield AIMessageChunk(content="结尾")
 
-    client, app = await make_client(SlowUpstream())
+    client, app = await make_client(SlowUpstream('{"intent": "订单"}'))
     async with client.stream(
         "POST", "/api/chat", json={"message": "你好", "session_id": 303}
     ) as resp:

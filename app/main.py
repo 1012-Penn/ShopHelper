@@ -33,6 +33,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.extract_model = make_extract_model(settings).with_structured_output(
         AfterSaleExtraction, method="function_calling"
     )
+    # ch05:LangGraph 图骨架(检索链与 build_tools 生产分支同构,各自持有真实现)
+    from app.graph.builder import build_graph, make_retrieval_chain
+
+    service, kb = make_retrieval_chain(session_factory, settings)
+    app.state.graph = build_graph(
+        app.state.chat_model, app.state.registry, settings,
+        app.state.store, app.state.pool, service, kb,
+    )
     app.include_router(chat.router)
     app.include_router(sessions.router)
     app.include_router(extract.router)

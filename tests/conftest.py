@@ -63,6 +63,22 @@ async def make_client():
         ))
         app.state.chat_model = chat_model
         app.state.extract_model = extract_model or StubExtractModel()
+        # ch05:图骨架,检索链用与 build_tools 替身分支同参的 stub
+        from app.graph.builder import build_graph
+        from app.kb import KnowledgeBaseStore
+        from app.retrieval import RetrievalService
+
+        kb = KnowledgeBaseStore(factory)
+        service = RetrievalService(
+            FakeEmbedding(), vectors_stub, kb, rewriter=FakeRewriter(), reranker=FakeReranker(),
+            candidates=50, final_top_k=3, rerank_score_floor=0.30,
+        )
+        app.state.graph = build_graph(
+            chat_model, app.state.registry, app.state.settings,
+            app.state.store, app.state.pool, service, kb,
+        )
+        app.state.retrieval_service = service
+        app.state.retrieval_kb = kb
         client = AsyncClient(transport=ASGITransport(app=app), base_url="http://test")
         clients.append(client)
         return client, app
