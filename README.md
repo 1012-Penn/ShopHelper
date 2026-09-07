@@ -1,6 +1,6 @@
 # ShopHelper
 
-电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集)。
+电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写。
 
 ## 环境要求
 
@@ -88,7 +88,22 @@ docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character
   -e "SELECT id, source, raw_question, reason FROM low_confidence_questions"
 ```
 
-ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。
+ch05 五条验收(服务启动后逐条打):
+
+1. **知识类强制检索**:问「你们的退货政策是怎样的」→ 气泡出现「知识检索」徽章,服务日志见 `node=retrieve strategy=hybrid_rerank top1=...`;
+2. **Agent 自调工具**:问「订单1001的物流到哪了」→ 回答气泡带「物流查询」徽章;
+3. **投诉自选按钮**:说「我要投诉」→ 安抚话术下出现「转人工」「建工单」两个独立按钮;点「转人工」本地展示「已转接人工客服」并蹦客服小猫问候(纯前端);点「建工单」确认后才 `POST /api/tickets` 写 tickets 表;都不点就当普通对话继续;
+4. **闲聊固定话术**:说「你好呀」→ 固定回复,零工具徽章;
+5. **ReAct 多步**:问「先帮我查一下订单1001,然后告诉我它的物流到哪了」→ 依次出现「订单查询」「物流查询」两个徽章,日志 `node=agent steps=2`。
+
+```bash
+docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper \
+  -e "SELECT ticket_no, ticket_type, description FROM tickets"
+```
+
+祛魅热身(不依赖 LangGraph 的裸 Agent 循环):`.venv/bin/python -m scripts.naive_agent "订单1001的物流到哪了"`。
+
+ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。ch04 评估脚本继续可用(注意 ch05 图内检索与 query_faq 工具同链)。
 
 ## 已知边界
 
@@ -99,6 +114,7 @@ ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收�
 - 满意度反馈纯前端内存采集,刷新即失;落库与数据飞轮留后续章节。
 - query_order / query_product / query_logistics 为工具内 mock 随机数据,不接真实电商/物流 API。
 - 多轮 Agent Loop、用户体系不做(ch02 边界延续)。
+- ch05:意图识别/指代消解是最简版(简单 prompt / 原样透传),判错意图即走错出口(如「发货时间」被判「订单」),正式版后置;InMemorySaver 进程内无界增长,重启即清;同一会话并发请求共用 thread,无会话锁;ReAct 中间思考文本对用户可见(祛魅主题下如实呈现);沙箱无浏览器后端,前端按钮视觉终验由用户本地点开页面确认(SSE 帧/工单接口已 curl 验证)。
 
 API 契约细节见
 `docs/superpowers/specs/2026-09-04-ch01-pure-chat-design.md`、
