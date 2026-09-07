@@ -57,6 +57,15 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
             yield sse_frame({"type": "done"})
         except Exception as exc:  # 图内节点异常:下发 error 后收流,本轮不落库(log 未达)
             yield sse_frame({"type": "error", "message": str(exc)})
+        finally:
+            # 客户端提前断开(GeneratorExit/CancelledError)时取消孤儿图任务:
+            # 不再烧 token,也保证未达 log 节点的回合绝不落库
+            if not task.done():
+                task.cancel()
+            try:
+                await task
+            except (asyncio.CancelledError, Exception):
+                pass
 
     return StreamingResponse(
         event_stream(),

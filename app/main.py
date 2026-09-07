@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -12,6 +13,8 @@ from app.schemas import AfterSaleExtraction
 from app.store import ConversationStore
 from app.tools.definitions import build_tools
 from app.tools.registry import ToolRegistry
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
 

@@ -106,7 +106,9 @@ async def test_max_steps_cutoff():
     node = make_agent_node(model, _registry(), _settings(agent_max_steps=2), FakePool())
     out = await node(_state(session_id=1, user_message="查订单", resolved_message="查订单", history=[]))
     assert out["agent_steps"] == 2 and model.bind_calls == 2
-    assert out["final_reply"]  # 熔断时给收敛文本,不无限循环
+    # C1 修复:熔断时回溯 assistant 文本;全程只有工具轮 → 给引导语而非原始工具 JSON
+    assert out["final_reply"] == "问题比较复杂,请您稍后再试或换种问法。"
+    assert not out["final_reply"].lstrip().startswith("{")
 
 
 async def test_agent_suggests_actions_on_refusal():
@@ -142,3 +144,17 @@ async def test_query_faq_low_confidence_pools():
     assert [r[0] for r in pool.rows] == ["retrieval_low_conf"]
     assert pool.rows[0][2] == "量子力学怎么退货"
     assert [f for f in rec.frames if f["type"] == "citations"] == []  # 低置信不出证据
+
+
+async def test_cutoff_prefers_last_assistant_text():
+    """熔断前有过部分文本(如"已为您查询到")时,收敛用该文本而非引导语。"""
+    model = ScriptedToolModel([
+        ("text", "已为您查询到订单,"),
+        ("tools", [_tc("query_order", {"order_id": "1"}, "c9")]),
+        ("tools", [_tc("query_order", {"order_id": "1"}, "c9")]),
+    ])
+    rec = Recorder()
+    node = make_agent_node(model, _registry(), _settings(agent_max_steps=3), FakePool())
+    out = await node(_state(session_id=1, user_message="查订单", resolved_message="查订单",
+                            history=[]), writer=rec)
+    assert out["final_reply"] == "已为您查询到订单,"

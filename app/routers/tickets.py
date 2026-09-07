@@ -18,7 +18,10 @@ async def create_ticket(body: TicketRequest, request: Request):
         "conversation_id": conversation_id, "description": body.description,
         "ticket_type": body.ticket_type,
     }, ensure_ascii=False))
-    parsed = json.loads(raw)
-    if "ticket_no" not in parsed:
+    try:
+        parsed = json.loads(raw)
+    except json.JSONDecodeError:
+        parsed = None  # registry 失败收敛为错误字符串,不是 JSON → 与下方同归 502
+    if not isinstance(parsed, dict) or "ticket_no" not in parsed:
         raise HTTPException(status_code=502, detail="创建工单失败")
     return parsed

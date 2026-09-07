@@ -77,7 +77,7 @@ agent → log → END
 ## 接口
 
 - `POST /api/chat`:入参不变;内部 `graph.astream(state, config={"configurable": {"thread_id": session_id}}, stream_mode=["custom"])`,custom 事件逐一映射 SSE 帧:`session/token/tool_status/citations/actions/done/error`。actions 帧结构 `{"type":"actions","items":[{"action":"transfer_human","label":"转人工"},{"action":"create_ticket","label":"建工单"}]}`(可只含一个)。
-- `POST /api/tickets`(新):`{"session_id", "description"}` → registry 的 `create_ticket`(conversation_id 解析、ticket_type 固定"投诉"场景可传参,默认"售后")→ 返回工单号。仅前端按钮触发,后端不自动建单。
+- `POST /api/tickets`(新):`{"session_id", "description"}` → registry 的 `create_ticket`(conversation_id 解析、ticket_type 可传参,缺省"投诉"(按钮场景即投诉语境,实现定稿))→ 返回工单号。仅前端按钮触发,后端不自动建单。
 
 ## 前端(static/index.html)
 

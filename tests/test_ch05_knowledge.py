@@ -53,8 +53,8 @@ async def test_gate_weak_evidence_falls_back_and_pools():
 
     out = await fallback(_state(user_message="量子力学怎么退货", **g))
     assert "无法回答" in out["final_reply"]
-    assert [m["role"] for m in out["messages"]] == ["assistant"]
-    assert out["messages"][0]["content"] == out["final_reply"]
+    assert [m["role"] for m in out["messages"]] == ["user", "assistant"]  # I1 修复:兜底轮也落 user
+    assert out["messages"][-1]["content"] == out["final_reply"]
 
 
 async def test_gate_strong_evidence_passes_no_pooling():

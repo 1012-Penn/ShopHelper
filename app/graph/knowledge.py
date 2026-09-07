@@ -15,7 +15,7 @@ def make_knowledge_nodes(service, kb, pool):
         rows = kb.get_chunks([r.chunk_id for r in result.items])
         evidence = [
             {"n": i + 1, "chunk_id": r.chunk_id,
-             "question": row.questions.splitlines()[0], "answer": row.answer,
+             "question": (row.questions.splitlines() or [""])[0], "answer": row.answer,
              "category": row.category, "section_path": row.section_path or ""}
             for i, (r, row) in enumerate(zip(result.items, rows))
         ]
@@ -37,7 +37,8 @@ def make_knowledge_nodes(service, kb, pool):
     async def fallback_node(state, writer=None) -> dict:
         _emit(writer, {"type": "token", "content": FALLBACK_REPLY})
         return {"final_reply": FALLBACK_REPLY,
-                "messages": [{"role": "assistant", "content": FALLBACK_REPLY}],
+                "messages": [{"role": "user", "content": state["user_message"]},
+                             {"role": "assistant", "content": FALLBACK_REPLY}],
                 "trace": [*state["trace"], "node=fallback"]}
 
     return retrieve_node, gate_node, fallback_node
