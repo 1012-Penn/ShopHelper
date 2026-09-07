@@ -34,3 +34,23 @@ def trim_history(messages: list[dict], budget: int) -> list[dict]:
         total += cost
     kept.reverse()
     return system + kept
+
+
+def history_to_messages(history: list[dict]) -> list:
+    """落库的 dict 历史 → LangChain 消息对象(完整还原工具轨迹,不含 System 与本轮 user)。
+
+    自 ch04 chat.py::_to_prompt_messages 迁入;System 由调用方自行拼在首位。
+    """
+    messages: list = []
+    for m in history:
+        if m["role"] == "user":
+            messages.append(HumanMessage(content=m["content"]))
+        elif m["role"] == "assistant":
+            if m.get("tool_calls"):
+                messages.append(AIMessage(content=m.get("content") or "", tool_calls=m["tool_calls"]))
+            elif m.get("content"):
+                messages.append(AIMessage(content=m["content"]))
+        elif m["role"] == "tool":
+            messages.append(ToolMessage(content=m.get("content") or "",
+                                        tool_call_id=m.get("tool_call_id") or ""))
+    return messages

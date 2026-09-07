@@ -37,3 +37,7 @@ class Settings(BaseSettings):
     hybrid_candidates: int = 50       # dense/BM25 各自召回数(hybrid_search limit)
     retrieval_final_top_k: int = 10   # 精排后进入 prompt 的条数
     query_rewrite_enabled: bool = True
+
+    # ch05:ReAct 主力 Agent 停止条件
+    agent_max_steps: int = 6        # 单轮最多工具交互步数,超限强制收敛
+    agent_token_budget: int = 3000  # 单轮 Agent 侧输出 token 预算(estimate_tokens 口径)
