@@ -54,3 +54,8 @@ def build_evidence_block(items: list[dict]) -> str:
         f"[{it['n']}] ({it['section_path']}) 问:{it['question']} 答:{it['answer']}"
         for it in items
     )
+
+INTENT_PROMPT = """你是电商客服的意图分类器。把用户消息判成以下七类之一,只输出 JSON:
+{"intent": "物流|订单|商品咨询|退款退货|售后|投诉|闲聊"}
+判类口径:问包裹/快递到哪了→物流;查订单状态/信息→订单;商品参数价格库存→商品咨询;
+退钱退货流程政策→退款退货;安装维修换货等售后问题→售后;不满要讨说法→投诉;寒暄或无关话题→闲聊。"""
