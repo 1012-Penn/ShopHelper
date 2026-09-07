@@ -151,6 +151,20 @@
     cursor: pointer;
   }
   #send:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ch05:转人工/建工单独立按钮 + 系统提示 */
+  .action-bar { display: flex; gap: 8px; margin-top: 8px; }
+  .action-btn {
+    border: 1px solid #4f7cff; background: #fff; color: #4f7cff;
+    border-radius: 8px; padding: 5px 14px; font-size: 13px; cursor: pointer;
+  }
+  .action-btn:hover { background: #eef3ff; }
+  .action-btn:disabled { cursor: default; opacity: .6; }
+  .sys-row { display: flex; justify-content: center; margin: 10px 0; }
+  .sys-msg {
+    font-size: 12.5px; color: #5a6270; background: #e9edf3;
+    border-radius: 999px; padding: 4px 14px;
+  }
 </style>
 </head>
 <body>
@@ -175,6 +189,7 @@ const log = document.getElementById("log");
 const text = document.getElementById("text");
 const sendBtn = document.getElementById("send");
 const state = { sessionId: null, busy: false };
+let lastUserMessage = "";
 
 function nearBottom() {
   return log.scrollHeight - log.scrollTop - log.clientHeight < 80;
@@ -229,6 +244,54 @@ function startStreamText(bubble) {
     append(t) { cursor.before(document.createTextNode(t)); scrollDown(); },
     finish() { cursor.remove(); },
   };
+}
+
+// ch05:转人工/建工单——两个独立选项,用户自选,后端不自动执行
+function addSystemMsg(content) {
+  const row = document.createElement("div");
+  row.className = "sys-row";
+  const msg = document.createElement("span");
+  msg.className = "sys-msg";
+  msg.textContent = content;
+  row.appendChild(msg);
+  log.appendChild(row);
+  scrollDown(true);
+}
+function renderActions(bubble, items) {
+  if (!items || !items.length) return;
+  const bar = document.createElement("div");
+  bar.className = "action-bar";
+  for (const it of items) {
+    const btn = document.createElement("button");
+    btn.className = "action-btn";
+    btn.textContent = it.label;
+    btn.onclick = () => it.action === "transfer_human" ? transferHuman(bar) : createTicket(btn);
+    bar.appendChild(btn);
+  }
+  bubble.appendChild(bar);
+  scrollDown();
+}
+async function transferHuman(bar) {
+  // 纯前端模拟:不调任何接口
+  bar.remove();
+  addSystemMsg("已转接人工客服");
+  addBotMsg().querySelector(".content").textContent = "您好,我是客服小猫,请问有什么可以帮您的";
+  scrollDown(true);
+}
+async function createTicket(btn) {
+  if (!confirm("确认为您创建工单吗?")) return;
+  btn.disabled = true;
+  try {
+    const resp = await fetch("/api/tickets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ session_id: state.sessionId, description: lastUserMessage }),
+    });
+    const body = await resp.json();
+    btn.textContent = resp.ok ? "工单 " + body.ticket_no + " 已创建" : "创建失败";
+  } catch (e) {
+    btn.textContent = "创建失败";
+  }
 }
 
 // ch04:答案收尾后,把正文里的 [n] 替换成可点角标;citations 帧提供 n → 来源映射
@@ -306,6 +369,7 @@ async function send() {
   if (!message || state.busy) return;
   setBusy(true);
   text.value = "";
+  lastUserMessage = message;
   addUserMsg(message);
 
   const bubble = addBotMsg();
@@ -343,6 +407,8 @@ async function send() {
           addToolBadge(bubble, evt.label || evt.name);
         } else if (evt.type === "citations") {
           citations = evt.items || [];
+        } else if (evt.type === "actions") {
+          renderActions(bubble, evt.items);
         } else if (evt.type === "token") {
           if (!stream) stream = startStreamText(bubble);
           stream.append(evt.content);
