@@ -9,6 +9,7 @@ dependencies = [
     "uvicorn==0.52.4",
     "langchain==1.4.0",
     "langchain-openai==1.6.0",
+    "langgraph>=1.2.11,<2",
     "pydantic-settings==2.15.0",
     "httpx==0.28.1",
     "pymilvus[milvus-lite]==3.0.1",
