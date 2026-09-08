@@ -42,7 +42,8 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
         async def run_graph():
             try:
                 await graph.ainvoke(
-                    initial_state(session_id, body.message, trimmed[1:]), config)
+                    initial_state(session_id, body.message, trimmed[1:], resume=body.resume),
+                    config)
             finally:
                 await queue.put(_QUEUE_DONE)  # 先冲刷已产帧再终结,异常也不丢序
 

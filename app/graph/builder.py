@@ -1,8 +1,9 @@
-"""组图:START→resolve→intent→route 四出口;agent/fallback/complaint/chitchat→log→END。
+"""组图:START→resolve→intent→route 多出口;退款/售后走确定性子流程;全部出口汇于 log→END。
 
 流式说明(py3.10 兼容,见 spec 实现期偏差):langgraph 的 get_stream_writer 在
 Python 3.10 async 上下文被官方守卫禁用,故节点发帧走 configurable.sink 队列——
 路由层建 asyncio.Queue 注入 config,节点内 writer 闭包 put_nowait,路由层排空转 SSE。
+interrupt() 同受该守卫禁用(spike 实测),订单选择器停走走无状态回传(resume 旁路)。
 """
 import asyncio
 
@@ -13,6 +14,7 @@ from app.graph.agent import make_agent_node
 from app.graph.entry import make_intent_node, make_resolve_node, route
 from app.graph.knowledge import make_knowledge_nodes
 from app.graph.logging_node import make_log_node
+from app.graph.refund import make_refund_nodes
 from app.graph.simple import chitchat_node, complaint_node
 from app.graph.state import ChatState
 
@@ -34,49 +36,84 @@ def _with_sink(fn):
     return _wrapped
 
 
-def build_graph(model, registry, settings, store, pool, retrieval_service, kb):
+def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *,
+                resolver=None, intent_model=None, escalator=None, expander=None):
+    """resolver/expander 缺省时生产路径自建(结构化真模型);测试经 conftest 注入替身。
+    intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。"""
+    from app.llm import make_extract_model
+    from app.prompts import ExpandedQueries, ResolvedQuestion
+
     retrieve_node, gate_node, fallback_node = make_knowledge_nodes(retrieval_service, kb, pool)
 
-    from app.prompts import ResolvedQuestion
-    from app.llm import make_extract_model
+    if resolver is None:
+        resolver = make_extract_model(settings).with_structured_output(
+            ResolvedQuestion, method="function_calling")
+    if expander is None:
+        expander = make_extract_model(settings).with_structured_output(
+            ExpandedQueries, method="function_calling")
+    if settings.intent_escalation_enabled:
+        small = make_extract_model(settings, model=settings.intent_small_model or None)
+        _intent = make_intent_node(small, escalator=escalator or make_extract_model(settings),
+                                   floor=settings.intent_confidence_floor)
+    else:
+        _intent = make_intent_node(intent_model or model)
 
-    resolver = make_extract_model(settings).with_structured_output(
-        ResolvedQuestion, method="function_calling")
     _resolve = make_resolve_node(resolver)
-
-    _intent = make_intent_node(model)
+    prep, ask, fetch, expand, policy = make_refund_nodes(
+        expander, retrieval_service, kb, pool, top_k=settings.retrieval_final_top_k)
 
     g = StateGraph(ChatState)
-    g.add_node("resolve", _with_sink(_resolve))
-    g.add_node("intent", _intent)
     # 一切发帧节点都套 _with_sink:py3.10 async 下 langgraph 的 writer 注入失效,
     # 帧经 configurable.sink 队列外送(spec 实现期偏差)
+    g.add_node("resolve", _with_sink(_resolve))
+    g.add_node("intent", _intent)
     g.add_node("retrieve", _with_sink(retrieve_node))
     g.add_node("gate", _with_sink(gate_node))
     g.add_node("fallback", _with_sink(fallback_node))
     g.add_node("agent", _with_sink(make_agent_node(model, registry, settings, pool)))
     g.add_node("complaint", _with_sink(complaint_node))
     g.add_node("chitchat", _with_sink(chitchat_node))
+    g.add_node("prepare_order", _with_sink(prep))
+    g.add_node("ask_order", _with_sink(ask))
+    g.add_node("fetch_order", _with_sink(fetch))
+    g.add_node("expand", _with_sink(expand))
+    g.add_node("policy_retrieve", _with_sink(policy))
     g.add_node("log", _with_sink(make_log_node(store, pool)))
+
     g.add_edge(START, "resolve")
-    g.add_edge("resolve", "intent")
+    # resume 旁路:订单选择器点选回传,补全问题已定,直达子流程不再过 resolve/intent 的 LLM
+    g.add_conditional_edges("resolve",
+                            lambda s: "prepare_order" if s.get("resume_question") else "intent",
+                            {"intent": "intent", "prepare_order": "prepare_order"})
     g.add_conditional_edges("intent", route, {
-        "retrieve": "retrieve", "agent": "agent", "complaint": "complaint", "chitchat": "chitchat"})
+        "retrieve": "retrieve", "agent": "agent", "complaint": "complaint",
+        "chitchat": "chitchat", "prepare_order": "prepare_order"})
+    g.add_conditional_edges("prepare_order",
+                            lambda s: "fetch_order" if s.get("pending_order_id") else "ask_order",
+                            {"fetch_order": "fetch_order", "ask_order": "ask_order"})
+    g.add_edge("fetch_order", "expand")
+    g.add_edge("expand", "policy_retrieve")
+    g.add_edge("policy_retrieve", "agent")
     g.add_edge("retrieve", "gate")
     g.add_conditional_edges("gate", lambda s: "fallback" if not s["gate_passed"] else "agent",
                             {"fallback": "fallback", "agent": "agent"})
-    for n in ("fallback", "agent", "complaint", "chitchat"):
+    for n in ("fallback", "agent", "complaint", "chitchat", "ask_order"):
         g.add_edge(n, "log")
     g.add_edge("log", END)
     return g.compile(checkpointer=InMemorySaver())
 
 
-def initial_state(session_id: int, user_message: str, history: list) -> dict:
-    """路由层每回合注入的全量默认值:防 checkpointer 上一回合残留字段(如 evidence)泄漏。"""
+def initial_state(session_id: int, user_message: str, history: list, resume=None) -> dict:
+    """路由层每回合注入的全量默认值:防 checkpointer 上一回合残留字段(如 evidence)泄漏;
+    resume 非空时携带选择器点选回传的槽位。"""
     return {"session_id": session_id, "user_message": user_message, "resolved_message": "",
-            "intent": "", "evidence": [], "low_confidence": False, "low_reason": "",
-            "gate_passed": False, "agent_steps": 0, "final_reply": "", "suggested_actions": [],
-            "trace": [], "messages": [], "history": history}
+            "intent": resume.intent if resume else "", "intent_confidence": 0.0,
+            "evidence": [], "low_confidence": False,
+            "low_reason": "", "gate_passed": False, "agent_steps": 0, "final_reply": "",
+            "suggested_actions": [], "trace": [], "messages": [], "history": history,
+            "order": {}, "expand_queries": [], "refund_flow": False,
+            "pending_order_id": "", "resume_order_id": resume.order_id if resume else "",
+            "resume_question": resume.question if resume else ""}
 
 
 def make_retrieval_chain(session_factory, settings):

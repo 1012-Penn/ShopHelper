@@ -19,7 +19,7 @@ from app.tools.definitions import build_tools
 from app.tools.registry import ToolRegistry
 from app.models import Base
 from tests.helpers import (FakeEmbedding, FakeReranker, FakeRewriter, FakeVectorStore,
-                           StubExtractModel)
+                           EchoResolver, StubExpand, StubExtractModel)
 
 
 def make_session_factory():
@@ -49,7 +49,7 @@ async def make_client():
     """构建测试应用:真 Settings 换测试值,存储用 SQLite 内存库,模型/嵌入/向量库全用替身。"""
     clients = []
 
-    async def _make(chat_model, extract_model=None):
+    async def _make(chat_model, extract_model=None, resolver=None, expander=None):
         app = create_app(Settings(openai_api_key="sk-test", _env_file=None))
         factory = make_session_factory()
         app.state.session_factory = factory
@@ -73,9 +73,12 @@ async def make_client():
             FakeEmbedding(), vectors_stub, kb, rewriter=FakeRewriter(), reranker=FakeReranker(),
             candidates=50, final_top_k=3, rerank_score_floor=0.30,
         )
+        # ch06:resolve/expand 替身缺省注入,测试不出网
         app.state.graph = build_graph(
             chat_model, app.state.registry, app.state.settings,
             app.state.store, app.state.pool, service, kb,
+            resolver=resolver or EchoResolver({}),
+            expander=expander or StubExpand({}),
         )
         app.state.retrieval_service = service
         app.state.retrieval_kb = kb

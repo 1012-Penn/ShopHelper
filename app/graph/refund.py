@@ -27,7 +27,8 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
                                   "amount": o["amount"], "status": o["status"]}
                                  for o in list_orders()],
                        "question": state["resolved_message"],
-                       "original": state["user_message"]})
+                       "original": state["user_message"],
+                       "intent": state["intent"]})
         return {"messages": [{"role": "user", "content": state["user_message"]}],
                 "trace": [*state["trace"], "node=ask_order n=3"]}
 
