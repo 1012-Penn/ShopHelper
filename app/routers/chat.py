@@ -30,7 +30,7 @@ def _anchor_str(v: int | None) -> str:
     return "无" if v is None else str(v)
 
 
-async def prepare_turn(request: Request, session_id: int, message: str) -> tuple[dict, list, dict]:
+async def prepare_turn(request: Request, session_id: int) -> tuple[dict, list, dict]:
     """轮前维护与装配:层 1 超预算先同步降级,层 2 超预算投后台摘要,再组装模型面分层上下文。
 
     返回 (layered, 未回灌时的全量行, anchors);history_ctx 每轮必打(不进 Agent 的闲聊轮也看得到)。
@@ -78,7 +78,7 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
         raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
 
     session_id = await store.resolve(body.session_id)
-    layered, rows, _anchors = await prepare_turn(request, session_id, body.message)
+    layered, rows, _anchors = await prepare_turn(request, session_id)
 
     # 完整历史回灌:checkpoint 为空(进程重启/首 touch)时从 MySQL 灌一次,add_messages 按 id 去重
     hydrated = session_id in request.app.state.hydrated_threads

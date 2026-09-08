@@ -34,7 +34,7 @@ async def _seed(db_store, msgs=None):
 async def test_run_appends_segment_and_advances_anchor(db_store):
     sid, rows = await _seed(db_store)
     await db_store.set_layer1_from(sid, rows[-1]["id"])
-    svc = SummaryService(db_store, StubSummaryModel(), None)
+    svc = SummaryService(db_store, StubSummaryModel())
     await svc._run(sid, upto_id=rows[-1]["id"])
     a = await db_store.get_anchors(sid)
     assert a["summary_seqs"] == 1 and a["summary_upto"] == rows[-1]["id"]
@@ -43,7 +43,7 @@ async def test_run_appends_segment_and_advances_anchor(db_store):
 
 async def test_second_run_appends_next_segment(db_store):
     sid, rows = await _seed(db_store)
-    svc = SummaryService(db_store, StubSummaryModel(), None)
+    svc = SummaryService(db_store, StubSummaryModel())
     await svc._run(sid, upto_id=rows[0]["id"])
     await svc._run(sid, upto_id=rows[-1]["id"])  # 第二段只补增量
     a = await db_store.get_anchors(sid)
@@ -54,7 +54,7 @@ async def test_second_run_appends_next_segment(db_store):
 async def test_prompt_carries_old_summary_and_batch(db_store, caplog):
     sid, rows = await _seed(db_store)
     model = StubSummaryModel()
-    svc = SummaryService(db_store, model, None)
+    svc = SummaryService(db_store, model)
     with caplog.at_level(logging.INFO, logger="app.summarizer"):
         await svc._run(sid, upto_id=rows[-1]["id"])
     assert "已有梗概(背景,勿重复):\n(无)" in model.prompts[0]
@@ -68,7 +68,7 @@ async def test_upto_id_bounds_batch(db_store):
                                        {"role": "assistant", "content": "回复"},
                                        {"role": "user", "content": "第二条最新"}])
     model = StubSummaryModel()
-    svc = SummaryService(db_store, model, None)
+    svc = SummaryService(db_store, model)
     await svc._run(sid, upto_id=rows[1]["id"])  # 只压到第二条之前
     assert "第二条最新" not in model.prompts[0]
     assert (await db_store.get_anchors(sid))["summary_upto"] == rows[1]["id"]
@@ -76,14 +76,14 @@ async def test_upto_id_bounds_batch(db_store):
 
 async def test_overlong_output_hard_truncated(db_store):
     sid, rows = await _seed(db_store, [{"role": "user", "content": "u"}])
-    svc = SummaryService(db_store, StubSummaryModel(text="长" * 400), None)
+    svc = SummaryService(db_store, StubSummaryModel(text="长" * 400))
     await svc._run(sid, upto_id=rows[-1]["id"])
     assert len((await db_store.get_anchors(sid))["summary_text"]) <= 300
 
 
 async def test_upstream_failure_logged_not_raised(db_store, caplog):
     sid, rows = await _seed(db_store, [{"role": "user", "content": "u"}])
-    svc = SummaryService(db_store, BoomModel(), None)
+    svc = SummaryService(db_store, BoomModel())
     with caplog.at_level(logging.WARNING, logger="app.summarizer"):
         await svc._run(sid, upto_id=rows[-1]["id"])  # 不抛
     assert any("fail" in r.message for r in caplog.records)
@@ -92,7 +92,7 @@ async def test_upstream_failure_logged_not_raised(db_store, caplog):
 
 async def test_empty_batch_skips(db_store, caplog):
     sid = await db_store.resolve(None)
-    svc = SummaryService(db_store, StubSummaryModel(), None)
+    svc = SummaryService(db_store, StubSummaryModel())
     with caplog.at_level(logging.INFO, logger="app.summarizer"):
         await svc._run(sid, upto_id=None)
     assert any("skip" in r.message for r in caplog.records)
@@ -100,7 +100,7 @@ async def test_empty_batch_skips(db_store, caplog):
 
 async def test_maybe_trigger_skips_when_inflight(db_store, caplog):
     sid, rows = await _seed(db_store, [{"role": "user", "content": "u"}])
-    svc = SummaryService(db_store, StubSummaryModel(), None)
+    svc = SummaryService(db_store, StubSummaryModel())
     svc._inflight.add(sid)  # 模拟在飞
     with caplog.at_level(logging.INFO, logger="app.summarizer"):
         svc.maybe_trigger(sid, upto_id=rows[-1]["id"])

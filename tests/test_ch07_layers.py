@@ -133,6 +133,17 @@ def test_render_history_text_empty_everything():
     assert "(无)" in render_history_text(None, [], [], 60)
 
 
+def test_render_history_text_layer2_has_role_prefix():
+    """I-3 回归:层 2 行与层 1 行同套角色前缀,说话人角色不得丢失。"""
+    l2 = [{"id": 1, "role": "user", "content": "它多少钱"},
+          {"id": 2, "role": "assistant", "content": "很长的答复" * 40}]
+    l1 = [{"id": 3, "role": "user", "content": "能便宜点吗"}]
+    text = render_history_text("(无)", l2, l1, head_chars=60)
+    assert "用户:它多少钱" in text
+    assert "客服:很长的答复" in text and text.split("客服:")[1].startswith("很长的答复"[0])
+    assert "用户:能便宜点吗" in text
+
+
 # ---- 背景块 ----
 
 def test_background_combines_summary_and_evidence():

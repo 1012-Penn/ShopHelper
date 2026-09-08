@@ -59,8 +59,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     budgets.window, budgets.fixed, budgets.peak, budgets.sliding,
                     budgets.history, budgets.layer1, budgets.layer2)
     app.state.hydrated_threads = set()  # 已回灌完整历史的 thread(checkpoint 空时从 MySQL 灌一次)
-    app.state.summary_service = SummaryService(app.state.store, make_extract_model(settings),
-                                               settings)
+    app.state.summary_service = SummaryService(app.state.store, make_extract_model(settings))
     # build_tools 生产路径:内部构造真 embedder/向量库(v2)/rewriter/reranker
     app.state.registry = ToolRegistry(build_tools(
         session_factory, top_k=settings.rerank_top_k,

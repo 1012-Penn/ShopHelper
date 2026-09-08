@@ -75,7 +75,9 @@ def make_agent_node(model, registry, settings, pool):
         system = SERVICE_PROMPT_TEMPLATE.format()
         instruction = ""
         if state.get("refund_flow") and state.get("order"):
-            instruction = NARROW_INSTRUCTIONS.get(state.get("intent"), "")
+            # 占位符先填充:I-1 回归修复——ch06 重写后 format 被丢,字面量 {order_id} 泄漏进背景块
+            instruction = NARROW_INSTRUCTIONS.get(state.get("intent"), "").format(
+                order_id=state["order"].get("order_id", ""))
         background = build_background(lay.get("summary_text") or "",
                                       state.get("evidence") or [],
                                       state.get("order") if instruction else None,

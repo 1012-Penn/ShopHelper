@@ -126,4 +126,12 @@ class ChatState(TypedDict):
 
 ## 实现期偏差
 
-(实现期回填)
+(以下为实现期确认的偏差与契约演进,评审波回填)
+
+1. **层 2 预算口径为 `int(历史×0.3)`**:七三开各自 int 截断(5650 → 3954 + 1695,和留 1 token 余量),非「层 2 = 历史 − 层 1」;初版推导有一处口算错(prompt 开销 1400→1800 校正),由预算单测首跑逮住。`MAX_AGENT_STEPS` 由 `agent_max_steps` 改名、`RERANK_TOP_K` 顶替 `retrieval_final_top_k`,`HISTORY_TOKEN_BUDGET` 退役。
+2. **messages 表只落 user 行与最后一条含文本 assistant 行**:ReAct 中间文本碎片(「我先查一下」类)与熔断回溯的重复答复不落库——场景 S 真机验收逮住回载出现两条 assistant 后收窄;工具行/纯工具调用行不落库为需求原文。
+3. **层 2 的「截短」是渲染规则、存储保持原文**(摘要批压的是原文);`split_layers` 的 NULL `layer1_from` 视为「从未降级」,层 1 从 summary_upto 之后起(防已摘要行回流层 1)。
+4. **conversations.updated_at 随每轮落库推进**(评审 I-2):侧栏「新在前」按活跃序浮顶,而非创建序;`store.append` 顺带 touch 会话行。
+5. **评审波修复(I-1/I-3)**:退款窄化指令的 `{order_id}` 占位符在拼入背景块前 format(ch06 重写时 format 丢失,字面量泄漏);`render_history_text` 的层 2 行补「用户:/客服:」角色前缀(与层 1 一致,护住指代消解)。
+6. **退役偏差**:`trim_history`/`history_to_messages` 的删除从计划 Task 3 推迟到评审修复波执行(过渡期 chat.py/agent.py 仍引用,为保持每个提交全绿);已完成。
+7. **记档**:层 2 渲染块因超滑窗被丢弃时,`history_text` 仍按未丢弃的行渲染(resolve 当轮看到的窗口略大于 agent,无害);model_ctx 的 tokens≈ 不计纯工具调用消息的参数(日志口径偏小);日志路径相对 CWD(约定仓库根启动);`TOOL_RESULT_MAX_TOKENS` 小于截断标记自身 token 数时截断反超(现实配置不可达)。

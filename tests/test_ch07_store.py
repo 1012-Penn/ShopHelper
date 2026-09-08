@@ -62,3 +62,16 @@ async def test_list_conversations_newest_first_with_preview_and_flag(db_store):
     assert [i["id"] for i in items][:2] == [s2, s1]  # 新在前
     assert items[0]["preview"] == "第二通的首问内容"
     assert items[0]["summarized"] is True and items[1]["summarized"] is False
+
+
+async def test_append_bumps_conversation_to_front(db_store):
+    """I-2 回归:updated_at 随落库推进,续聊的旧会话在侧栏上浮。"""
+    import time
+
+    s1 = await db_store.resolve(None)
+    time.sleep(2.1)  # SQLite CURRENT_TIMESTAMP 秒级精度,拉开时差
+    s2 = await db_store.resolve(None)
+    time.sleep(2.1)  # 保证续聊时间戳严格新于 s2 的创建时间
+    await db_store.append(s1, [{"role": "user", "content": "旧会话续聊"}])
+    items = await db_store.list_conversations()
+    assert [i["id"] for i in items][:2] == [s1, s2]  # 活跃的旧会话浮到最前

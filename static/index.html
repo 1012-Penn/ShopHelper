@@ -638,6 +638,7 @@ async function loadConversations() {
     const resp = await fetch("/api/conversations");
     if (!resp.ok) throw new Error(resp.status);
     renderConvList((await resp.json()).items || []);
+    sidebar.classList.remove("hidden");  // 自愈:瞬时失败恢复后侧栏重新可见
   } catch (e) {
     sidebar.classList.add("hidden");
   }

@@ -1,5 +1,8 @@
-"""token 估算与历史裁剪——纯函数,宁大勿小。"""
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+"""token 估算与历史消息还原——纯函数,宁大勿小。
+
+ch07 起「整条丢弃式裁剪」由三层上下文管理取代(见 app/context.py),trim_history 退役。
+"""
+from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
 
 def _is_wide(ch: str) -> bool:
@@ -17,24 +20,6 @@ def estimate_tokens(text: str) -> int:
     wide = sum(1 for ch in text if _is_wide(ch))
     narrow = len(text) - wide
     return wide + (narrow + 3) // 4
-
-
-def trim_history(messages: list[dict], budget: int) -> list[dict]:
-    """messages[0] 视为 System 永不裁剪;从最老的历史消息开始丢弃,直到预算内。
-
-    保留部分是历史的"最新连续后缀",保序。预算只计历史部分,不含 System。
-    """
-    system, history = messages[:1], messages[1:]
-    kept: list[dict] = []
-    total = 0
-    for msg in reversed(history):
-        cost = estimate_tokens(msg.get("content") or "")  # 纯工具调用消息 content 为空,不计费
-        if total + cost > budget:
-            break
-        kept.append(msg)
-        total += cost
-    kept.reverse()
-    return system + kept
 
 
 def rows_to_messages(rows: list[dict]) -> list:
@@ -58,8 +43,3 @@ def rows_to_messages(rows: list[dict]) -> list:
             messages.append(ToolMessage(content=m.get("content") or "",
                                         tool_call_id=m.get("tool_call_id") or "", id=mid))
     return messages
-
-
-def history_to_messages(history: list[dict]) -> list:
-    """旧接口(ch05):不带 id 版还原;Task 5 管线重接线后退役。"""
-    return rows_to_messages([{**m, "id": None} for m in history])

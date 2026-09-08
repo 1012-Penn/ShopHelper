@@ -153,8 +153,20 @@ def build_layered(l1_rows: list[dict], l2_rows: list[dict], summary_text: str | 
 
 def render_history_text(summary_text: str | None, l2_rows: list[dict],
                         l1_rows: list[dict], head_chars: int) -> str:
-    """resolve/意图等前置节点的历史文本:摘要行 + 滑窗(层 2 半压、层 1 原文)。"""
-    lines = [ln for r in l2_rows if (ln := _layer2_line(r, head_chars)) is not None]
+    """resolve/意图等前置节点的历史文本:摘要行 + 滑窗(层 2 半压、层 1 原文)。
+
+    层 2 与层 1 行同套「用户:/客服:」角色前缀(I-3:层 2 丢角色会削弱指代消解);
+    tool 残留行的标识不带前缀。
+    """
+    lines = []
+    for r in l2_rows:
+        ln = _layer2_line(r, head_chars)
+        if ln is None:
+            continue
+        if r["role"] in _ROLE_ZH:
+            lines.append(f"{_ROLE_ZH[r['role']]}:{ln}")
+        else:
+            lines.append(ln)
     lines += [f"{_ROLE_ZH.get(r['role'], r['role'])}:{r.get('content')}" for r in l1_rows
               if r.get("content")]
     return (f"【早期对话梗概】{summary_text or '(无)'}\n"

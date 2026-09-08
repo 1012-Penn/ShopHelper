@@ -1,11 +1,12 @@
 """ch07 真机验收脚本:对运行中的服务跑脚本化多轮对话,并对 logs/app.log 做断言。
 
-用法:.venv/bin/python scripts/acceptance_ch07.py --scenario a|b|trap
+用法:.venv/bin/python scripts/acceptance_ch07.py --scenario a|b|trap|s
   a    默认配置:连聊 22 轮,断言无降级/无摘要、无错误帧(验收 1+3)
   b    演示配置:埋单号锚点→长消息逼级联→断言 层1 降级/summary trigger/summary done;
        再问「最开始那个订单后来怎么说」断言答出订单号(验收 2);记录触发轮 done 与
        summary done 的时间先后(验收 4 非阻塞证据)
   trap 只调 MODEL_CONTEXT_WINDOW=18000 启动,断言启动自检报「上下文预算不足」(验收 2 的陷阱复核)
+  s    多会话侧栏 HTTP 级验收(验收 5;浏览器视觉终验留用户本地)
 证据统一追加写入 reports/ch07-acceptance.md。
 """
 import argparse
@@ -144,8 +145,12 @@ async def scenario_b(report: list) -> None:
                 trigger_turn_secs = turn_secs
                 break
         assert trigger_seen, "25 轮内未触发摘要"
-        trigger_line = next(_ln for _ln in _full_log().splitlines()
+        _all = _full_log()
+        trigger_line = next(_ln for _ln in _all.splitlines()
                             if "summary trigger" in _ln and f"session={sid} " in _ln)
+        degrade_line = next((_ln for _ln in _all.splitlines()
+                             if "层1 降级" in _ln and f"session={sid} " in _ln), None)
+        assert degrade_line, "未见层1 降级行(级联第一步缺失)"
 
         # 等后台摘要落成:全文件轮询(摘要往往在触发轮流式结束前就完成,增量读会错过)
         summary_done_line = None
@@ -184,6 +189,7 @@ async def scenario_b(report: list) -> None:
                f"- 非阻塞证据:触发轮整体耗时 {trigger_turn_secs:.1f}s,摘要任务与该轮流式并行完成;"
                f"触发行与完成行时间戳见下",
                "", "关键日志行:", "", "```",
+               degrade_line.strip(),
                trigger_line.strip(),
                summary_done_line.strip(),
                *[_ln for _ln in _full_log().splitlines() if "[model_ctx]" in _ln][-2:],

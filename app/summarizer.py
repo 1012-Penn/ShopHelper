@@ -29,7 +29,7 @@ def _render_batch(rows: list[dict]) -> str:
 class SummaryService:
     """每会话至多一个在飞任务;任务引用挂在 self._tasks 防 GC;进程关停未完成的下轮重触发(锚点单调幂等)。"""
 
-    def __init__(self, store, model, settings) -> None:
+    def __init__(self, store, model) -> None:
         self._store = store
         self._model = model
         self._inflight: set[int] = set()

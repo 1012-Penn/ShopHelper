@@ -75,10 +75,10 @@ async def test_empty_message_rejected_422(make_client):
     assert resp.status_code == 422
 
 
-def test_history_to_messages_restores_tool_trace():
+def test_rows_to_messages_restores_tool_trace():
     from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
 
-    from app.history import history_to_messages
+    from app.history import rows_to_messages
 
     history = [
         {"role": "user", "content": "旧问", "tool_calls": None, "tool_call_id": None},
@@ -88,7 +88,7 @@ def test_history_to_messages_restores_tool_trace():
         {"role": "tool", "content": '{"order_id": "1"}', "tool_calls": None, "tool_call_id": "c1"},
         {"role": "assistant", "content": "旧答", "tool_calls": None, "tool_call_id": None},
     ]
-    msgs = history_to_messages(history)
+    msgs = rows_to_messages(history)
     assert isinstance(msgs[0], HumanMessage)
     assert isinstance(msgs[1], AIMessage) and msgs[1].tool_calls[0]["id"] == "c1"
     assert isinstance(msgs[2], ToolMessage) and msgs[2].tool_call_id == "c1"

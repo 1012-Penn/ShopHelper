@@ -1,5 +1,5 @@
 """MySQL 会话存储:conversations/messages 表承载多轮上下文与工具轨迹。"""
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.orm import sessionmaker
 
 from app.models import Conversation, ConversationSummary, Message
@@ -47,6 +47,11 @@ class ConversationStore:
                     tool_calls=m.get("tool_calls"),
                     tool_call_id=m.get("tool_call_id"),
                 ))
+            # 触碰会话行推进 updated_at:侧栏「新在前」按活跃序浮顶,而非创建序(I-2)
+            if msgs:
+                session.execute(
+                    update(Conversation).where(Conversation.id == conversation_id)
+                    .values(updated_at=func.now()))
             session.commit()
 
     # ---- ch07:分层上下文——行带 id、锚点读写、分段摘要 ----
@@ -86,9 +91,11 @@ class ConversationStore:
                     "summary_seqs": int(seqs or 0)}
 
     async def set_layer1_from(self, conversation_id: int, msg_id: int | None) -> None:
-        """级联降级只挪锚点,不搬数据。"""
+        """级联降级只挪锚点,不搬数据;会话行不存在时静默返回(与 get_anchors 防御对称)。"""
         with self._factory() as session:
             conv = session.get(Conversation, conversation_id)
+            if conv is None:
+                return
             conv.layer1_from_msg_id = msg_id
             session.commit()
 

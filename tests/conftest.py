@@ -55,6 +55,12 @@ async def make_client():
         app.state.session_factory = factory
         app.state.store = ConversationStore(factory)
         app.state.pool = LowConfidencePool(factory)
+        # store 被替换,摘要服务必须随之重建(M-2):否则它仍持 create_app 时的 MySQL factory
+        from app.llm import make_extract_model
+        from app.summarizer import SummaryService
+
+        app.state.summary_service = SummaryService(
+            app.state.store, make_extract_model(app.state.settings))
         vectors_stub = FakeVectorStore()
         app.state.vectors = vectors_stub
         app.state.registry = ToolRegistry(build_tools(

@@ -47,6 +47,8 @@ async def test_narrowing_injects_order_and_instruction():
     assert "【订单数据】" in bg and "无线耳机" in bg
     assert "能不能退" in bg and "1001" in bg
     assert "【参考知识】" in bg and "退货条件" in bg  # 证据块进背景块
+    # I-1 回归:{order_id} 占位符必须已 format,字面量不得泄漏
+    assert "判断这一单(订单1001)能不能退" in bg and "{order_id}" not in bg
     assert out["final_reply"] == "这一单可以退。"
 
 
