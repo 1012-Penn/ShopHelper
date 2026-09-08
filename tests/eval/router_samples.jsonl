@@ -1,0 +1,8 @@
+{"id": "R01", "tag": "多轮切换", "turns": [{"user": "订单1001的物流到哪了", "expect_intent": "物流"}, {"user": "它能退吗", "expect_intent": "退款退货", "expect_resolved": "订单1001的无线耳机能退吗"}, {"user": "那现在到哪个城市了", "expect_intent": "物流", "expect_resolved": "订单1001的物流现在到哪个城市了"}]}
+{"id": "R02", "tag": "多轮切换", "turns": [{"user": "SH-E300多少钱", "expect_intent": "商品咨询"}, {"user": "这个能退吗", "expect_intent": "退款退货", "expect_resolved": "SH-E300能退吗"}, {"user": "多久能发货", "expect_intent": "商品咨询", "expect_resolved": "SH-E300多久能发货"}]}
+{"id": "R03", "tag": "指代", "turns": [{"user": "你们的退货政策是怎样的", "expect_intent": "退款退货"}, {"user": "上面说的时效是多久", "expect_intent": "退款退货", "expect_resolved": "退货政策里说的时效是多久"}]}
+{"id": "R04", "tag": "口语", "turns": [{"user": "咋把钱整回来啊", "expect_intent": "退款退货"}, {"user": "东西咋还没到啊", "expect_intent": "物流"}]}
+{"id": "R05", "tag": "边界", "turns": [{"user": "东西坏了想退钱", "expect_intent": "退款退货"}, {"user": "东西坏了想换个新的", "expect_intent": "售后"}, {"user": "我要投诉你们", "expect_intent": "投诉"}, {"user": "帮我看看订单1002什么状态", "expect_intent": "订单"}]}
+{"id": "R06", "tag": "边界", "turns": [{"user": "你们什么态度啊我要个说法", "expect_intent": "投诉"}, {"user": "哈哈你们客服真逗", "expect_intent": "闲聊"}]}
+{"id": "R07", "tag": "怪问题", "turns": [{"user": "量子力学怎么解释", "expect_intent": "其他"}, {"user": "你会写诗吗", "expect_intent": "其他"}, {"user": "明天股票会涨吗", "expect_intent": "其他"}]}
+{"id": "R08", "tag": "七类", "turns": [{"user": "耳机怎么安装", "expect_intent": "售后"}, {"user": "发票怎么开", "expect_intent": "商品咨询"}, {"user": "你好呀", "expect_intent": "闲聊"}]}
