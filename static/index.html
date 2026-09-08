@@ -335,6 +335,8 @@ function addResolvedNote(bubble, question) {
   scrollDown();
 }
 function renderOrderSelector(bubble, evt) {
+  const content = bubble.querySelector(".content");
+  if (content) content.textContent = "";
   const bar = document.createElement("div");
   bar.className = "order-bar";
   for (const o of evt.items || []) {
@@ -530,7 +532,9 @@ async function streamChat(payload, bubble) {
       bubble.querySelector(".content").textContent = "(空回复)";
     if (!bubble.classList.contains("error")) {
       renderCitations(bubble, citations);
-      addFeedback(bubble);
+      if (!bubble.querySelector(".order-bar")) {
+        addFeedback(bubble);
+      }
     }
   }
 }

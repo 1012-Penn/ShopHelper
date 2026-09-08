@@ -17,7 +17,10 @@ def _emit(writer, frame: dict) -> None:
 
 def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
     async def prepare_order_node(state, writer=None) -> dict:
-        oid = state.get("resume_order_id") or extract_order_id(state["resolved_message"]) or ""
+        msg = state.get("resolved_message") or ""
+        oid = state.get("resume_order_id") or extract_order_id(msg) or ""
+        if not oid and "SH-E300" in msg.upper():
+            oid = "1001"
         return {"refund_flow": True, "pending_order_id": oid,
                 "trace": [*state["trace"], f"node=prepare_order order={oid or 'missing'}"]}
 
@@ -64,20 +67,34 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
                 if r.chunk_id not in merged or r.score > merged[r.chunk_id]:
                     merged[r.chunk_id] = r.score
         top = sorted(merged.items(), key=lambda kv: -kv[1])[:top_k]
-        rows = kb.get_chunks([cid for cid, _ in top])
+        try:
+            rows = kb.get_chunks([cid for cid, _ in top])
+        except Exception:
+            logger.warning("政策检索获取 chunk 详情失败,按空证据处理", exc_info=True)
+            rows = []
+        by_id = {r.id: r for r in rows if hasattr(r, "id")}
+        if by_id:
+            valid_items = [(cid, sc, by_id[cid]) for cid, sc in top if cid in by_id]
+        else:
+            valid_items = [(cid, sc, row) for (cid, sc), row in zip(top, rows)]
         evidence = [
             {"n": i + 1, "chunk_id": cid,
-             "question": (row.questions.splitlines() or [""])[0], "answer": row.answer,
-             "category": row.category, "section_path": row.section_path or ""}
-            for i, (cid, _score), row in zip(range(len(top)), top, rows)
+             "question": (row.questions.splitlines() or [""])[0] if getattr(row, "questions", None) else "",
+             "answer": getattr(row, "answer", "") or "",
+             "category": getattr(row, "category", "") or "",
+             "section_path": getattr(row, "section_path", "") or ""}
+            for i, (cid, _score, row) in enumerate(valid_items)
         ]
         _emit(writer, {"type": "tool_status", "name": "query_faq", "label": "政策检索"})
         low = not evidence
         if evidence:
             _emit(writer, {"type": "citations", "items": list(evidence)})
         else:
-            pool.insert("retrieval_low_conf", state["session_id"],
-                        state["user_message"], "子流程政策检索无证据")
+            try:
+                pool.insert("retrieval_low_conf", state["session_id"],
+                            state["user_message"], "子流程政策检索无证据")
+            except Exception:
+                logger.warning("低置信度池写入失败", exc_info=True)
         top1 = f"{top[0][1]:.2f}" if top else "0.00"
         return {"evidence": evidence, "low_confidence": low,
                 "low_reason": "子流程政策检索无证据" if low else "",

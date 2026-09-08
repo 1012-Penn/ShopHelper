@@ -147,3 +147,53 @@ async def test_policy_retrieve_empty_evidence_lands_pool():
     out = await retrieve(_state(expand_queries=["无人问津的问题"]), writer=None)
     assert out["evidence"] == [] and out["low_confidence"] is True
     assert pool.inserted and pool.inserted[0][0] == "retrieval_low_conf"
+
+
+async def test_policy_retrieve_kb_error_graceful_fallback():
+    class BrokenKB:
+        def get_chunks(self, ids):
+            raise RuntimeError("数据库连不上了")
+
+    mapping = {"无线耳机退货条件": [(11, 0.9)]}
+    service = StubService(mapping)
+    pool = StubPool()
+    from app.prompts import ExpandedQueries
+    expander = StubExtractModel(result=ExpandedQueries(queries=["无线耳机退货条件"]))
+    (prep, ask, fetch, expand, retrieve) = make_refund_nodes(expander, service, BrokenKB(), pool, top_k=3)
+    out = await retrieve(_state(expand_queries=["无线耳机退货条件"]), writer=None)
+    assert out["evidence"] == []
+    assert out["low_confidence"] is True
+    assert pool.inserted and pool.inserted[0][0] == "retrieval_low_conf"
+
+
+async def test_policy_retrieve_partial_chunks_aligned():
+    """当检索出的 chunk 某一行在 DB 中缺失时,其余行应按 id 精准对齐而非按索引错位。"""
+    class PartialKB:
+        def get_chunks(self, ids):
+            # 只有 11 和 14 存在,13 缺失
+            rows = []
+            for cid in ids:
+                if cid != 13:
+                    rows.append(type("Row", (), {
+                        "id": cid,
+                        "questions": f"问题{cid}\n变体",
+                        "answer": f"答案{cid}",
+                        "category": "退货政策",
+                        "section_path": f"退货政策.md > 节{cid}",
+                    })())
+            return rows
+
+    mapping = {"无线耳机退货条件": [(11, 0.9)],
+               "七天无理由时效": [(13, 0.85)],
+               "耳机类特殊品类限制": [(14, 0.6)]}
+    service = StubService(mapping)
+    pool = StubPool()
+    from app.prompts import ExpandedQueries
+    expander = StubExtractModel(result=ExpandedQueries(queries=list(mapping.keys())))
+    (prep, ask, fetch, expand, retrieve) = make_refund_nodes(expander, service, PartialKB(), pool, top_k=3)
+    out = await retrieve(_state(expand_queries=list(mapping.keys())), writer=None)
+    # 13 缺失,剩余 11 和 14;14 必须对齐到 chunk_id=14,不能错位对齐到 13
+    assert [e["chunk_id"] for e in out["evidence"]] == [11, 14]
+    assert out["evidence"][0]["answer"] == "答案11"
+    assert out["evidence"][1]["answer"] == "答案14"
+    assert [e["n"] for e in out["evidence"]] == [1, 2]

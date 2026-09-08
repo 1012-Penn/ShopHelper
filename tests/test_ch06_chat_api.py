@@ -77,3 +77,12 @@ async def test_resume_invalid_order_id_422(make_client):
     resp = await client.post("/api/chat", json={
         "message": "x", "resume": {"order_id": "abc", "question": "q"}})
     assert resp.status_code == 422
+
+
+def test_initial_state_supports_dict_resume():
+    from app.graph.builder import initial_state
+
+    st = initial_state(1, "帮我退货", [], resume={"order_id": "1002", "question": "机械键盘能退吗", "intent": "退款退货"})
+    assert st["resume_order_id"] == "1002"
+    assert st["resume_question"] == "机械键盘能退吗"
+    assert st["intent"] == "退款退货"

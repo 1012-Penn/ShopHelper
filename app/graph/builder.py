@@ -105,15 +105,25 @@ def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *
 
 def initial_state(session_id: int, user_message: str, history: list, resume=None) -> dict:
     """路由层每回合注入的全量默认值:防 checkpointer 上一回合残留字段(如 evidence)泄漏;
-    resume 非空时携带选择器点选回传的槽位。"""
+    resume 非空时携带选择器点选回传的槽位(兼容对象与 dict)。"""
+    resume_order_id = getattr(resume, "order_id", None) if resume else ""
+    if not resume_order_id and isinstance(resume, dict):
+        resume_order_id = resume.get("order_id", "")
+    resume_question = getattr(resume, "question", None) if resume else ""
+    if not resume_question and isinstance(resume, dict):
+        resume_question = resume.get("question", "")
+    resume_intent = getattr(resume, "intent", None) if resume else ""
+    if not resume_intent and isinstance(resume, dict):
+        resume_intent = resume.get("intent", "")
+
     return {"session_id": session_id, "user_message": user_message, "resolved_message": "",
-            "intent": resume.intent if resume else "", "intent_confidence": 0.0,
+            "intent": resume_intent, "intent_confidence": 0.0,
             "evidence": [], "low_confidence": False,
             "low_reason": "", "gate_passed": False, "agent_steps": 0, "final_reply": "",
             "suggested_actions": [], "trace": [], "messages": [], "history": history,
             "order": {}, "expand_queries": [], "refund_flow": False,
-            "pending_order_id": "", "resume_order_id": resume.order_id if resume else "",
-            "resume_question": resume.question if resume else ""}
+            "pending_order_id": "", "resume_order_id": resume_order_id,
+            "resume_question": resume_question}
 
 
 def make_retrieval_chain(session_factory, settings):

@@ -1,6 +1,7 @@
 """入口节点:指代消解+改写(ch06 正式版,带 resume 旁路)+ 意图识别(四件套,置信度+降级路)+ 写死分流。"""
 import json
 import logging
+import math
 import re
 
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -24,7 +25,9 @@ _ROLE_ZH = {"user": "用户", "assistant": "客服"}
 
 def parse_intent(raw: str) -> tuple[str, float, bool]:
     """裸 JSON 契约的宽松解析:剥代码围栏 → json.loads → 枚举校验;畸形/超纲归其他(malformed=true)。"""
-    text = (raw or "").strip()
+    if isinstance(raw, list):
+        raw = "".join(b.get("text", "") if isinstance(b, dict) else str(b) for b in raw)
+    text = (str(raw) if raw is not None else "").strip()
     m = _FENCE_RE.match(text)
     if m:
         text = m.group(1)
@@ -37,6 +40,8 @@ def parse_intent(raw: str) -> tuple[str, float, bool]:
         return INTENT_FALLBACK, 0.0, True
     try:
         conf = float(obj.get("confidence", 0.0))
+        if math.isnan(conf) or math.isinf(conf):
+            conf = 0.0
     except (TypeError, ValueError):
         conf = 0.0
     return intent, min(max(conf, 0.0), 1.0), False
@@ -68,10 +73,15 @@ def make_resolve_node(resolver):
                                       query=state["user_message"]))
         except Exception:
             logger.warning("resolve 上游失败,原样透传", exc_info=True)
-        resolved = str(getattr(result, "resolved", "") or "").strip()
+        if isinstance(result, dict):
+            resolved = str(result.get("resolved") or "").strip()
+            changed_raw = result.get("changed", False)
+        else:
+            resolved = str(getattr(result, "resolved", "") or "").strip()
+            changed_raw = getattr(result, "changed", False)
         if not resolved:
             resolved = state["user_message"]
-        changed = bool(getattr(result, "changed", False)) and resolved != state["user_message"]
+        changed = bool(changed_raw) and resolved != state["user_message"]
         if changed:
             _emit(writer, {"type": "resolved", "changed": True, "question": resolved})
         return {"resolved_message": resolved,
@@ -86,18 +96,31 @@ def make_intent_node(model, escalator=None, floor: float = 0.6):
     async def intent_node(state) -> dict:
         messages = [SystemMessage(content=INTENT_PROMPT),
                     HumanMessage(content=state["resolved_message"])]
-        resp = await model.ainvoke(messages)
-        intent, conf, malformed = parse_intent(getattr(resp, "content", ""))
         escalated = False
-        if escalator is not None and conf < floor:
-            resp2 = await escalator.ainvoke(messages)
-            intent, conf, malformed = parse_intent(getattr(resp2, "content", ""))
-            escalated = True
+        upstream_error = False
+        try:
+            resp = await model.ainvoke(messages)
+            intent, conf, malformed = parse_intent(getattr(resp, "content", ""))
+        except Exception:
+            logger.warning("intent 上游调用失败,降级为兜底意图", exc_info=True)
+            intent, conf, malformed = INTENT_FALLBACK, 0.0, True
+            upstream_error = True
+
+        if escalator is not None and conf < floor and not upstream_error:
+            try:
+                resp2 = await escalator.ainvoke(messages)
+                intent, conf, malformed = parse_intent(getattr(resp2, "content", ""))
+                escalated = True
+            except Exception:
+                logger.warning("intent escalator 上游调用失败,保留初次判定", exc_info=True)
+
         line = f"node=intent intent={intent} confidence={conf:.2f}"
         if escalated:
             line += " escalated=true"
         if malformed:
             line += " malformed=true"
+        if upstream_error:
+            line += " upstream_error=true"
         return {"intent": intent, "intent_confidence": conf,
                 "trace": [*state["trace"], line]}
 

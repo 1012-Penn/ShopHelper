@@ -109,3 +109,37 @@ def test_route_other_and_unchanged_outlets():
                            ("投诉", "complaint"), ("闲聊", "chitchat")]:
         assert route(_state(intent=intent)) == expect
     assert INTENT_FALLBACK == "其他"
+
+
+async def test_intent_llm_error_falls_back_other():
+    class BoomModel:
+        async def ainvoke(self, messages, **kwargs):
+            raise RuntimeError("意图模型上游挂了")
+
+    node = make_intent_node(BoomModel())
+    out = await node(_state())
+    assert out["intent"] == "其他" and out["intent_confidence"] == 0.0
+    assert "malformed=true" in out["trace"][-1]
+    assert "upstream_error=true" in out["trace"][-1]
+
+
+async def test_intent_escalator_llm_error_keeps_primary():
+    small = fake_chat('{"intent": "商品咨询", "confidence": 0.3}')
+
+    class BoomModel:
+        async def ainvoke(self, messages, **kwargs):
+            raise RuntimeError("大模型重判挂了")
+
+    node = make_intent_node(small, escalator=BoomModel(), floor=0.6)
+    out = await node(_state())
+    assert out["intent"] == "商品咨询" and out["intent_confidence"] == 0.3
+
+
+async def test_resolve_dict_output_supported():
+    class DictResolver:
+        async def ainvoke(self, text):
+            return {"resolved": "订单1001的无线耳机能退吗", "changed": True}
+
+    node = make_resolve_node(DictResolver())
+    out = await node(_state(), writer=None)
+    assert out["resolved_message"] == "订单1001的无线耳机能退吗"
