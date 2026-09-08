@@ -1,6 +1,6 @@
 # ShopHelper
 
-电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写。
+电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写;ch06 分流器正式版:LLM 指代消解+Query 改写(已完整原样透传)、意图识别四件套(七类+其他枚举/JSON intent+confidence/边界 few-shot/置信度与可选小→大降级路)、退款售后确定性子流程(槽位检查→订单数据→Query 扩写→多路政策检索去重合并→窄化「这一单能不能退」交主力 Agent)、订单选择器(SSE 帧下发可点订单卡,点选无状态回传续走)与退款单表单(固定原因类目,复用工单链路)。
 
 ## 环境要求
 
@@ -103,6 +103,20 @@ docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character
 
 祛魅热身(不依赖 LangGraph 的裸 Agent 循环):`.venv/bin/python -m scripts.naive_agent "订单1001的物流到哪了"`。
 
+ch06 四条验收(服务启动后逐条打;路由评估:`.venv/bin/python scripts/eval_router.py` 真模型跑,报告落 `reports/ch06-router-report.md`):
+
+1. **多轮来回切意图全对、指代全补对**:评估报告——意图准确率 21/22(95.5%),多轮切换桶 6/6(物流→退款退货→物流逐轮全对),指代消解关键词口径 5/5;
+2. **意图 JSON 稳定可解析、怪问题落「其他」**:畸形率 0/22(宽松解析+兜底类单测 7 个);「量子力学怎么解释」「明天股票会涨吗」→其他(「你会写诗吗」→闲聊,非业务出口口径边缘个案,记档);
+3. **「这个能退吗」先补全指代、再走子流程**:先问「SH-E300 多少钱」再问「这个能退吗」→ 气泡灰字「已理解:SH-E300…能退吗」(resolved 帧)→ 因无订单号弹**订单选择器** → 点选订单卡后子流程续走:徽章链 订单查询→查询扩写→政策检索,答案带 [n] 角标;服务日志 `node=resolve changed=True → node=intent intent=退款退货 → node=prepare_order → node=fetch_order → node=expand → node=policy_retrieve → node=agent`;
+4. **不带订单号问退款弹选择器、点选走完 + 退款单**:新会话直接问「这个能退吗」→ 三张订单卡(单号/商品/金额/状态),点选后自动回填、流程接着走;判定可退后点「申请退款」→ 表单(原因固定六类下拉+备注)→ 提交写 tickets 表:
+
+```bash
+docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper \
+  -e "SELECT ticket_no, ticket_type, description FROM tickets ORDER BY created_at DESC LIMIT 1"
+```
+
+真机验收证据:`reports/ch06-acceptance.md`。
+
 ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。ch04 评估脚本继续可用(注意 ch05 图内检索与 query_faq 工具同链)。
 
 ## 已知边界
@@ -115,6 +129,7 @@ ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收�
 - query_order / query_product / query_logistics 为工具内 mock 随机数据,不接真实电商/物流 API。
 - 多轮 Agent Loop、用户体系不做(ch02 边界延续)。
 - ch05:意图识别/指代消解是最简版(简单 prompt / 原样透传),判错意图即走错出口(如「发货时间」被判「订单」),正式版后置;InMemorySaver 进程内无界增长,重启即清;同一会话并发请求共用 thread,无会话锁;ReAct 中间思考文本对用户可见(祛魅主题下如实呈现);沙箱无浏览器后端,前端按钮视觉终验由用户本地点开页面确认(SSE 帧/工单接口已 curl 验证)。
+- ch06:订单为固定 mock 三单(`app/orders.py`,未知单号走「未找到」话术);被搁置的选择器旧卡片仍可点,点选视作对该订单重新发起退款咨询(语义合理不设过期);意图降级路(小→大)已实现默认关(`INTENT_ESCALATION_ENABLED=true` 开启,需配 `INTENT_SMALL_MODEL`);评估怪问题桶 2/3(「你会写诗吗」判闲聊,未硬塞业务意图,口径边缘);商品名(如 SH-E300)不绑定具体订单,退款一律经订单选择器确认。
 
 API 契约细节见
 `docs/superpowers/specs/2026-09-04-ch01-pure-chat-design.md`、
