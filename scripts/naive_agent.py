@@ -14,17 +14,21 @@ from app.tools.builtin import build_default_registry
 from app.tools.engine import ToolEngine
 
 
-async def naive_agent_loop(model, tools, question: str, max_steps: int = 10) -> str:
-    """核心就这十几行:LLM 返回 tool_calls 就执行并喂回去,返回纯文本就收敛。"""
-    messages = [HumanMessage(content=question)]
-    registry = build_default_registry(None)
+def make_engine():
+    """内置注册表 + SQLite 内存审计库(演示脚本,无 MySQL 依赖)。"""
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
     from app.models import Base
 
     sqlite_engine = create_engine("sqlite:///:memory:")
     Base.metadata.create_all(sqlite_engine)
-    engine = ToolEngine(registry, ToolAuditStore(sessionmaker(bind=sqlite_engine)))
+    registry = build_default_registry(None)
+    return ToolEngine(registry, ToolAuditStore(sessionmaker(bind=sqlite_engine)))
+
+
+async def naive_agent_loop(model, engine, question: str, max_steps: int = 10) -> str:
+    """核心就这十几行:LLM 返回 tool_calls 就执行并喂回去,返回纯文本就收敛。"""
+    messages = [HumanMessage(content=question)]
     for _ in range(max_steps):
         resp = await model.ainvoke(messages)
         if not resp.tool_calls:
@@ -37,14 +41,12 @@ async def naive_agent_loop(model, tools, question: str, max_steps: int = 10) -> 
 
 
 async def main() -> None:
-    from app.tools.definitions import build_tools
-
     settings = Settings()
-    tools = build_tools(None)
-    model = make_chat_model(settings).bind_tools(tools)
+    engine = make_engine()
+    model = make_chat_model(settings).bind_tools(engine.registry.bind_tools())
     question = " ".join(sys.argv[1:]) or "订单 1001 的物流到哪了"
     print(f"[user] {question}")
-    print(f"[agent] {await naive_agent_loop(model, tools, question)}")
+    print(f"[agent] {await naive_agent_loop(model, engine, question)}")
 
 
 if __name__ == "__main__":

@@ -463,28 +463,37 @@ function renderTicketPreview(bubble, evt) {
       } else {
         status.textContent = "提交失败";
         card.querySelector(".t-confirm").disabled = false;
+        card.querySelector(".t-cancel").disabled = false;  // 失败后允许改选取消
       }
     } catch (e) {
       status.textContent = "提交失败";
       card.querySelector(".t-confirm").disabled = false;
+      card.querySelector(".t-cancel").disabled = false;
     }
   };
   card.querySelector(".t-cancel").onclick = async () => {
     card.querySelector(".t-confirm").disabled = true;
     card.querySelector(".t-cancel").disabled = true;
+    let cancelled = false;
     try {
-      await fetch("/api/tickets/cancel", {
+      const resp = await fetch("/api/tickets/cancel", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_id: state.sessionId, reason: "用户取消确认" }),
       });
+      cancelled = resp.ok;   // 服务端审计落行成功才算取消完成
     } catch (e) {}
     const sys = document.createElement("div");
     sys.className = "sys-row";
     const msg = document.createElement("span");
     msg.className = "sys-msg";
-    msg.textContent = "已取消,未创建工单";
+    msg.textContent = cancelled ? "已取消,未创建工单" : "取消失败,请重试";
     sys.appendChild(msg);
     log.appendChild(sys);
+    if (cancelled) {
+      card.querySelector(".t-confirm").disabled = true;
+    } else {
+      card.querySelector(".t-cancel").disabled = false;  // 取消失败恢复,可重试
+    }
     scrollDown(true);
   };
   bubble.appendChild(card);

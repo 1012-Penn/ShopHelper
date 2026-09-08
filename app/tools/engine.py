@@ -28,7 +28,12 @@ RESULT_SUMMARY_MAX = 500
 
 
 def format_result(raw) -> str:
-    """结果格式化:MCP 内容块列表取 text 拼接;str 原样;其余 JSON 序列化中文不转义。"""
+    """结果格式化:MCP 内容块列表取 text 拼接;str 原样;其余 JSON 序列化中文不转义。
+
+    adapters 0.3.x 的 MCP 工具 ainvoke 返回 (content, artifact) 二元组——解包取内容。
+    """
+    if isinstance(raw, tuple) and len(raw) == 2:
+        raw = raw[0]
     if isinstance(raw, str):
         return raw
     if isinstance(raw, list):
@@ -65,9 +70,13 @@ class ToolEngine:
                                        confirmed=confirmed)
         except Exception as exc:  # 兜底:任何漏网异常(如 BaseExceptionGroup)不炸图
             logger.error("工具 %s 执行出现未预期异常:%s", name, exc, exc_info=True)
+            record = self.registry.get(name)
             try:
-                self.audit.log(tool_name=name, tool_source="builtin", status="失败",
-                               conversation_id=conversation_id, tool_call_id=tool_call_id,
+                self.audit.log(tool_name=name,
+                               tool_source=record.source if record else "builtin",
+                               mcp_server=record.mcp_server if record else None,
+                               status="失败", conversation_id=conversation_id,
+                               tool_call_id=tool_call_id,
                                error_message=f"未预期异常:{exc}"[:512])
             except Exception:
                 logger.warning("审计写入失败(不拦工具执行):%s", name, exc_info=True)

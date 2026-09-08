@@ -100,3 +100,11 @@ ORM `ToolAuditLog`(SQLite 方言兼容);`ToolAuditStore(factory).log(...)` 同�
 ## 实现期偏差
 
 (实现期回填)
+
+1. **建工单确认机制为无状态回传而非 LangGraph interrupt**:spike 实测(2026-09-08,langgraph 1.2.11 + py3.10)async 上下文 `interrupt()` 仍触发 `RuntimeError: Called get_config outside of a runnable context`(ch06 同款官方守卫);功能语义(预览→确认→放行/取消)经订单选择器同款帧回传完整保留。
+2. **未注册的工具名不落审计**:DDL 的 tool_source 枚举(builtin/mcp)无中立值,模型幻觉出的未注册名无工具实体可归属,只回灌错误文本不落行。
+3. **MCP 型工具 args_schema 为原始 JSON Schema dict**(adapters 0.3.x),ToolRecord.json_schema 兼容 dict/pydantic 两形态;真机首验曾因对 dict 调 model_json_schema() 崩溃整轮(error 帧、审计缺行),回归测试覆盖。
+4. **确认通道收口(I-4)**:POST /api/tickets/confirm 仅放行「已注册且 access=write」的工具(422 拒绝读工具/未注册名);非 create_ticket 工具执行失败映射 502;引擎最外层兜底的审计按注册表真实 source/mcp_server 归属(查不到才退 builtin)。
+5. **McpService.sync 增强**:TTL 只在成功同步后起算(失败下轮立即重试);单次发现包 asyncio.wait_for 5s 上界(半死 Server 不拖死聊天轮);失败保留既有注册不做删除性同步;get_tools 连续 3 次失败才告警跳过。
+6. **插件钩子签名为 register(registry, ctx)**(计划文本写作 register(ctx),以实现为准);插件 register() 抛异常时 warn 跳过,不炸启动。
+7. **query_order 描述消歧**:与 logistics_tracker 并存后,描述明确「不含物流轨迹」,避免模型误选(验收 2 实测)。

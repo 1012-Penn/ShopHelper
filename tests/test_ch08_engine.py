@@ -224,3 +224,38 @@ async def test_mcp_dict_schema_tool_executes(db_session_factory):
     out = await engine.execute("mcp_like", "{}")
     (row,) = [_r for _r in _rows(db_session_factory)][-1:]
     assert row.status == "校验拦下"
+
+
+async def test_transient_connection_error_retries_then_succeeds(db_session_factory):
+    """连接类异常属暂时性故障:首次失败重试后成功,审计「成功」retry_count=1。"""
+    calls = []
+
+    def _flaky(order_id: str) -> str:
+        calls.append(1)
+        if len(calls) == 1:
+            raise ConnectionError("网络抖了一下")
+        return "已重连"
+
+    rec = _rec("flaky_read", _flaky)
+    engine = _engine(db_session_factory, [rec], retries=1)
+    out = await engine.execute("flaky_read", json.dumps({"order_id": "1"}))
+    assert out == "已重连" and len(calls) == 2
+    (row,) = _rows(db_session_factory)
+    assert row.status == "成功" and row.retry_count == 1
+
+
+async def test_persistent_connection_error_exhausts_retry_as_failure(db_session_factory):
+    """连接类异常重试耗尽 → 审计「失败」retry_count=重试次数。"""
+    calls = []
+
+    def _down(order_id: str) -> str:
+        calls.append(1)
+        raise ConnectionError("对端拒绝")
+
+    rec = _rec("down_read", _down)
+    engine = _engine(db_session_factory, [rec], retries=1)
+    out = await engine.execute("down_read", json.dumps({"order_id": "1"}))
+    assert len(calls) == 2
+    (row,) = _rows(db_session_factory)
+    assert row.status == "失败" and row.retry_count == 1
+    assert "错误" in out

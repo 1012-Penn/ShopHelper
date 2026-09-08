@@ -73,8 +73,28 @@ async def test_confirm_404_unknown_conversation(make_client):
 
 async def test_mcp_unavailable_degrades_gracefully(make_client):
     """测试环境不接 MCP(sync 空实现):聊天照常,内置工具可用。"""
-    model = _model('{"intent": "其他"}')
     model = _model([("text", "内置工具照常可用。")])
     client, app = await make_client(model)
     events = await post_chat_sse(client, {"message": "你好"})
     assert events[-1]["type"] == "done"
+
+
+async def test_confirm_rejects_read_or_unknown_tools(make_client):
+    """I-4 收口:确认通道仅放行已注册的写工具;读工具/未知工具 422。"""
+    client, app = await make_client(_model([]))
+    await app.state.store.resolve(1)
+    resp = await client.post("/api/tickets/confirm", json={
+        "conversation_id": 1, "tool_name": "query_faq",
+        "arguments": {"keyword": "邮费"}})
+    assert resp.status_code == 422
+    resp = await client.post("/api/tickets/confirm", json={
+        "conversation_id": 1, "tool_name": "not_a_tool", "arguments": {}})
+    assert resp.status_code == 422
+
+
+async def test_confirm_missing_description_422(make_client):
+    client, app = await make_client(_model([]))
+    await app.state.store.resolve(1)
+    resp = await client.post("/api/tickets/confirm", json={
+        "conversation_id": 1, "description": "", "ticket_type": "售后"})
+    assert resp.status_code == 422

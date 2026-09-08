@@ -32,12 +32,16 @@ async def create_ticket(body: TicketRequest, request: Request):
 async def confirm_ticket(body: TicketConfirmRequest, request: Request):
     """ch08 确认流:前端「确认提交」回传,引擎以 confirmed 放行真实执行。
 
-    tool_name=create_ticket(缺省)用工单字段组装参数;其余写工具(如 debug 慢写)
-    原样透传 arguments——确认通道本身就是用户授权,引擎侧仍再做一次 Schema 校验。
+    收口(I-4):仅「已注册且为写操作」的工具可走确认通道——确认即用户授权;
+    create_ticket(缺省)用工单字段组装参数,其他写工具原样透传 arguments,引擎侧仍做 Schema 校验。
     """
     store, engine = request.app.state.store, request.app.state.engine
+    registry = request.app.state.registry
     if not await store.exists(body.conversation_id):
         raise HTTPException(status_code=404, detail="会话不存在")
+    record = registry.get(body.tool_name)
+    if record is None or record.access != "write":
+        raise HTTPException(status_code=422, detail="该工具不可经确认通道执行")
     if body.tool_name == "create_ticket":
         args = {"conversation_id": body.conversation_id,
                 "description": body.description, "ticket_type": body.ticket_type}
@@ -45,8 +49,7 @@ async def confirm_ticket(body: TicketConfirmRequest, request: Request):
             raise HTTPException(status_code=422, detail="缺少问题描述")
     else:
         args = body.arguments
-    raw = await engine.execute("create_ticket" if body.tool_name == "create_ticket"
-                               else body.tool_name,
+    raw = await engine.execute(body.tool_name,
                                json.dumps(args, ensure_ascii=False),
                                conversation_id=body.conversation_id, confirmed=True)
     try:

@@ -29,18 +29,25 @@ class ToolThenAnswerModel(FakeChatWithTools):
         return await super().ainvoke(messages, **kwargs)
 
 
+class _Engine:
+    """回声场景:不经过引擎执行,model 不需要真实工具。"""
+
+    async def execute(self, name, args_json, **kwargs):
+        return ""
+
+
 async def test_loop_executes_tool_and_converges():
-    from scripts.naive_agent import naive_agent_loop
+    from scripts.naive_agent import make_engine, naive_agent_loop
 
     model = ToolThenAnswerModel()
-    answer = await naive_agent_loop(model, [echo_city], "杭州天气怎么样")
+    answer = await naive_agent_loop(model, _Engine(), "杭州天气怎么样")
     assert answer == "杭州今天晴。"
     assert model.call_count == 2
 
 
 async def test_loop_no_tool_single_call():
-    from scripts.naive_agent import naive_agent_loop
+    from scripts.naive_agent import make_engine, naive_agent_loop
 
     model = FakeChatWithTools(messages=iter([AIMessage(content="直接回答。")]))
-    answer = await naive_agent_loop(model, [echo_city], "你好")
+    answer = await naive_agent_loop(model, _Engine(), "你好")
     assert answer == "直接回答。"

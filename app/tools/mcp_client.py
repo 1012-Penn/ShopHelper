@@ -25,10 +25,6 @@ class McpService:
         ) if urls else None)
         self._last_sync = 0.0
 
-    def connected(self) -> bool:
-        return bool(self.urls) and bool(
-            [r for r in self.registry.records() if r.source == "mcp"])
-
     async def sync(self, force: bool = False) -> None:
         """拉取各 Server 工具清单并 diff 进注册表;TTL 内跳过(现问现拿,防抖不防新)。
 
@@ -43,7 +39,9 @@ class McpService:
             tools = None
             for attempt in range(3):  # 立即重试:新 spawn 的 Server 握手偶发抖动
                 try:
-                    tools = await self._client.get_tools(server_name=server_name)
+                    # 单次发现限时 5s:半死 Server(连上不响应)不能拖死聊天轮(I-3)
+                    tools = await asyncio.wait_for(
+                        self._client.get_tools(server_name=server_name), timeout=5.0)
                     break
                 except Exception:
                     # Server 不在线/重启中:降级为无该 Server 工具,不影响其余工具

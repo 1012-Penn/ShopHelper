@@ -99,3 +99,30 @@ async def test_no_urls_is_noop():
     service = McpService(registry, {})
     await service.sync()  # 不抛不拉
     assert registry.names() == []
+
+
+async def test_failed_sync_keeps_existing_registrations():
+    """失败保留既有注册:Server 挂掉后不做删除性同步,既有 mcp 工具仍在。"""
+    registry, service, _ = _make({"logistics": [_tool("logistics_tracker")]})
+    await service.sync()
+    service._client.servers["logistics"] = []  # Server 端工具消失前的最后一次成功同步之后
+    # 让 get_tools 直接失败(而非返回空):模拟连接故障
+    async def boom(server_name=None):
+        raise ConnectionError("挂了")
+    service._client.get_tools = boom
+    await service.sync(force=True)
+    assert registry.get("logistics_tracker") is not None  # 保留最后已知注册
+
+
+async def test_ttl_only_counts_from_success():
+    registry, service, client = _make({"logistics": [_tool("logistics_tracker")]}, ttl=60)
+    boom_calls = []
+
+    async def boom(server_name=None):
+        boom_calls.append(1)
+        raise ConnectionError("挂了")
+    service._client.get_tools = boom
+    await service.sync(force=True)   # 失败
+    calls_before = len(boom_calls)
+    await service.sync()             # 失败不写 TTL,下轮必须立即重试
+    assert len(boom_calls) > calls_before

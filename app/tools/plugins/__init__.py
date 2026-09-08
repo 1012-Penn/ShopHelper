@@ -31,7 +31,11 @@ def load_plugins(registry: ToolRegistryV2, ctx: ToolContext,
         if hook is None:
             logger.warning("插件 %s 缺 register(ctx) 钩子,跳过", path.name)
             continue
-        hook(registry, ctx)
+        try:
+            hook(registry, ctx)
+        except Exception:
+            logger.warning("插件 %s 注册失败,跳过", path.name, exc_info=True)
+            continue
         loaded.append(path.stem)
     if loaded:
         logger.info("已装载工具插件:%s", ", ".join(loaded))

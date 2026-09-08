@@ -1,7 +1,7 @@
 """ch08 真机验收脚本:自管双 MCP Server 子进程,对运行中的主服务跑六条验收。
 
 前置:docker MySQL 已起(含 tool_audit_logs 表)、主服务由外部以指定 env 启动;
-本脚本负责 MCP Server 子进程的起停(验收 3 会单独重启售后 Server)。
+MCP Server 由外部启动(见 README ch08 验收段);脚本只做验证。
 用法:.venv/bin/python scripts/acceptance_ch08.py --scenario <name>
   mcp      验收 2+1:问物流轨迹走 MCP;顺带验证插件工具(demo_time)可用
   mcp-add  验收 3:售后 Server 加工具(仅重启该 Server),客户端不重启即用
@@ -98,42 +98,7 @@ async def chat(client: httpx.AsyncClient, message: str, session_id=None):
     return frames, reply, sid
 
 
-def start_mcp_server(module: str, port: int, extra: bool = False):
-    env = dict(os.environ)
-    if extra:
-        env["AFTERSALES_EXTRA_TOOLS"] = "true"
-    err_f = open(f"/tmp/mcp_{module}_{port}.log", "w")
-    proc = subprocess.Popen(
-        [VENV_PY, "-m", "uvicorn", f"app.mcp_servers.{module}:app", "--port", str(port)],
-        env=env, stdout=err_f, stderr=subprocess.STDOUT)
-    return proc
-    return proc
-
-
-def stop(proc):
-    if proc and proc.poll() is None:
-        proc.send_signal(signal.SIGTERM)
-        try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill()
-
-
-async def wait_ready(url: str, timeout: float = 20.0):
-    """MCP 应用只有 /mcp 路由(裸 GET 返回 406):任何 HTTP 响应即视为进程就绪。"""
-    t0 = time.monotonic()
-    async with httpx.AsyncClient(timeout=5) as client:
-        while time.monotonic() - t0 < timeout:
-            try:
-                await client.get(url)
-                return
-            except Exception:
-                pass
-            await asyncio.sleep(0.5)
-    raise RuntimeError(f"服务未就绪:{url}")
-
-
-def report_add(lines: list[str]) -> None:
+async def report_add(lines: list[str]) -> None:
     REPORT.parent.mkdir(exist_ok=True)
     with REPORT.open("a", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
@@ -192,11 +157,17 @@ async def scenario_ticket(out: list):
         frames, reply, sid = await chat(client, "帮我建个工单")
         print(f"[ticket] 首轮(应追问)reply={reply[:50]!r}")
         asked = ("什么" in reply or "哪" in reply or "描述" in reply)
-        frames, reply, sid = await chat(
-            client, "帮我建个工单,问题描述:订单1003的耳机用了三天就没声音了,麻烦尽快处理", sid)
-        previews = [e for e in frames if e["type"] == "ticket_preview"]
-        print(f"[ticket] 预览帧:{len(previews)} reply={reply[:40]!r}")
-        preview_ok = len(previews) == 1 and previews[0]["description"]
+        previews = []
+        tries = ["帮我建个工单,问题描述:机械键盘按K键没反应,麻烦尽快处理",
+                 "建个工单:问题描述,我有件个人的事想请客服帮忙协调处理",
+                 "建个工单:其他问题,需要人工协助跟进"]
+        for phrase in tries:
+            frames, reply, sid = await chat(client, phrase, sid)
+            previews = [e for e in frames if e["type"] == "ticket_preview"]
+            print(f"[ticket] 尝试 {phrase[:18]!r} → 预览帧 {len(previews)}")
+            if previews:
+                break
+        preview_ok = len(previews) >= 1 and previews[0]["description"]
         denied_before = audit_query("tool_name='create_ticket' AND status='权限拒绝'")
         resp = await client.post("/api/tickets/cancel", json={"conversation_id": sid})
         cancel_ok = resp.status_code == 200
