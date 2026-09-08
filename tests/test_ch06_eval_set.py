@@ -18,6 +18,8 @@ def test_rows_schema():
             assert t["user"] and t["expect_intent"] in INTENTS
             if "expect_resolved" in t:
                 assert t["expect_resolved"]
+                # 指代判定走关键词口径,有补全期望就必须有关键词断言
+                assert t.get("expect_keywords")
 
 
 def test_covers_switch_and_other():

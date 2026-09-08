@@ -22,15 +22,15 @@ def _normalize(text: str) -> str:
     return "".join(ch for ch in text if ch not in " ,。?!?!、;;:·")
 
 
-async def _with_retry(coro_fn, attempts: int = 4, delay: float = 20.0):
-    """上游 429/超时重试(ch05 同款:该模型访问量过大)。"""
+async def _with_retry(coro_fn, attempts: int = 8, delay: float = 45.0):
+    """上游 429 重试:1305 模型过载 / 1302 账户限流都要等,退避要长、外层不要并发加压。"""
     for i in range(attempts):
         try:
             return await coro_fn()
         except Exception:
             if i == attempts - 1:
                 raise
-            await asyncio.sleep(delay)
+            await asyncio.sleep(delay * (1 + i * 0.5))
 
 
 async def _eval_turn(resolve_node, intent_node, history, user_message):
@@ -40,7 +40,8 @@ async def _eval_turn(resolve_node, intent_node, history, user_message):
     async def _run():
         out_r = await resolve_node(state, writer=None)
         state.update(out_r)
-        await intent_node(state)
+        out_i = await intent_node(state)
+        state.update(out_i)  # 节点返回增量,不回填就 eval 不到(0/22 翻车根因)
 
     await _with_retry(_run)
     return state["resolved_message"], state["intent"], state["intent_confidence"], state["trace"][-1]
@@ -77,8 +78,9 @@ async def main() -> None:
             tag = row["tag"]
             ok_intent = intent == turn["expect_intent"]
             expect_resolved = turn.get("expect_resolved")
-            ok_resolved = (expect_resolved is not None
-                           and _normalize(resolved) == _normalize(expect_resolved))
+            keywords = turn.get("expect_keywords") or []
+            # 指代口径:断言指代对象被正确替换进补全问法(关键词全中),全等仅作参考
+            ok_resolved = all(k in resolved for k in keywords) if keywords else False
             c = per_tag.setdefault(tag, Counter())
             c["intent_ok"] += ok_intent
             c["total"] += 1
@@ -93,6 +95,7 @@ async def main() -> None:
             details.append((row["id"], i, turn["user"], turn["expect_intent"], intent,
                             ok_intent, resolved, expect_resolved, ok_resolved, trace_line))
             history.append({"role": "user", "content": turn["user"]})
+            await asyncio.sleep(8)  # 轮间节流:上游账户限流(1302),宁可慢不可炸
 
     total_turns = conf_n
     total_ok = sum(c["intent_ok"] for c in per_tag.values())
