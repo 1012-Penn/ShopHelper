@@ -37,21 +37,29 @@ def trim_history(messages: list[dict], budget: int) -> list[dict]:
     return system + kept
 
 
-def history_to_messages(history: list[dict]) -> list:
-    """落库的 dict 历史 → LangChain 消息对象(完整还原工具轨迹,不含 System 与本轮 user)。
+def rows_to_messages(rows: list[dict]) -> list:
+    """落库消息行(带自增 id)→ LangChain 消息对象;id=str(row_id) 供 add_messages 去重与锚点换算。
 
-    自 ch04 chat.py::_to_prompt_messages 迁入;System 由调用方自行拼在首位。
+    完整还原工具轨迹(ch04 chat.py::_to_prompt_messages → ch05 迁入 → ch07 带.id 版)。
+    System 由调用方自行拼在首位。
     """
     messages: list = []
-    for m in history:
+    for m in rows:
+        mid = str(m["id"]) if m.get("id") is not None else None
         if m["role"] == "user":
-            messages.append(HumanMessage(content=m["content"]))
+            messages.append(HumanMessage(content=m["content"], id=mid))
         elif m["role"] == "assistant":
             if m.get("tool_calls"):
-                messages.append(AIMessage(content=m.get("content") or "", tool_calls=m["tool_calls"]))
+                messages.append(AIMessage(content=m.get("content") or "",
+                                          tool_calls=m["tool_calls"], id=mid))
             elif m.get("content"):
-                messages.append(AIMessage(content=m["content"]))
+                messages.append(AIMessage(content=m["content"], id=mid))
         elif m["role"] == "tool":
             messages.append(ToolMessage(content=m.get("content") or "",
-                                        tool_call_id=m.get("tool_call_id") or ""))
+                                        tool_call_id=m.get("tool_call_id") or "", id=mid))
     return messages
+
+
+def history_to_messages(history: list[dict]) -> list:
+    """旧接口(ch05):不带 id 版还原;Task 5 管线重接线后退役。"""
+    return rows_to_messages([{**m, "id": None} for m in history])
