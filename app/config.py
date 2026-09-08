@@ -41,3 +41,8 @@ class Settings(BaseSettings):
     # ch05:ReAct 主力 Agent 停止条件
     agent_max_steps: int = 6        # 单轮最多工具交互步数,超限强制收敛
     agent_token_budget: int = 3000  # 单轮 Agent 侧输出 token 预算(estimate_tokens 口径)
+
+    # ch06:意图识别(默认直接主模型;escalation 开启后小模型先判、置信度低于阈值大模型重判一次)
+    intent_escalation_enabled: bool = False
+    intent_confidence_floor: float = 0.6
+    intent_small_model: str = ""  # 缺省同 openai_model

@@ -68,13 +68,9 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k=None,
     @tool
     def query_order(order_id: str) -> str:
         """按订单号查询订单信息:商品、金额、状态。用户问订单相关问题时使用。"""
-        return json.dumps({
-            "order_id": order_id,
-            "product": random.choice(["无线耳机", "机械键盘", "硅胶手机壳", "智能手环"]),
-            "amount": round(random.uniform(19.9, 999.0), 2),
-            "status": random.choice(["待发货", "已发货", "已签收"]),
-            "created_at": datetime.now().strftime("%Y-%m-%d"),
-        }, ensure_ascii=False)
+        from app.orders import get_order
+
+        return json.dumps(get_order(order_id), ensure_ascii=False)
 
     @tool
     def query_product(keyword: str) -> str:

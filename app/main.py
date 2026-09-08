@@ -8,7 +8,7 @@ from app.config import Settings
 from app.db import make_engine, make_session_factory
 from app.guard import LowConfidencePool
 from app.llm import make_chat_model, make_extract_model
-from app.routers import chat, extract, sessions, tickets
+from app.routers import chat, extract, orders, sessions, tickets
 from app.schemas import AfterSaleExtraction
 from app.store import ConversationStore
 from app.tools.definitions import build_tools
@@ -45,6 +45,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         app.state.store, app.state.pool, service, kb,
     )
     app.include_router(chat.router)
+    app.include_router(orders.router)
     app.include_router(sessions.router)
     app.include_router(extract.router)
     app.include_router(tickets.router)

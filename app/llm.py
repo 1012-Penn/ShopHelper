@@ -13,9 +13,10 @@ def make_chat_model(settings: Settings) -> ChatOpenAI:
     )
 
 
-def make_extract_model(settings: Settings) -> ChatOpenAI:
+def make_extract_model(settings: Settings, model: str | None = None) -> ChatOpenAI:
+    """model 覆盖参数(ch06):意图降级路给小模型传 intent_small_model 时用。"""
     return ChatOpenAI(
-        model=settings.openai_model,
+        model=model or settings.openai_model,
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
         temperature=settings.extract_temperature,
