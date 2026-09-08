@@ -18,12 +18,7 @@ from app.llm import make_extract_model
 from app.prompts import ResolvedQuestion
 
 
-def _normalize(text: str) -> str:
-    return "".join(ch for ch in text if ch not in " ,。?!?!、;;:·")
-
-
 async def _with_retry(coro_fn, attempts: int = 8, delay: float = 45.0):
-    """上游 429 重试:1305 模型过载 / 1302 账户限流都要等,退避要长、外层不要并发加压。"""
     for i in range(attempts):
         try:
             return await coro_fn()

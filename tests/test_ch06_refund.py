@@ -197,3 +197,16 @@ async def test_policy_retrieve_partial_chunks_aligned():
     assert out["evidence"][0]["answer"] == "答案11"
     assert out["evidence"][1]["answer"] == "答案14"
     assert [e["n"] for e in out["evidence"]] == [1, 2]
+
+
+async def test_prepare_order_rejects_unknown_bare_digits():
+    """I-2/M-3 回归:裸数字(年份/尾号)必须命中目录;商品名不再硬绑单号。"""
+    (prep, ask, fetch, expand, retrieve), service, pool = _nodes()
+    out = await prep(_state(resolved_message="我2024年买的东西能退吗"), writer=None)
+    assert out["pending_order_id"] == ""          # 年份误抓 → 走选择器
+    out2 = await prep(_state(resolved_message="尾号5678能退吗"), writer=None)
+    assert out2["pending_order_id"] == ""         # 尾号误抓 → 走选择器
+    out3 = await prep(_state(resolved_message="SH-E300能退吗"), writer=None)
+    assert out3["pending_order_id"] == ""         # 商品名不硬绑订单(I-2 移除)
+    out4 = await prep(_state(resolved_message="订单424242能退吗"), writer=None)
+    assert out4["pending_order_id"] == "424242"   # 带上下文的未知单号放行 → 未找到话术

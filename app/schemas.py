@@ -8,7 +8,8 @@ class OrderResume(BaseModel):
     """ch06 订单选择器无状态回传:点选后前端原样带回的槽位数据。
     intent 属于挂起上下文:resume 轮旁路了 intent 节点,由路由层直接注入 state。"""
     order_id: str = Field(pattern=r"^\d{3,6}$", description="点选的订单号")
-    question: str = Field(min_length=1, description="选择器帧带回的补全问题")
+    question: str = Field(min_length=1, max_length=300,
+                          description="选择器帧带回的补全问题(限长防绕过消息长度闸)")
     intent: Literal["退款退货", "售后"] = Field(description="发起选择器时的意图")
 
 

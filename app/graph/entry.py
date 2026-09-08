@@ -57,15 +57,20 @@ def _emit(writer, frame: dict) -> None:
         writer(frame)
 
 
+def _one_line(text: str) -> str:
+    """trace 单行化:用户原文含换行会伪造日志行(log forging)。"""
+    return " ".join(str(text).split())
+
+
 def make_resolve_node(resolver):
     """resolver = with_structured_output(ResolvedQuestion) 产物;resume 旁路不走 LLM;异常兜底透传。"""
 
     async def resolve_node(state, writer=None) -> dict:
         if state.get("resume_question"):
             q = state["resume_question"]
-            _emit(writer, {"type": "resolved", "changed": True, "question": q})
+            # 旁路不发 resolved 帧:选择器轮已展示过同文灰字, resume 轮重发会重复渲染
             return {"resolved_message": q,
-                    "trace": [*state["trace"], f"node=resolve resume_bypass q={q}"]}
+                    "trace": [*state["trace"], f"node=resolve resume_bypass q={_one_line(q)}"]}
         result = None
         try:
             result = await resolver.ainvoke(
@@ -85,7 +90,8 @@ def make_resolve_node(resolver):
         if changed:
             _emit(writer, {"type": "resolved", "changed": True, "question": resolved})
         return {"resolved_message": resolved,
-                "trace": [*state["trace"], f"node=resolve changed={changed} q={resolved}"]}
+                "trace": [*state["trace"],
+                          f"node=resolve changed={changed} q={_one_line(resolved)}"]}
 
     return resolve_node
 

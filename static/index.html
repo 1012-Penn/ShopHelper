@@ -356,13 +356,20 @@ async function pickOrder(bar, card, order, evt) {
   [...bar.children].forEach((c) => { c.disabled = true; });
   card.classList.add("picked");
   addUserMsg(evt.original || "");
+  lastUserMessage = evt.original || "";  // 点旧卡片后「建工单」描述应跟随该轮
   const bubble = addBotMsg();
   setBusy(true);
   try {
     await streamChat({ message: evt.original || "", session_id: state.sessionId,
                        resume: { order_id: order.order_id, question: evt.question,
                                  intent: evt.intent } }, bubble);
-  } finally { setBusy(false); text.focus(); }
+  } finally {
+    setBusy(false);
+    text.focus();
+    if (bubble.classList.contains("error")) {
+      [...bar.children].forEach((c) => { c.disabled = false; c.classList.remove("picked"); });
+    }
+  }
 }
 
 // ch06:退款单表单——原因固定类目下拉 + 备注,提交复用 /api/tickets(类型:售后)
@@ -377,7 +384,8 @@ function renderRefundForm(bar, bubble, orderId) {
     '<div class="rf-row"><button class="rf-submit">提交退款申请</button><span class="rf-status"></span></div>';
   const REASONS = ["质量问题", "七天无理由", "尺寸不合适", "发错货", "与描述不符", "不想要了"];
   for (const r of REASONS) form.querySelector(".rf-reason").add(new Option(r, r));
-  form.querySelector(".rf-submit").onclick = async () => {
+  form.querySelector(".rf-submit").onclick = async (ev) => {
+    ev.target.disabled = true;  // 防双击重复建单
     const reason = form.querySelector(".rf-reason").value;
     const note = form.querySelector(".rf-note").value.trim();
     const status = form.querySelector(".rf-status");
@@ -389,12 +397,11 @@ function renderRefundForm(bar, bubble, orderId) {
       });
       const body = await resp.json();
       if (resp.ok) {
-        form.querySelector(".rf-submit").disabled = true;
         form.querySelector(".rf-reason").disabled = true;
         form.querySelector(".rf-note").disabled = true;
         status.textContent = "工单 " + body.ticket_no + " 已创建";
-      } else { status.textContent = "提交失败"; }
-    } catch (e) { status.textContent = "提交失败"; }
+      } else { ev.target.disabled = false; status.textContent = "提交失败"; }
+    } catch (e) { ev.target.disabled = false; status.textContent = "提交失败"; }
   };
   bubble.appendChild(form);
   scrollDown();

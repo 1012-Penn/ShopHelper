@@ -23,8 +23,8 @@ async def test_ask_order_round_then_resume_completes(make_client):
     client, app = await _mk(make_client, '{"intent": "退款退货", "confidence": 0.9}',
                             [("text", "这一单签收未超7天,可以退。")],
                             resolver=resolver, expander=expander)
-    from tests.test_chat_toolflow import _seed_kb_chunk
-    _seed_kb_chunk(app, "r.md", "无线耳机退货条件", "签收后7天内可退。", "退货政策.md > 退货条件")
+    from tests.helpers import seed_kb_chunk
+    seed_kb_chunk(app, "r.md", "无线耳机退货条件", "签收后7天内可退。", "退货政策.md > 退货条件")
 
     frames = await post_chat_sse(client, {"message": "它能退吗"})
     types = [f["type"] for f in frames]
@@ -86,3 +86,12 @@ def test_initial_state_supports_dict_resume():
     assert st["resume_order_id"] == "1002"
     assert st["resume_question"] == "机械键盘能退吗"
     assert st["intent"] == "退款退货"
+
+
+async def test_resume_overlong_question_422(make_client):
+    """I-3 回归:resume.question 限长,防止绕过 message 长度闸烧 token。"""
+    client, app = await _mk(make_client, '{"intent": "闲聊"}', [("text", "你好呀")])
+    resp = await client.post("/api/chat", json={
+        "message": "x", "resume": {"order_id": "1001", "question": "退" * 301,
+                                   "intent": "退款退货"}})
+    assert resp.status_code == 422

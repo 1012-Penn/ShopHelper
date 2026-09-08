@@ -46,14 +46,22 @@ async def test_resolve_passthrough_when_complete():
     assert "changed=False" in out["trace"][-1]
 
 
-async def test_resolve_resume_bypass_skips_llm():
+async def test_resolve_resume_bypass_skips_llm_and_no_frame():
+    """旁路不发 resolved 帧:选择器轮已展示过灰字,重发会重复(M-6)。"""
     node = make_resolve_node(EchoResolver({}))
     frames = []
     out = await node(_state(resume_question="订单1002的机械键盘能退吗",
                             resume_order_id="1002"), writer=frames.append)
     assert out["resolved_message"] == "订单1002的机械键盘能退吗"
-    assert frames[0]["type"] == "resolved"
+    assert frames == []
     assert "resume_bypass" in out["trace"][-1]
+
+
+async def test_resolve_trace_is_single_line():
+    """trace 单行化:原文换行不得进入日志行(log forging,M-7)。"""
+    node = make_resolve_node(EchoResolver({"多行\n问题": ResolvedQuestion(resolved="第一行\n第二行", changed=True)}))
+    out = await node(_state(user_message="多行\n问题"), writer=None)
+    assert "\n" not in out["trace"][-1]
 
 
 async def test_resolve_llm_error_falls_back_passthrough():

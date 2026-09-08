@@ -2,7 +2,7 @@
 import json
 
 from app.models import Faq
-from tests.helpers import FakeEmbedding, GraphChatModel, post_chat_sse
+from tests.helpers import FakeEmbedding, GraphChatModel, post_chat_sse, seed_kb_chunk as _seed_kb_chunk
 
 
 def _tc(name, args, id_, index=0):
@@ -83,17 +83,6 @@ def _pool_rows(factory):
     with factory() as s:
         return [{"source": r.source, "raw_question": r.raw_question, "reason": r.reason or ""}
                 for r in s.query(LowConfidenceQuestion).all()]
-
-
-def _seed_kb_chunk(app, path, questions, answer, section):
-    from app.chunking import Chunk
-    from app.kb import KnowledgeBaseStore, vectorize_pending
-
-    kb = KnowledgeBaseStore(app.state.session_factory)
-    kb.replace_doc_chunks(path, [Chunk(category="售后政策", questions=questions, answer=answer,
-                                       section_path=section, content_type="faq",
-                                       is_key_clause=False)])
-    vectorize_pending(kb, app.state.vectors, FakeEmbedding())
 
 
 async def test_citations_frame_before_tokens(make_client):

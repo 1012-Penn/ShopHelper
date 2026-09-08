@@ -160,4 +160,10 @@ resume 轮的消息契约:`message` = 原始问题(落库与展示),`resume.ques
 
 ## 实现期偏差
 
-(预留:实现中发现的偏差回填此处,格式同 ch05 spec)
+(以下为实现期确认的偏差与契约演进,评审波回填)
+
+1. **`order_selector` 帧与 `OrderResume` 增加 `intent` 字段**:resume 旁路跳过 intent 节点,而 agent 窄化指令与 refund_form action 都依赖 `state["intent"]`——意图属「挂起上下文」,无状态回传方案下必须随选择器帧下发、随 resume 请求带回、由 `initial_state` 注入 state;否则 resume 轮意图恒空,窄化与 actions 失效(端到端测试 `test_ask_order_round_then_resume_completes` 逮住)。
+2. **citations 帧继承既有证据重发全量**:前端 citations 帧为覆盖语义,agent 轮内 query_faq 的重发若不带先发证据会把 `resolved`/`policy_retrieve` 已下发的引用冲掉;同时 `n_offset` 从 `len(evidence)` 续排,消除知识路径/子流程证据与工具证据的编号撞号(ch04 旧断言按此契约迁移)。
+3. **意图模型温度修正为 0(extract 口径)**:初版把 chat 模型(温度 0.7)直接当意图分类器,与 spec「默认配够格的大模型(温度 0)」不符,且评估脚本用的是温度 0,线上/评估口径不一致;评审波改为 `make_extract_model` 缺省,评估结论因此可外推,无需重跑。
+4. **裸数字兜底加目录校验(`extract_order_id(require_known=True)`)**:裸 4-6 位数字会误抓年份/尾号,prepare_order 对兜底结果要求命中订单目录,未命中走选择器;「订单N」上下文形态不受限(未知单号走未找到话术合法)。
+5. **帧微调**:resume 旁路不再重发 `resolved` 帧(选择器轮已展示,重复渲染);订单未命中(error)时不发 `refund_form` action,防对不存在订单建退款工单;trace 的 q 字段单行化防日志伪造。

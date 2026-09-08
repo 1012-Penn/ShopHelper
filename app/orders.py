@@ -23,9 +23,14 @@ def list_orders() -> list[dict]:
     return [dict(o) for o in ORDER_CATALOG.values()]
 
 
-def extract_order_id(text: str) -> str | None:
+def extract_order_id(text: str, require_known: bool = False) -> str | None:
+    """require_known:裸数字兜底结果必须命中目录才返回(年份/尾号误抓防御);
+    「订单N」上下文形态不受此限(未知单号走未找到话术是合法应答)。"""
     m = _ORDER_ID_CONTEXTUAL.search(text or "")
     if m:
         return m.group(1)
     m = _ORDER_ID_BARE.search(text or "")
-    return m.group(1) if m else None
+    if m:
+        oid = m.group(1)
+        return oid if (not require_known or oid in ORDER_CATALOG) else None
+    return None

@@ -56,7 +56,8 @@ def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *
         _intent = make_intent_node(small, escalator=escalator or make_extract_model(settings),
                                    floor=settings.intent_confidence_floor)
     else:
-        _intent = make_intent_node(intent_model or model)
+        # spec 定稿:意图默认温度 0(extract 口径)——传入的 model 是 chat 温度(0.7),不能直接当分类器
+        _intent = make_intent_node(intent_model or make_extract_model(settings))
 
     _resolve = make_resolve_node(resolver)
     prep, ask, fetch, expand, policy = make_refund_nodes(

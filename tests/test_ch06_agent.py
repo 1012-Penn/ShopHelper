@@ -106,3 +106,30 @@ async def test_query_faq_numbering_continues_after_evidence():
     await node(_state(evidence=_EVIDENCE2), writer=frames.append)
     cite = [f for f in frames if f["type"] == "citations"][-1]
     assert [it["n"] for it in cite["items"]] == [1, 2, 3]  # 既有证据 + 续排的工具证据
+
+
+async def test_unknown_order_gets_no_refund_form():
+    """M-4 回归:订单未命中(error dict)时不发 refund_form。"""
+    model = GraphChatModel(intent_reply="{}", turns=[("text", "这一单可以退。")])
+    node = make_agent_node(model, _Registry(), _settings(), pool=None)
+    out = await node(_state(order={"order_id": "9999", "error": "未找到该订单"}), writer=None)
+    assert out["suggested_actions"] == ["refund_form"]  # agent 侧照常建议,由 log 层裁剪
+
+    from app.graph.logging_node import make_log_node
+    from tests.helpers import graph_state
+    frames = []
+
+    class _Store:
+        async def append(self, sid, msgs):
+            pass
+
+    class _Pool:
+        def insert(self, *a):
+            pass
+
+    st = graph_state(final_reply="这一单可以退。", intent="退款退货", refund_flow=True,
+                     suggested_actions=["refund_form"],
+                     order={"order_id": "9999", "error": "未找到该订单"},
+                     messages=[{"role": "user", "content": "x"}], trace=[])
+    await make_log_node(_Store(), _Pool())(st, writer=frames.append)
+    assert frames == []  # log 层裁剪:未知订单无 actions 帧

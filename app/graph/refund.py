@@ -18,22 +18,22 @@ def _emit(writer, frame: dict) -> None:
 def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
     async def prepare_order_node(state, writer=None) -> dict:
         msg = state.get("resolved_message") or ""
-        oid = state.get("resume_order_id") or extract_order_id(msg) or ""
-        if not oid and "SH-E300" in msg.upper():
-            oid = "1001"
+        # require_known:裸数字兜底(年份/尾号)必须命中目录才算单号;带「订单」上下文的放行(走未找到话术)
+        oid = state.get("resume_order_id") or extract_order_id(msg, require_known=True) or ""
         return {"refund_flow": True, "pending_order_id": oid,
                 "trace": [*state["trace"], f"node=prepare_order order={oid or 'missing'}"]}
 
     async def ask_order_node(state, writer=None) -> dict:
+        orders = list_orders()
         _emit(writer, {"type": "order_selector",
                        "items": [{"order_id": o["order_id"], "product": o["product"],
                                   "amount": o["amount"], "status": o["status"]}
-                                 for o in list_orders()],
+                                 for o in orders],
                        "question": state["resolved_message"],
                        "original": state["user_message"],
                        "intent": state["intent"]})
         return {"messages": [{"role": "user", "content": state["user_message"]}],
-                "trace": [*state["trace"], "node=ask_order n=3"]}
+                "trace": [*state["trace"], f"node=ask_order n={len(orders)}"]}
 
     async def fetch_order_node(state, writer=None) -> dict:
         order = get_order(state["pending_order_id"])

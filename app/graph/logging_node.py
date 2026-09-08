@@ -23,11 +23,15 @@ def make_log_node(store, pool):
         if state["suggested_actions"]:
             items = []
             for a in state["suggested_actions"]:
+                order = state.get("order") or {}
+                if a == "refund_form" and (not order or order.get("error")):
+                    continue  # 未知订单不给退款表单入口
                 item = {"action": a, "label": ACTION_LABELS.get(a, a)}
-                if a == "refund_form" and state.get("order"):
-                    item["order_id"] = state["order"].get("order_id", "")
+                if a == "refund_form" and order:
+                    item["order_id"] = order.get("order_id", "")
                 items.append(item)
-            _emit(writer, {"type": "actions", "items": items})
+            if items:
+                _emit(writer, {"type": "actions", "items": items})
         return {"trace": [*state["trace"], "node=log persisted"]}
 
     return log_node

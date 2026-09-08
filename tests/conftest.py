@@ -73,12 +73,13 @@ async def make_client():
             FakeEmbedding(), vectors_stub, kb, rewriter=FakeRewriter(), reranker=FakeReranker(),
             candidates=50, final_top_k=3, rerank_score_floor=0.30,
         )
-        # ch06:resolve/expand 替身缺省注入,测试不出网
+        # ch06:resolve/expand 替身缺省注入,测试不出网;intent 显式用 chat 替身(生产缺省是温度 0 的 extract 模型)
         app.state.graph = build_graph(
             chat_model, app.state.registry, app.state.settings,
             app.state.store, app.state.pool, service, kb,
             resolver=resolver or EchoResolver({}),
             expander=expander or StubExpand({}),
+            intent_model=chat_model,
         )
         app.state.retrieval_service = service
         app.state.retrieval_kb = kb

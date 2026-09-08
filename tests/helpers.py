@@ -9,7 +9,7 @@ from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage
 from pydantic import Field
 
-__all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse",
+__all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse", "seed_kb_chunk",
            "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker", "FakeRewriter",
            "StubExpand", "EchoResolver", "graph_state"]
 
@@ -313,3 +313,15 @@ class GraphChatModel(FakeChatWithTools):
         else:
             for piece in payload.split("|"):
                 yield ChunkStub(text=piece)
+
+
+def seed_kb_chunk(app, path, questions, answer, section):
+    """向测试应用的知识库种一条 chunk 并向量化(原 test_chat_toolflow._seed_kb_chunk 收编)。"""
+    from app.chunking import Chunk
+    from app.kb import KnowledgeBaseStore, vectorize_pending
+
+    kb = KnowledgeBaseStore(app.state.session_factory)
+    kb.replace_doc_chunks(path, [Chunk(category="售后政策", questions=questions, answer=answer,
+                                       section_path=section, content_type="faq",
+                                       is_key_clause=False)])
+    vectorize_pending(kb, app.state.vectors, FakeEmbedding())
