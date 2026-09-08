@@ -58,7 +58,7 @@ async def test_build_graph_escalation_low_confidence_escalates(monkeypatch):
                         escalator=big)  # 大模型显式注入,避免真构造
 
     config = {"configurable": {"thread_id": "esc1"}}
-    final = await graph.ainvoke(initial_state(1, "你好呀", [], None), config)
+    final = await graph.ainvoke(initial_state(1, "你好呀", None), config)
     assert small.calls == 1 and big.calls == 1  # 小模型先判,低置信触发大模型重判
     assert final["intent"] == "闲聊"
     assert any("escalated=true" in line for line in final["trace"])

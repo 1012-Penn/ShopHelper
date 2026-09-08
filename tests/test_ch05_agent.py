@@ -75,7 +75,7 @@ async def test_single_step_converges_without_tools():
                             resolved_message="你们几点营业", history=[]))
     assert out["final_reply"] == "直接能答。"
     assert out["agent_steps"] == 1
-    assert [m["role"] for m in out["messages"]] == ["user", "assistant"]
+    assert [(type(m).__name__, m.content) for m in out["messages"]] == [("AIMessage", "直接能答。")]
 
 
 async def test_react_multi_step_order_then_logistics():
@@ -91,8 +91,8 @@ async def test_react_multi_step_order_then_logistics():
     assert out["agent_steps"] == 3 and out["final_reply"] == "包裹已到杭州转运中心。"
     labels = [f["label"] for f in rec.frames if f["type"] == "tool_status"]
     assert labels == ["订单查询", "物流查询"]
-    roles = [m["role"] for m in out["messages"]]
-    assert roles == ["user", "assistant", "tool", "assistant", "tool", "assistant"]
+    roles = [type(m).__name__ for m in out["messages"]]
+    assert roles == ["AIMessage", "ToolMessage", "AIMessage", "ToolMessage", "AIMessage"]
     # 每步都重新 bind_tools(ReAct 每步都带工具,区别于 ch04 单轮两段式)
     assert model.bind_calls == 3
     # 第二步的 prompt 回灌了第一步的 AIMessage(tool_calls) 与 ToolMessage
@@ -118,17 +118,22 @@ async def test_agent_suggests_actions_on_refusal():
     assert set(out["suggested_actions"]) == {"transfer_human", "create_ticket"}
 
 
-async def test_evidence_injected_into_system_prompt():
+async def test_evidence_in_background_message_not_system():
+    """ch07 组装纪律:system 纯静态,证据进背景块并挂在当前用户消息之后。"""
     model = ScriptedToolModel([("text", "带[n]的回答。")])
     node = make_agent_node(model, _registry(), _settings(), FakePool())
     evidence = [{"n": 1, "chunk_id": 7, "question": "退货政策是什么", "answer": "七天无理由退货。",
                  "category": "售后政策", "section_path": "d.md > 退货政策"}]
     out = await node(_state(session_id=1, user_message="退货政策", resolved_message="退货政策",
-                            history=[], evidence=evidence))
+                            evidence=evidence))
     assert out["final_reply"] == "带[n]的回答。"
-    system = model.prompts[0][0]
-    assert type(system).__name__ == "SystemMessage"
-    assert "[1]" in system.content and "七天无理由退货" in system.content
+    prompts = model.prompts[0]
+    assert type(prompts[0]).__name__ == "SystemMessage"
+    assert "[1]" not in prompts[0].content          # system 不含证据
+    assert prompts[1].content == "退货政策"          # 层2/层1 空,紧跟当前用户消息
+    bg = prompts[-1]
+    assert type(bg).__name__ == "HumanMessage" and bg is not prompts[1]
+    assert "【参考知识】" in bg.content and "[1]" in bg.content and "七天无理由退货" in bg.content
 
 
 async def test_query_faq_low_confidence_pools():

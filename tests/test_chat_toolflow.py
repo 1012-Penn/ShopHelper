@@ -36,12 +36,9 @@ async def test_tool_flow_frame_order_and_persistence(make_client):
 
     conv_id = events[0]["session_id"]
     history = await app.state.store.get_history(conv_id)
-    assert [m["role"] for m in history] == ["user", "assistant", "tool", "assistant"]
-    assert history[1]["tool_calls"][0]["id"] == "call_1"
-    assert history[1]["tool_calls"][0]["name"] == "query_faq"
-    assert history[2]["tool_call_id"] == "call_1"
-    assert "items" in history[2]["content"]  # FAQ 检索结果 JSON
-    assert history[3]["content"] == "支持七天无理由退货"
+    # ch07 落库契约:工具轨迹(assistant 纯工具调用行 + tool 行)不落 messages 表
+    assert [m["role"] for m in history] == ["user", "assistant"]
+    assert history[1]["content"] == "支持七天无理由退货"
 
 
 async def test_unknown_tool_error_fed_back_not_500(make_client):
@@ -54,9 +51,9 @@ async def test_unknown_tool_error_fed_back_not_500(make_client):
     events = await post_chat_sse(client, {"message": "帮我查一下火星天气"})
     assert events[-1]["type"] == "done"
     history = await app.state.store.get_history(events[0]["session_id"])
-    tool_msg = history[2]
-    assert "未注册" in tool_msg["content"]
-    assert tool_msg["tool_call_id"] == "call_x"
+    # ch07:未注册工具的错误回灌只活在当轮,落库只剩 user/assistant 文本
+    assert [m["role"] for m in history] == ["user", "assistant"]
+    assert history[1]["content"] == "抱歉,该查询暂时不可用。"
 
 
 async def test_multi_tool_calls_all_fed_back(make_client):
@@ -71,8 +68,8 @@ async def test_multi_tool_calls_all_fed_back(make_client):
     status = [e for e in events if e["type"] == "tool_status"]
     assert [s["label"] for s in status] == ["订单查询", "物流查询"]
     history = await app.state.store.get_history(events[0]["session_id"])
-    assert [m["role"] for m in history] == ["user", "assistant", "tool", "tool", "assistant"]
-    assert [m["tool_call_id"] for m in history[2:4]] == ["c1", "c2"]
+    assert [m["role"] for m in history] == ["user", "assistant"]  # ch07:工具行不落库
+    assert history[1]["content"] == "两路结果都拿到了。"
 
 
 # ---------- ch04:citations 帧 + 低置信度池(载体换图,语义不变) ----------
@@ -163,11 +160,5 @@ async def test_citations_renumbered_across_multiple_tool_calls(make_client):
     assert len(cites) >= 1
     ns = [it["n"] for it in cites[-1]["items"]]
     assert ns == list(range(1, len(ns) + 1)) and len(ns) >= 4  # 帧 = 证据[1,2] + 工具续排[3..]
-    conv_id = events[0]["session_id"]
-    history = await app.state.store.get_history(conv_id)
-    tool_msgs = [m for m in history if m["role"] == "tool"]
-    ns_in_tool = [it["n"] for m in tool_msgs
-                  for it in (json.loads(m["content"]).get("items") or [])]
-    # 工具 JSON 编号自证据数(2)后续排:3..6;与最终帧的后段一致
-    assert ns_in_tool == list(range(3, len(ns_in_tool) + 3))
-    assert set(ns_in_tool) == set(ns) - {1, 2}
+    # ch07:工具行不落库,编号续排的校验对象改为最终 citations 帧(帧 = 证据[1,2] + 工具续排[3..])
+    assert ns == list(range(1, len(ns) + 1)) and len(ns) >= 4

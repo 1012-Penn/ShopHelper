@@ -1,17 +1,19 @@
 """主力 Agent 节点:手写 ReAct 循环——每步 bind_tools 流式 → tool_calls 执行回灌 → 收敛/熔断。
 
-区别于 ch04 单轮两段式(一次工具后强制收敛):这里每步都带工具,复杂问题按中间结果多走几步。
-query_faq 语义自 ch04 路由迁入:低置信落池、证据编号 n_offset 续排并重写回灌、citations 帧全量重发
-(前端 byN 覆盖语义天然消解,ch04 已验证)。
+ch07 组装纪律:system 只装静态人设与红线(每轮逐字节一致,护住上游前缀缓存);早期梗概、
+检索证据、订单数据与窄化指令合成一条背景块 HumanMessage 挂在当前用户消息之后——梗概绝不
+单独占一条 system(上游模板会把所有 system 上提合并渲染,工具定义被挤到可变内容之后)。
+工具结果入库前按 TOOL_RESULT_MAX_TOKENS 截断;每步调模型前把实际上下文原样打进 model_ctx。
 """
 import json
 import logging
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
+from app.context import build_background, truncate_tool_result
 from app.guard import is_refusal
-from app.history import estimate_tokens, history_to_messages
-from app.prompts import SERVICE_PROMPT_TEMPLATE, build_evidence_block
+from app.history import estimate_tokens
+from app.prompts import SERVICE_PROMPT_TEMPLATE
 
 logger = logging.getLogger(__name__)
 
@@ -25,10 +27,24 @@ NARROW_INSTRUCTIONS = {
              "说明这一单(订单{order_id})的售后问题该怎么处理(修/换/退);不要回答与这一单无关的问题。"),
 }
 
+_ROLE_LOG = {"HumanMessage": "user", "AIMessage": "assistant", "ToolMessage": "tool",
+             "SystemMessage": "system"}
+
 
 def _emit(writer, frame: dict) -> None:
     if writer is not None:
         writer(frame)
+
+
+def _log_model_ctx(state, step: int, messages: list, system: str) -> None:
+    """每步调模型前,把实际发出的上下文原样打进 app.log(system 只计 token 不落正文)。"""
+    window = messages[1:]
+    lines = [f"{_ROLE_LOG.get(type(m).__name__, type(m).__name__)}: {m.content}" for m in window]
+    tokens = estimate_tokens(system) + sum(estimate_tokens(m.content or "") for m in window)
+    logger.info("[model_ctx] session=%s step=%d 条数=%d tokens≈%d\n摘要全文:%s\n滑窗逐条:\n%s",
+                state["session_id"], step, len(window), tokens,
+                state.get("layered", {}).get("summary_text") or "(无)",
+                "\n".join(lines) or "(无)")
 
 
 def _merge_tool_call_chunks(chunks: list[dict]) -> list[dict]:
@@ -54,24 +70,30 @@ def _merge_tool_call_chunks(chunks: list[dict]) -> list[dict]:
 
 def make_agent_node(model, registry, settings, pool):
     async def agent_node(state, writer=None) -> dict:
+        lay = state.get("layered") or {}
+        # 纯静态 system:证据/订单数据/窄化指令一律不进(ch07 组装纪律)
         system = SERVICE_PROMPT_TEMPLATE.format()
-        if state.get("evidence"):
-            system += "\n\n参考知识(回答须带 [n] 角标):\n" + build_evidence_block(state["evidence"])
+        instruction = ""
         if state.get("refund_flow") and state.get("order"):
             instruction = NARROW_INSTRUCTIONS.get(state.get("intent"), "")
-            if instruction:
-                system += ("\n\n【订单数据】" + json.dumps(state["order"], ensure_ascii=False)
-                           + "\n" + instruction.format(order_id=state["order"].get("order_id", "")))
+        background = build_background(lay.get("summary_text") or "",
+                                      state.get("evidence") or [],
+                                      state.get("order") if instruction else None,
+                                      instruction)
         messages = [SystemMessage(content=system),
-                    *history_to_messages(state["history"]),
+                    *(lay.get("layer2_msgs") or []),
+                    *(lay.get("layer1_msgs") or []),
                     HumanMessage(content=state["resolved_message"])]
-        pending = [{"role": "user", "content": state["user_message"]}]
+        if background:
+            messages.append(HumanMessage(content=background))
         # citations 继承既有证据再累计:前端 citations 帧是覆盖语义,重发必须带全量,
         # 否则子流程/知识路径先发的证据会被 agent 轮内 query_faq 的重发冲掉
         spent, steps, n_offset = 0, 0, len(state.get("evidence") or [])
         citations: list[dict] = [dict(it) for it in (state.get("evidence") or [])]
+        emitted: list = []  # 本轮新增消息(AI/Tool),经 add_messages 并入完整历史
         while steps < settings.max_agent_steps and spent < settings.agent_token_budget:
             steps += 1
+            _log_model_ctx(state, steps, messages, system)
             bound = model.bind_tools(registry.tools)
             parts: list[str] = []
             call_chunks: list[dict] = []
@@ -84,19 +106,20 @@ def make_agent_node(model, registry, settings, pool):
             spent += estimate_tokens(text)
             tool_calls = _merge_tool_call_chunks(call_chunks)
             if not tool_calls:
-                pending.append({"role": "assistant", "content": text})
+                emitted.append(AIMessage(content=text))
                 actions = ACTIONS_ON_REFUSAL if is_refusal(text) else (
                     ["refund_form"] if state.get("refund_flow")
                     and state.get("intent") == "退款退货" else [])
-                return {"final_reply": text, "agent_steps": steps, "messages": pending,
+                return {"final_reply": text, "agent_steps": steps, "messages": emitted,
                         "suggested_actions": actions,
                         "trace": [*state["trace"], f"node=agent steps={steps} converged"]}
-            pending.append({"role": "assistant", "content": text or None, "tool_calls": tool_calls})
+            emitted.append(AIMessage(content=text, tool_calls=tool_calls))
             messages.append(AIMessage(content=text, tool_calls=tool_calls))
             for tc in tool_calls:
                 _emit(writer, {"type": "tool_status", "name": tc["name"],
                                "label": registry.labels().get(tc["name"], tc["name"])})
                 result = await registry.execute(tc["name"], json.dumps(tc["args"], ensure_ascii=False))
+                result = truncate_tool_result(result, settings.tool_result_max_tokens)
                 parsed = _safe_json(result)
                 if isinstance(parsed, dict):
                     if parsed.get("low_confidence"):
@@ -111,16 +134,16 @@ def make_agent_node(model, registry, settings, pool):
                         n_offset += len(tool_items)
                         result = json.dumps(parsed, ensure_ascii=False)
                         _emit(writer, {"type": "citations", "items": list(citations)})
-                pending.append({"role": "tool", "content": result, "tool_call_id": tc["id"]})
+                emitted.append(ToolMessage(content=result, tool_call_id=tc["id"]))
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
         # 熔断:回溯最近一条 assistant 文本作收敛答复(工具 JSON 不是给人看的答案);全程无文本则给引导语
-        cutoff = next((m["content"] for m in reversed(pending)
-                       if m["role"] == "assistant" and m.get("content")),
-                      None)
+        cutoff = next((m.content for m in reversed(emitted)
+                       if isinstance(m, AIMessage) and m.content), None)
         if cutoff is None:
             cutoff = "问题比较复杂,请您稍后再试或换种问法。"
             _emit(writer, {"type": "token", "content": cutoff})
-        return {"final_reply": cutoff, "agent_steps": steps, "messages": pending,
+        emitted.append(AIMessage(content=cutoff))
+        return {"final_reply": cutoff, "agent_steps": steps, "messages": emitted,
                 "suggested_actions": [],
                 "trace": [*state["trace"], f"node=agent steps={steps} cutoff"]}
 

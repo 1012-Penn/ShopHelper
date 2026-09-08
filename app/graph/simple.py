@@ -1,4 +1,6 @@
 """投诉安抚与闲聊:零模型调用的固定话术节点。"""
+from langchain_core.messages import AIMessage
+
 COMPLAINT_REPLY = ("非常抱歉给您带来了不好的体验,您的反馈我们很重视。"
                    "您可以选择下面的方式,我们会尽快为您处理。")
 CHITCHAT_REPLY = ("我是本店智能客服,专注商品咨询、订单物流和售后问题;"
@@ -12,9 +14,8 @@ def _emit(writer, frame: dict) -> None:
 
 
 def _base_state_update(state, reply: str) -> dict:
-    return {"final_reply": reply,
-            "messages": [{"role": "user", "content": state["user_message"]},
-                         {"role": "assistant", "content": reply}]}
+    # ch07:user 消息由 initial_state 带入 State,节点只吐本轮新增的 assistant 消息
+    return {"final_reply": reply, "messages": [AIMessage(content=reply)]}
 
 
 async def complaint_node(state, writer=None) -> dict:

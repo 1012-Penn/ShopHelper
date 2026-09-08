@@ -41,10 +41,12 @@ async def test_narrowing_injects_order_and_instruction():
     out = await node(_state(evidence=[{"n": 1, "chunk_id": 11, "question": "退货条件",
                                        "answer": "签收后7天内", "category": "退货政策",
                                        "section_path": "退货政策.md"}]), writer=None)
-    system = model.prompts[0][0].content
-    assert "订单数据" in system and "无线耳机" in system
-    assert "能不能退" in system and "1001" in system
-    assert "退货条件" in system  # 证据块照旧注入
+    msgs = model.prompts[0]
+    assert "订单数据" not in msgs[0].content  # ch07:system 纯静态,窄化材料进背景块
+    bg = msgs[-1].content
+    assert "【订单数据】" in bg and "无线耳机" in bg
+    assert "能不能退" in bg and "1001" in bg
+    assert "【参考知识】" in bg and "退货条件" in bg  # 证据块进背景块
     assert out["final_reply"] == "这一单可以退。"
 
 
@@ -52,7 +54,7 @@ async def test_aftersale_narrowing_wording():
     model = GraphChatModel(intent_reply="{}", turns=[("text", "可以换新。")])
     node = make_agent_node(model, _Registry(), _settings(), pool=None)
     await node(_state(intent="售后"), writer=None)
-    assert "修/换/退" in model.prompts[0][0].content
+    assert "修/换/退" in model.prompts[0][-1].content
 
 
 async def test_non_refund_converge_emits_refund_form_action():

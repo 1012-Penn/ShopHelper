@@ -20,8 +20,6 @@ BUSINESS_INTENTS = {"物流", "订单"}
 
 _FENCE_RE = re.compile(r"^\s*```(?:json)?\s*(.*?)\s*```\s*$", re.DOTALL)
 
-_ROLE_ZH = {"user": "用户", "assistant": "客服"}
-
 
 def parse_intent(raw: str) -> tuple[str, float, bool]:
     """裸 JSON 契约的宽松解析:剥代码围栏 → json.loads → 枚举校验;畸形/超纲归其他(malformed=true)。"""
@@ -47,11 +45,6 @@ def parse_intent(raw: str) -> tuple[str, float, bool]:
     return intent, min(max(conf, 0.0), 1.0), False
 
 
-def _history_text(history: list) -> str:
-    return "\n".join(f"{_ROLE_ZH.get(h.get('role'), h.get('role'))}:{h.get('content')}"
-                     for h in history if h.get("content")) or "(无)"
-
-
 def _emit(writer, frame: dict) -> None:
     if writer is not None:
         writer(frame)
@@ -63,7 +56,10 @@ def _one_line(text: str) -> str:
 
 
 def make_resolve_node(resolver):
-    """resolver = with_structured_output(ResolvedQuestion) 产物;resume 旁路不走 LLM;异常兜底透传。"""
+    """resolver = with_structured_output(ResolvedQuestion) 产物;resume 旁路不走 LLM;异常兜底透传。
+
+    ch07:{history} 槽位改喂分层历史的文本渲染(摘要行+滑窗),由路由层预算好放进 layered。
+    """
 
     async def resolve_node(state, writer=None) -> dict:
         if state.get("resume_question"):
@@ -74,8 +70,9 @@ def make_resolve_node(resolver):
         result = None
         try:
             result = await resolver.ainvoke(
-                RESOLVE_PROMPT.format(history=_history_text(state["history"]),
-                                      query=state["user_message"]))
+                RESOLVE_PROMPT.format(
+                    history=(state.get("layered") or {}).get("history_text") or "(无)",
+                    query=state["user_message"]))
         except Exception:
             logger.warning("resolve 上游失败,原样透传", exc_info=True)
         if isinstance(result, dict):

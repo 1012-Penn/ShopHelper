@@ -1,15 +1,21 @@
-"""ch05:/api/chat 内部替换为跑 LangGraph 图,SSE 帧契约对前端保持兼容 + 新增 actions 帧。"""
+"""ch07:/api/chat 轮前上下文编排(级联降级→摘要触发→分层装配→history_ctx) + 跑图,SSE 帧契约不变。
+
+分层视图以 MySQL 为构建源(messages 行带自增 id 与锚点对齐);checkpoint 的 State.messages
+只承载图内完整轨迹,两套真源各走各的。摘要任务投后台,不阻塞本轮 SSE。
+"""
 import asyncio
 import json
+import logging
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
+from app.context import build_layered, cascade_layer1, layer2_tokens, split_layers
 from app.graph.builder import initial_state
-from app.context import derive_budgets
-from app.history import estimate_tokens, trim_history
-from app.prompts import SERVICE_PROMPT_TEMPLATE
+from app.history import estimate_tokens
 from app.schemas import ChatRequest
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -18,6 +24,48 @@ _QUEUE_DONE = object()  # 队列终结哨兵:图任务结束(含异常)后补投
 
 def sse_frame(event: dict) -> str:
     return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+
+def _anchor_str(v: int | None) -> str:
+    return "无" if v is None else str(v)
+
+
+async def prepare_turn(request: Request, session_id: int, message: str) -> tuple[dict, list, dict]:
+    """轮前维护与装配:层 1 超预算先同步降级,层 2 超预算投后台摘要,再组装模型面分层上下文。
+
+    返回 (layered, 未回灌时的全量行, anchors);history_ctx 每轮必打(不进 Agent 的闲聊轮也看得到)。
+    """
+    settings = request.app.state.settings
+    store = request.app.state.store
+    budgets = request.app.state.budgets
+
+    rows = await store.get_rows(session_id)
+    anchors = await store.get_anchors(session_id)
+
+    # 级联第一步:层 1 超预算 → 降级一批(纯锚点移动,同步生效)
+    new_lf, t0, t1 = cascade_layer1(rows, anchors["layer1_from"], budgets.layer1)
+    if new_lf != anchors["layer1_from"]:
+        await store.set_layer1_from(session_id, new_lf)
+        logger.info("[ctx] session=%s 层1 降级 %s→%s token %d→%d",
+                    session_id, _anchor_str(anchors["layer1_from"]), _anchor_str(new_lf), t0, t1)
+        anchors["layer1_from"] = new_lf
+    l1_rows, l2_rows = split_layers(rows, anchors["summary_upto"], anchors["layer1_from"])
+
+    # 级联第二步:层 2 渲染态超预算 → 后台摘要(触发看用量不数条数,工具结果不落消息表)
+    l2_tok = layer2_tokens(l2_rows, settings.ctx_layer2_assistant_head_chars)
+    if l2_tok > budgets.layer2:
+        logger.info("[ctx] session=%s summary trigger 层2 约 %d token > 预算 %d"
+                    "(后台执行,不阻塞本轮回复)", session_id, l2_tok, budgets.layer2)
+        request.app.state.summary_service.maybe_trigger(session_id,
+                                                        upto_id=anchors["layer1_from"])
+
+    layered = build_layered(l1_rows, l2_rows, anchors["summary_text"],
+                            settings.ctx_layer2_assistant_head_chars, budgets.sliding)
+    logger.info("[history_ctx] session=%s 摘要=%d段 滑窗=%d条 层2=%d 层1=%d tokens≈%d\n%s",
+                session_id, anchors["summary_seqs"], layered["n_window"],
+                layered["tokens_l2"], layered["tokens_l1"],
+                layered["tokens_l1"] + layered["tokens_l2"], layered["history_text"])
+    return layered, rows, anchors
 
 
 @router.post("/api/chat")
@@ -30,12 +78,12 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
         raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
 
     session_id = await store.resolve(body.session_id)
-    history = await store.get_history(session_id)
-    # 过渡口径(Task 5 重写为三层装配):历史预算按窗口推导,不再用写死常量
-    budget = derive_budgets(settings).history
-    # System 拼在 [0] 交给 trim_history 满足"messages[0] 永不裁剪";System 不下发,由 Agent 节点自拼
-    trimmed = trim_history([{"role": "system", "content": SERVICE_PROMPT_TEMPLATE.format()},
-                            *history], budget)
+    layered, rows, _anchors = await prepare_turn(request, session_id, body.message)
+
+    # 完整历史回灌:checkpoint 为空(进程重启/首 touch)时从 MySQL 灌一次,add_messages 按 id 去重
+    hydrated = session_id in request.app.state.hydrated_threads
+    if not hydrated:
+        request.app.state.hydrated_threads.add(session_id)
 
     async def event_stream():
         yield sse_frame({"type": "session", "session_id": session_id})
@@ -45,7 +93,8 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
         async def run_graph():
             try:
                 await graph.ainvoke(
-                    initial_state(session_id, body.message, trimmed[1:], resume=body.resume),
+                    initial_state(session_id, body.message, resume=body.resume,
+                                  history_rows=None if hydrated else rows, layered=layered),
                     config)
             finally:
                 await queue.put(_QUEUE_DONE)  # 先冲刷已产帧再终结,异常也不丢序

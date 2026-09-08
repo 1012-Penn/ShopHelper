@@ -6,7 +6,9 @@ Python 3.10 async 上下文被官方守卫禁用,故节点发帧走 configurable
 interrupt() 同受该守卫禁用(spike 实测),订单选择器停走走无状态回传(resume 旁路)。
 """
 import asyncio
+from uuid import uuid4
 
+from langchain_core.messages import HumanMessage
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
 
@@ -17,6 +19,7 @@ from app.graph.logging_node import make_log_node
 from app.graph.refund import make_refund_nodes
 from app.graph.simple import chitchat_node, complaint_node
 from app.graph.state import ChatState
+from app.history import rows_to_messages
 
 
 def _sink_adapter(sink) -> object:
@@ -104,9 +107,12 @@ def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *
     return g.compile(checkpointer=InMemorySaver())
 
 
-def initial_state(session_id: int, user_message: str, history: list, resume=None) -> dict:
+def initial_state(session_id: int, user_message: str, resume=None,
+                  history_rows: list | None = None, layered: dict | None = None) -> dict:
     """路由层每回合注入的全量默认值:防 checkpointer 上一回合残留字段(如 evidence)泄漏;
-    resume 非空时携带选择器点选回传的槽位(兼容对象与 dict)。"""
+    resume 非空时携带选择器点选回传的槽位(兼容对象与 dict)。
+    history_rows 非空 = 该 thread 的 checkpoint 为空(进程重启/首 touch),从 MySQL 回灌完整历史
+    (行带 id,add_messages 按 id 去重,并发首轮不会双灌);layered 是模型面分层精简版。"""
     resume_order_id = getattr(resume, "order_id", None) if resume else ""
     if not resume_order_id and isinstance(resume, dict):
         resume_order_id = resume.get("order_id", "")
@@ -117,11 +123,16 @@ def initial_state(session_id: int, user_message: str, history: list, resume=None
     if not resume_intent and isinstance(resume, dict):
         resume_intent = resume.get("intent", "")
 
+    msgs = rows_to_messages(history_rows) if history_rows else []
+    user_msg_id = f"u{uuid4().hex}"
+    msgs.append(HumanMessage(content=user_message, id=user_msg_id))
+
     return {"session_id": session_id, "user_message": user_message, "resolved_message": "",
             "intent": resume_intent, "intent_confidence": 0.0,
             "evidence": [], "low_confidence": False,
             "low_reason": "", "gate_passed": False, "agent_steps": 0, "final_reply": "",
-            "suggested_actions": [], "trace": [], "messages": [], "history": history,
+            "suggested_actions": [], "trace": [],
+            "messages": msgs, "turn_user_msg_id": user_msg_id, "layered": layered or {},
             "order": {}, "expand_queries": [], "refund_flow": False,
             "pending_order_id": "", "resume_order_id": resume_order_id,
             "resume_question": resume_question}

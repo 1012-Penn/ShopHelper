@@ -1,5 +1,11 @@
-"""ch05 图骨架:State 一路贯穿,checkpointer 只承载图内运行态(历史真源在 MySQL store)。"""
-from typing import TypedDict
+"""ch05 图骨架:State 一路贯穿,checkpointer 只承载图内运行态(持久真源在 MySQL store)。
+
+ch07:messages 挂 add_messages reducer——各节点只吐本轮新消息,框架按 id 并入完整历史,
+checkpoint 承载进程内完整轨迹;模型面的分层精简版由路由层预算好放在 layered,两套各走各的。
+"""
+from typing import Annotated, TypedDict
+
+from langgraph.graph.message import add_messages
 
 
 class ChatState(TypedDict):
@@ -15,8 +21,9 @@ class ChatState(TypedDict):
     final_reply: str
     suggested_actions: list[str]  # "transfer_human" / "create_ticket" 子集
     trace: list[str]              # 每节点一行,log 节点逐行打日志(验收 1 靠它)
-    messages: list                # 本轮新增的落库 pending(role/content/tool_calls/tool_call_id)
-    history: list                 # 裁剪后的历史(dict),由路由层注入
+    messages: Annotated[list, add_messages]  # 完整历史+本轮轨迹;节点只吐新消息,框架按 id 并入
+    turn_user_msg_id: str         # 本轮 user 消息 id(log 节点据此切出本轮新消息落库)
+    layered: dict                 # 模型面分层上下文(路由层预算好):层2/层1消息、摘要、history_text
     # ---- ch06:分流器正式版 ----
     intent_confidence: float      # 意图置信度(trace/评估用)
     order: dict                   # 子流程拿到的订单数据({}=无)

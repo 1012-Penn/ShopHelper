@@ -17,8 +17,9 @@ _graph_state_defaults = dict(
     session_id=1, user_message="退货政策是什么", resolved_message="", intent="",
     intent_confidence=0.0, evidence=[], low_confidence=False, low_reason="",
     gate_passed=False, agent_steps=0, final_reply="", suggested_actions=[],
-    trace=[], messages=[], history=[], order={}, expand_queries=[],
-    refund_flow=False, pending_order_id="", resume_order_id="", resume_question="")
+    trace=[], messages=[], turn_user_msg_id="utest", layered={}, order={},
+    expand_queries=[], refund_flow=False, pending_order_id="",
+    resume_order_id="", resume_question="")
 
 
 def graph_state(**kw) -> dict:

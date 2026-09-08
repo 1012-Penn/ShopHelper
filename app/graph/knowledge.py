@@ -1,4 +1,6 @@
 """知识路径:强制 RAG 检索 → 置信度闸 → 弱证据兜底。service/kb/pool 构造注入,测试可替身。"""
+from langchain_core.messages import AIMessage
+
 from app.guard import REFUSAL_MARKER
 
 FALLBACK_REPLY = f"{REFUSAL_MARKER}这个问题我暂时无法给出可靠答案,您可以换个问法,或选择下方方式继续。"
@@ -37,8 +39,7 @@ def make_knowledge_nodes(service, kb, pool):
     async def fallback_node(state, writer=None) -> dict:
         _emit(writer, {"type": "token", "content": FALLBACK_REPLY})
         return {"final_reply": FALLBACK_REPLY,
-                "messages": [{"role": "user", "content": state["user_message"]},
-                             {"role": "assistant", "content": FALLBACK_REPLY}],
+                "messages": [AIMessage(content=FALLBACK_REPLY)],  # user 由 initial_state 带入
                 "trace": [*state["trace"], "node=fallback"]}
 
     return retrieve_node, gate_node, fallback_node

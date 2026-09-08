@@ -106,7 +106,8 @@ async def test_business_path_multi_step_persists(make_client):
     assert labels == ["订单查询", "物流查询"]  # 不预检索:没有 FAQ 检索徽章
     assert "".join(e["content"] for e in events if e["type"] == "token") == "包裹已到杭州。"
     history = await app.state.store.get_history(events[0]["session_id"])
-    assert [m["role"] for m in history] == ["user", "assistant", "tool", "assistant", "tool", "assistant"]
+    # ch07 落库契约:工具轨迹不落 messages 表,只留 user 与最终 assistant 文本
+    assert [m["role"] for m in history] == ["user", "assistant"]
     assert history[-1]["content"] == "包裹已到杭州。"
 
 

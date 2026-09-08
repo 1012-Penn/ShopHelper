@@ -1,5 +1,11 @@
-"""log 节点:整轮收尾——落库、拒答落池、trace 逐行日志、actions 帧下发。"""
+"""log 节点:整轮收尾——落库、拒答落池、trace 逐行日志、actions 帧下发。
+
+ch07 落库契约:messages 表只落 user 行与含文本 assistant 行;assistant 纯工具调用行与
+tool 行不落库(工具轨迹只活在当轮 State/checkpoint,跨轮事实靠摘要延续)。
+"""
 import logging
+
+from langchain_core.messages import AIMessage, HumanMessage
 
 from app.guard import is_refusal
 from app.graph.simple import ACTION_LABELS
@@ -12,9 +18,27 @@ def _emit(writer, frame: dict) -> None:
         writer(frame)
 
 
+def _turn_rows(state) -> list[dict]:
+    """按 turn_user_msg_id 定位本轮起点,切出新消息并过滤落库形态。"""
+    msgs = state.get("messages") or []
+    turn_id = state.get("turn_user_msg_id")
+    start = next((i for i, m in enumerate(msgs) if getattr(m, "id", None) == turn_id), None)
+    if start is None:
+        logger.warning("session=%s 未找到本轮 user 消息 %s,本轮回避落库",
+                       state["session_id"], turn_id)
+        return []
+    rows: list[dict] = []
+    for m in msgs[start:]:
+        if isinstance(m, HumanMessage):
+            rows.append({"role": "user", "content": m.content})
+        elif isinstance(m, AIMessage) and isinstance(m.content, str) and m.content.strip():
+            rows.append({"role": "assistant", "content": m.content})
+    return rows
+
+
 def make_log_node(store, pool):
     async def log_node(state, writer=None) -> dict:
-        await store.append(state["session_id"], state["messages"])
+        await store.append(state["session_id"], _turn_rows(state))
         if is_refusal(state["final_reply"]):
             pool.insert("self_check", state["session_id"], state["user_message"],
                         "模型自评证据不足:" + (state["final_reply"] or "")[:200])

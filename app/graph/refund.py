@@ -32,8 +32,7 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
                        "question": state["resolved_message"],
                        "original": state["user_message"],
                        "intent": state["intent"]})
-        return {"messages": [{"role": "user", "content": state["user_message"]}],
-                "trace": [*state["trace"], f"node=ask_order n={len(orders)}"]}
+        return {"trace": [*state["trace"], f"node=ask_order n={len(orders)}"]}
 
     async def fetch_order_node(state, writer=None) -> dict:
         order = get_order(state["pending_order_id"])

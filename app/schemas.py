@@ -32,6 +32,23 @@ class HistoryResponse(BaseModel):
     messages: list[MessageItem]
 
 
+class ConversationItem(BaseModel):
+    """ch07 侧栏列表项:新在前由排序保证,首问预览截 100 字,summarized=摘要投影已生成。"""
+    id: int
+    preview: str = ""
+    summarized: bool = False
+    updated_at: str = ""
+
+
+class ConversationListResponse(BaseModel):
+    items: list[ConversationItem]
+
+
+class ConversationMessagesResponse(BaseModel):
+    conversation_id: int
+    messages: list[MessageItem]
+
+
 class ExtractRequest(BaseModel):
     text: str = Field(min_length=1, description="售后描述原文")
 

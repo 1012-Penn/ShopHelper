@@ -94,7 +94,7 @@ async def test_ask_order_emits_selector_frame_and_user_only_messages():
     assert frames[0]["items"][0]["order_id"] == "1001"
     assert frames[0]["question"] == "这个能退吗"
     assert frames[0]["original"] == "这个能退吗"
-    assert out["messages"] == [{"role": "user", "content": "这个能退吗"}]
+    assert "messages" not in out  # ch07:user 消息由 initial_state 带入,ask_order 零吐
     assert "node=ask_order" in out["trace"][-1]
 
 
