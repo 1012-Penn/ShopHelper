@@ -10,7 +10,22 @@ from langchain_core.messages import AIMessage
 from pydantic import Field
 
 __all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse",
-           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker", "FakeRewriter"]
+           "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker", "FakeRewriter",
+           "StubExpand", "EchoResolver", "graph_state"]
+
+_graph_state_defaults = dict(
+    session_id=1, user_message="退货政策是什么", resolved_message="", intent="",
+    intent_confidence=0.0, evidence=[], low_confidence=False, low_reason="",
+    gate_passed=False, agent_steps=0, final_reply="", suggested_actions=[],
+    trace=[], messages=[], history=[], order={}, expand_queries=[],
+    refund_flow=False, pending_order_id="", resume_order_id="", resume_question="")
+
+
+def graph_state(**kw) -> dict:
+    """图 State 测试底座:ch05 全字段 + ch06 新字段,关键字参数覆盖。"""
+    base = dict(_graph_state_defaults)
+    base.update(kw)
+    return base
 
 
 class FakeChatWithTools(GenericFakeChatModel):
@@ -231,6 +246,37 @@ class ChunkStub:
     def __init__(self, text="", tool_call_chunks=None):
         self.text = text
         self.tool_call_chunks = tool_call_chunks or []
+
+
+class StubExpand:
+    """expand 结构化替身:映射命中返回预置 ExpandedQueries,未命中返回单条原句。
+    ainvoke 收到的 text 里「问题:」之后是 query。"""
+
+    def __init__(self, mapping=None):
+        self.mapping = mapping or {}
+
+    async def ainvoke(self, text):
+        from app.prompts import ExpandedQueries
+
+        query = text.split("问题:")[-1].strip()
+        return ExpandedQueries(queries=list(self.mapping.get(query, [query])))
+
+
+class EchoResolver:
+    """resolve 替身:映射命中返回预置 ResolvedQuestion,未命中原样透传 changed=False。
+    ainvoke 收到的 text 里「最新消息:」之后是 query。"""
+
+    def __init__(self, mapping=None):
+        self.mapping = mapping or {}
+
+    async def ainvoke(self, text):
+        from app.prompts import ResolvedQuestion
+
+        query = text.split("最新消息:")[-1].strip()
+        hit = self.mapping.get(query)
+        if hit is not None:
+            return hit
+        return ResolvedQuestion(resolved=query, changed=False)
 
 
 class GraphChatModel(FakeChatWithTools):

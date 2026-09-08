@@ -2,7 +2,7 @@
 from app.graph.logging_node import make_log_node
 from app.graph.simple import COMPLAINT_REPLY, CHITCHAT_REPLY, chitchat_node, complaint_node
 from app.guard import REFUSAL_MARKER
-from tests.test_ch05_entry import _state
+from tests.helpers import graph_state as _state
 
 
 class Rec:

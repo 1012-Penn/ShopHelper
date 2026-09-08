@@ -7,7 +7,7 @@ from pydantic import Field
 from app.config import Settings
 from app.graph.agent import make_agent_node
 from tests.helpers import FakeChatWithTools, FakeEmbedding, FakeVectorStore
-from tests.test_ch05_entry import _state
+from tests.helpers import graph_state as _state
 from tests.helpers import ChunkStub as Chunk
 
 

@@ -2,7 +2,7 @@
 from types import SimpleNamespace
 
 from app.graph.knowledge import make_knowledge_nodes
-from tests.test_ch05_entry import _state
+from tests.helpers import graph_state as _state
 
 
 def _service(items=None, low=False, reason=""):

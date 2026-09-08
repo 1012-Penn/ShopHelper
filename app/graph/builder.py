@@ -10,7 +10,7 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.graph import END, START, StateGraph
 
 from app.graph.agent import make_agent_node
-from app.graph.entry import intent_node, resolve_node, route
+from app.graph.entry import make_intent_node, make_resolve_node, route
 from app.graph.knowledge import make_knowledge_nodes
 from app.graph.logging_node import make_log_node
 from app.graph.simple import chitchat_node, complaint_node
@@ -37,11 +37,17 @@ def _with_sink(fn):
 def build_graph(model, registry, settings, store, pool, retrieval_service, kb):
     retrieve_node, gate_node, fallback_node = make_knowledge_nodes(retrieval_service, kb, pool)
 
-    async def _intent(state):
-        return await intent_node(state, model)
+    from app.prompts import ResolvedQuestion
+    from app.llm import make_extract_model
+
+    resolver = make_extract_model(settings).with_structured_output(
+        ResolvedQuestion, method="function_calling")
+    _resolve = make_resolve_node(resolver)
+
+    _intent = make_intent_node(model)
 
     g = StateGraph(ChatState)
-    g.add_node("resolve", resolve_node)
+    g.add_node("resolve", _with_sink(_resolve))
     g.add_node("intent", _intent)
     # 一切发帧节点都套 _with_sink:py3.10 async 下 langgraph 的 writer 注入失效,
     # 帧经 configurable.sink 队列外送(spec 实现期偏差)
