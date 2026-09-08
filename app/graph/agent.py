@@ -70,7 +70,7 @@ def make_agent_node(model, registry, settings, pool):
         # 否则子流程/知识路径先发的证据会被 agent 轮内 query_faq 的重发冲掉
         spent, steps, n_offset = 0, 0, len(state.get("evidence") or [])
         citations: list[dict] = [dict(it) for it in (state.get("evidence") or [])]
-        while steps < settings.agent_max_steps and spent < settings.agent_token_budget:
+        while steps < settings.max_agent_steps and spent < settings.agent_token_budget:
             steps += 1
             bound = model.bind_tools(registry.tools)
             parts: list[str] = []

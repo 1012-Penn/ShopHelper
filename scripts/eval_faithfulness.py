@@ -80,7 +80,7 @@ def main() -> int:
         make_embedder(settings), vectors, kb,
         rewriter=make_rewriter(settings) if settings.query_rewrite_enabled else None,
         reranker=make_reranker(settings),
-        candidates=settings.hybrid_candidates, final_top_k=settings.retrieval_final_top_k,
+        candidates=settings.hybrid_candidates, final_top_k=settings.rerank_top_k,
         rerank_score_floor=settings.rerank_score_floor,
     )
     chat = make_chat_model(settings)

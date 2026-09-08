@@ -61,7 +61,7 @@ def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *
 
     _resolve = make_resolve_node(resolver)
     prep, ask, fetch, expand, policy = make_refund_nodes(
-        expander, retrieval_service, kb, pool, top_k=settings.retrieval_final_top_k)
+        expander, retrieval_service, kb, pool, top_k=settings.rerank_top_k)
 
     g = StateGraph(ChatState)
     # 一切发帧节点都套 _with_sink:py3.10 async 下 langgraph 的 writer 注入失效,
@@ -144,7 +144,7 @@ def make_retrieval_chain(session_factory, settings):
         rewriter=make_rewriter(settings) if settings.query_rewrite_enabled else None,
         reranker=make_reranker(settings),
         candidates=settings.hybrid_candidates,
-        final_top_k=settings.retrieval_final_top_k,
+        final_top_k=settings.rerank_top_k,
         rerank_score_floor=settings.rerank_score_floor,
     )
     return service, kb

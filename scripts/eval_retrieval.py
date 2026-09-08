@@ -73,7 +73,7 @@ def main() -> int:
     rewriter = make_rewriter(settings) if (settings.query_rewrite_enabled and not args.no_rewrite) else None
     service = RetrievalService(
         make_embedder(settings), vectors, kb, rewriter=rewriter, reranker=make_reranker(settings),
-        candidates=settings.hybrid_candidates, final_top_k=settings.retrieval_final_top_k,
+        candidates=settings.hybrid_candidates, final_top_k=settings.rerank_top_k,
         rerank_score_floor=settings.rerank_score_floor,
     )
     cases = [json.loads(ln) for ln in

@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from app.graph.builder import initial_state
+from app.context import derive_budgets
 from app.history import estimate_tokens, trim_history
 from app.prompts import SERVICE_PROMPT_TEMPLATE
 from app.schemas import ChatRequest
@@ -25,14 +26,16 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
     store = request.app.state.store
     graph = request.app.state.graph
 
-    if estimate_tokens(body.message) > settings.history_token_budget:
-        raise HTTPException(status_code=400, detail="消息过长,超出会话历史预算")
+    if estimate_tokens(body.message) > settings.max_user_input_tokens:
+        raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
 
     session_id = await store.resolve(body.session_id)
     history = await store.get_history(session_id)
+    # 过渡口径(Task 5 重写为三层装配):历史预算按窗口推导,不再用写死常量
+    budget = derive_budgets(settings).history
     # System 拼在 [0] 交给 trim_history 满足"messages[0] 永不裁剪";System 不下发,由 Agent 节点自拼
     trimmed = trim_history([{"role": "system", "content": SERVICE_PROMPT_TEMPLATE.format()},
-                            *history], settings.history_token_budget)
+                            *history], budget)
 
     async def event_stream():
         yield sse_frame({"type": "session", "session_id": session_id})

@@ -30,7 +30,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.pool = LowConfidencePool(session_factory)
     # build_tools 生产路径:内部构造真 embedder/向量库(v2)/rewriter/reranker
     app.state.registry = ToolRegistry(build_tools(
-        session_factory, top_k=settings.retrieval_final_top_k,
+        session_factory, top_k=settings.rerank_top_k,
     ))
     app.state.chat_model = make_chat_model(settings)
     app.state.extract_model = make_extract_model(settings).with_structured_output(

@@ -50,7 +50,7 @@ def build_tools(session_factory, embedder=None, vectors=None, top_k=None,
         settings = Settings()
         embedder = embedder or make_embedder(settings)
         vectors = vectors or KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)
-    top_k = top_k or (settings.retrieval_final_top_k if production else 3)
+    top_k = top_k or (settings.rerank_top_k if production else 3)
     if production:
         if settings.query_rewrite_enabled:
             rewriter = rewriter or make_rewriter(settings)

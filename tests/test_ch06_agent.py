@@ -19,7 +19,7 @@ def _settings():
     from app.config import Settings
 
     return Settings(openai_api_key="sk-test", _env_file=None,
-                    agent_max_steps=4, agent_token_budget=2000)
+                    max_agent_steps=4, agent_token_budget=2000)
 
 
 class _Registry:

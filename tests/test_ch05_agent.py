@@ -103,7 +103,7 @@ async def test_react_multi_step_order_then_logistics():
 async def test_max_steps_cutoff():
     model = ScriptedToolModel([("tools", [_tc("query_order", {"order_id": "1"}, f"c{i}")])
                                for i in range(10)])
-    node = make_agent_node(model, _registry(), _settings(agent_max_steps=2), FakePool())
+    node = make_agent_node(model, _registry(), _settings(max_agent_steps=2), FakePool())
     out = await node(_state(session_id=1, user_message="查订单", resolved_message="查订单", history=[]))
     assert out["agent_steps"] == 2 and model.bind_calls == 2
     # C1 修复:熔断时回溯 assistant 文本;全程只有工具轮 → 给引导语而非原始工具 JSON
@@ -154,7 +154,7 @@ async def test_cutoff_prefers_last_assistant_text():
         ("tools", [_tc("query_order", {"order_id": "1"}, "c9")]),
     ])
     rec = Recorder()
-    node = make_agent_node(model, _registry(), _settings(agent_max_steps=3), FakePool())
+    node = make_agent_node(model, _registry(), _settings(max_agent_steps=3), FakePool())
     out = await node(_state(session_id=1, user_message="查订单", resolved_message="查订单",
                             history=[]), writer=rec)
     assert out["final_reply"] == "已为您查询到订单,"

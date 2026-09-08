@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- 预算公式(spec「预算推导」节,验收数字逐位复现):滑窗=max(窗口−输出−(输入+步数×工具上限)−固定,0);固定=1400+RERANK_TOP_K×250+200+1500;层1=`int(历史×0.7)`(Python 浮点语义);层2=历史−层1
+- 预算公式(spec「预算推导」节,验收数字逐位复现):滑窗=max(窗口−输出−(输入+步数×工具上限)−固定,0);固定=1800+RERANK_TOP_K×250+200+1500;层1=`int(历史×0.7)`、层2=`int(历史×0.3)`(各算各的,Python 浮点语义)
 - 演示配置必须精确产出滑窗 5650 / 层1 3954 / 层2 1695:`MODEL_CONTEXT_WINDOW=18000 MAX_OUTPUT_TOKENS=2000 MAX_USER_INPUT_TOKENS=2000 MAX_AGENT_STEPS=3 TOOL_RESULT_MAX_TOKENS=1200 RERANK_TOP_K=5`
 - messages 表只落 user 行与含文本 assistant 行;tool 行与纯工具调用 assistant 行不落库(ch02 契约收窄)
 - 梗概只追加不回炉;旧梗概只作背景不参与合并;摘要 prompt 禁编造、不留寒暄、几十到一两百字、超 300 字硬截断
@@ -107,9 +107,10 @@ def derive_budgets(s: Settings) -> ContextBudgets:
              + s.ctx_safety_margin_tokens)
     sliding = max(s.model_context_window - s.max_output_tokens - peak - fixed, 0)
     history = min(s.ctx_keep_rounds * s.ctx_per_round_tokens, sliding)
-    layer1 = int(history * 0.7)  # Python 浮点语义:5650*0.7 → 3954
+    layer1 = int(history * 0.7)  # 七三开各自 int 截断(验收口径:5650 → 3954 + 1695)
     return ContextBudgets(window=s.model_context_window, fixed=fixed, peak=peak,
-                          sliding=sliding, history=history, layer1=layer1, layer2=history - layer1)
+                          sliding=sliding, history=history,
+                          layer1=int(history * 0.7), layer2=int(history * 0.3))
 ```
 
 - [ ] **Step 4: 跑测试 + 全量** `pytest tests/test_ch07_budget.py -v && pytest -q` → 全绿(改名波及面 grep 兜底见 Step 5)
