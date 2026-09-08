@@ -4,6 +4,7 @@
 -- ch02 新建:faq / conversations / messages / tickets 四张表
 -- ch03 新建:knowledge_chunks / qa_extraction_staging
 -- ch04 新建:low_confidence_questions / faith_cases
+-- ch07 新建:conversation_summaries;conversations 加三列(summary / summary_upto_msg_id / layer1_from_msg_id)
 -- 商品、订单、物流走工具内 mock,不建表
 -- 全库统一 ENGINE=InnoDB、CHARSET=utf8mb4
 -- 建表顺序:先 conversations,再依赖它的 messages / tickets / low_confidence_questions
@@ -13,12 +14,16 @@
 SET NAMES utf8mb4;
 
 -- 会话壳:一通对话的统一身份,messages / tickets 都引用它
+-- ch07 三列:summary=分段梗概的拼接投影;summary_upto_msg_id=摘要覆盖到哪条;layer1_from_msg_id=层1(原文)起点
 CREATE TABLE conversations (
-  id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '会话主键',
-  user_id     VARCHAR(64)     NOT NULL                COMMENT '用户标识',
-  status      ENUM('进行中','已转人工','已结束') NOT NULL DEFAULT '进行中' COMMENT '处理状态',
-  created_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '开启时间',
-  updated_at  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+  id                  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '会话主键',
+  user_id             VARCHAR(64)     NOT NULL                COMMENT '用户标识',
+  status              ENUM('进行中','已转人工','已结束') NOT NULL DEFAULT '进行中' COMMENT '处理状态',
+  summary             TEXT            NULL                    COMMENT '最近几段梗概拼成的投影,拼装时跟证据一起挂在用户那句之后',
+  summary_upto_msg_id BIGINT UNSIGNED NULL                    COMMENT '摘要已覆盖到哪条消息,滑窗从其后接原文',
+  layer1_from_msg_id  BIGINT UNSIGNED NULL                    COMMENT '层1(原文)起点;此 id 之后原样,之前渲染成半压形态',
+  created_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '开启时间',
+  updated_at          DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (id),
   KEY idx_user_id (user_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='客服会话';
@@ -155,3 +160,24 @@ CREATE TABLE faith_cases (
   KEY idx_status (status),
   KEY idx_last_seen_at (last_seen_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ch04 忠实度编造个案台账';
+
+-- =============================================================
+-- ch07 · 会话上下文管理 · 分段摘要表
+-- 摘要一段一行、只追加:压完的段落不再回炉重压,一个事实只经历一次有损压缩。
+-- conversations.summary 是全部段落按 seq 拼接的投影,conversations.summary_upto_msg_id 是覆盖锚点。
+-- 层边界靠消息 id 表达不搬数据:id ≤ summary_upto 已进摘要;summary_upto < id ≤ layer1_from 层2;
+-- id > layer1_from 层1 原样。
+-- =============================================================
+
+CREATE TABLE conversation_summaries (
+  id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  conversation_id BIGINT UNSIGNED NOT NULL,
+  seq             INT             NOT NULL COMMENT '第几段,从 1 开始',
+  from_msg_id     BIGINT UNSIGNED NOT NULL COMMENT '这段覆盖的消息区间,闭区间',
+  upto_msg_id     BIGINT UNSIGNED NOT NULL,
+  content         TEXT            NOT NULL,
+  created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_conv_seq (conversation_id, seq),
+  KEY idx_conv_upto (conversation_id, upto_msg_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分段摘要,一段一行只追加';
