@@ -100,3 +100,23 @@ def test_real_plugins_dir_loads_demo_time():
     loaded = load_plugins(reg, ToolContext())
     assert "demo_time" in loaded
     assert reg.get("query_server_time") is not None
+
+
+class FakeMcpLikeTool:
+    """langchain-mcp-adapters 形态:args_schema 为原始 JSON Schema dict。"""
+
+    name = "mcp_like"
+    description = "dict schema 工具"
+    args_schema = {"type": "object",
+                   "properties": {"order_id": {"type": "string"}},
+                   "required": ["order_id"]}
+
+    async def ainvoke(self, args):
+        return "done"
+
+
+def test_record_json_schema_accepts_raw_dict():
+    """I 回归:MCP 工具 args_schema 为 dict 时不得调用 model_json_schema。"""
+    rec = ToolRecord(FakeMcpLikeTool(), source="mcp", mcp_server="aftersales")
+    schema = rec.json_schema
+    assert schema["properties"]["order_id"]["type"] == "string"

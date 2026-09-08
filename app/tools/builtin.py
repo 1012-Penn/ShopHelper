@@ -34,7 +34,8 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
 
     @tool
     def query_order(order_id: str) -> str:
-        """按订单号查询订单信息:商品、金额、状态。用户问订单相关问题时使用。"""
+        """按订单号查询订单的基础信息:商品、金额、状态;不包含物流轨迹。
+        用户问订单买了什么、多少钱、什么状态时使用;问包裹/物流到哪了时不要用本工具。"""
         from app.orders import get_order
 
         return json.dumps(get_order(order_id), ensure_ascii=False)

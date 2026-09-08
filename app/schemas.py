@@ -71,10 +71,13 @@ class TicketRequest(BaseModel):
 
 
 class TicketConfirmRequest(BaseModel):
-    """ch08 建工单确认流:预览卡「确认提交」回传的载荷(前端原样回显,服务端零状态)。"""
+    """ch08 建工单确认流:预览卡「确认提交」回传的载荷(前端原样回显,服务端零状态)。
+    tool_name/arguments 支持 debug 写工具走同一确认通道(验收 6 制造写超时)。"""
     conversation_id: int = Field(description="会话 id")
-    description: str = Field(min_length=1, max_length=500, description="工单问题描述")
+    tool_name: str = Field(default="create_ticket", description="确认放行的写工具名")
+    description: str = Field(default="", max_length=500, description="工单问题描述(create_ticket 用)")
     ticket_type: Literal["售后", "投诉", "咨询"] = Field(default="售后", description="工单类型")
+    arguments: dict = Field(default_factory=dict, description="工具参数(非 create_ticket 时使用)")
 
 
 class TicketCancelRequest(BaseModel):

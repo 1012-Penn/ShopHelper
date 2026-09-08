@@ -57,6 +57,25 @@ class ToolEngine:
     async def execute(self, name: str, args_json: str, *, conversation_id: int | None = None,
                       tool_call_id: str | None = None, on_write_intercept=None,
                       confirmed: bool = False) -> str:
+        """引擎契约:任何情况都不向上抛异常,统一收敛为回灌给模型的错误文本。"""
+        try:
+            return await self._execute(name, args_json, conversation_id=conversation_id,
+                                       tool_call_id=tool_call_id,
+                                       on_write_intercept=on_write_intercept,
+                                       confirmed=confirmed)
+        except Exception as exc:  # 兜底:任何漏网异常(如 BaseExceptionGroup)不炸图
+            logger.error("工具 %s 执行出现未预期异常:%s", name, exc, exc_info=True)
+            try:
+                self.audit.log(tool_name=name, tool_source="builtin", status="失败",
+                               conversation_id=conversation_id, tool_call_id=tool_call_id,
+                               error_message=f"未预期异常:{exc}"[:512])
+            except Exception:
+                logger.warning("审计写入失败(不拦工具执行):%s", name, exc_info=True)
+            return f"错误:工具 {name} 执行失败:{exc}"
+
+    async def _execute(self, name: str, args_json: str, *, conversation_id=None,
+                       tool_call_id=None, on_write_intercept=None,
+                       confirmed: bool = False) -> str:
         record = self.registry.get(name)
         t0 = time.monotonic()
         if record is None:

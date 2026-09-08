@@ -197,3 +197,30 @@ async def test_audit_failure_does_not_block_execution(db_session_factory):
     engine = _engine(db_session_factory, [rec], audit_raises=True)
     out = await engine.execute("t", json.dumps({"order_id": "1"}))
     assert out == "结果"
+
+
+async def test_mcp_dict_schema_tool_executes(db_session_factory):
+    """回归:args_schema 为原始 JSON Schema dict 的 MCP 型工具走完整管线。"""
+    from app.tools.base import ToolRecord
+
+    class McpLikeTool:
+        name = "mcp_like"
+        description = "dict schema 工具"
+        args_schema = {"type": "object",
+                       "properties": {"order_id": {"type": "string"}},
+                       "required": ["order_id"]}
+
+        async def ainvoke(self, args):
+            return [{"type": "text", "text": "轨迹节点一"}]
+
+    rec = ToolRecord(McpLikeTool(), source="mcp", access="read", mcp_server="logistics")
+    engine = _engine(db_session_factory, [rec])
+    out = await engine.execute("mcp_like", json.dumps({"order_id": "1001"}))
+    assert out == "轨迹节点一"
+    (row,) = _rows(db_session_factory)
+    assert row.status == "成功" and row.tool_source == "mcp" and row.mcp_server == "logistics"
+
+    # 缺必填 → 校验拦下(dict schema 同样生效)
+    out = await engine.execute("mcp_like", "{}")
+    (row,) = [_r for _r in _rows(db_session_factory)][-1:]
+    assert row.status == "校验拦下"

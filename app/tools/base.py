@@ -28,10 +28,16 @@ class ToolRecord:
 
     @property
     def json_schema(self) -> dict[str, Any]:
-        """参数 JSON Schema:模型可见的入参契约,执行前统一按它校验。"""
+        """参数 JSON Schema:模型可见的入参契约,执行前统一按它校验。
+
+        langchain-mcp-adapters 0.3.x 的 MCP 工具 args_schema 是原始 JSON Schema dict,
+        内置 @tool 是 pydantic 类——两种形态都接。
+        """
         schema = self.tool.args_schema
         if schema is None:
             return {"type": "object", "properties": {}}
+        if isinstance(schema, dict):
+            return schema
         return schema.model_json_schema()
 
 

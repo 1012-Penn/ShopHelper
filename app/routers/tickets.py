@@ -30,21 +30,33 @@ async def create_ticket(body: TicketRequest, request: Request):
 
 @router.post("/api/tickets/confirm")
 async def confirm_ticket(body: TicketConfirmRequest, request: Request):
-    """ch08 建工单确认流:前端预览卡「确认提交」回传,引擎以 confirmed 放行真实执行。"""
+    """ch08 确认流:前端「确认提交」回传,引擎以 confirmed 放行真实执行。
+
+    tool_name=create_ticket(缺省)用工单字段组装参数;其余写工具(如 debug 慢写)
+    原样透传 arguments——确认通道本身就是用户授权,引擎侧仍再做一次 Schema 校验。
+    """
     store, engine = request.app.state.store, request.app.state.engine
     if not await store.exists(body.conversation_id):
         raise HTTPException(status_code=404, detail="会话不存在")
-    raw = await engine.execute("create_ticket", json.dumps({
-        "conversation_id": body.conversation_id, "description": body.description,
-        "ticket_type": body.ticket_type,
-    }, ensure_ascii=False), conversation_id=body.conversation_id, confirmed=True)
+    if body.tool_name == "create_ticket":
+        args = {"conversation_id": body.conversation_id,
+                "description": body.description, "ticket_type": body.ticket_type}
+        if not body.description:
+            raise HTTPException(status_code=422, detail="缺少问题描述")
+    else:
+        args = body.arguments
+    raw = await engine.execute("create_ticket" if body.tool_name == "create_ticket"
+                               else body.tool_name,
+                               json.dumps(args, ensure_ascii=False),
+                               conversation_id=body.conversation_id, confirmed=True)
     try:
         parsed = json.loads(raw)
     except json.JSONDecodeError:
         parsed = None
-    if not isinstance(parsed, dict) or "ticket_no" not in parsed:
+    if body.tool_name == "create_ticket" and (
+            not isinstance(parsed, dict) or "ticket_no" not in parsed):
         raise HTTPException(status_code=502, detail="创建工单失败")
-    return parsed
+    return parsed if isinstance(parsed, dict) else {"result": raw}
 
 
 @router.post("/api/tickets/cancel")

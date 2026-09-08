@@ -1,6 +1,6 @@
 # ShopHelper
 
-电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写;ch06 分流器正式版:LLM 指代消解+Query 改写(已完整原样透传)、意图识别四件套(七类+其他枚举/JSON intent+confidence/边界 few-shot/置信度与可选小→大降级路)、退款售后确定性子流程(槽位检查→订单数据→Query 扩写→多路政策检索去重合并→窄化「这一单能不能退」交主力 Agent)、订单选择器(SSE 帧下发可点订单卡,点选无状态回传续走)与退款单表单(固定原因类目,复用工单链路);ch07 会话上下文管理:三层历史(层 1 原文/层 2 渲染截短/早期异步分段摘要,锚点 id 划界降级只挪 id)、token 预算从模型窗口倒推(滑窗=窗口−输出−单轮峰值−固定开销,层 1 七成层 2 三成,启动自检装不下一轮报警)、摘要走后台任务不阻塞回复(旧梗概只作背景不回炉)、State.messages 挂 add_messages 承载图内完整轨迹(与模型面精简版各走各的)、每轮上下文原样落 logs/app.log(model_ctx/history_ctx)、messages 表只落 user/assistant 文本(工具轨迹活在当轮)、前端会话侧栏(新在前/首问预览/已摘要标记/切换回载续聊)。
+电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写;ch06 分流器正式版:LLM 指代消解+Query 改写(已完整原样透传)、意图识别四件套(七类+其他枚举/JSON intent+confidence/边界 few-shot/置信度与可选小→大降级路)、退款售后确定性子流程(槽位检查→订单数据→Query 扩写→多路政策检索去重合并→窄化「这一单能不能退」交主力 Agent)、订单选择器(SSE 帧下发可点订单卡,点选无状态回传续走)与退款单表单(固定原因类目,复用工单链路);ch07 会话上下文管理:三层历史(层 1 原文/层 2 渲染截短/早期异步分段摘要,锚点 id 划界降级只挪 id)、token 预算从模型窗口倒推(滑窗=窗口−输出−单轮峰值−固定开销,层 1 七成层 2 三成,启动自检装不下一轮报警)、摘要走后台任务不阻塞回复(旧梗概只作背景不回炉)、State.messages 挂 add_messages 承载图内完整轨迹(与模型面精简版各走各的)、每轮上下文原样落 logs/app.log(model_ctx/history_ctx)、messages 表只落 user/assistant 文本(工具轨迹活在当轮)、前端会话侧栏(新在前/首问预览/已摘要标记/切换回载续聊);ch08 即插即用工具系统:统一注册中心(内置插件化+MCP 动态发现,langchain-mcp-adapters 多 Server 接入)、JSON Schema 参数校验(拦下回灌)、读写权限把门(create_ticket 须前端确认,模型直调一律拒绝)、统一执行引擎(超时/分类重试/错误三档分诊/结果格式化)、tool_audit_logs 全量审计、自建物流/售后双 MCP Server(FastMCP Streamable HTTP,mock 数据,独立进程)、建工单确认流(预览卡片→确认落表/取消记拒)。
 
 ## 环境要求
 
@@ -11,7 +11,7 @@
 
 ```bash
 pip install virtualenv && python3 -m virtualenv .venv
-.venv/bin/pip install fastapi==0.141.1 uvicorn==0.52.4 langchain==1.4.0 langchain-openai==1.6.0 pydantic-settings==2.15.0 httpx==0.28.1 "pymilvus[milvus-lite]==3.0.1" jieba==0.42.1 "sqlalchemy>=2.0" pymysql cryptography pytest==9.1.1 pytest-asyncio==1.4.0
+.venv/bin/pip install fastapi==0.141.1 uvicorn==0.52.4 langchain==1.4.0 langchain-openai==1.6.0 pydantic-settings==2.15.0 httpx==0.28.1 "pymilvus[milvus-lite]==3.0.1" jieba==0.42.1 mcp==1.30.0 langchain-mcp-adapters==0.3.2 jsonschema==4.26.0 "sqlalchemy>=2.0" pymysql cryptography pytest==9.1.1 pytest-asyncio==1.4.0
 ```
 
 ## 配置
@@ -128,6 +128,17 @@ ch07 五条验收(先 `docker compose down -v && up -d` → seed → `build_kb` 
 
 真机验收证据:`reports/ch07-acceptance.md`。
 
+ch08 六条验收(主服务启动后;先另起两个 MCP Server:`.venv/bin/python -m uvicorn app.mcp_servers.logistics:app --port 8001` 与 `aftersales:app --port 8002`,都从仓库根目录运行):
+
+1. **新工具即插即用**:示范插件 `app/tools/plugins/demo_time.py` 即「只做注册动作」的新工具,问「现在服务器时间几点」Agent 即调用(审计落 query_server_time 成功);
+2. **MCP 接管物流**:`.venv/bin/python scripts/acceptance_ch08.py --scenario mcp`——问物流轨迹由 MCP 的 logistics_tracker 应答(审计 tool_source=mcp,成功);
+3. **Server 侧加工具不重启客户端**:重启售后 Server 时加 `AFTERSALES_EXTRA_TOOLS=true`,`.venv/bin/python scripts/acceptance_ch08.py --scenario mcp-add`——query_repair_shop 现问现拿;
+4. **建工单确认流**:`--scenario ticket`——「帮我建个工单」Agent 先追问描述;补齐后推预览卡;确认后 tickets 表落新工单且回复工单号;
+5. **取消**:预览卡点「取消」→ 工单未建,tool_audit_logs 该 create_ticket 状态=「权限拒绝」;
+6. **人为超时**:主服务加 `TOOLS_DEBUG=true TOOL_TIMEOUT_SECONDS=2` 重启,`--scenario timeout`——读 debug_slow_query:超时+重试 1 次;写 debug_slow_write:超时+retry_count=0。
+
+真机验收证据:`reports/ch08-acceptance.md`。
+
 ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。ch04 评估脚本继续可用(注意 ch05 图内检索与 query_faq 工具同链)。
 
 ## 已知边界
@@ -141,7 +152,7 @@ ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收�
 - 多轮 Agent Loop、用户体系不做(ch02 边界延续)。
 - ch05:意图识别/指代消解是最简版(简单 prompt / 原样透传),判错意图即走错出口(如「发货时间」被判「订单」),正式版后置;InMemorySaver 进程内无界增长,重启即清;同一会话并发请求共用 thread,无会话锁;ReAct 中间思考文本对用户可见(祛魅主题下如实呈现);沙箱无浏览器后端,前端按钮视觉终验由用户本地点开页面确认(SSE 帧/工单接口已 curl 验证)。
 - ch06:订单为固定 mock 三单(`app/orders.py`,未知单号走「未找到」话术);被搁置的选择器旧卡片仍可点,点选视作对该订单重新发起退款咨询(语义合理不设过期);意图降级路(小→大)已实现默认关(`INTENT_ESCALATION_ENABLED=true` 开启,需配 `INTENT_SMALL_MODEL`);评估怪问题桶 2/3(「你会写诗吗」判闲聊,未硬塞业务意图,口径边缘);商品名(如 SH-E300)不绑定具体订单,退款一律经订单选择器确认。
-- ch07:checkpointer 仍为 InMemorySaver(进程内无界增长,重启即清)——持久真源在 MySQL,重启后按会话从 messages 表回灌 State,轮内工具轨迹不跨重启存活(事实靠摘要延续);messages 表只落 user 与最终 assistant 文本(ch02「全量落库」契约收窄),ReAct 中间文本碎片不落库;层 2 的「截短」是渲染规则,存储保持原文;摘要质量依赖模型(prompt 禁编造+超 300 字硬截断,无事后校验);层 2 超预算到摘要完成之间当轮以半压渲染顶住,必要时组装端丢弃最老层 2 块(仅当轮);崩溃在 log 节点前的回合 checkpoint 有而 MySQL 无,模型输入以 MySQL 为准(该轮视作未发生);跨会话记忆/用户画像不做;多进程多 worker 部署不在本章范围(InMemorySaver/hydrated_threads/摘要 seq 均为单进程假设,多 worker 下摘要任务可能撞 uk_conv_seq 记 fail 后下轮重试,无数据损坏)。
+- ch07:checkpointer 仍为 InMemorySaver(进程内无界增长,重启即清)——持久真源在 MySQL,重启后按会话从 messages 表回灌 State,轮内工具轨迹不跨重启存活(事实靠摘要延续);messages 表只落 user 与最终 assistant 文本(ch02「全量落库」契约收窄),ReAct 中间文本碎片不落库;层 2 的「截短」是渲染规则,存储保持原文;摘要质量依赖模型(prompt 禁编造+超 300 字硬截断,无事后校验);层 2 超预算到摘要完成之间当轮以半压渲染顶住,必要时组装端丢弃最老层 2 块(仅当轮);崩溃在 log 节点前的回合 checkpoint 有而 MySQL 无,模型输入以 MySQL 为准(该轮视作未发生);跨会话记忆/用户画像不做;多进程多 worker 部署不在本章范围(InMemorySaver/hydrated_threads/摘要 seq 均为单进程假设,多 worker 下摘要任务可能撞 uk_conv_seq 记 fail 后下轮重试,无数据损坏)。\n- ch08:MCP Server 为 mock 随机数据,不接真实系统;MCP 工具一律只读(我侧规则,不看 Server 声明);工具调用审计 arguments/result_summary 截断存储,非全量;引擎超时/重试按工具粒度,MCP 网络抖动的重试计入 retry_count;确认载荷未签名(演示系统);Skill 机制不落代码。
 
 API 契约细节见
 `docs/superpowers/specs/2026-09-04-ch01-pure-chat-design.md`、
