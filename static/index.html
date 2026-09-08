@@ -193,6 +193,37 @@
   }
   .refund-form .rf-submit:disabled { opacity: .5; cursor: default; }
   .refund-form .rf-status { font-size: 12px; color: #34c759; }
+
+  /* ch07:会话侧栏——多会话列表,点击切换回载历史;加载失败整体隐藏(静默降级) */
+  #main { flex: 1; display: flex; min-height: 0; }
+  #chat-col { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  #sidebar {
+    width: 236px; flex: none; background: #fff; border-right: 1px solid #e5e8ee;
+    display: flex; flex-direction: column; min-height: 0;
+  }
+  #sidebar.hidden { display: none; }
+  #sidebar .sb-head {
+    padding: 12px 14px; font-size: 13px; font-weight: 600; color: #5a6270;
+    border-bottom: 1px solid #eef1f5; flex: none;
+  }
+  #conv-list { list-style: none; margin: 0; padding: 6px; overflow-y: auto; flex: 1; }
+  #conv-list li {
+    padding: 8px 10px; border-radius: 8px; cursor: pointer;
+    font-size: 13px; color: #1a1d24; margin-bottom: 2px;
+  }
+  #conv-list li:hover { background: #f5f7fa; }
+  #conv-list li.active { background: #eef3ff; }
+  #conv-list li .preview {
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  #conv-list li .meta {
+    font-size: 11px; color: #8a919e; margin-top: 2px;
+    display: flex; gap: 6px; align-items: center;
+  }
+  #conv-list li .sum-badge {
+    background: #e8f7ee; color: #1d9a55; border-radius: 999px;
+    padding: 0 6px; font-size: 10.5px;
+  }
 </style>
 </head>
 <body>
@@ -205,11 +236,19 @@
   <button id="new-chat">新对话</button>
 </header>
 
-<div id="log"></div>
+<div id="main">
+  <aside id="sidebar">
+    <div class="sb-head">会话列表</div>
+    <ul id="conv-list"></ul>
+  </aside>
+  <div id="chat-col">
+    <div id="log"></div>
 
-<div id="bar">
-  <input id="text" placeholder="输入消息,回车发送" autocomplete="off" />
-  <button id="send">发送</button>
+    <div id="bar">
+      <input id="text" placeholder="输入消息,回车发送" autocomplete="off" />
+      <button id="send">发送</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -542,6 +581,7 @@ async function streamChat(payload, bubble) {
       if (!bubble.querySelector(".order-bar")) {
         addFeedback(bubble);
       }
+      loadConversations();  // 发送完成后静默刷新侧栏(新会话上榜/预览更新)
     }
   }
 }
@@ -563,15 +603,82 @@ async function send() {
   }
 }
 
+// ch07:会话侧栏——列表(新在前/首问预览/已摘要标记)、点击切换回载、发送后静默刷新;
+// 任何侧栏请求失败只隐藏侧栏,不影响聊天区(静默降级)
+const sidebar = document.getElementById("sidebar");
+const convList = document.getElementById("conv-list");
+let convItemsCache = [];
+
+function renderConvList(items) {
+  convItemsCache = items || [];
+  convList.innerHTML = "";
+  for (const it of convItemsCache) {
+    const li = document.createElement("li");
+    if (it.id === state.sessionId) li.classList.add("active");
+    const preview = document.createElement("div");
+    preview.className = "preview";
+    preview.textContent = it.preview || "(无消息)";
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    meta.appendChild(document.createTextNode("会话 " + it.id));
+    if (it.summarized) {
+      const badge = document.createElement("span");
+      badge.className = "sum-badge";
+      badge.textContent = "摘要";
+      meta.appendChild(badge);
+    }
+    li.append(preview, meta);
+    li.onclick = () => switchConversation(it.id);
+    convList.appendChild(li);
+  }
+}
+
+async function loadConversations() {
+  try {
+    const resp = await fetch("/api/conversations");
+    if (!resp.ok) throw new Error(resp.status);
+    renderConvList((await resp.json()).items || []);
+  } catch (e) {
+    sidebar.classList.add("hidden");
+  }
+}
+
+async function switchConversation(id) {
+  if (state.busy || id === state.sessionId) return;
+  let body;
+  try {
+    const resp = await fetch("/api/conversations/" + id + "/messages");
+    if (!resp.ok) throw new Error(resp.status);
+    body = await resp.json();
+  } catch (e) {
+    return;  // 回载失败:保留当前会话不动
+  }
+  state.sessionId = id;
+  log.innerHTML = "";
+  for (const m of body.messages || []) {
+    if (m.role === "user") addUserMsg(m.content || "");
+    else if (m.role === "assistant" && m.content) {
+      const b = addBotMsg();
+      b.querySelector(".content").textContent = m.content;
+    }
+  }
+  renderConvList(convItemsCache);  // 高亮刷新
+  scrollDown(true);
+  text.focus();
+}
+
 sendBtn.onclick = send;
 text.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 document.getElementById("new-chat").onclick = () => {
   if (state.busy) return;
   state.sessionId = null;
   log.innerHTML = "";
+  loadConversations();  // 清高亮,旧会话仍在侧栏可切回
   text.focus();
 };
 text.focus();
+loadConversations();
+setInterval(() => { if (!state.busy) loadConversations(); }, 15000);
 </script>
 </body>
 </html>
