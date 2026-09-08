@@ -19,7 +19,11 @@ def _emit(writer, frame: dict) -> None:
 
 
 def _turn_rows(state) -> list[dict]:
-    """按 turn_user_msg_id 定位本轮起点,切出新消息并过滤落库形态。"""
+    """按 turn_user_msg_id 定位本轮起点,切出新消息并过滤落库形态。
+
+    assistant 只落最后一条含文本消息:ReAct 中间步骤的「我先查一下」碎片与回灌用
+    AI/Tool 消息不是对话原文,落库会污染回载与下一轮的层 1 历史。
+    """
     msgs = state.get("messages") or []
     turn_id = state.get("turn_user_msg_id")
     start = next((i for i, m in enumerate(msgs) if getattr(m, "id", None) == turn_id), None)
@@ -28,11 +32,14 @@ def _turn_rows(state) -> list[dict]:
                        state["session_id"], turn_id)
         return []
     rows: list[dict] = []
+    last_ai = None
     for m in msgs[start:]:
         if isinstance(m, HumanMessage):
             rows.append({"role": "user", "content": m.content})
         elif isinstance(m, AIMessage) and isinstance(m.content, str) and m.content.strip():
-            rows.append({"role": "assistant", "content": m.content})
+            last_ai = m
+    if last_ai is not None:
+        rows.append({"role": "assistant", "content": last_ai.content})
     return rows
 
 

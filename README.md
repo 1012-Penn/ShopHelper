@@ -1,6 +1,6 @@
 # ShopHelper
 
-电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写;ch06 分流器正式版:LLM 指代消解+Query 改写(已完整原样透传)、意图识别四件套(七类+其他枚举/JSON intent+confidence/边界 few-shot/置信度与可选小→大降级路)、退款售后确定性子流程(槽位检查→订单数据→Query 扩写→多路政策检索去重合并→窄化「这一单能不能退」交主力 Agent)、订单选择器(SSE 帧下发可点订单卡,点选无状态回传续走)与退款单表单(固定原因类目,复用工单链路)。
+电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写;ch06 分流器正式版:LLM 指代消解+Query 改写(已完整原样透传)、意图识别四件套(七类+其他枚举/JSON intent+confidence/边界 few-shot/置信度与可选小→大降级路)、退款售后确定性子流程(槽位检查→订单数据→Query 扩写→多路政策检索去重合并→窄化「这一单能不能退」交主力 Agent)、订单选择器(SSE 帧下发可点订单卡,点选无状态回传续走)与退款单表单(固定原因类目,复用工单链路);ch07 会话上下文管理:三层历史(层 1 原文/层 2 渲染截短/早期异步分段摘要,锚点 id 划界降级只挪 id)、token 预算从模型窗口倒推(滑窗=窗口−输出−单轮峰值−固定开销,层 1 七成层 2 三成,启动自检装不下一轮报警)、摘要走后台任务不阻塞回复(旧梗概只作背景不回炉)、State.messages 挂 add_messages 承载图内完整轨迹(与模型面精简版各走各的)、每轮上下文原样落 logs/app.log(model_ctx/history_ctx)、messages 表只落 user/assistant 文本(工具轨迹活在当轮)、前端会话侧栏(新在前/首问预览/已摘要标记/切换回载续聊)。
 
 ## 环境要求
 
@@ -22,7 +22,8 @@ pip install virtualenv && python3 -m virtualenv .venv
 - `EMBEDDING_API_KEY`(必填,BGE-M3 嵌入,硅基流动申请)、`EMBEDDING_API_BASE` / `EMBEDDING_MODEL`(默认 BAAI/bge-m3)
 - `RERANK_API_KEY`(ch04 重排,留空复用 EMBEDDING_API_KEY)、`RERANK_API_BASE` / `RERANK_MODEL`(默认 BAAI/bge-reranker-v2-m3)
 - `DATABASE_URL`(默认指向本机 3306 的 Docker MySQL)、`MILVUS_DB_PATH`(默认 `./data/milvus_knowledge.db`)
-- `HISTORY_TOKEN_BUDGET` / `CHAT_TEMPERATURE` / `EXTRACT_TEMPERATURE` / `RETRIEVAL_TOP_K` / `CHUNK_MAX_CHARS` / `CHUNK_OVERLAP_CHARS` / `DEDUP_THRESHOLD` / `RERANK_SCORE_FLOOR` / `HYBRID_CANDIDATES` / `RETRIEVAL_FINAL_TOP_K` / `QUERY_REWRITE_ENABLED` 均有默认值
+- `CHAT_TEMPERATURE` / `EXTRACT_TEMPERATURE` / `RETRIEVAL_TOP_K` / `CHUNK_MAX_CHARS` / `CHUNK_OVERLAP_CHARS` / `DEDUP_THRESHOLD` / `RERANK_SCORE_FLOOR` / `HYBRID_CANDIDATES` 均有默认值
+- ch07 上下文预算(均有默认值,见 spec「预算推导」):`MODEL_CONTEXT_WINDOW` / `MAX_OUTPUT_TOKENS` / `MAX_USER_INPUT_TOKENS` / `MAX_AGENT_STEPS` / `TOOL_RESULT_MAX_TOKENS` / `RERANK_TOP_K`(顶替旧 RETRIEVAL_FINAL_TOP_K)及 `CTX_*` 固定开销组件;只调 `MODEL_CONTEXT_WINDOW` 不够——其余项按默认值算,窗口过小会滑窗归零并在启动时报「上下文预算不足」
 
 ## 数据库
 
@@ -117,6 +118,16 @@ docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character
 
 真机验收证据:`reports/ch06-acceptance.md`。
 
+ch07 五条验收(先 `docker compose down -v && up -d` → seed → `build_kb` → 启动服务;老库需另 apply `db/ch07-summary.sql` 与 `db/ch07-layers.sql`):
+
+1. **默认配置连聊 20+ 轮不爆不崩、且不触发任何压缩(装得下就不压)**:`.venv/bin/python scripts/acceptance_ch07.py --scenario a`(23 轮,断言无 `层1 降级`/`summary trigger`、无错误轮,启动行见 `[ctx] budget 窗口=…`);
+2. **演示配置完整级联 + 梗概召回**:演示配置 `MODEL_CONTEXT_WINDOW=18000 MAX_OUTPUT_TOKENS=2000 MAX_USER_INPUT_TOKENS=2000 MAX_AGENT_STEPS=3 TOOL_RESULT_MAX_TOKENS=1200 RERANK_TOP_K=5` 起服务(算出滑窗 5650/层1 3954/层2 1695),`.venv/bin/python scripts/acceptance_ch07.py --scenario b`——日志完整链:`层1 降级 …→…` → `summary trigger 层2 约 N token > 预算 1695` → `[summary] … done 第1段`;此时问「最开始那个订单后来怎么说?」能靠梗概里的订单号与诉求答对;
+3. **陷阱复核**:只设 `MODEL_CONTEXT_WINDOW=18000` 起服务 → 启动即报 `[ctx] 上下文预算不足:滑窗 0 …`(`--scenario trap`);
+4. **后台摘要不阻塞 + 每轮上下文可观测**:`grep model_ctx logs/app.log`(摘要全文+滑窗逐条+条数+tokens)、`grep history_ctx logs/app.log`(每轮必打,闲聊轮也有);场景 B 报告附触发轮耗时与摘要完成时间戳(并行完成);
+5. **多会话侧栏**:`--scenario s`(HTTP 级:新在前/首问预览/回载/切回续聊/已摘要标记);浏览器操作:聊天页左侧栏点「会话」项切换回载、可接着聊;「新对话」开新会话,旧会话仍在侧栏可切回;侧栏加载失败自动隐藏不影响聊天。
+
+真机验收证据:`reports/ch07-acceptance.md`。
+
 ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。ch04 评估脚本继续可用(注意 ch05 图内检索与 query_faq 工具同链)。
 
 ## 已知边界
@@ -130,6 +141,7 @@ ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收�
 - 多轮 Agent Loop、用户体系不做(ch02 边界延续)。
 - ch05:意图识别/指代消解是最简版(简单 prompt / 原样透传),判错意图即走错出口(如「发货时间」被判「订单」),正式版后置;InMemorySaver 进程内无界增长,重启即清;同一会话并发请求共用 thread,无会话锁;ReAct 中间思考文本对用户可见(祛魅主题下如实呈现);沙箱无浏览器后端,前端按钮视觉终验由用户本地点开页面确认(SSE 帧/工单接口已 curl 验证)。
 - ch06:订单为固定 mock 三单(`app/orders.py`,未知单号走「未找到」话术);被搁置的选择器旧卡片仍可点,点选视作对该订单重新发起退款咨询(语义合理不设过期);意图降级路(小→大)已实现默认关(`INTENT_ESCALATION_ENABLED=true` 开启,需配 `INTENT_SMALL_MODEL`);评估怪问题桶 2/3(「你会写诗吗」判闲聊,未硬塞业务意图,口径边缘);商品名(如 SH-E300)不绑定具体订单,退款一律经订单选择器确认。
+- ch07:checkpointer 仍为 InMemorySaver(进程内无界增长,重启即清)——持久真源在 MySQL,重启后按会话从 messages 表回灌 State,轮内工具轨迹不跨重启存活(事实靠摘要延续);messages 表只落 user 与最终 assistant 文本(ch02「全量落库」契约收窄),ReAct 中间文本碎片不落库;层 2 的「截短」是渲染规则,存储保持原文;摘要质量依赖模型(prompt 禁编造+超 300 字硬截断,无事后校验);层 2 超预算到摘要完成之间当轮以半压渲染顶住,必要时组装端丢弃最老层 2 块(仅当轮);崩溃在 log 节点前的回合 checkpoint 有而 MySQL 无,模型输入以 MySQL 为准(该轮视作未发生);跨会话记忆/用户画像不做。
 
 API 契约细节见
 `docs/superpowers/specs/2026-09-04-ch01-pure-chat-design.md`、

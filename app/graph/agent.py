@@ -136,13 +136,14 @@ def make_agent_node(model, registry, settings, pool):
                         _emit(writer, {"type": "citations", "items": list(citations)})
                 emitted.append(ToolMessage(content=result, tool_call_id=tc["id"]))
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
-        # 熔断:回溯最近一条 assistant 文本作收敛答复(工具 JSON 不是给人看的答案);全程无文本则给引导语
+        # 熔断:回溯最近一条 assistant 文本作收敛答复(工具 JSON 不是给人看的答案);全程无文本则给引导语。
+        # cutoff 若来自 emitted 中既有文本则不重复追加(落库/历史只留一份)
         cutoff = next((m.content for m in reversed(emitted)
                        if isinstance(m, AIMessage) and m.content), None)
         if cutoff is None:
             cutoff = "问题比较复杂,请您稍后再试或换种问法。"
+            emitted.append(AIMessage(content=cutoff))
             _emit(writer, {"type": "token", "content": cutoff})
-        emitted.append(AIMessage(content=cutoff))
         return {"final_reply": cutoff, "agent_steps": steps, "messages": emitted,
                 "suggested_actions": [],
                 "trace": [*state["trace"], f"node=agent steps={steps} cutoff"]}
