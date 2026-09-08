@@ -81,7 +81,7 @@ async def test_single_step_converges_without_tools():
 async def test_react_multi_step_order_then_logistics():
     model = ScriptedToolModel([
         ("tools", [_tc("query_order", {"order_id": "1001"}, "c1")]),
-        ("tools", [_tc("query_logistics", {"order_id": "1001"}, "c2")]),
+        ("tools", [_tc("query_product", {"keyword": "无线耳机"}, "c2")]),
         ("text", "包裹已到杭州转运中心。"),
     ])
     rec = Recorder()
@@ -90,7 +90,7 @@ async def test_react_multi_step_order_then_logistics():
                             resolved_message="先查订单1001再告诉我物流", history=[]), writer=rec)
     assert out["agent_steps"] == 3 and out["final_reply"] == "包裹已到杭州转运中心。"
     labels = [f["label"] for f in rec.frames if f["type"] == "tool_status"]
-    assert labels == ["订单查询", "物流查询"]
+    assert labels == ["订单查询", "商品查询"]  # ch08:query_logistics 由 MCP 接管,内置下线
     roles = [type(m).__name__ for m in out["messages"]]
     assert roles == ["AIMessage", "ToolMessage", "AIMessage", "ToolMessage", "AIMessage"]
     # 每步都重新 bind_tools(ReAct 每步都带工具,区别于 ch04 单轮两段式)

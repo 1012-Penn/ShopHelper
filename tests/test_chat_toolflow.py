@@ -60,13 +60,13 @@ async def test_multi_tool_calls_all_fed_back(make_client):
     """模型一轮点多个工具:逐个执行、逐个回灌,徽章帧逐个下发。"""
     model = GraphChatModel('{"intent": "订单"}', [
         ("tools", [_tc("query_order", {"order_id": "1001"}, "c1", index=0),
-                   _tc("query_logistics", {"order_id": "1001"}, "c2", index=1)]),
+                   _tc("query_product", {"keyword": "无线耳机"}, "c2", index=1)]),
         ("text", "两路结果都拿到了。"),
     ])
     client, app = await make_client(model)
     events = await post_chat_sse(client, {"message": "订单 1001 的物流到哪了"})
     status = [e for e in events if e["type"] == "tool_status"]
-    assert [s["label"] for s in status] == ["订单查询", "物流查询"]
+    assert [s["label"] for s in status] == ["订单查询", "商品查询"]
     history = await app.state.store.get_history(events[0]["session_id"])
     assert [m["role"] for m in history] == ["user", "assistant"]  # ch07:工具行不落库
     assert history[1]["content"] == "两路结果都拿到了。"

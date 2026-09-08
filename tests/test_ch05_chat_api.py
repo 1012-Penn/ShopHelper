@@ -97,13 +97,13 @@ async def test_business_path_multi_step_persists(make_client):
     """业务数据类不预检索直达 Agent;两步 ReAct(查订单→查物流)后收敛并落库。"""
     model = IntentAgentModel('{"intent": "订单"}', [
         ("tools", [_tc("query_order", {"order_id": "1001"}, "c1")]),
-        ("tools", [_tc("query_logistics", {"order_id": "1001"}, "c2")]),
+        ("tools", [_tc("query_product", {"keyword": "无线耳机"}, "c2")]),
         ("text", "包裹已到杭州。"),
     ])
     client, app = await make_client(model)
     events = await post_chat_sse(client, {"message": "先查订单1001再告诉我物流"})
     labels = [e["label"] for e in events if e["type"] == "tool_status"]
-    assert labels == ["订单查询", "物流查询"]  # 不预检索:没有 FAQ 检索徽章
+    assert labels == ["订单查询", "商品查询"]  # 不预检索:没有 FAQ 检索徽章;ch08 物流走 MCP
     assert "".join(e["content"] for e in events if e["type"] == "token") == "包裹已到杭州。"
     history = await app.state.store.get_history(events[0]["session_id"])
     # ch07 落库契约:工具轨迹不落 messages 表,只留 user 与最终 assistant 文本

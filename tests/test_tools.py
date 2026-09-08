@@ -6,7 +6,7 @@ from app.chunking import Chunk
 from app.db import make_session_factory
 from app.kb import KnowledgeBaseStore, vectorize_pending
 from app.models import Faq, Ticket
-from app.tools.definitions import TOOL_LABELS, build_tools
+from app.tools.definitions import build_tools
 from tests.helpers import FakeEmbedding, FakeReranker, FakeRewriter, FakeVectorStore
 from tests.test_models import create_memory_engine
 
@@ -43,8 +43,8 @@ def _make_vector_tools(factory, *, vectors=None):
 def test_build_tools_names_and_labels():
     tools, _ = _make()
     names = {t.name for t in tools}
-    assert names == {"query_order", "query_product", "query_logistics", "query_faq", "create_ticket"}
-    assert TOOL_LABELS["query_logistics"] == "物流查询"
+    # ch08:query_logistics 内置下线,物流由 MCP Server 接管;插件(query_server_time)由 main 接线时装载
+    assert names == {"query_order", "query_product", "query_faq", "create_ticket"}
 
 
 def test_mock_tools_return_structured_json():
@@ -54,8 +54,6 @@ def test_mock_tools_return_structured_json():
     assert order["order_id"] == "1001" and "status" in order and "amount" in order
     product = json.loads(by_name["query_product"].invoke({"keyword": "手机"}))
     assert "name" in product and "price" in product
-    logistics = json.loads(by_name["query_logistics"].invoke({"order_id": "1001"}))
-    assert logistics["order_id"] == "1001" and len(logistics["traces"]) >= 1
 
 
 def test_query_faq_paraphrase_hit():
