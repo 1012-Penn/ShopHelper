@@ -68,9 +68,22 @@ def _merge_tool_call_chunks(chunks: list[dict]) -> list[dict]:
     return calls
 
 
-def make_agent_node(model, registry, settings, pool):
+def _write_intercept(writer, state):
+    """引擎拦截写操作时的回调:推工单预览卡片(无状态回传,前端确认后经 confirm 端点执行)。"""
+
+    def _intercept(record, args):
+        _emit(writer, {"type": "ticket_preview",
+                       "ticket_type": args.get("ticket_type", "售后"),
+                       "description": args.get("description", ""),
+                       "conversation_id": state["session_id"]})
+
+    return _intercept
+
+
+def make_agent_node(model, engine, settings, pool):
     async def agent_node(state, writer=None) -> dict:
         lay = state.get("layered") or {}
+        registry = engine.registry
         # 纯静态 system:证据/订单数据/窄化指令一律不进(ch07 组装纪律)
         system = SERVICE_PROMPT_TEMPLATE.format()
         instruction = ""
@@ -96,7 +109,7 @@ def make_agent_node(model, registry, settings, pool):
         while steps < settings.max_agent_steps and spent < settings.agent_token_budget:
             steps += 1
             _log_model_ctx(state, steps, messages, system)
-            bound = model.bind_tools(registry.tools)
+            bound = model.bind_tools(registry.bind_tools())
             parts: list[str] = []
             call_chunks: list[dict] = []
             async for chunk in bound.astream(messages):
@@ -120,7 +133,10 @@ def make_agent_node(model, registry, settings, pool):
             for tc in tool_calls:
                 _emit(writer, {"type": "tool_status", "name": tc["name"],
                                "label": registry.labels().get(tc["name"], tc["name"])})
-                result = await registry.execute(tc["name"], json.dumps(tc["args"], ensure_ascii=False))
+                result = await engine.execute(
+                    tc["name"], json.dumps(tc["args"], ensure_ascii=False),
+                    conversation_id=state["session_id"], tool_call_id=tc["id"],
+                    on_write_intercept=_write_intercept(writer, state))
                 result = truncate_tool_result(result, settings.tool_result_max_tokens)
                 parsed = _safe_json(result)
                 if isinstance(parsed, dict):

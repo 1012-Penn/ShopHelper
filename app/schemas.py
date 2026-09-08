@@ -68,3 +68,15 @@ class TicketRequest(BaseModel):
     session_id: int | None = Field(default=None, description="会话 id,缺省则新建")
     description: str = Field(min_length=1, description="工单问题描述")
     ticket_type: Literal["投诉", "售后", "咨询"] = Field(default="投诉", description="工单类型")
+
+
+class TicketConfirmRequest(BaseModel):
+    """ch08 建工单确认流:预览卡「确认提交」回传的载荷(前端原样回显,服务端零状态)。"""
+    conversation_id: int = Field(description="会话 id")
+    description: str = Field(min_length=1, max_length=500, description="工单问题描述")
+    ticket_type: Literal["售后", "投诉", "咨询"] = Field(default="售后", description="工单类型")
+
+
+class TicketCancelRequest(BaseModel):
+    conversation_id: int = Field(description="会话 id")
+    reason: str = Field(default="用户取消确认", description="取消原因,落审计")

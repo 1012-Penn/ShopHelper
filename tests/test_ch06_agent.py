@@ -25,8 +25,18 @@ def _settings():
 class _Registry:
     tools = []
 
+    @property
+    def registry(self):
+        return self  # ch08 引擎形态:engine.registry 即注册表
+
+    def bind_tools(self):
+        return self.tools
+
     def labels(self):
         return {}
+
+    async def execute(self, name, args_json, **kwargs):
+        return ""
 
 
 _EVIDENCE2 = [{"n": 1, "chunk_id": 11, "question": "a", "answer": "a",
@@ -98,7 +108,7 @@ async def test_query_faq_numbering_continues_after_evidence():
         def labels(self):
             return {"query_faq": "FAQ 检索"}
 
-        async def execute(self, name, args):
+        async def execute(self, name, args_json, **kwargs):
             return json.dumps({"items": [{"n": 1, "chunk_id": 99, "question": "运费",
                                           "answer": "8 元", "category": "退货政策",
                                           "section_path": "p"}],

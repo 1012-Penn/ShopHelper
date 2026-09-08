@@ -9,20 +9,29 @@ from langchain_core.messages import HumanMessage, ToolMessage
 
 from app.config import Settings
 from app.llm import make_chat_model
-from app.tools.registry import ToolRegistry
+from app.tools.audit import ToolAuditStore
+from app.tools.builtin import build_default_registry
+from app.tools.engine import ToolEngine
 
 
 async def naive_agent_loop(model, tools, question: str, max_steps: int = 10) -> str:
     """核心就这十几行:LLM 返回 tool_calls 就执行并喂回去,返回纯文本就收敛。"""
     messages = [HumanMessage(content=question)]
-    registry = ToolRegistry(tools)
+    registry = build_default_registry(None)
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from app.models import Base
+
+    sqlite_engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(sqlite_engine)
+    engine = ToolEngine(registry, ToolAuditStore(sessionmaker(bind=sqlite_engine)))
     for _ in range(max_steps):
         resp = await model.ainvoke(messages)
         if not resp.tool_calls:
             return resp.content
         messages.append(resp)
         for tc in resp.tool_calls:
-            result = await registry.execute(tc["name"], json.dumps(tc["args"], ensure_ascii=False))
+            result = await engine.execute(tc["name"], json.dumps(tc["args"], ensure_ascii=False))
             messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
     return "达到步数上限,未收敛。"
 

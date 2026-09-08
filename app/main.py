@@ -13,8 +13,6 @@ from app.routers import chat, conversations, extract, orders, sessions, tickets
 from app.schemas import AfterSaleExtraction
 from app.store import ConversationStore
 from app.summarizer import SummaryService
-from app.tools.definitions import build_tools
-from app.tools.registry import ToolRegistry
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
 
@@ -60,20 +58,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                     budgets.history, budgets.layer1, budgets.layer2)
     app.state.hydrated_threads = set()  # 已回灌完整历史的 thread(checkpoint 空时从 MySQL 灌一次)
     app.state.summary_service = SummaryService(app.state.store, make_extract_model(settings))
-    # build_tools 生产路径:内部构造真 embedder/向量库(v2)/rewriter/reranker
-    app.state.registry = ToolRegistry(build_tools(
-        session_factory, top_k=settings.rerank_top_k,
-    ))
+    # ch08 工具系统:注册中心(内置+插件 autoload)→ 统一执行引擎 → MCP 动态发现
+    from app.graph.builder import build_graph, make_retrieval_chain
+    from app.tools.audit import ToolAuditStore
+    from app.tools.base import ToolContext, ToolRegistryV2
+    from app.tools.builtin import register_builtin, register_debug
+    from app.tools.engine import ToolEngine
+    from app.tools.mcp_client import McpService
+    from app.tools.plugins import load_plugins
+
+    service, kb = make_retrieval_chain(session_factory, settings)
+    registry = ToolRegistryV2()
+    tool_ctx = ToolContext(session_factory=session_factory, service=service, kb=kb,
+                           top_k=settings.rerank_top_k)
+    register_builtin(registry, tool_ctx)
+    load_plugins(registry, tool_ctx)
+    if settings.tools_debug:
+        register_debug(registry, settings)
+    app.state.registry = registry
+    tool_audit_store = ToolAuditStore(session_factory)
+    app.state.tool_audit_store = tool_audit_store
+    app.state.engine = ToolEngine(registry, tool_audit_store,
+                                  timeout_seconds=settings.tool_timeout_seconds,
+                                  retry_attempts=settings.tool_retry_attempts)
+    app.state.mcp_service = McpService(registry, {
+        "logistics": settings.mcp_logistics_url,
+        "aftersales": settings.mcp_aftersales_url,
+    })
     app.state.chat_model = make_chat_model(settings)
     app.state.extract_model = make_extract_model(settings).with_structured_output(
         AfterSaleExtraction, method="function_calling"
     )
-    # ch05:LangGraph 图骨架(检索链与 build_tools 生产分支同构,各自持有真实现)
-    from app.graph.builder import build_graph, make_retrieval_chain
-
-    service, kb = make_retrieval_chain(session_factory, settings)
+    # ch05:LangGraph 图骨架(检索链与工具检索生产分支同构,各自持有真实现)
     app.state.graph = build_graph(
-        app.state.chat_model, app.state.registry, settings,
+        app.state.chat_model, app.state.engine, settings,
         app.state.store, app.state.pool, service, kb,
     )
     app.include_router(chat.router)

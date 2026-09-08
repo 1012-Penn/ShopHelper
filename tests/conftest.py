@@ -13,10 +13,10 @@ from sqlalchemy.pool import StaticPool
 
 from app.config import Settings
 from app.guard import LowConfidencePool
+from app.kb import KnowledgeBaseStore
 from app.main import create_app
+from app.retrieval import RetrievalService
 from app.store import ConversationStore
-from app.tools.definitions import build_tools
-from app.tools.registry import ToolRegistry
 from app.models import Base
 from tests.helpers import (FakeEmbedding, FakeReranker, FakeRewriter, FakeVectorStore,
                            EchoResolver, StubExpand, StubExtractModel)
@@ -63,25 +63,37 @@ async def make_client():
             app.state.store, make_extract_model(app.state.settings))
         vectors_stub = FakeVectorStore()
         app.state.vectors = vectors_stub
-        app.state.registry = ToolRegistry(build_tools(
-            factory, embedder=FakeEmbedding(), vectors=vectors_stub, top_k=3,
-            rewriter=FakeRewriter(), reranker=FakeReranker(),
-        ))
-        app.state.chat_model = chat_model
-        app.state.extract_model = extract_model or StubExtractModel()
-        # ch05:图骨架,检索链用与 build_tools 替身分支同参的 stub
-        from app.graph.builder import build_graph
-        from app.kb import KnowledgeBaseStore
-        from app.retrieval import RetrievalService
+        # ch08 工具系统装配:内置注册(替身检索)+ 执行引擎;测试不接 MCP(空 urls)
+        from app.tools.audit import ToolAuditStore
+        from app.tools.base import ToolContext, ToolRegistryV2
+        from app.tools.builtin import register_builtin
+        from app.tools.engine import ToolEngine
+        from app.tools.mcp_client import McpService
 
         kb = KnowledgeBaseStore(factory)
         service = RetrievalService(
             FakeEmbedding(), vectors_stub, kb, rewriter=FakeRewriter(), reranker=FakeReranker(),
             candidates=50, final_top_k=3, rerank_score_floor=0.30,
         )
+        registry = ToolRegistryV2()
+        tool_ctx = ToolContext(session_factory=factory, service=service, kb=kb, top_k=3)
+        register_builtin(registry, tool_ctx)
+        app.state.registry = registry
+        app.state.tool_audit_store = ToolAuditStore(factory)
+        app.state.engine = ToolEngine(registry, app.state.tool_audit_store,
+                                      timeout_seconds=app.state.settings.tool_timeout_seconds,
+                                      retry_attempts=app.state.settings.tool_retry_attempts)
+        app.state.mcp_service = McpService(registry, {})
+        app.state.retrieval_service = service
+        app.state.retrieval_kb = kb
+        app.state.chat_model = chat_model
+        app.state.extract_model = extract_model or StubExtractModel()
+        # ch05:图骨架,检索链用与工具检索替身同参的 stub
+        from app.graph.builder import build_graph
+
         # ch06:resolve/expand 替身缺省注入,测试不出网;intent 显式用 chat 替身(生产缺省是温度 0 的 extract 模型)
         app.state.graph = build_graph(
-            chat_model, app.state.registry, app.state.settings,
+            chat_model, app.state.engine, app.state.settings,
             app.state.store, app.state.pool, service, kb,
             resolver=resolver or EchoResolver({}),
             expander=expander or StubExpand({}),

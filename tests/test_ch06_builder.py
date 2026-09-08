@@ -28,8 +28,9 @@ async def test_build_graph_escalation_low_confidence_escalates(monkeypatch):
     from app.kb import KnowledgeBaseStore
     from app.retrieval import RetrievalService
     from app.store import ConversationStore
-    from app.tools.definitions import build_tools
-    from app.tools.registry import ToolRegistry
+    from app.tools.audit import ToolAuditStore
+    from app.tools.builtin import build_default_registry
+    from app.tools.engine import ToolEngine
 
     settings = Settings(openai_api_key="sk-test", _env_file=None,
                         intent_escalation_enabled=True)
@@ -50,10 +51,11 @@ async def test_build_graph_escalation_low_confidence_escalates(monkeypatch):
     service = RetrievalService(FakeEmbedding(), vectors, kb, rewriter=FakeRewriter(),
                                reranker=FakeReranker(), candidates=50, final_top_k=3,
                                rerank_score_floor=0.30)
-    registry = ToolRegistry(build_tools(factory, embedder=FakeEmbedding(), vectors=vectors,
-                                        top_k=3, rewriter=FakeRewriter(), reranker=FakeReranker()))
+    registry = build_default_registry(factory, embedder=FakeEmbedding(), vectors=vectors,
+                                      top_k=3, rewriter=FakeRewriter(), reranker=FakeReranker())
+    engine = ToolEngine(registry, ToolAuditStore(factory))
     chat = GraphChatModel(intent_reply="{}", turns=[("text", "有购物问题随时问我")])
-    graph = build_graph(chat, registry, settings, store, pool, service, kb,
+    graph = build_graph(chat, engine, settings, store, pool, service, kb,
                         resolver=EchoResolver({}), expander=StubExpand({}),
                         escalator=big)  # 大模型显式注入,避免真构造
 

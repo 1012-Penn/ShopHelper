@@ -37,10 +37,11 @@ def test_extract_bare_fallback_4_to_6_digits():
 
 async def test_query_order_tool_stable():
     from tests.conftest import make_session_factory
-    from app.tools.definitions import build_tools
+    from app.tools.builtin import build_default_registry
 
-    tools = {t.name: t for t in build_tools(make_session_factory(),
-                                            embedder=object(), vectors=object())}
+    registry = build_default_registry(make_session_factory(),
+                                      embedder=object(), vectors=object())
+    tools = {r.name: r.tool for r in registry.records()}
     data = json.loads(tools["query_order"].invoke({"order_id": "1001"}))
     assert data["product"] == "无线耳机" and data["amount"] == 299.0
     assert "未找到" in json.loads(tools["query_order"].invoke({"order_id": "424242"}))["error"]

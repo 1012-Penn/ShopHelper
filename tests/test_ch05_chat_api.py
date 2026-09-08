@@ -130,7 +130,7 @@ async def test_stale_evidence_not_leaked_across_turns(make_client):
 
     model2 = IntentAgentModel('{"intent": "订单"}', [("text", "订单没问题。")])
     app.state.graph = build_graph(
-        model2, app.state.registry, app.state.settings,
+        model2, app.state.engine, app.state.settings,
         app.state.store, app.state.pool, app.state.retrieval_service, app.state.retrieval_kb)
     events = await post_chat_sse(client, {"message": "查订单", "session_id": 7})
     system = model2.prompts[0][0]

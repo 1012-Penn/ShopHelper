@@ -74,6 +74,9 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
     store = request.app.state.store
     graph = request.app.state.graph
 
+    # MCP 现问现拿:每轮聊天前 diff 同步一次(TTL 防抖),Server 侧新工具不重启即用
+    await request.app.state.mcp_service.sync()
+
     if estimate_tokens(body.message) > settings.max_user_input_tokens:
         raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
 

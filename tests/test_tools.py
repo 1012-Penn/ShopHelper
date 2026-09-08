@@ -6,7 +6,7 @@ from app.chunking import Chunk
 from app.db import make_session_factory
 from app.kb import KnowledgeBaseStore, vectorize_pending
 from app.models import Faq, Ticket
-from app.tools.definitions import build_tools
+from app.tools.builtin import build_default_registry
 from tests.helpers import FakeEmbedding, FakeReranker, FakeRewriter, FakeVectorStore
 from tests.test_models import create_memory_engine
 
@@ -20,7 +20,9 @@ def _make():
             ("多久能发货?", "48 小时内发出。", "物流"),
         ])
         s.commit()
-    return build_tools(factory), factory
+    registry = build_default_registry(factory)
+    tools = [r.tool for r in registry.records()]
+    return [r.tool for r in registry.records()], factory
 
 
 def _make_vector_tools(factory, *, vectors=None):
@@ -35,8 +37,9 @@ def _make_vector_tools(factory, *, vectors=None):
     _, ids = kb.replace_doc_chunks("docs", chunks)
     vectors = vectors or FakeVectorStore()
     vectorize_pending(kb, vectors, FakeEmbedding())
-    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=3,
-                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    registry = build_default_registry(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=3,
+                                      rewriter=FakeRewriter(), reranker=FakeReranker())
+    tools = [r.tool for r in registry.records()]
     return tools, kb, ids
 
 
@@ -86,7 +89,8 @@ def test_query_faq_never_raises_on_backend_failure():
             raise RuntimeError("嵌入服务挂了")
 
     factory = make_session_factory(create_memory_engine())
-    tools2 = build_tools(factory, embedder=ExplodingEmbedder(), vectors=FakeVectorStore(), top_k=3)
+    registry = build_default_registry(factory, embedder=ExplodingEmbedder(), vectors=FakeVectorStore(), top_k=3)
+    tools2 = [r.tool for r in registry.records()]
     faq = {t.name: t for t in tools2}["query_faq"]
     out = json.loads(faq.invoke({"keyword": "退货"}))
     assert out["items"] == [] and out["low_confidence"] is True  # 异常收敛为空 + 低置信标志
@@ -149,8 +153,9 @@ def _make_v3_tools(factory, *, vectors=None, top_k=3):
     kb.replace_doc_chunks("d.md", chunks)
     vectors = vectors or FakeVectorStore()
     vectorize_pending(kb, vectors, FakeEmbedding())
-    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=top_k,
-                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    registry = build_default_registry(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=top_k,
+                                      rewriter=FakeRewriter(), reranker=FakeReranker())
+    tools = [r.tool for r in registry.records()]
     return tools, kb, vectors
 
 
@@ -188,8 +193,9 @@ def test_query_faq_v3_lost_in_middle_arrangement():
     kb.replace_doc_chunks("d.md", chunks)
     vectors = FakeVectorStore()
     vectorize_pending(kb, vectors, FakeEmbedding())
-    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=4,
-                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    registry = build_default_registry(factory, embedder=FakeEmbedding(), vectors=vectors, top_k=4,
+                                      rewriter=FakeRewriter(), reranker=FakeReranker())
+    tools = [r.tool for r in registry.records()]
     out = json.loads({t.name: t for t in tools}["query_faq"].invoke({"keyword": "退货"}))
     ns = [it["n"] for it in out["items"]]
     assert len(ns) == 4 and ns[0] == 1 and ns[-1] == 2  # 反漏斗:n=1 首位、n=2 末位
@@ -205,7 +211,8 @@ def test_query_faq_v3_exception_converges():
             raise RuntimeError("db lock")
 
     factory = make_session_factory(create_memory_engine())
-    tools = build_tools(factory, embedder=FakeEmbedding(), vectors=Broken(), top_k=3,
-                        rewriter=FakeRewriter(), reranker=FakeReranker())
+    registry = build_default_registry(factory, embedder=FakeEmbedding(), vectors=Broken(), top_k=3,
+                                      rewriter=FakeRewriter(), reranker=FakeReranker())
+    tools = [r.tool for r in registry.records()]
     out = json.loads({t.name: t for t in tools}["query_faq"].invoke({"keyword": "邮费"}))
     assert out["items"] == [] and out["low_confidence"] is True and "检索服务暂不可用" in out["reason"]

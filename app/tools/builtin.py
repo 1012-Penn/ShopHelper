@@ -119,3 +119,40 @@ def register_debug(registry: ToolRegistryV2, settings) -> None:
 
     registry.register(ToolRecord(debug_slow_query, source="builtin", access="read", label="慢查询演示"))
     registry.register(ToolRecord(debug_slow_write, source="builtin", access="write", label="慢写入演示"))
+
+
+def build_default_registry(session_factory, embedder=None, vectors=None, top_k=None,
+                           rewriter=None, reranker=None) -> ToolRegistryV2:
+    """便捷装配(兼容旧 build_tools 语义):替身/生产检索链按需组装 + 内置注册,返回注册表。"""
+    from app.kb import KnowledgeBaseStore
+    from app.rerank import make_reranker
+    from app.retrieval import RetrievalService
+    from app.rewrite import make_rewriter
+
+    production = embedder is None or vectors is None
+    settings = None
+    if production:
+        from app.config import Settings
+        from app.embedding import make_embedder
+        from app.vector_store import KnowledgeVectorStore
+
+        settings = Settings()
+        embedder = embedder or make_embedder(settings)
+        vectors = vectors or KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)
+    top_k = top_k or (settings.rerank_top_k if production else 3)
+    if production:
+        if settings.query_rewrite_enabled:
+            rewriter = rewriter or make_rewriter(settings)
+        reranker = reranker if reranker is not None else make_reranker(settings)
+
+    kb = KnowledgeBaseStore(session_factory)
+    service = RetrievalService(
+        embedder, vectors, kb, rewriter=rewriter, reranker=reranker,
+        candidates=settings.hybrid_candidates if production else 50,
+        final_top_k=top_k,
+        rerank_score_floor=settings.rerank_score_floor if production else 0.30,
+    )
+    registry = ToolRegistryV2()
+    register_builtin(registry, ToolContext(
+        session_factory=session_factory, service=service, kb=kb, top_k=top_k))
+    return registry

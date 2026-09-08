@@ -326,3 +326,29 @@ def seed_kb_chunk(app, path, questions, answer, section):
                                        section_path=section, content_type="faq",
                                        is_key_clause=False)])
     vectorize_pending(kb, app.state.vectors, FakeEmbedding())
+
+
+def builtin_engine():
+    """ch08:内置四工具的真实执行引擎(SQLite 内存审计库 + 替身检索),agent 节点级测试用。"""
+    from sqlalchemy import create_engine
+    from sqlalchemy.orm import sessionmaker
+    from sqlalchemy.pool import StaticPool
+
+    from app.kb import KnowledgeBaseStore
+    from app.models import Base
+    from app.retrieval import RetrievalService
+    from app.tools.audit import ToolAuditStore
+    from app.tools.base import ToolContext, ToolRegistryV2
+    from app.tools.builtin import register_builtin
+    from app.tools.engine import ToolEngine
+
+    engine = create_engine("sqlite:///:memory:",
+                           connect_args={"check_same_thread": False}, poolclass=StaticPool)
+    Base.metadata.create_all(engine)
+    factory = sessionmaker(bind=engine, expire_on_commit=False)
+    kb = KnowledgeBaseStore(factory)
+    service = RetrievalService(FakeEmbedding(), FakeVectorStore(), kb,
+                               candidates=50, final_top_k=3, rerank_score_floor=0.30)
+    registry = ToolRegistryV2()
+    register_builtin(registry, ToolContext(session_factory=factory, service=service, kb=kb, top_k=3))
+    return ToolEngine(registry, ToolAuditStore(factory))

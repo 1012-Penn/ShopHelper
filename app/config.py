@@ -63,3 +63,5 @@ class Settings(BaseSettings):
     tool_timeout_seconds: float = 10.0   # 单次工具执行超时
     tool_retry_attempts: int = 1         # 读操作暂时性故障重试次数;写操作恒不重试
     tools_debug: bool = False            # TOOLS_DEBUG=true 时注册 debug 慢工具(验收 6 用)
+    mcp_logistics_url: str = "http://127.0.0.1:8001/mcp"    # 物流 MCP Server(Streamable HTTP)
+    mcp_aftersales_url: str = "http://127.0.0.1:8002/mcp"   # 售后 MCP Server

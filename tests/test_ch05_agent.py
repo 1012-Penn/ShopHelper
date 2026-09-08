@@ -57,9 +57,10 @@ class FakePool:
 
 
 def _registry():
-    from app.tools.definitions import build_tools
-    from app.tools.registry import ToolRegistry
-    return ToolRegistry(build_tools(None, embedder=FakeEmbedding(), vectors=FakeVectorStore(), top_k=3))
+    """ch08:真实内置引擎(替身检索;审计落内存库)。"""
+    from tests.helpers import builtin_engine
+
+    return builtin_engine()
 
 
 def _settings(**kw):

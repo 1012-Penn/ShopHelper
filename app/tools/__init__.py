@@ -1,3 +1,1 @@
-from app.tools.definitions import TOOL_LABELS, build_tools
-
-__all__ = ["TOOL_LABELS", "build_tools"]
+"""工具系统:注册中心/引擎/审计/MCP 接入(ch08 起即插即用)。"""

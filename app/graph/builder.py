@@ -39,7 +39,7 @@ def _with_sink(fn):
     return _wrapped
 
 
-def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *,
+def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
                 resolver=None, intent_model=None, escalator=None, expander=None):
     """resolver/expander 缺省时生产路径自建(结构化真模型);测试经 conftest 注入替身。
     intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。"""
@@ -74,7 +74,7 @@ def build_graph(model, registry, settings, store, pool, retrieval_service, kb, *
     g.add_node("retrieve", _with_sink(retrieve_node))
     g.add_node("gate", _with_sink(gate_node))
     g.add_node("fallback", _with_sink(fallback_node))
-    g.add_node("agent", _with_sink(make_agent_node(model, registry, settings, pool)))
+    g.add_node("agent", _with_sink(make_agent_node(model, engine, settings, pool)))
     g.add_node("complaint", _with_sink(complaint_node))
     g.add_node("chitchat", _with_sink(chitchat_node))
     g.add_node("prepare_order", _with_sink(prep))
