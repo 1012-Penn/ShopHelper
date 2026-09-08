@@ -158,7 +158,8 @@ async def test_refusal_without_tool_call_pools(make_client):
 
 
 async def test_citations_renumbered_across_multiple_tool_calls(make_client):
-    """ch04 评审修复:同轮两次 query_faq,编号续排不冲突;回灌给模型的工具结果同步重写。"""
+    """ch04 评审修复 + ch06 契约演进:知识路径证据占 n=1..k(不发帧不回灌),agent 内两次
+    query_faq 的编号自 k+1 续排不撞号;citations 帧继承既有证据重发全量,工具 JSON 与帧一致。"""
     model = GraphChatModel('{"intent": "商品咨询"}', [
         ("tools", [_tc("query_faq", {"keyword": "邮费是多少"}, "call_1", index=0),
                    _tc("query_faq", {"keyword": "怎么申请退货"}, "call_2", index=1)]),
@@ -172,11 +173,12 @@ async def test_citations_renumbered_across_multiple_tool_calls(make_client):
     cites = [e for e in events if e["type"] == "citations"]
     assert len(cites) >= 1
     ns = [it["n"] for it in cites[-1]["items"]]
-    assert ns == list(range(1, len(ns) + 1)) and len(ns) >= 2  # 续排:从 1 连续无冲突
+    assert ns == list(range(1, len(ns) + 1)) and len(ns) >= 4  # 帧 = 证据[1,2] + 工具续排[3..]
     conv_id = events[0]["session_id"]
     history = await app.state.store.get_history(conv_id)
     tool_msgs = [m for m in history if m["role"] == "tool"]
     ns_in_tool = [it["n"] for m in tool_msgs
                   for it in (json.loads(m["content"]).get("items") or [])]
-    assert ns_in_tool == list(range(1, len(ns_in_tool) + 1))
-    assert set(ns_in_tool) == set(ns)
+    # 工具 JSON 编号自证据数(2)后续排:3..6;与最终帧的后段一致
+    assert ns_in_tool == list(range(3, len(ns_in_tool) + 3))
+    assert set(ns_in_tool) == set(ns) - {1, 2}

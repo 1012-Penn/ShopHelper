@@ -17,6 +17,14 @@ logger = logging.getLogger(__name__)
 
 ACTIONS_ON_REFUSAL = ["transfer_human", "create_ticket"]
 
+# ch06 退款/售后子流程窄化指令:只答「这一单」的问题,需求澄清仍在 Agent 内做
+NARROW_INSTRUCTIONS = {
+    "退款退货": ("用户处于退款退货流程。请仅依据下方订单数据与参考知识,"
+                 "判断这一单(订单{order_id})能不能退,并说明依据条款;不要回答与这一单无关的问题。"),
+    "售后": ("用户处于售后流程。请仅依据下方订单数据与参考知识,"
+             "说明这一单(订单{order_id})的售后问题该怎么处理(修/换/退);不要回答与这一单无关的问题。"),
+}
+
 
 def _emit(writer, frame: dict) -> None:
     if writer is not None:
@@ -49,12 +57,19 @@ def make_agent_node(model, registry, settings, pool):
         system = SERVICE_PROMPT_TEMPLATE.format()
         if state.get("evidence"):
             system += "\n\n参考知识(回答须带 [n] 角标):\n" + build_evidence_block(state["evidence"])
+        if state.get("refund_flow") and state.get("order"):
+            instruction = NARROW_INSTRUCTIONS.get(state.get("intent"), "")
+            if instruction:
+                system += ("\n\n【订单数据】" + json.dumps(state["order"], ensure_ascii=False)
+                           + "\n" + instruction.format(order_id=state["order"].get("order_id", "")))
         messages = [SystemMessage(content=system),
                     *history_to_messages(state["history"]),
                     HumanMessage(content=state["resolved_message"])]
         pending = [{"role": "user", "content": state["user_message"]}]
-        spent, steps, n_offset = 0, 0, 0
-        citations: list[dict] = []
+        # citations 继承既有证据再累计:前端 citations 帧是覆盖语义,重发必须带全量,
+        # 否则子流程/知识路径先发的证据会被 agent 轮内 query_faq 的重发冲掉
+        spent, steps, n_offset = 0, 0, len(state.get("evidence") or [])
+        citations: list[dict] = [dict(it) for it in (state.get("evidence") or [])]
         while steps < settings.agent_max_steps and spent < settings.agent_token_budget:
             steps += 1
             bound = model.bind_tools(registry.tools)
@@ -70,7 +85,9 @@ def make_agent_node(model, registry, settings, pool):
             tool_calls = _merge_tool_call_chunks(call_chunks)
             if not tool_calls:
                 pending.append({"role": "assistant", "content": text})
-                actions = ACTIONS_ON_REFUSAL if is_refusal(text) else []
+                actions = ACTIONS_ON_REFUSAL if is_refusal(text) else (
+                    ["refund_form"] if state.get("refund_flow")
+                    and state.get("intent") == "退款退货" else [])
                 return {"final_reply": text, "agent_steps": steps, "messages": pending,
                         "suggested_actions": actions,
                         "trace": [*state["trace"], f"node=agent steps={steps} converged"]}

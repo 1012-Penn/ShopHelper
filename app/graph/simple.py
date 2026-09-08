@@ -3,7 +3,7 @@ COMPLAINT_REPLY = ("非常抱歉给您带来了不好的体验,您的反馈我�
                    "您可以选择下面的方式,我们会尽快为您处理。")
 CHITCHAT_REPLY = ("我是本店智能客服,专注商品咨询、订单物流和售后问题;"
                   "闲聊虽然不太擅长,但有关购物的任何问题都可以随时问我哦。")
-ACTION_LABELS = {"transfer_human": "转人工", "create_ticket": "建工单"}
+ACTION_LABELS = {"transfer_human": "转人工", "create_ticket": "建工单", "refund_form": "申请退款"}
 
 
 def _emit(writer, frame: dict) -> None:

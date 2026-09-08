@@ -21,9 +21,13 @@ def make_log_node(store, pool):
         for line in state["trace"]:
             logger.info("[ch05] session=%s %s", state["session_id"], line)
         if state["suggested_actions"]:
-            _emit(writer, {"type": "actions",
-                           "items": [{"action": a, "label": ACTION_LABELS[a]}
-                                     for a in state["suggested_actions"]]})
+            items = []
+            for a in state["suggested_actions"]:
+                item = {"action": a, "label": ACTION_LABELS.get(a, a)}
+                if a == "refund_form" and state.get("order"):
+                    item["order_id"] = state["order"].get("order_id", "")
+                items.append(item)
+            _emit(writer, {"type": "actions", "items": items})
         return {"trace": [*state["trace"], "node=log persisted"]}
 
     return log_node
