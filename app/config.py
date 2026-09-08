@@ -58,3 +58,8 @@ class Settings(BaseSettings):
     ctx_summary_allowance_tokens: int = 200  # 注入梗概预留
     ctx_safety_margin_tokens: int = 1500     # 安全余量
     ctx_layer2_assistant_head_chars: int = 60  # 层 2 客服答复只留开头几十字
+
+    # ch08:工具系统(执行引擎超时/重试与 debug 慢工具开关)
+    tool_timeout_seconds: float = 10.0   # 单次工具执行超时
+    tool_retry_attempts: int = 1         # 读操作暂时性故障重试次数;写操作恒不重试
+    tools_debug: bool = False            # TOOLS_DEBUG=true 时注册 debug 慢工具(验收 6 用)

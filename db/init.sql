@@ -181,3 +181,30 @@ CREATE TABLE conversation_summaries (
   UNIQUE KEY uk_conv_seq (conversation_id, seq),
   KEY idx_conv_upto (conversation_id, upto_msg_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='分段摘要,一段一行只追加';
+
+
+-- =============================================================
+-- ch08 · 工具系统 · 工具调用审计表
+-- 统一执行引擎每次工具调用落一条:被权限拒、被校验拦的调用同样落;
+-- 不挂外键,审计写入不能被引用约束拦住;写审计失败只记 warning 不拦执行。
+-- =============================================================
+
+CREATE TABLE tool_audit_logs (
+  id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '审计主键',
+  conversation_id BIGINT UNSIGNED NULL                    COMMENT '所属会话,无会话上下文的调用为 NULL',
+  tool_call_id    VARCHAR(64)     NULL                    COMMENT '模型申请单 id,可对回 messages 流水',
+  tool_name       VARCHAR(128)    NOT NULL                COMMENT '工具名',
+  tool_source     ENUM('builtin','mcp') NOT NULL          COMMENT '工具来源:内置 / MCP 接入',
+  mcp_server      VARCHAR(64)     NULL                    COMMENT '来源 MCP Server 名,内置工具为 NULL',
+  arguments       JSON            NULL                    COMMENT '调用参数',
+  result_summary  TEXT            NULL                    COMMENT '返回结果,过长截断存摘要',
+  status          ENUM('成功','失败','超时','校验拦下','权限拒绝') NOT NULL COMMENT '本次调用结局',
+  error_message   VARCHAR(512)    NULL                    COMMENT '失败 / 拦下时的原因说明',
+  retry_count     TINYINT UNSIGNED NOT NULL DEFAULT 0     COMMENT '实际重试次数,写操作默认不重试恒为 0',
+  duration_ms     INT UNSIGNED    NULL                    COMMENT '耗时毫秒',
+  created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '调用时间',
+  PRIMARY KEY (id),
+  KEY idx_conversation_id (conversation_id),
+  KEY idx_tool_name (tool_name),
+  KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='工具调用审计留痕';
