@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     openai_model: str = "deepseek-chat"
     database_url: str = "mysql+pymysql://shophelper:shophelper@127.0.0.1:3306/shophelper?charset=utf8mb4"
     chat_temperature: float = 0.7
+    llm_max_retries: int = 6  # 上游 429/1305(访问量过大)是分钟级波动,默认重试 2 次不够
     extract_temperature: float = 0
 
     # ch09：Langfuse 是可选的本地可观测副本，缺 key/SDK/服务均不得影响聊天。

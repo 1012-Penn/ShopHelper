@@ -14,7 +14,7 @@ def _emit(writer, frame: dict) -> None:
 
 
 def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
-    async def retrieve_node(state, writer=None) -> dict:
+    async def retrieve_node(state, writer=None, config=None) -> dict:
         result = service.retrieve(state["resolved_message"], strategy="hybrid_rerank")
         rows = kb.get_chunks([r.chunk_id for r in result.items])
         evidence = [
@@ -55,7 +55,7 @@ def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
                 "trace": [*state["trace"], f"node=retrieve strategy=hybrid_rerank top1={top1} "
                                            f"low_confidence={result.low_confidence} n={len(evidence)}"]}
 
-    async def gate_node(state, writer=None) -> dict:
+    async def gate_node(state, writer=None, config=None) -> dict:
         if state["low_confidence"]:
             # 落池可能内联标准化/查重(LLM),放线程池避免阻塞事件循环
             await asyncio.to_thread(
@@ -68,7 +68,7 @@ def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
                     "trace": [*state["trace"], "node=gate blocked=low_confidence"]}
         return {"gate_passed": True, "trace": [*state["trace"], "node=gate passed"]}
 
-    async def fallback_node(state, writer=None) -> dict:
+    async def fallback_node(state, writer=None, config=None) -> dict:
         _emit(writer, {"type": "token", "content": FALLBACK_REPLY})
         return {"final_reply": FALLBACK_REPLY,
                 "messages": [AIMessage(content=FALLBACK_REPLY)],  # user 由 initial_state 带入

@@ -82,7 +82,7 @@ def _write_intercept(writer, state):
 
 
 def make_agent_node(model, engine, settings, pool):
-    async def agent_node(state, writer=None) -> dict:
+    async def agent_node(state, writer=None, config=None) -> dict:
         lay = state.get("layered") or {}
         registry = engine.registry
         # 纯静态 system:证据/订单数据/窄化指令一律不进(ch07 组装纪律)
@@ -114,7 +114,7 @@ def make_agent_node(model, engine, settings, pool):
             bound = model.bind_tools(registry.bind_tools())
             parts: list[str] = []
             call_chunks: list[dict] = []
-            async for chunk in bound.astream(messages):
+            async for chunk in bound.astream(messages, config):
                 if chunk.text:
                     parts.append(chunk.text)
                     _emit(writer, {"type": "token", "content": chunk.text})

@@ -48,7 +48,7 @@ class StubExtractModel:
         self.result = result
         self.error = error
 
-    async def ainvoke(self, text):
+    async def ainvoke(self, text, config=None, **kwargs):
         if self.error is not None:
             raise self.error
         return self.result
@@ -256,7 +256,7 @@ class StubExpand:
     def __init__(self, mapping=None):
         self.mapping = mapping or {}
 
-    async def ainvoke(self, text):
+    async def ainvoke(self, text, config=None, **kwargs):
         from app.prompts import ExpandedQueries
 
         query = text.split("问题:")[-1].strip()
@@ -270,7 +270,7 @@ class EchoResolver:
     def __init__(self, mapping=None):
         self.mapping = mapping or {}
 
-    async def ainvoke(self, text):
+    async def ainvoke(self, text, config=None, **kwargs):
         from app.prompts import ResolvedQuestion
 
         query = text.split("最新消息:")[-1].strip()
@@ -298,7 +298,7 @@ class GraphChatModel(FakeChatWithTools):
         self.intent_reply = intent_reply
         self.turns = list(turns)
 
-    async def ainvoke(self, messages, **kwargs):
+    async def ainvoke(self, messages, config=None, **kwargs):
         # 意图节点每轮都调:恒返 intent_reply,不消耗 messages 迭代器
         return AIMessage(content=self.intent_reply)
 
@@ -306,7 +306,7 @@ class GraphChatModel(FakeChatWithTools):
         self.bind_calls += 1
         return self
 
-    async def astream(self, messages, **kwargs):
+    async def astream(self, messages, config=None, **kwargs):
         self.prompts.append(list(messages))
         kind, payload = self.turns.pop(0) if self.turns else ("text", "默认回答。")
         if kind == "tools":

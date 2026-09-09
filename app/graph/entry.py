@@ -61,7 +61,7 @@ def make_resolve_node(resolver):
     ch07:{history} 槽位改喂分层历史的文本渲染(摘要行+滑窗),由路由层预算好放进 layered。
     """
 
-    async def resolve_node(state, writer=None) -> dict:
+    async def resolve_node(state, writer=None, config=None) -> dict:
         if state.get("resume_question"):
             q = state["resume_question"]
             # 旁路不发 resolved 帧:选择器轮已展示过同文灰字, resume 轮重发会重复渲染
@@ -72,7 +72,7 @@ def make_resolve_node(resolver):
             result = await resolver.ainvoke(
                 RESOLVE_PROMPT.format(
                     history=(state.get("layered") or {}).get("history_text") or "(无)",
-                    query=state["user_message"]))
+                    query=state["user_message"]), config)
         except Exception:
             logger.warning("resolve 上游失败,原样透传", exc_info=True)
         if isinstance(result, dict):
@@ -96,13 +96,13 @@ def make_resolve_node(resolver):
 def make_intent_node(model, escalator=None, floor: float = 0.6):
     """默认单次大模型;escalator 给定时小模型先判、confidence<floor 大模型重判一次取其结果。"""
 
-    async def intent_node(state) -> dict:
+    async def intent_node(state, config=None) -> dict:
         messages = [SystemMessage(content=INTENT_PROMPT),
                     HumanMessage(content=state["resolved_message"])]
         escalated = False
         upstream_error = False
         try:
-            resp = await model.ainvoke(messages)
+            resp = await model.ainvoke(messages, config)
             intent, conf, malformed = parse_intent(getattr(resp, "content", ""))
         except Exception:
             logger.warning("intent 上游调用失败,降级为兜底意图", exc_info=True)
@@ -111,7 +111,7 @@ def make_intent_node(model, escalator=None, floor: float = 0.6):
 
         if escalator is not None and conf < floor and not upstream_error:
             try:
-                resp2 = await escalator.ainvoke(messages)
+                resp2 = await escalator.ainvoke(messages, config)
                 intent, conf, malformed = parse_intent(getattr(resp2, "content", ""))
                 escalated = True
             except Exception:

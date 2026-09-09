@@ -18,7 +18,7 @@ def _base_state_update(state, reply: str) -> dict:
     return {"final_reply": reply, "messages": [AIMessage(content=reply)]}
 
 
-async def complaint_node(state, writer=None) -> dict:
+async def complaint_node(state, writer=None, config=None) -> dict:
     """不进 Agent、不自动执行任何动作:安抚 + 把两个选项交用户自选。"""
     _emit(writer, {"type": "token", "content": COMPLAINT_REPLY})
     return {**_base_state_update(state, COMPLAINT_REPLY),
@@ -26,7 +26,7 @@ async def complaint_node(state, writer=None) -> dict:
             "trace": [*state["trace"], "node=complaint fixed_reply actions=2"]}
 
 
-async def chitchat_node(state, writer=None) -> dict:
+async def chitchat_node(state, writer=None, config=None) -> dict:
     _emit(writer, {"type": "token", "content": CHITCHAT_REPLY})
     return {**_base_state_update(state, CHITCHAT_REPLY),
             "suggested_actions": [],

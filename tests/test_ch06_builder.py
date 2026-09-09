@@ -12,7 +12,7 @@ class _Fixed:
         self.reply = reply
         self.calls = 0
 
-    async def ainvoke(self, messages, **kwargs):
+    async def ainvoke(self, messages, config=None, **kwargs):
         from langchain_core.messages import AIMessage
 
         self.calls += 1

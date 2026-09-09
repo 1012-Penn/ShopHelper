@@ -29,9 +29,10 @@ class UsageStore:
                        func.sum(RequestUsage.total_tokens), func.avg(RequestUsage.total_tokens))
                 .group_by(RequestUsage.intent).order_by(RequestUsage.intent)
             ).all()
+            # MySQL SUM() 经 PyMySQL 返回 Decimal,显式转型避免 API 序列化成字符串
             return [
-                {"intent": intent, "request_count": count, "total_tokens": total,
-                 "avg_tokens": float(avg)}
+                {"intent": intent, "request_count": int(count), "total_tokens": int(total or 0),
+                 "avg_tokens": round(float(avg or 0), 2)}
                 for intent, count, total, avg in rows
             ]
 

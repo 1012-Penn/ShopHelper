@@ -45,7 +45,7 @@ def _turn_rows(state) -> list[dict]:
 
 
 def make_log_node(store, pool):
-    async def log_node(state, writer=None) -> dict:
+    async def log_node(state, writer=None, config=None) -> dict:
         await store.append(state["session_id"], _turn_rows(state))
         if is_refusal(state["final_reply"]):
             reason = "模型自评证据不足:" + (state["final_reply"] or "")[:200]

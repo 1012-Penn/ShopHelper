@@ -24,7 +24,7 @@ class ToolThenAnswerModel(FakeChatWithTools):
             AIMessage(content="杭州今天晴。"),
         ]))
 
-    async def ainvoke(self, messages, **kwargs):
+    async def ainvoke(self, messages, config=None, **kwargs):
         self.call_count += 1
         return await super().ainvoke(messages, **kwargs)
 

@@ -51,11 +51,15 @@ def _sink_adapter(sink) -> object:
 
 
 def _with_sink(fn):
-    """把 configurable.sink 适配成节点 writer 参数;同时让节点可被 (state, writer) 直测。"""
+    """把 configurable.sink 适配成节点 writer 参数;同时让节点可被 (state, writer) 直测。
+
+    config 一并透传:langgraph 1.2.x 下节点内裸调 model.ainvoke 不继承图级 callbacks,
+    节点必须显式把 config 递给模型调用,Langfuse 生成层/token 统计才看得到 LLM 事件。
+    """
 
     async def _wrapped(state, config=None):
         sink = (config or {}).get("configurable", {}).get("sink")
-        return await fn(state, writer=_sink_adapter(sink))
+        return await fn(state, writer=_sink_adapter(sink), config=config)
 
     return _wrapped
 

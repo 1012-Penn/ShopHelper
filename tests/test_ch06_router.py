@@ -22,7 +22,7 @@ class _SeqModel:
     def __init__(self, replies):
         self.replies = list(replies)
 
-    async def ainvoke(self, messages, **kwargs):
+    async def ainvoke(self, messages, config=None, **kwargs):
         return AIMessage(content=self.replies.pop(0))
 
 
@@ -66,7 +66,7 @@ async def test_resolve_trace_is_single_line():
 
 async def test_resolve_llm_error_falls_back_passthrough():
     class Boom:
-        async def ainvoke(self, text):
+        async def ainvoke(self, text, config=None, **kwargs):
             raise RuntimeError("上游挂了")
 
     node = make_resolve_node(Boom())
@@ -121,7 +121,7 @@ def test_route_other_and_unchanged_outlets():
 
 async def test_intent_llm_error_falls_back_other():
     class BoomModel:
-        async def ainvoke(self, messages, **kwargs):
+        async def ainvoke(self, messages, config=None, **kwargs):
             raise RuntimeError("意图模型上游挂了")
 
     node = make_intent_node(BoomModel())
@@ -135,7 +135,7 @@ async def test_intent_escalator_llm_error_keeps_primary():
     small = fake_chat('{"intent": "商品咨询", "confidence": 0.3}')
 
     class BoomModel:
-        async def ainvoke(self, messages, **kwargs):
+        async def ainvoke(self, messages, config=None, **kwargs):
             raise RuntimeError("大模型重判挂了")
 
     node = make_intent_node(small, escalator=BoomModel(), floor=0.6)
@@ -145,7 +145,7 @@ async def test_intent_escalator_llm_error_keeps_primary():
 
 async def test_resolve_dict_output_supported():
     class DictResolver:
-        async def ainvoke(self, text):
+        async def ainvoke(self, text, config=None, **kwargs):
             return {"resolved": "订单1001的无线耳机能退吗", "changed": True}
 
     node = make_resolve_node(DictResolver())

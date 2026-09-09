@@ -17,14 +17,14 @@ def _emit(writer, frame: dict) -> None:
 
 
 def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
-    async def prepare_order_node(state, writer=None) -> dict:
+    async def prepare_order_node(state, writer=None, config=None) -> dict:
         msg = state.get("resolved_message") or ""
         # require_known:裸数字兜底(年份/尾号)必须命中目录才算单号;带「订单」上下文的放行(走未找到话术)
         oid = state.get("resume_order_id") or extract_order_id(msg, require_known=True) or ""
         return {"refund_flow": True, "pending_order_id": oid,
                 "trace": [*state["trace"], f"node=prepare_order order={oid or 'missing'}"]}
 
-    async def ask_order_node(state, writer=None) -> dict:
+    async def ask_order_node(state, writer=None, config=None) -> dict:
         orders = list_orders()
         _emit(writer, {"type": "order_selector",
                        "items": [{"order_id": o["order_id"], "product": o["product"],
@@ -35,16 +35,17 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
                        "intent": state["intent"]})
         return {"trace": [*state["trace"], f"node=ask_order n={len(orders)}"]}
 
-    async def fetch_order_node(state, writer=None) -> dict:
+    async def fetch_order_node(state, writer=None, config=None) -> dict:
         order = get_order(state["pending_order_id"])
         _emit(writer, {"type": "tool_status", "name": "query_order", "label": "订单查询"})
         return {"order": order,
                 "trace": [*state["trace"], f"node=fetch_order found={'error' not in order}"]}
 
-    async def expand_node(state, writer=None) -> dict:
+    async def expand_node(state, writer=None, config=None) -> dict:
         queries: list[str] = []
         try:
-            result = await expander.ainvoke(EXPAND_PROMPT.format(query=state["resolved_message"]))
+            result = await expander.ainvoke(
+                EXPAND_PROMPT.format(query=state["resolved_message"]), config)
             raw = result.queries if hasattr(result, "queries") else (result or {}).get("queries", [])
             queries = [q.strip() for q in raw if isinstance(q, str) and q.strip()][:4]
         except Exception:
@@ -55,7 +56,7 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
         return {"expand_queries": queries,
                 "trace": [*state["trace"], f"node=expand n={len(queries)}"]}
 
-    async def policy_retrieve_node(state, writer=None) -> dict:
+    async def policy_retrieve_node(state, writer=None, config=None) -> dict:
         merged: dict[int, float] = {}
         for q in state["expand_queries"]:
             try:

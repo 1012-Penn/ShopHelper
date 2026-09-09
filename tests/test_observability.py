@@ -1,4 +1,5 @@
 """ch09 可观测性：Langfuse 可选接入与本地 token 用量底座。"""
+import os
 from types import SimpleNamespace
 
 import pytest
@@ -185,3 +186,19 @@ async def test_usage_store_persists_and_aggregates_intent_tokens(db_session_fact
         "intent": "退款退货", "request_count": 2, "total_tokens": 25,
         "avg_tokens": 12.5,
     }]
+
+
+def test_real_sdk_handler_constructs_when_installed(monkeypatch):
+    """装了 SDK 时必须能真构造 handler:v3 不收凭据参数,曾被 no-op 分支掩盖成真机必挂。"""
+    pytest.importorskip("langfuse")
+    monkeypatch.delenv("LANGFUSE_PUBLIC_KEY", raising=False)
+    monkeypatch.delenv("LANGFUSE_SECRET_KEY", raising=False)
+    monkeypatch.delenv("LANGFUSE_HOST", raising=False)
+
+    settings = _settings(langfuse_enabled=True, langfuse_public_key="pk-lf-test",
+                         langfuse_secret_key="sk-lf-test", langfuse_host="http://127.0.0.1:3000")
+    service = ObservabilityService(settings, usage_store=None)
+    service._ensure_handler()
+
+    assert service.callback_handler is not None
+    assert os.environ.get("LANGFUSE_PUBLIC_KEY") == "pk-lf-test"

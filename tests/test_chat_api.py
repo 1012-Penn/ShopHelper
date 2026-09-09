@@ -46,7 +46,7 @@ async def test_reply_persisted_after_done(make_client):
 
 async def test_upstream_error_emits_error_and_not_persisted(make_client):
     class Exploding(GraphChatModel):
-        async def astream(self, messages, **kwargs):
+        async def astream(self, messages, config=None, **kwargs):
             self.prompts.append(list(messages))
             yield AIMessageChunk(content="部分")
             raise RuntimeError("boom")
@@ -120,7 +120,7 @@ async def test_client_disconnect_before_done_not_persisted(make_client):
     from langchain_core.messages import AIMessage
 
     class SlowUpstream(GraphChatModel):
-        async def astream(self, messages, **kwargs):
+        async def astream(self, messages, config=None, **kwargs):
             self.prompts.append(list(messages))
             yield AIMessageChunk(content="开头")
             await asyncio.sleep(5)

@@ -23,7 +23,7 @@ class IntentAgentModel(FakeChatWithTools):
     def bind_tools(self, tools, **kwargs):
         return self
 
-    async def astream(self, messages, **kwargs):
+    async def astream(self, messages, config=None, **kwargs):
         self.prompts.append(list(messages))
         kind, payload = self.turns.pop(0) if self.turns else ("text", "默认回答。")
         if kind == "tools":

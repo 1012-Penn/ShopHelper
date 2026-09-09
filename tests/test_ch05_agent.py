@@ -26,7 +26,7 @@ class ScriptedToolModel(FakeChatWithTools):
         self.bind_calls += 1
         return self
 
-    async def astream(self, messages, **kwargs):
+    async def astream(self, messages, config=None, **kwargs):
         self.prompts.append(list(messages))
         kind, payload = self.turns.pop(0)
         if kind == "tools":

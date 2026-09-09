@@ -2,16 +2,18 @@
 import asyncio
 import inspect
 import logging
-from contextlib import contextmanager
+import os
+from contextlib import contextmanager, nullcontext
 
 from langchain_core.callbacks import BaseCallbackHandler
 
 try:  # SDK 是可选依赖：部署未安装时客服主流程仍可运行。
-    from langfuse import Langfuse
+    from langfuse import Langfuse, propagate_attributes
     from langfuse.langchain import CallbackHandler
 except ImportError:  # pragma: no cover - 覆盖由未安装 SDK 的运行环境验证
     Langfuse = None
     CallbackHandler = None
+    propagate_attributes = None
 
 logger = logging.getLogger(__name__)
 _METADATA_VALUE_MAX_LENGTH = 128
@@ -164,11 +166,14 @@ class ObservabilityService:
                     release=self.settings.langfuse_release,
                     environment=self.settings.langfuse_tracing_environment,
                 )
-            self.callback_handler = CallbackHandler(
-                public_key=self.settings.langfuse_public_key,
-                secret_key=self.settings.langfuse_secret_key,
-                host=self.settings.langfuse_host,
-            )
+            # v3 SDK 的 CallbackHandler 不收凭据参数,凭 LANGFUSE_* 环境变量取全局 client;
+            # Settings 显式配置时回落注入环境变量(进程环境优先,与 Settings 同源不冲突)。
+            for env_key, value in (("LANGFUSE_PUBLIC_KEY", self.settings.langfuse_public_key),
+                                   ("LANGFUSE_SECRET_KEY", self.settings.langfuse_secret_key),
+                                   ("LANGFUSE_HOST", self.settings.langfuse_host)):
+                if value:
+                    os.environ.setdefault(env_key, value)
+            self.callback_handler = CallbackHandler()
         except Exception:
             logger.warning("[observability] Langfuse 初始化失败，禁用 tracing", exc_info=True)
             self.client = None
@@ -195,10 +200,14 @@ class ObservabilityService:
         trace = RequestTrace(self, conversation_id, question)
         if self.client is not None:
             try:
-                trace._observation_context = self.client.start_as_current_observation(
-                    name="chat_request", as_type="chain", input={"question": question},
-                    metadata=trace.metadata(),
-                )
+                # propagate_attributes 把 session_id 写成 trace 级属性,Langfuse 按会话归组
+                ctx = (propagate_attributes(session_id=str(conversation_id))
+                       if propagate_attributes is not None else nullcontext())
+                with ctx:
+                    trace._observation_context = self.client.start_as_current_observation(
+                        name="chat_request", as_type="chain", input={"question": question},
+                        metadata=trace.metadata(),
+                    )
             except Exception:
                 logger.warning("[observability] 创建 Langfuse 根 observation 失败", exc_info=True)
         return trace
