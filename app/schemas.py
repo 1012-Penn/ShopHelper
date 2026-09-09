@@ -20,6 +20,16 @@ class ChatRequest(BaseModel):
                                        description="订单选择器点选回传,非空走子流程旁路")
 
 
+class FeedbackRequest(BaseModel):
+    session_id: int
+    question: str = Field(min_length=1, max_length=2000)
+    rating: Literal["up", "down"]
+
+
+class ReviewApproveRequest(BaseModel):
+    approved_answer: str = Field(min_length=1, max_length=10000)
+
+
 class MessageItem(BaseModel):
     role: Literal["user", "assistant", "tool"]
     content: str | None = None

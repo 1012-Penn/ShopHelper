@@ -105,6 +105,7 @@ def make_agent_node(model, engine, settings, pool):
         # 否则子流程/知识路径先发的证据会被 agent 轮内 query_faq 的重发冲掉
         spent, steps, n_offset = 0, 0, len(state.get("evidence") or [])
         citations: list[dict] = [dict(it) for it in (state.get("evidence") or [])]
+        retrieved_chunks: list[dict] = list(state.get("retrieved_chunks") or [])
         emitted: list = []  # 本轮新增消息(AI/Tool),经 add_messages 并入完整历史
         while steps < settings.max_agent_steps and spent < settings.agent_token_budget:
             steps += 1
@@ -126,6 +127,7 @@ def make_agent_node(model, engine, settings, pool):
                     ["refund_form"] if state.get("refund_flow")
                     and state.get("intent") == "退款退货" else [])
                 return {"final_reply": text, "agent_steps": steps, "messages": emitted,
+                        "retrieved_chunks": retrieved_chunks,
                         "suggested_actions": actions,
                         "trace": [*state["trace"], f"node=agent steps={steps} converged"]}
             emitted.append(AIMessage(content=text, tool_calls=tool_calls))
@@ -140,9 +142,15 @@ def make_agent_node(model, engine, settings, pool):
                 result = truncate_tool_result(result, settings.tool_result_max_tokens)
                 parsed = _safe_json(result)
                 if isinstance(parsed, dict):
+                    retrieved_chunks.extend(parsed.get("retrieved_chunks") or [])
                     if parsed.get("low_confidence"):
-                        pool.insert("retrieval_low_conf", state["session_id"],
-                                    state["user_message"], str(parsed.get("reason") or ""))
+                        snapshot = parsed.get("retrieved_chunks") or []
+                        if snapshot:
+                            pool.insert("retrieval_low_conf", state["session_id"],
+                                        state["user_message"], str(parsed.get("reason") or ""), snapshot)
+                        else:
+                            pool.insert("retrieval_low_conf", state["session_id"],
+                                        state["user_message"], str(parsed.get("reason") or ""))
                     tool_items = [it for it in parsed.get("items") or []
                                   if isinstance(it, dict) and "n" in it]
                     if tool_items:
@@ -163,6 +171,7 @@ def make_agent_node(model, engine, settings, pool):
             emitted.append(AIMessage(content=cutoff))
             _emit(writer, {"type": "token", "content": cutoff})
         return {"final_reply": cutoff, "agent_steps": steps, "messages": emitted,
+                "retrieved_chunks": retrieved_chunks,
                 "suggested_actions": [],
                 "trace": [*state["trace"], f"node=agent steps={steps} cutoff"]}
 

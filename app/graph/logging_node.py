@@ -47,8 +47,12 @@ def make_log_node(store, pool):
     async def log_node(state, writer=None) -> dict:
         await store.append(state["session_id"], _turn_rows(state))
         if is_refusal(state["final_reply"]):
-            pool.insert("self_check", state["session_id"], state["user_message"],
-                        "模型自评证据不足:" + (state["final_reply"] or "")[:200])
+            snapshot = state.get("retrieved_chunks") or []
+            reason = "模型自评证据不足:" + (state["final_reply"] or "")[:200]
+            if snapshot:
+                pool.insert("self_check", state["session_id"], state["user_message"], reason, snapshot)
+            else:
+                pool.insert("self_check", state["session_id"], state["user_message"], reason)
         for line in state["trace"]:
             logger.info("[ch05] session=%s %s", state["session_id"], line)
         if state["suggested_actions"]:

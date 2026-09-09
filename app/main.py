@@ -9,9 +9,13 @@ from app.context import derive_budgets
 from app.db import make_engine, make_session_factory
 from app.guard import LowConfidencePool
 from app.llm import make_chat_model, make_extract_model
-from app.routers import chat, conversations, extract, orders, sessions, tickets
+from app.routers import (chat, conversations, evaluation, extract, feedback, orders,
+                          review_queue, sessions, tickets, usage)
 from app.schemas import AfterSaleExtraction
 from app.store import ConversationStore, UsageStore
+from app.flywheel import (DedupDecisionOutput, FlywheelService, NormalizedQuestion,
+                          NormalizedQuestionOutput)
+from app.evaluation import EvalRunStore
 from app.summarizer import SummaryService
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -44,6 +48,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.session_factory = session_factory
     app.state.store = ConversationStore(session_factory)
     app.state.usage_store = UsageStore(session_factory)
+    app.state.eval_store = EvalRunStore(session_factory)
     app.state.pool = LowConfidencePool(session_factory)
     # ch07:上下文预算从模型窗口倒推 + 启动自检(连一轮稳态都装不下就报警)
     budgets = derive_budgets(settings)
@@ -69,6 +74,31 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from app.tools.plugins import load_plugins
 
     service, kb = make_retrieval_chain(session_factory, settings)
+    normalize_model = make_extract_model(settings).with_structured_output(
+        NormalizedQuestionOutput, method="function_calling")
+    dedup_model = make_extract_model(settings).with_structured_output(
+        DedupDecisionOutput, method="function_calling")
+
+    def normalize_question(raw: str) -> NormalizedQuestion:
+        result = normalize_model.invoke(
+            "把下面客服用户原话改写成标准 FAQ 问题,并给出一条保守的示例答案。\n" + raw)
+        return NormalizedQuestion(result.normalized_question, result.ai_suggested_answer)
+
+    def dedup_question(normalized: str, candidates) -> int | None:
+        if not candidates:
+            return None
+        prompt = ("判断标准问题是否与待审队列候选中的某一条是同一个意思。只返回结构化结果。\n"
+                  f"标准问题:{normalized}\n候选:\n" +
+                  "\n".join(f"id={row.id}: {row.normalized_question}" for row in candidates))
+        result = dedup_model.invoke(prompt)
+        valid_ids = {row.id for row in candidates}
+        return result.matched_review_id if result.same_meaning and result.matched_review_id in valid_ids else None
+
+    app.state.flywheel = FlywheelService(
+        session_factory, normalizer=normalize_question, deduper=dedup_question,
+        kb=kb, vectors=service._vectors, embedder=service._embedder)
+    # 生产图统一使用飞轮 facade;测试可继续注入轻量 LowConfidencePool。
+    app.state.pool = app.state.flywheel
     registry = ToolRegistryV2()
     tool_ctx = ToolContext(session_factory=session_factory, service=service, kb=kb,
                            top_k=settings.rerank_top_k)
@@ -99,6 +129,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.observability = ObservabilityService(settings, app.state.usage_store)
     app.state.graph = app.state.observability.bind_graph(compiled_graph)
     app.include_router(chat.router)
+    app.include_router(feedback.router)
+    app.include_router(review_queue.router)
+    app.include_router(evaluation.router)
+    app.include_router(usage.router)
     app.include_router(orders.router)
     app.include_router(sessions.router)
     app.include_router(extract.router)
@@ -108,6 +142,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/")
     async def index() -> FileResponse:
         return FileResponse(STATIC_DIR / "index.html")
+
+    @app.get("/admin/review")
+    async def review_admin() -> FileResponse:
+        return FileResponse(STATIC_DIR / "review-queue.html")
+
+    @app.get("/admin/evals")
+    async def eval_admin() -> FileResponse:
+        return FileResponse(STATIC_DIR / "eval-runs.html")
 
     return app
 

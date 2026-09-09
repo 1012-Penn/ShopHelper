@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopHelper · 待审问题池</title>
+  <style>
+    body { margin: 0; font: 14px system-ui, sans-serif; color: #20242b; background: #f5f7fb; }
+    header { padding: 18px 28px; background: #fff; border-bottom: 1px solid #e5e8ee; }
+    main { display: grid; grid-template-columns: 380px 1fr; gap: 16px; padding: 18px; max-width: 1200px; margin: auto; }
+    section { background: #fff; border: 1px solid #e5e8ee; border-radius: 12px; padding: 16px; }
+    #items { display: grid; gap: 8px; margin-top: 12px; }
+    .item { text-align: left; background: #fff; border: 1px solid #e1e5ec; border-radius: 9px; padding: 10px; cursor: pointer; }
+    .item:hover, .item.active { border-color: #4f7cff; background: #f1f5ff; }
+    .count { color: #4f7cff; float: right; font-weight: 700; }
+    .muted { color: #737b88; font-size: 12px; }
+    textarea { width: 100%; min-height: 120px; box-sizing: border-box; border: 1px solid #d6dae2; border-radius: 8px; padding: 10px; }
+    button { border: 1px solid #4f7cff; background: #fff; color: #315ed6; border-radius: 8px; padding: 7px 14px; cursor: pointer; }
+    button.primary { background: #4f7cff; color: #fff; }
+    button:disabled { opacity: .55; cursor: default; }
+    .toolbar { display: flex; gap: 8px; margin-top: 10px; }
+    .source { margin-top: 10px; padding: 10px; border-radius: 8px; background: #f6f8fc; white-space: pre-wrap; }
+    @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header><strong>ShopHelper · 飞轮待审问题</strong><span class="muted">　标准化缺口 / 原话 / 召回依据</span></header>
+  <main>
+    <section><h3>待审队列</h3><div id="items">加载中…</div></section>
+    <section><h3 id="title">选择一条问题查看详情</h3><div id="detail" class="muted">人工审核时请对照原话和召回片段。</div></section>
+  </main>
+  <script>
+    const items = document.getElementById("items"), detail = document.getElementById("detail"), title = document.getElementById("title");
+    let selected = null;
+    async function load() {
+      const res = await fetch("/api/review-queue");
+      const body = await res.json();
+      items.innerHTML = "";
+      for (const row of body.items || []) {
+        const b = document.createElement("button"); b.className = "item";
+        b.innerHTML = '<span class="count"></span><span class="question"></span><div class="muted"></div>';
+        b.querySelector(".count").textContent = "×" + row.occurrence_count;
+        b.querySelector(".question").textContent = row.normalized_question;
+        b.querySelector(".muted").textContent = row.ai_suggested_answer || "暂无示例答案";
+        b.onclick = () => openDetail(row.id, b); items.appendChild(b);
+      }
+      if (!body.items?.length) items.textContent = "暂无待审问题";
+    }
+    async function openDetail(id, button) {
+      document.querySelectorAll(".item").forEach((x) => x.classList.remove("active")); button.classList.add("active");
+      selected = await (await fetch("/api/review-queue/" + id)).json();
+      title.textContent = selected.normalized_question;
+      detail.innerHTML = "";
+      for (const q of selected.original_questions || []) {
+        const box = document.createElement("div"); box.className = "source";
+        box.textContent = "[" + q.source + "] " + q.raw_question + "\n原因: " + q.reason + "\n召回片段:\n" + JSON.stringify(q.retrieved_chunks || [], null, 2);
+        detail.appendChild(box);
+      }
+      const label = document.createElement("p"); label.textContent = "核准答案"; detail.appendChild(label);
+      const input = document.createElement("textarea"); input.value = selected.ai_suggested_answer || ""; input.id = "answer"; detail.appendChild(input);
+      const bar = document.createElement("div"); bar.className = "toolbar";
+      const approve = document.createElement("button"); approve.className = "primary"; approve.textContent = "通过并写入知识库";
+      const reject = document.createElement("button"); reject.textContent = "驳回";
+      approve.onclick = async () => { approve.disabled = true; await fetch("/api/review-queue/" + id + "/approve", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({approved_answer: input.value})}); await load(); detail.textContent = "已通过并写入知识库。"; };
+      reject.onclick = async () => { reject.disabled = true; await fetch("/api/review-queue/" + id + "/reject", {method:"POST"}); await load(); detail.textContent = "已驳回。"; };
+      bar.append(approve, reject); detail.appendChild(bar);
+    }
+    load();
+  </script>
+</body>
+</html>

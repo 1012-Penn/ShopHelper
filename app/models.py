@@ -1,7 +1,8 @@
 """ORM 四模型,字段与 db/init.sql 一一对应。"""
 from datetime import datetime
 
-from sqlalchemy import JSON, BigInteger, DateTime, Enum, Integer, String, Text, UniqueConstraint, func
+from sqlalchemy import (JSON, BigInteger, DateTime, Enum, ForeignKey, Integer, String,
+                        Text, UniqueConstraint, func)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -156,6 +157,46 @@ class LowConfidenceQuestion(Base):
         Enum("retrieval_low_conf", "self_check", "user_feedback", name="lcq_source"), nullable=False
     )
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
+    matched_review_id: Mapped[int | None] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), ForeignKey("review_queue.id", ondelete="SET NULL"),
+        nullable=True
+    )
+    retrieved_chunks: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class ReviewQueue(Base):
+    """去重后的知识缺口待审队列,一行代表一个待补 FAQ。"""
+
+    __tablename__ = "review_queue"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    normalized_question: Mapped[str] = mapped_column(String(512), nullable=False)
+    ai_suggested_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    occurrence_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    review_status: Mapped[str] = mapped_column(
+        Enum("待审", "通过", "驳回", name="review_status"), nullable=False, default="待审"
+    )
+    approved_answer: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
+
+
+class EvalRun(Base):
+    """自动评估流水线的一轮结果,用于按时间观察指标趋势。"""
+
+    __tablename__ = "eval_runs"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    triggered_by: Mapped[str] = mapped_column(
+        Enum("定时", "手动", name="eval_triggered_by"), nullable=False, default="定时"
+    )
+    dataset_size: Mapped[int] = mapped_column(Integer, nullable=False)
+    metrics: Mapped[dict] = mapped_column(JSON, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 

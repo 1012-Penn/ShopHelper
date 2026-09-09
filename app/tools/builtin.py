@@ -55,7 +55,9 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
         """语义检索常见问题知识库并精排。用户问退货政策、发货时间、邮费运费、付款、发票、会员等常见问题,或问具体商品型号(如 SH-E300)的参数、价格时使用;能从用户话里明确判断品类时传 category,判断不了不要传。"""
         try:
             result = service.retrieve(keyword, strategy="hybrid_rerank", category=category)
-            rows = kb.get_chunks([r.chunk_id for r in result.items])
+            # 低置信候选可以被问题池快照保留,但不能作为 Agent 工具证据继续向上游传播。
+            visible_items = [] if result.low_confidence else result.items
+            rows = kb.get_chunks([r.chunk_id for r in visible_items])
             evidence = [
                 {
                     "n": i + 1,  # n = 精排名次,[1] 恒为最强证据
@@ -65,12 +67,21 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
                     "category": row.category,
                     "section_path": row.section_path or "",
                 }
-                for i, (r, row) in enumerate(zip(result.items, rows))
+                for i, (r, row) in enumerate(zip(visible_items, rows))
             ]
+            snapshot = result.snapshot() if hasattr(result, "snapshot") else []
+            rows_by_id = {row.id: row for row in kb.get_chunks([r.chunk_id for r in result.items])}
+            for item in snapshot:
+                row = rows_by_id.get(item["chunk_id"])
+                if row is not None:
+                    item.update({"question": row.questions.splitlines()[0], "answer": row.answer,
+                                 "category": row.category, "section_path": row.section_path or "",
+                                 "text": f"{row.questions}\n{row.answer}"})
             from app.retrieval import lost_in_middle_order
 
             return json.dumps({
                 "items": lost_in_middle_order(evidence),
+                "retrieved_chunks": snapshot,
                 "low_confidence": result.low_confidence,
                 "reason": result.reason,
                 "filter_fallback": result.filter_fallback,

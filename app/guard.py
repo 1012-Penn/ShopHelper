@@ -14,10 +14,14 @@ class LowConfidencePool:
     def __init__(self, session_factory: sessionmaker) -> None:
         self._factory = session_factory
 
-    def insert(self, source: str, conversation_id: int | None, question: str, reason: str = "") -> None:
-        """source ∈ retrieval_low_conf / self_check / user_feedback(本章只写前两个,不去重)。"""
+    def insert(self, source: str, conversation_id: int | None, question: str, reason: str = "",
+               retrieved_chunks: list | None = None, matched_review_id: int | None = None) -> int:
+        """写入问题池,并可保存落池当轮的召回片段快照。"""
         with self._factory() as session:
-            session.add(LowConfidenceQuestion(
+            row = LowConfidenceQuestion(
                 conversation_id=conversation_id, raw_question=question, source=source, reason=reason,
-            ))
+                retrieved_chunks=retrieved_chunks, matched_review_id=matched_review_id,
+            )
+            session.add(row)
             session.commit()
+            return row.id
