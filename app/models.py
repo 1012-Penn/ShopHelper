@@ -185,6 +185,26 @@ class ToolAuditLog(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
+class RequestUsage(Base):
+    """ch09：每次请求的本地 token/耗时副本，Langfuse 不可用时仍可统计。"""
+
+    __tablename__ = "request_usage"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    conversation_id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), nullable=False
+    )
+    trace_id: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    intent: Mapped[str] = mapped_column(String(64), nullable=False, default="")
+    input_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    output_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    total_tokens: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    duration_ms: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
 class FaithCase(Base):
     """忠实度编造个案台账(ch04):一题一行,seen_count 跨轮累加,复发退回未解决。"""
 

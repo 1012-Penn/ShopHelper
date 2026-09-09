@@ -11,7 +11,7 @@ from app.guard import LowConfidencePool
 from app.llm import make_chat_model, make_extract_model
 from app.routers import chat, conversations, extract, orders, sessions, tickets
 from app.schemas import AfterSaleExtraction
-from app.store import ConversationStore
+from app.store import ConversationStore, UsageStore
 from app.summarizer import SummaryService
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -43,6 +43,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     session_factory = make_session_factory(make_engine(settings))
     app.state.session_factory = session_factory
     app.state.store = ConversationStore(session_factory)
+    app.state.usage_store = UsageStore(session_factory)
     app.state.pool = LowConfidencePool(session_factory)
     # ch07:上下文预算从模型窗口倒推 + 启动自检(连一轮稳态都装不下就报警)
     budgets = derive_budgets(settings)
@@ -90,10 +91,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         AfterSaleExtraction, method="function_calling"
     )
     # ch05:LangGraph 图骨架(检索链与工具检索生产分支同构,各自持有真实现)
-    app.state.graph = build_graph(
+    compiled_graph = build_graph(
         app.state.chat_model, app.state.engine, settings,
         app.state.store, app.state.pool, service, kb,
     )
+    from app.observability import ObservabilityService
+    app.state.observability = ObservabilityService(settings, app.state.usage_store)
+    app.state.graph = app.state.observability.bind_graph(compiled_graph)
     app.include_router(chat.router)
     app.include_router(orders.router)
     app.include_router(sessions.router)

@@ -6,6 +6,7 @@
 import asyncio
 import json
 import logging
+import time
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
@@ -73,6 +74,7 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
     settings = request.app.state.settings
     store = request.app.state.store
     graph = request.app.state.graph
+    observability = request.app.state.observability
 
     if estimate_tokens(body.message) > settings.max_user_input_tokens:
         raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
@@ -91,14 +93,25 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
     async def event_stream():
         yield sse_frame({"type": "session", "session_id": session_id})
         queue: asyncio.Queue = asyncio.Queue()
-        config = {"configurable": {"thread_id": str(session_id), "sink": queue}}
+        trace = observability.start_request(session_id, body.message)
+        config = {
+            "configurable": {"thread_id": str(session_id), "sink": queue},
+            "metadata": trace.metadata(),
+            "callbacks": [trace.usage_callback],
+        }
 
         async def run_graph():
+            started_at = time.perf_counter()
             try:
-                await graph.ainvoke(
-                    initial_state(session_id, body.message, resume=body.resume,
-                                  history_rows=None if hydrated else rows, layered=layered),
-                    config)
+                with trace.activate():
+                    result = await graph.ainvoke(
+                        initial_state(session_id, body.message, resume=body.resume,
+                                      history_rows=None if hydrated else rows, layered=layered),
+                        config)
+                    trace.finish(
+                        intent=result.get("intent", ""), answer=result.get("final_reply", ""),
+                        duration_ms=int((time.perf_counter() - started_at) * 1000),
+                    )
             finally:
                 await queue.put(_QUEUE_DONE)  # 先冲刷已产帧再终结,异常也不丢序
 

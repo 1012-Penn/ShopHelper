@@ -14,6 +14,15 @@ class Settings(BaseSettings):
     chat_temperature: float = 0.7
     extract_temperature: float = 0
 
+    # ch09：Langfuse 是可选的本地可观测副本，缺 key/SDK/服务均不得影响聊天。
+    langfuse_enabled: bool = False
+    langfuse_public_key: str = ""
+    langfuse_secret_key: str = ""
+    langfuse_host: str = "http://127.0.0.1:3000"
+    langfuse_release: str = "shophelper-ch09"
+    langfuse_tracing_environment: str = "development"
+    langfuse_retrieval_top_k: int = 3
+
     # ch03:RAG 知识库(BGE-M3 走硅基流动 OpenAI 兼容接口;向量库 Milvus Lite 本地文件)
     embedding_api_base: str = "https://api.siliconflow.cn/v1"
     embedding_api_key: str = ""

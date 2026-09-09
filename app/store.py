@@ -2,7 +2,38 @@
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import sessionmaker
 
-from app.models import Conversation, ConversationSummary, Message
+from app.models import Conversation, ConversationSummary, Message, RequestUsage
+
+
+class UsageStore:
+    """request_usage 的独立读写口径，避免聊天存储承担统计职责。"""
+
+    def __init__(self, session_factory: sessionmaker) -> None:
+        self._factory = session_factory
+
+    async def record(self, *, conversation_id: int, trace_id: str | None, intent: str,
+                     input_tokens: int, output_tokens: int, total_tokens: int,
+                     duration_ms: int) -> None:
+        with self._factory() as session:
+            session.add(RequestUsage(
+                conversation_id=conversation_id, trace_id=trace_id, intent=intent,
+                input_tokens=input_tokens, output_tokens=output_tokens,
+                total_tokens=total_tokens, duration_ms=duration_ms,
+            ))
+            session.commit()
+
+    async def aggregate_by_intent(self) -> list[dict]:
+        with self._factory() as session:
+            rows = session.execute(
+                select(RequestUsage.intent, func.count(RequestUsage.id),
+                       func.sum(RequestUsage.total_tokens), func.avg(RequestUsage.total_tokens))
+                .group_by(RequestUsage.intent).order_by(RequestUsage.intent)
+            ).all()
+            return [
+                {"intent": intent, "request_count": count, "total_tokens": total,
+                 "avg_tokens": float(avg)}
+                for intent, count, total, avg in rows
+            ]
 
 class ConversationStore:
     def __init__(self, session_factory: sessionmaker) -> None:
