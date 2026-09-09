@@ -55,6 +55,35 @@ def test_enabled_langfuse_constructs_one_callback_handler(monkeypatch):
     assert len(created) == 1
 
 
+def test_bind_graph_configures_same_compiled_graph_only_once(monkeypatch):
+    """同一编译图重复绑定会叠加 callback，并生成多个 runnable wrapper。"""
+    import app.observability as observability
+
+    class FakeHandler:
+        def __init__(self, **_kwargs):
+            pass
+
+    class BindingRunnable(_Runnable):
+        def with_config(self, config):
+            self.configs.append(config)
+            return object()
+
+    monkeypatch.setattr(observability, "CallbackHandler", FakeHandler)
+    monkeypatch.setattr(observability, "Langfuse", None)
+    service = ObservabilityService(_settings(
+        langfuse_enabled=True,
+        langfuse_public_key="public",
+        langfuse_secret_key="secret",
+    ), usage_store=None)
+    graph = BindingRunnable()
+
+    first = service.bind_graph(graph)
+    second = service.bind_graph(graph)
+
+    assert second is first
+    assert len(graph.configs) == 1
+
+
 def test_request_metadata_includes_conversation_and_final_intent():
     """遗漏会话或意图会使 Langfuse 无法按客服场景筛选一次请求。"""
     trace = ObservabilityService(_settings(), usage_store=None).start_request(42, "能退货吗")
@@ -68,6 +97,37 @@ def test_request_metadata_includes_conversation_and_final_intent():
         "intent": "退款退货",
         "entry_route": "retrieve",
     }
+
+
+def test_request_metadata_normalizes_every_value_to_short_string():
+    """直接透传对象或长文本会违反 Langfuse metadata 的稳定筛选契约。"""
+    trace = ObservabilityService(_settings(), usage_store=None).start_request(42, "能退货吗")
+    long_intent = "退款" * 100
+
+    metadata = trace.metadata(intent=long_intent, entry_route=7)
+
+    assert metadata["intent"] == long_intent[:128]
+    assert metadata["entry_route"] == "7"
+    assert all(isinstance(value, str) and len(value) <= 128 for value in metadata.values())
+
+
+def test_request_trace_suppresses_langfuse_context_exit_failure():
+    """Langfuse context 在退出时失败也不能把已完成的聊天改成异常。"""
+    trace = ObservabilityService(_settings(), usage_store=None).start_request(42, "能退货吗")
+
+    class ExitFailureContext:
+        def __enter__(self):
+            return SimpleNamespace()
+
+        def __exit__(self, *_args):
+            raise RuntimeError("langfuse exit failed")
+
+    trace._observation_context = ExitFailureContext()
+
+    with trace.activate():
+        activated = True
+
+    assert activated is True
 
 
 def test_usage_callback_accumulates_llm_output_and_message_metadata():

@@ -14,6 +14,11 @@ except ImportError:  # pragma: no cover - 覆盖由未安装 SDK 的运行环境
     CallbackHandler = None
 
 logger = logging.getLogger(__name__)
+_METADATA_VALUE_MAX_LENGTH = 128
+
+
+def _short_metadata_value(value: object) -> str:
+    return str(value)[:_METADATA_VALUE_MAX_LENGTH]
 
 
 class UsageCallback(BaseCallbackHandler):
@@ -64,15 +69,15 @@ class RequestTrace:
 
     def metadata(self, intent: str | None = None, entry_route: str | None = None) -> dict:
         metadata = {
-            "session_id": str(self._conversation_id),
-            "conversation_id": str(self._conversation_id),
+            "session_id": self._conversation_id,
+            "conversation_id": self._conversation_id,
             "source": "chat",
         }
         if intent is not None:
             metadata["intent"] = intent
         if entry_route is not None:
             metadata["entry_route"] = entry_route
-        return metadata
+        return {key: _short_metadata_value(value) for key, value in metadata.items()}
 
     @contextmanager
     def activate(self):
@@ -80,13 +85,29 @@ class RequestTrace:
         if self._observation_context is None:
             yield self
             return
+        context = self._observation_context
         try:
-            with self._observation_context as observation:
-                self._observation = observation
-                yield self
+            self._observation = context.__enter__()
         except Exception:
-            logger.warning("[observability] Langfuse 根 observation 不可用，继续聊天", exc_info=True)
+            logger.warning("[observability] Langfuse 根 observation 进入失败，继续聊天", exc_info=True)
             yield self
+            return
+
+        try:
+            yield self
+        except BaseException as exc:
+            try:
+                suppress = context.__exit__(type(exc), exc, exc.__traceback__)
+            except Exception:
+                logger.warning("[observability] Langfuse 根 observation 退出失败", exc_info=True)
+                suppress = False
+            if not suppress:
+                raise
+        else:
+            try:
+                context.__exit__(None, None, None)
+            except Exception:
+                logger.warning("[observability] Langfuse 根 observation 退出失败，继续聊天", exc_info=True)
 
     def finish(self, *, intent: str, answer: str, duration_ms: int) -> None:
         metadata = self.metadata(intent=intent)
@@ -136,6 +157,7 @@ class ObservabilityService:
         self.usage_store = usage_store
         self.client = None
         self.callback_handler = None
+        self._bound_graphs = {}
         self._enabled = bool(settings.langfuse_enabled and settings.langfuse_public_key
                              and settings.langfuse_secret_key)
 
@@ -169,8 +191,13 @@ class ObservabilityService:
         self._ensure_handler()
         if self.callback_handler is None:
             return compiled_graph
+        cached = self._bound_graphs.get(id(compiled_graph))
+        if cached is not None and cached[0] is compiled_graph:
+            return cached[1]
         try:
-            return compiled_graph.with_config({"callbacks": [self.callback_handler]})
+            bound_graph = compiled_graph.with_config({"callbacks": [self.callback_handler]})
+            self._bound_graphs[id(compiled_graph)] = (compiled_graph, bound_graph)
+            return bound_graph
         except Exception:
             logger.warning("[observability] 绑定 Graph callback 失败，继续使用原图", exc_info=True)
             return compiled_graph
