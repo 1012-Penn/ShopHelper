@@ -579,7 +579,7 @@ function toggleSource(bubble, n, citations) {
   scrollDown();
 }
 
-// ch04:满意度反馈(纯前端采集,一次性锁定,为数据飞轮留入口)
+// ch09:满意度反馈后端落池;一次性锁定,👎保存该轮用户原话
 function addFeedback(bubble) {
   const bar = document.createElement("div");
   bar.className = "feedback";
@@ -589,10 +589,21 @@ function addFeedback(bubble) {
   down.textContent = "👎";
   const status = document.createElement("span");
   status.className = "fb-status";
-  function pick(which) {
+  async function pick(which) {
     (which === "up" ? up : down).classList.add("picked");
     status.textContent = "已反馈";
     up.disabled = down.disabled = true;
+    if (which !== "down") return;
+    try {
+      const resp = await fetch("/api/feedback", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({session_id: state.sessionId, question: bubble.dataset.question || "", rating: "down"}),
+      });
+      if (!resp.ok) throw new Error(resp.status);
+      status.textContent = "已记录,谢谢反馈";
+    } catch (_) {
+      status.textContent = "反馈记录失败";
+    }
   }
   up.onclick = () => pick("up");
   down.onclick = () => pick("down");
@@ -607,6 +618,7 @@ function setBusy(v) {
 
 // fetch /api/chat + SSE 逐帧驱动一个气泡;send 与订单卡点选(pickOrder)共用
 async function streamChat(payload, bubble) {
+  bubble.dataset.question = payload.message || "";
   let stream = null;
   let citations = [];
   try {
