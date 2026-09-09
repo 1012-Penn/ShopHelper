@@ -6,6 +6,9 @@ Python 3.10 async 上下文被官方守卫禁用,故节点发帧走 configurable
 interrupt() 同受该守卫禁用(spike 实测),订单选择器停走走无状态回传(resume 旁路)。
 """
 import asyncio
+import json
+import logging
+from pathlib import Path
 from uuid import uuid4
 
 from langchain_core.messages import HumanMessage
@@ -20,6 +23,24 @@ from app.graph.refund import make_refund_nodes
 from app.graph.simple import chitchat_node, complaint_node
 from app.graph.state import ChatState
 from app.history import rows_to_messages
+
+logger = logging.getLogger(__name__)
+
+
+def _load_evidence_calibration(settings):
+    """加载 ch04 校准产物;产物不可用时回落到当前 rerank floor。"""
+    from app.retrieval import EvidenceCalibration
+
+    path = Path(settings.evidence_calibration_path)
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        allowed = {"top1_floor", "effective_score_floor", "min_effective_count",
+                   "margin_floor", "combined_floor", "source"}
+        return EvidenceCalibration(**{key: value for key, value in payload.items() if key in allowed})
+    except (FileNotFoundError, OSError, ValueError, TypeError) as exc:
+        logger.info("证据置信度校准产物不可用,使用配置基线:%s", exc)
+        return EvidenceCalibration(top1_floor=settings.rerank_score_floor,
+                                   effective_score_floor=settings.rerank_score_floor)
 
 
 def _sink_adapter(sink) -> object:
@@ -46,7 +67,8 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
     from app.llm import make_extract_model
     from app.prompts import ExpandedQueries, ResolvedQuestion
 
-    retrieve_node, gate_node, fallback_node = make_knowledge_nodes(retrieval_service, kb, pool)
+    retrieve_node, gate_node, fallback_node = make_knowledge_nodes(
+        retrieval_service, kb, pool, snapshot_top_k=settings.langfuse_retrieval_top_k)
 
     if resolver is None:
         resolver = make_extract_model(settings).with_structured_output(
@@ -129,7 +151,8 @@ def initial_state(session_id: int, user_message: str, resume=None,
 
     return {"session_id": session_id, "user_message": user_message, "resolved_message": "",
             "intent": resume_intent, "intent_confidence": 0.0,
-            "evidence": [], "low_confidence": False,
+            "evidence": [], "retrieved_chunks": [], "evidence_confidence": None,
+            "low_confidence": False,
             "low_reason": "", "gate_passed": False, "agent_steps": 0, "final_reply": "",
             "suggested_actions": [], "trace": [],
             "messages": msgs, "turn_user_msg_id": user_msg_id, "layered": layered or {},
@@ -157,5 +180,6 @@ def make_retrieval_chain(session_factory, settings):
         candidates=settings.hybrid_candidates,
         final_top_k=settings.rerank_top_k,
         rerank_score_floor=settings.rerank_score_floor,
+        evidence_calibration=_load_evidence_calibration(settings),
     )
     return service, kb

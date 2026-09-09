@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     langfuse_release: str = "shophelper-ch09"
     langfuse_tracing_environment: str = "development"
     langfuse_retrieval_top_k: int = 3
+    evidence_calibration_path: str = "data/evidence_calibration.json"
 
     # ch03:RAG 知识库(BGE-M3 走硅基流动 OpenAI 兼容接口;向量库 Milvus Lite 本地文件)
     embedding_api_base: str = "https://api.siliconflow.cn/v1"

@@ -14,6 +14,8 @@ class ChatState(TypedDict):
     resolved_message: str
     intent: str
     evidence: list[dict]          # 检索证据(带引用编号 n),知识类才有
+    retrieved_chunks: list[dict]   # 入池时的 Top-K 召回/精排片段快照
+    evidence_confidence: dict | None  # 证据闸可解释信号
     low_confidence: bool          # 置信度闸输入(检索层判定)
     low_reason: str
     gate_passed: bool

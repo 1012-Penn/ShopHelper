@@ -2,7 +2,7 @@
 
 线上一律 hybrid_rerank;评估脚本逐策略调同一实现,四策略对比才是同一套代码。
 依赖(embedder/vectors/kb/rewriter/reranker)全部构造注入,测试可替换身。
-低置信判定:候选空(知识库无相关内容)或精排 Top-1 分低于 rerank_score_floor(证据置信度低)。
+低置信判定:候选空(知识库无相关内容)或精排结果未通过证据置信度闸。
 """
 import logging
 from dataclasses import dataclass
@@ -22,6 +22,29 @@ class Retrieved:
     score: float
 
 
+@dataclass(frozen=True)
+class EvidenceCalibration:
+    """证据闸阈值,由 ch04 评估集校准并可由脚本产物覆盖。"""
+
+    top1_floor: float = 0.03
+    effective_score_floor: float = 0.03
+    min_effective_count: int = 1
+    margin_floor: float = 0.0
+    combined_floor: float = 0.15
+    source: str = "ch04_eval_set"
+
+
+@dataclass(frozen=True)
+class EvidenceConfidence:
+    top1_relevance: float
+    effective_count: int
+    top1_top2_margin: float
+    score: float
+    passed: bool
+    signals: dict
+    calibration_source: str
+
+
 @dataclass
 class RetrievalResult:
     items: list[Retrieved]
@@ -31,6 +54,62 @@ class RetrievalResult:
     rewritten: str = ""
     search_text: str = ""
     degraded: bool = False  # reranker 缺失/失败降级 RRF 序时为 True(未精排,证据质量降档)
+    evidence_confidence: EvidenceConfidence | None = None
+
+    def snapshot(self, top_k: int = 3) -> list[dict]:
+        """保留入池时可供人工审核的 Top-K 原始 chunk id 与精排分数。"""
+        return [
+            {"rank": rank, "chunk_id": item.chunk_id, "score": item.score,
+             "rerank_score": item.score}
+            for rank, item in enumerate(self.items[:max(0, top_k)], start=1)
+        ]
+
+
+def evidence_confidence(items: list[Retrieved], calibration: EvidenceCalibration) -> EvidenceConfidence:
+    """用 Top1、有效证据数、Top1/Top2 分差合成可解释的证据置信度。"""
+    scores = [max(0.0, min(1.0, float(item.score))) for item in items]
+    top1 = scores[0] if scores else 0.0
+    top2 = scores[1] if len(scores) > 1 else 0.0
+    margin = top1 - top2 if len(scores) > 1 else top1
+    effective_count = sum(score >= calibration.effective_score_floor for score in scores)
+    normalized_margin = min(1.0, max(0.0, margin / 0.5))
+    normalized_count = min(1.0, effective_count / 3.0)
+    combined = 0.60 * top1 + 0.25 * normalized_margin + 0.15 * normalized_count
+    passed = bool(scores) and top1 >= calibration.top1_floor \
+        and effective_count >= calibration.min_effective_count \
+        and margin >= calibration.margin_floor \
+        and combined >= calibration.combined_floor
+    signals = {
+        "top1_relevance": round(top1, 6),
+        "effective_evidence_count": effective_count,
+        "top1_top2_margin": round(margin, 6),
+        "combined_score": round(combined, 6),
+    }
+    return EvidenceConfidence(top1, effective_count, round(margin, 6), combined, passed, signals,
+                              calibration.source)
+
+
+def calibrate_evidence_thresholds(samples: list[dict], min_recall: float = 1.0) -> EvidenceCalibration:
+    """在带标注的 ch04 样本上选出仍满足目标 Recall 的最高 Top1 门槛。"""
+    positives = [s for s in samples if bool(s.get("relevant"))]
+    if not positives:
+        raise ValueError("校准集至少需要一条 relevant=true 样本")
+    candidates = sorted({float(s["top1_relevance"]) for s in positives}, reverse=True)
+    target = max(0.0, min(1.0, float(min_recall)))
+    top1_floor = min(candidates)
+    for candidate in candidates:
+        recall = sum(float(s["top1_relevance"]) >= candidate for s in positives) / len(positives)
+        if recall >= target:
+            top1_floor = candidate
+            break
+    return EvidenceCalibration(
+        top1_floor=top1_floor,
+        effective_score_floor=min(float(s.get("effective_score_floor", s["top1_relevance"]))
+                                  for s in positives),
+        min_effective_count=min(int(s.get("effective_count", 1)) for s in positives),
+        margin_floor=min(float(s.get("top1_top2_margin", 0.0)) for s in positives),
+        source="ch04_eval_set",
+    )
 
 
 def sanitize_category(category: str | None) -> str | None:
@@ -50,7 +129,8 @@ class RetrievalService:
     def __init__(self, embedder, vectors, kb: KnowledgeBaseStore, rewriter=None, reranker=None, *,
                  candidates: int = 50, final_top_k: int = 10,
                  dense_score_floor: float = RETRIEVAL_SCORE_FLOOR,
-                 rerank_score_floor: float = 0.30) -> None:
+                 rerank_score_floor: float = 0.30,
+                 evidence_calibration: EvidenceCalibration | None = None) -> None:
         self._embedder = embedder
         self._vectors = vectors
         self._kb = kb
@@ -60,6 +140,8 @@ class RetrievalService:
         self._final_top_k = final_top_k
         self._dense_floor = dense_score_floor
         self._rerank_floor = rerank_score_floor
+        self._evidence_calibration = evidence_calibration or EvidenceCalibration(
+            top1_floor=rerank_score_floor)
 
     def retrieve(self, query: str, strategy: str = "hybrid_rerank",
                  category: str | None = None, use_rewrite: bool = True) -> RetrievalResult:
@@ -126,12 +208,16 @@ class RetrievalService:
         items = [Retrieved(chunk_id=cand[idx].chunk_id, score=score) for idx, score in ranked]
         if not items:
             return RetrievalResult([], True, "知识库无相关内容", fallback, rewritten, search_text)
-        low = items[0].score < self._rerank_floor
-        if low:
-            # 低置信不出证据:别把零分候选递给生成层当编造素材(spec §5 拒答语义)
-            reason = f"证据置信度低(最高 {items[0].score:.2f})"
-            return RetrievalResult([], True, reason, fallback, rewritten, search_text)
-        return RetrievalResult(items, False, "", fallback, rewritten, search_text)
+        confidence = evidence_confidence(items, self._evidence_calibration)
+        if not confidence.passed:
+            # 低置信不进 Agent,但保留候选快照给问题池和人工审核。
+            reason = (f"证据置信度低(top1={confidence.top1_relevance:.2f}, "
+                      f"有效证据={confidence.effective_count}, "
+                      f"Top1/Top2差={confidence.top1_top2_margin:.2f})")
+            return RetrievalResult(items, True, reason, fallback, rewritten, search_text,
+                                   evidence_confidence=confidence)
+        return RetrievalResult(items, False, "", fallback, rewritten, search_text,
+                               evidence_confidence=confidence)
 
     # ---- 单路封装 ----
 
