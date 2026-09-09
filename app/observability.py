@@ -119,18 +119,6 @@ class RequestTrace:
         self._record_usage(intent=intent, duration_ms=duration_ms)
         self._service.flush()
 
-    def observe_retrieval(self, query: str, snapshot: list[dict]):
-        """供检索节点调用；未启用时是 no-op。"""
-        if self._service.client is None:
-            return None
-        try:
-            return self._service.client.start_as_current_observation(
-                name="retrieval", as_type="retriever", input={"query": query}, output={"snapshot": snapshot}
-            )
-        except Exception:
-            logger.warning("[observability] 写入检索 observation 失败", exc_info=True)
-            return None
-
     def _record_usage(self, *, intent: str, duration_ms: int) -> None:
         if self._service.usage_store is None:
             return

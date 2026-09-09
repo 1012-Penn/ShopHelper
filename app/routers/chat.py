@@ -108,6 +108,9 @@ async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
                         initial_state(session_id, body.message, resume=body.resume,
                                       history_rows=None if hydrated else rows, layered=layered),
                         config)
+                    # ch09 回捞底座:记录本轮原话与召回快照(闲聊轮记空,供 👎 事后区分)
+                    request.app.state.round_capture.record(
+                        session_id, body.message, result.get("retrieved_chunks") or [])
                     trace.finish(
                         intent=result.get("intent", ""), answer=result.get("final_reply", ""),
                         duration_ms=int((time.perf_counter() - started_at) * 1000),

@@ -65,6 +65,23 @@ class RetrievalResult:
         ]
 
 
+# 证据置信度合成口径(生成侧与校准侧共用,改权重必须重新校准):
+# combined = 0.60*top1 + 0.25*min(margin/0.5, 1) + 0.15*min(有效证据数/3, 1)
+EVIDENCE_WEIGHT_TOP1 = 0.60
+EVIDENCE_WEIGHT_MARGIN = 0.25
+EVIDENCE_WEIGHT_COUNT = 0.15
+EVIDENCE_MARGIN_NORM = 0.5
+EVIDENCE_COUNT_NORM = 3.0
+
+
+def combined_confidence_score(top1: float, margin: float, effective_count: int) -> float:
+    """三信号合成分;校准器按同一公式给样本定 combined_floor。"""
+    normalized_margin = min(1.0, max(0.0, margin / EVIDENCE_MARGIN_NORM))
+    normalized_count = min(1.0, effective_count / EVIDENCE_COUNT_NORM)
+    return (EVIDENCE_WEIGHT_TOP1 * top1 + EVIDENCE_WEIGHT_MARGIN * normalized_margin
+            + EVIDENCE_WEIGHT_COUNT * normalized_count)
+
+
 def evidence_confidence(items: list[Retrieved], calibration: EvidenceCalibration) -> EvidenceConfidence:
     """用 Top1、有效证据数、Top1/Top2 分差合成可解释的证据置信度。"""
     scores = [max(0.0, min(1.0, float(item.score))) for item in items]
@@ -72,9 +89,7 @@ def evidence_confidence(items: list[Retrieved], calibration: EvidenceCalibration
     top2 = scores[1] if len(scores) > 1 else 0.0
     margin = top1 - top2 if len(scores) > 1 else top1
     effective_count = sum(score >= calibration.effective_score_floor for score in scores)
-    normalized_margin = min(1.0, max(0.0, margin / 0.5))
-    normalized_count = min(1.0, effective_count / 3.0)
-    combined = 0.60 * top1 + 0.25 * normalized_margin + 0.15 * normalized_count
+    combined = combined_confidence_score(top1, margin, effective_count)
     passed = bool(scores) and top1 >= calibration.top1_floor \
         and effective_count >= calibration.min_effective_count \
         and margin >= calibration.margin_floor \
@@ -90,7 +105,11 @@ def evidence_confidence(items: list[Retrieved], calibration: EvidenceCalibration
 
 
 def calibrate_evidence_thresholds(samples: list[dict], min_recall: float = 1.0) -> EvidenceCalibration:
-    """在带标注的 ch04 样本上选出仍满足目标 Recall 的最高 Top1 门槛。"""
+    """在带标注的 ch04 样本上选出仍满足目标 Recall 的最高 Top1 门槛。
+
+    其余阈值取正样本的最小值(放行全部相关题的下界),combined_floor 按同一条
+    合成公式对正样本重算后取最小值——保证校准产物的闸对全部正样本放行。
+    """
     positives = [s for s in samples if bool(s.get("relevant"))]
     if not positives:
         raise ValueError("校准集至少需要一条 relevant=true 样本")
@@ -102,12 +121,19 @@ def calibrate_evidence_thresholds(samples: list[dict], min_recall: float = 1.0) 
         if recall >= target:
             top1_floor = candidate
             break
+    combined_floor = min(
+        combined_confidence_score(float(s["top1_relevance"]),
+                                  float(s.get("top1_top2_margin", 0.0)),
+                                  int(s.get("effective_count", 1)))
+        for s in positives
+    )
     return EvidenceCalibration(
         top1_floor=top1_floor,
         effective_score_floor=min(float(s.get("effective_score_floor", s["top1_relevance"]))
                                   for s in positives),
         min_effective_count=min(int(s.get("effective_count", 1)) for s in positives),
         margin_floor=min(float(s.get("top1_top2_margin", 0.0)) for s in positives),
+        combined_floor=round(combined_floor, 6),
         source="ch04_eval_set",
     )
 

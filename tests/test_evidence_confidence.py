@@ -70,4 +70,6 @@ def test_calibration_prefers_threshold_that_keeps_positive_recall():
     calibration = calibrate_evidence_thresholds(samples, min_recall=1.0)
 
     assert calibration.top1_floor == 0.70
+    # combined_floor 按同一条合成公式对正样本取下界:min(0.84, 0.57) → 全部正样本放行
+    assert calibration.combined_floor == 0.57
     assert calibration.source == "ch04_eval_set"

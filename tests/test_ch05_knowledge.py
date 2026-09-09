@@ -24,8 +24,9 @@ class FakePool:
     def __init__(self):
         self.rows = []
 
-    def insert(self, source, conversation_id, question, reason=""):
-        self.rows.append((source, conversation_id, question, reason))
+    def insert(self, source, conversation_id, question, reason="",
+               retrieved_chunks=None, matched_review_id=None):
+        self.rows.append((source, conversation_id, question, reason, retrieved_chunks))
 
 
 async def test_retrieve_attaches_evidence_and_trace():

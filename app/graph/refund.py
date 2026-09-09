@@ -2,6 +2,7 @@
 
 扩写只在检索侧现查现用;缺订单号不让模型猜——发 order_selector 帧结束本轮,点选后 resume 旁路再进。
 """
+import asyncio
 import logging
 
 from app.orders import extract_order_id, get_order, list_orders
@@ -90,8 +91,10 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
             _emit(writer, {"type": "citations", "items": list(evidence)})
         else:
             try:
-                pool.insert("retrieval_low_conf", state["session_id"],
-                            state["user_message"], "子流程政策检索无证据")
+                # 落池可能内联标准化/查重(LLM),放线程池避免阻塞事件循环
+                await asyncio.to_thread(
+                    pool.insert, "retrieval_low_conf", state["session_id"],
+                    state["user_message"], "子流程政策检索无证据")
             except Exception:
                 logger.warning("低置信度池写入失败", exc_info=True)
         top1 = f"{top[0][1]:.2f}" if top else "0.00"

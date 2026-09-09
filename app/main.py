@@ -12,6 +12,7 @@ from app.llm import make_chat_model, make_extract_model
 from app.routers import (chat, conversations, evaluation, extract, feedback, orders,
                           review_queue, sessions, tickets, usage)
 from app.schemas import AfterSaleExtraction
+from app.round_capture import RoundCapture
 from app.store import ConversationStore, UsageStore
 from app.flywheel import (DedupDecisionOutput, FlywheelService, NormalizedQuestion,
                           NormalizedQuestionOutput)
@@ -50,6 +51,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.usage_store = UsageStore(session_factory)
     app.state.eval_store = EvalRunStore(session_factory)
     app.state.pool = LowConfidencePool(session_factory)
+    # ch09 回捞底座:👎 反馈按会话回查当轮召回片段快照(进程内,重启即失走 NULL)
+    app.state.round_capture = RoundCapture()
     # ch07:上下文预算从模型窗口倒推 + 启动自检(连一轮稳态都装不下就报警)
     budgets = derive_budgets(settings)
     app.state.budgets = budgets

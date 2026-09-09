@@ -1,4 +1,6 @@
 """知识路径:强制 RAG 检索 → 置信度闸 → 弱证据兜底。service/kb/pool 构造注入,测试可替身。"""
+import asyncio
+
 from langchain_core.messages import AIMessage
 
 from app.guard import REFUSAL_MARKER
@@ -55,13 +57,11 @@ def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
 
     async def gate_node(state, writer=None) -> dict:
         if state["low_confidence"]:
-            snapshot = state.get("retrieved_chunks") or []
-            if snapshot:
-                pool.insert("retrieval_low_conf", state["session_id"],
-                            state["user_message"], str(state.get("low_reason") or ""), snapshot)
-            else:
-                pool.insert("retrieval_low_conf", state["session_id"],
-                            state["user_message"], str(state.get("low_reason") or ""))
+            # 落池可能内联标准化/查重(LLM),放线程池避免阻塞事件循环
+            await asyncio.to_thread(
+                pool.insert, "retrieval_low_conf", state["session_id"],
+                state["user_message"], str(state.get("low_reason") or ""),
+                state.get("retrieved_chunks") or None)
             return {"gate_passed": False,
                     "retrieved_chunks": state.get("retrieved_chunks", []),
                     "evidence_confidence": state.get("evidence_confidence"),

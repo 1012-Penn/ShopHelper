@@ -1,0 +1,24 @@
+{
+  "source": "ch04_eval_set",
+  "min_recall": 1.0,
+  "top1_floor": 0.029502,
+  "effective_score_floor": 0.03,
+  "min_effective_count": 0,
+  "margin_floor": 0.023533,
+  "combined_floor": 0.029468,
+  "sample_count": 40,
+  "positive_count": 31,
+  "positive_blocked": [],
+  "junk_count": 9,
+  "junk_blocked": [
+    "C04",
+    "J01",
+    "J02",
+    "J03",
+    "J04",
+    "J05",
+    "J06",
+    "J07",
+    "J08"
+  ]
+}

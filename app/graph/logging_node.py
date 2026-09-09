@@ -3,6 +3,7 @@
 ch07 落库契约:messages 表只落 user 行与含文本 assistant 行;assistant 纯工具调用行与
 tool 行不落库(工具轨迹只活在当轮 State/checkpoint,跨轮事实靠摘要延续)。
 """
+import asyncio
 import logging
 
 from langchain_core.messages import AIMessage, HumanMessage
@@ -47,12 +48,11 @@ def make_log_node(store, pool):
     async def log_node(state, writer=None) -> dict:
         await store.append(state["session_id"], _turn_rows(state))
         if is_refusal(state["final_reply"]):
-            snapshot = state.get("retrieved_chunks") or []
             reason = "模型自评证据不足:" + (state["final_reply"] or "")[:200]
-            if snapshot:
-                pool.insert("self_check", state["session_id"], state["user_message"], reason, snapshot)
-            else:
-                pool.insert("self_check", state["session_id"], state["user_message"], reason)
+            # 落池可能内联标准化/查重(LLM),放线程池避免阻塞事件循环
+            await asyncio.to_thread(
+                pool.insert, "self_check", state["session_id"], state["user_message"],
+                reason, state.get("retrieved_chunks") or None)
         for line in state["trace"]:
             logger.info("[ch05] session=%s %s", state["session_id"], line)
         if state["suggested_actions"]:

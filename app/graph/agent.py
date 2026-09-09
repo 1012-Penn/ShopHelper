@@ -5,6 +5,7 @@ ch07 组装纪律:system 只装静态人设与红线(每轮逐字节一致,护�
 单独占一条 system(上游模板会把所有 system 上提合并渲染,工具定义被挤到可变内容之后)。
 工具结果入库前按 TOOL_RESULT_MAX_TOKENS 截断;每步调模型前把实际上下文原样打进 model_ctx。
 """
+import asyncio
 import json
 import logging
 
@@ -144,13 +145,11 @@ def make_agent_node(model, engine, settings, pool):
                 if isinstance(parsed, dict):
                     retrieved_chunks.extend(parsed.get("retrieved_chunks") or [])
                     if parsed.get("low_confidence"):
-                        snapshot = parsed.get("retrieved_chunks") or []
-                        if snapshot:
-                            pool.insert("retrieval_low_conf", state["session_id"],
-                                        state["user_message"], str(parsed.get("reason") or ""), snapshot)
-                        else:
-                            pool.insert("retrieval_low_conf", state["session_id"],
-                                        state["user_message"], str(parsed.get("reason") or ""))
+                        # 落池可能内联标准化/查重(LLM),放线程池避免阻塞事件循环
+                        await asyncio.to_thread(
+                            pool.insert, "retrieval_low_conf", state["session_id"],
+                            state["user_message"], str(parsed.get("reason") or ""),
+                            parsed.get("retrieved_chunks") or None)
                     tool_items = [it for it in parsed.get("items") or []
                                   if isinstance(it, dict) and "n" in it]
                     if tool_items:
