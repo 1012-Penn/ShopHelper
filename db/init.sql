@@ -256,3 +256,14 @@ ALTER TABLE low_confidence_questions
   ADD KEY idx_matched_review_id (matched_review_id),
   ADD CONSTRAINT fk_lcq_review FOREIGN KEY (matched_review_id)
     REFERENCES review_queue (id) ON DELETE SET NULL;
+
+-- ch10 · 微调分类器旁路批量归类结果。低置信度问题攒够一批归一次类,主链路不写这张表。
+CREATE TABLE topic_classifications (
+  id            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  question_id   BIGINT UNSIGNED NOT NULL                COMMENT '归类的问题,指向 low_confidence_questions.id',
+  labels        JSON            NOT NULL                COMMENT '多标签,17 类权威类目里命中的若干个',
+  classified_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '归类时间',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_question_id (question_id),
+  CONSTRAINT fk_topic_question FOREIGN KEY (question_id) REFERENCES low_confidence_questions (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='主题分类结果';

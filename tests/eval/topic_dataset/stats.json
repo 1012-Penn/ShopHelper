@@ -1,0 +1,10 @@
+{
+  "pool_raw": 5,
+  "pool_kept": 5,
+  "synthetic": 1621,
+  "corpus": 1624,
+  "train": 1558,
+  "val": 163,
+  "test": 163,
+  "augmented": 260
+}

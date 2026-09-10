@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopHelper · 主题分布</title>
+  <style>
+    body { margin: 0; font: 14px system-ui, sans-serif; color: #20242b; background: #f5f7fb; }
+    header { padding: 18px 28px; background: #fff; border-bottom: 1px solid #e5e8ee; display: flex; align-items: baseline; gap: 16px; }
+    main { padding: 18px; max-width: 1200px; margin: auto; }
+    section { background: #fff; border: 1px solid #e5e8ee; border-radius: 12px; padding: 16px; }
+    .stats { display: flex; gap: 24px; margin-bottom: 14px; color: #737b88; font-size: 13px; }
+    .stats b { color: #20242b; font-size: 16px; }
+    button { border: 1px solid #4f7cff; background: #fff; color: #315ed6; border-radius: 8px; padding: 7px 14px; cursor: pointer; }
+    button.primary { background: #4f7cff; color: #fff; }
+    button:disabled { opacity: .55; cursor: default; }
+    #chart { display: grid; gap: 6px; margin-top: 6px; }
+    .row { display: grid; grid-template-columns: 90px 1fr 48px; align-items: center; gap: 10px; }
+    .row .label { text-align: right; color: #4a5060; }
+    .bar { height: 18px; border-radius: 4px; background: #4f7cff; min-width: 2px; }
+    .row.zero .bar { background: #dfe4ee; }
+    .row .count { color: #737b88; font-variant-numeric: tabular-nums; }
+    .hint { margin-top: 12px; color: #98a0ae; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <strong>ShopHelper · 飞轮主题分布</strong>
+    <span class="hint">微调分类器旁路批量归类的结果,决定先补哪块知识</span>
+  </header>
+  <main>
+    <section>
+      <div class="stats">
+        <span>池内问题 <b id="total">–</b></span>
+        <span>已归类 <b id="classified">–</b></span>
+        <span>待归类 <b id="unclassified">–</b></span>
+      </div>
+      <button class="primary" id="run">归类一批(≤200 条)</button>
+      <div id="chart">加载中…</div>
+      <div class="hint">柱条按各类目问题量等比缩放;0 条灰显。「其他」堆得异常多,多半是术语表没覆盖的新话题。</div>
+    </section>
+  </main>
+  <script>
+    const chart = document.getElementById("chart"), runBtn = document.getElementById("run");
+    async function load() {
+      const body = await (await fetch("/api/topics/distribution")).json();
+      document.getElementById("total").textContent = body.classified + body.unclassified;
+      document.getElementById("classified").textContent = body.classified;
+      document.getElementById("unclassified").textContent = body.unclassified;
+      const max = Math.max(1, ...body.items.map(i => i.count));
+      chart.innerHTML = "";
+      for (const item of body.items) {
+        const row = document.createElement("div");
+        row.className = "row" + (item.count ? "" : " zero");
+        row.innerHTML = '<span class="label"></span><div><div class="bar"></div></div><span class="count"></span>';
+        row.querySelector(".label").textContent = item.label;
+        row.querySelector(".bar").style.width = Math.round(item.count / max * 100) + "%";
+        row.querySelector(".count").textContent = item.count;
+        chart.appendChild(row);
+      }
+    }
+    runBtn.onclick = async () => {
+      runBtn.disabled = true; runBtn.textContent = "归类中…(CPU 推理,几百条约半分钟)";
+      try {
+        const res = await fetch("/api/topics/classify-batch", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ limit: 200 }) });
+        const body = await res.json();
+        if (!res.ok) alert("归类失败:" + (body.detail || res.status));
+        else alert("本批归类 " + body.classified + " 条");
+      } finally { runBtn.disabled = false; runBtn.textContent = "归类一批(≤200 条)"; await load(); }
+    };
+    load();
+  </script>
+</body>
+</html>

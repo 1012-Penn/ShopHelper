@@ -1,0 +1,1884 @@
+{"question": "我退的货你们收到了没，什么时候退款", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，顺便把发票也退了吧", "labels": ["退换货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "退款金额怎么少了，扣了啥", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "申请退款了，进度在哪看", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个用着不合适，能换一个吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退款是退到原来付款的卡里吗", "labels": ["退换货", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，用优惠券买的钱退吗", "labels": ["退换货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "收到货有点破，能直接退掉吗", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，但评价已经写了能删吗", "labels": ["退换货", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "退款能退到微信吗，不想退原卡", "labels": ["退换货", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "换货的货什么时候能发出来", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话要重新拍吗还是你们寄", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "衣服太大了，我要换小一码", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "想退货但是包装扔了还能退不", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退货地址在哪看，我要寄回去", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "东西还没拆，想退了，发票要一起寄回吗", "labels": ["退换货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "退货申请提交了，一直没审核", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退货地址给我一下，我要寄回去", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退款能不能快点，急用钱", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个鞋子码数不对，想换大一码", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "衣服太大了，能换个小一号的吗", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "下单地址填错了，能退了重新买吗", "labels": ["退换货", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个我不想要了，能退吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话要重新拍吗还是直接换", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退货地址发我一下", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "换货能不能换个别的款", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "东西不想要了，帮我退了吧", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个用着不合适，想退掉", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个我不想要了 能退吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "换货要多久才能收到新的", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退款金额怎么比我付的少", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我拍多了，想退一件", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "买贵了想退了重买 现在有券更便宜", "labels": ["退换货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我要换货 尺码买小了 能换大一码不", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话要重新开发票吗", "labels": ["退换货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话要重新拍吗还是直接寄回", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我买贵了，能退了重新买吗", "labels": ["退换货", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子码数不对，想换大一码", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "换货寄回去的快递单号填哪啊", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "收到货有点破损，能换一件新的不", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "包裹还没拆，直接拒收算退货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "收到货有点破，想退了", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "东西跟图片差太多 我要退货退款", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "换货要多久才能寄回来", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个款没货了，能换成有货的吗", "labels": ["退换货", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "退货要自己寄回去吗，怎么寄", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退款申请被拒了，为啥啊", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退货要发票一起寄回去吗", "labels": ["退换货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "我拍错尺码了，能退了重拍吗", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子码数不对，想换一双", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "换货后积分会退回来吗", "labels": ["退换货", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "东西还没到我就想退了行不行", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "买错颜色了，想换成黑色的", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我拍错尺码了，能换吗", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "换货运费要我自己出吗", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "买完就降价了，能退了重买吗", "labels": ["退换货", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话 新的是不是要等有货才发", "labels": ["退换货", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "退款进度在哪看啊", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个用优惠券买的，退了券还给我吗", "labels": ["退换货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "收到的是坏的，我要换新的", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，退货运费谁出啊", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "退款是退到原卡里吗", "labels": ["退换货", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款怎么还没退回来 我用的花呗付的", "labels": ["退换货", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，用优惠券买的钱怎么算", "labels": ["退换货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "拆封了还能退吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我要把整单都退了，怎么弄", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话新的是不是重新发一次快递", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "七天无理由退货怎么算时间", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "收到货和图片不一样，我要退货", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子码数不对，能换一双吗", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "退货要自己寄回去吗，有没有上门取件", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "申请退款了 钱什么时候能到账", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "东西和图片不一样，我要退", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个能七天无理由退吗 拆封了算不算", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个能七天无理由退吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "刚下的单能取消吗，还没发货", "labels": ["退换货", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "买错颜色了 想换成黑色的 怎么弄", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我点错了想退货，怎么操作", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "买了两件想退一件，可以吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "换货能不能换个别的款，补差价行不行", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退款申请提交三天了 咋还没到账啊", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "收到货颜色不对，我要换一个别的色", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "收到货是坏的，我要退掉", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个能换成别的款式吗", "labels": ["退换货"], "origin": "synthetic", "split": "train"}
+{"question": "能不能指定周末送，平时家里没人", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递被退回了，是什么原因啊", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "下单两天了还没发货，啥时候能发", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能发邮政，我们这只有邮政到", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西能发顺丰吗，加钱也行", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我下了两单，能合并发货吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "包裹到哪了，帮我看看物流", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我这边疫情管控，快递还能送到吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我催下快递，急用", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买了两件只收到一件，另一件呢", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西漏发了，包裹里少一件", "labels": ["物流", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "发货了没啊，怎么一直没动静", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "发的是哪家快递啊，我想查下物流", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "发到新疆要几天啊，能到吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递显示异常，帮我查下什么情况", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能指定周末送货，平时没人收", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递能送到镇上吗，我们这偏", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递显示派送中一整天了也没人联系", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西什么时候能发货", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买大了想换小一码，寄回去的运费谁出", "labels": ["物流", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "物流显示异常，帮我查下什么情况", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "包裹显示派送中一整天了，咋回事", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我下单后多久发货，有现货吗", "labels": ["物流", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我这边偏远地区能送到吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "为啥我的件在转运中心卡了这么久", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递到我们这了但一直不派送，催一下", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的预售款啥时候能发出来", "labels": ["物流", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "包裹显示异常，帮我看看咋回事", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能加急发货，我明天要用", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递员放驿站了没通知我，能让他送上门吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "下单两天了还没发货，啥时候发", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "包裹到隔壁城市了怎么又往回走了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦帮我查下物流，单号我发你", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "物流信息好几天不更新了，是不是丢件了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买两件怎么分开发了，另一个还没到", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我拍错了想取消，还没发货的话", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "包裹被退回了，是啥情况啊", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递显示派送中一整天了，催一下", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "包裹显示派送中，但快递员没联系我", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递放门口丢了算谁的", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候说三天到，现在都五天了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递到了但我不在家，能放几天", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "发什么快递啊，能不能指定顺丰", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "发的是哪个快递公司啊，我想查下", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "发货后能改收货人电话吗", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "能不能改下收货地址，还没发货呢", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "快递显示异常件，帮我看看咋了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我这边疫情管控，快递还能送吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我地址写错了，能改下收货地址吗，还没发货", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "包裹退回去了，是啥原因啊", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "显示已签收但我没收到，谁签的", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "下单两天了还没揽收，是不是漏发了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的生鲜，路上会不会坏掉啊", "labels": ["物流", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我的快递到哪了，都三天没动静了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "件被退回了，说是地址不详，咋回事", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递到付的话运费多少", "labels": ["物流", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "这个件能送到楼下驿站吗，别放快递柜", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能催一下快递，急用", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能发到菜鸟驿站我自己去取", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我退货的包裹寄到了吗，商家收到没", "labels": ["物流", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我那个快递到哪了，怎么三天没动静", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递一直卡在中转站不动了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能发顺丰，我加钱也行", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我地址写错了，能改吗，还没发出去", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "大概几天能到啊，我在外地", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "下单两天了怎么还没发货", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我催下发货，等好久了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "快递员放驿站了没通知我，能送上门吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我人不在家，能改天再送吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "包裹显示派送中，但快递员电话打不通", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "包裹显示已签收但我没收到，帮我查下", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "偏远地区发货吗，大概多久到", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "我那个快递咋还没到啊，都三天了", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "这个件能加急发顺丰吗，我着急用", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "收到货发现箱子破了，里面东西也磕了", "labels": ["物流", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "快递放驿站了，能让他送上门吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "东西寄到老家了，能转寄到我这吗", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "能不能改下收货地址，包裹还没发吧", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "显示已签收但我没收到啊，谁签的", "labels": ["物流"], "origin": "synthetic", "split": "train"}
+{"question": "买小了一码 换货的话运费谁出", "labels": ["尺码", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "裤子买大了想换小一码 怎么弄", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我买小了一码 想换大的 能补差价吗", "labels": ["尺码", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "我175 140斤 上衣选L还是XL", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这双靴子筒围多少 我小腿粗怕穿不进", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "宝宝两岁半 90cm 这个连体衣选多大合适", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这外套我180 140斤穿L会不会太紧", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子码数准不准啊 我nike穿42这个穿多少", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我身高158 体重110 这个套装选哪个码合适", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我165 100斤 这个裙子拍s还是m啊 怕小了", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我身高体重发你 帮我推荐个码数呗", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买错码了 能直接退了重新拍吗", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "裤子尺码表写的腰围是平铺还是拉伸的", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个袜子是均码还是分码的", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "尺码表在哪看 胸围那个数是对应哪个码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "内衣尺码怎么选 下胸围75上胸围88", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个码数断货了 什么时候补M码", "labels": ["尺码", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子平时穿38 这双偏大吗 要不要买37", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买错码了 现在换货要自己出运费吗", "labels": ["尺码", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "这个卫衣偏小吗 我肩宽42 平时穿m", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个卫衣是宽松版型吗 我180 140斤选L还是XL", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子码数正不正啊 我脚宽要不要买大半码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我拍错码了 还没发货能改一下吗", "labels": ["尺码", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "连衣裙我腰围68 选S会不会勒", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个裤子有加大码吗 我穿3xl的", "labels": ["尺码", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "帽子均码的吗 我头围58能戴不", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买大了想换小一码 怎么弄", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我体重一直在变 这个码数怎么选才不踩雷", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个内衣尺码怎么选 下胸围量出来是75", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个外套我穿m的 里面要套毛衣 是不是得买L", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个外套版型偏小吗 要不要买大一码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买大了一码 想换小的 还能用优惠券吗", "labels": ["尺码", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "尺码选错了能改吗 订单还没发货", "labels": ["尺码", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个羽绒服偏大还是偏小 我160 90斤", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个码偏大还是偏小 我卡在s和m中间", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个羽绒服偏大还是偏小 我一般穿s", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "帽子头围56 这个均码能戴吗", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我腿粗 这个裤子买大一码会不会太肥", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我肩宽40 这件衬衫M码能穿吗", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我平时穿40 这双鞋是不是要拍41", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我脚长24.5 这鞋选39还是40", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买错码了 想换成L的 还能换吗", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个裤子是九分还是长裤 我170选什么码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "鞋码跟平时运动鞋一样吗 我脚宽", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "宝宝两岁半 身高95 拍100还是110", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个码数是不是欧码 跟国内码差多少", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我160 90斤 这裤子拍XS会不会短", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "买大了能换小一码吗 吊牌还没剪", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子码数正不正 我脚宽 要不要买大半码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个毛衣偏大吗 我瘦 怕穿起来空荡荡", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买大了一码 想退 这个码还有货吗", "labels": ["尺码", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个外套s码衣长多少 我个子矮怕太长", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这双鞋偏大吗 我平时穿38的", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买小了一码 想换大码 顺便问下什么时候发货", "labels": ["尺码", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "连衣裙s码和m码差多少 我卡在中间", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个内衣尺码怎么选 下胸围72上胸围85", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我腰围78 这个裤子选什么码 怕买小了", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "裤子尺码表里臀围是净尺寸还是成品尺寸", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我腰围78 臀围96 这个牛仔裤选什么码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个童鞋内长多少 我家娃脚长16厘米", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我腿粗 这条裤子买大一码会不会太肥", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个童鞋内长多少 我家娃脚长15cm", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个裙子s码腰围多少 我64的腰", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个运动鞋码偏小吗 我穿厚袜子要不要加半码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我肩宽40 这个西装选m会不会小", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买错码了 想换大一码 顺便问下什么时候能到", "labels": ["尺码", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我平时穿M 这家码偏小吗 要不要拍L", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我脚长24.5 平时穿39 这个拍39还是40", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "裙子买大了能换小一码吗 运费谁出", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "裤子腰围2尺2 选哪个码合适", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "内衣尺码怎么选 我下胸围75 上胸围88", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我165 100斤 这件卫衣拍S还是M啊", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "裙子我160 120斤 会不会太紧", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个码数偏小吧 评论都说要买大两码", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我160 120斤 这个外套m码能穿吗", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个码数不准吧 我按尺码表买的穿着好紧", "labels": ["尺码", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我180 140斤 上衣拍L还是XL 怕小了", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这鞋偏大吗 我平时穿38的 要不要买37", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我平时穿L 这个牌子是不是偏小 要买XL吗", "labels": ["尺码"], "origin": "synthetic", "split": "train"}
+{"question": "发票什么时候能寄出来，我等着报销", "labels": ["发票", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货的话发票怎么处理", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头能加个备注吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票什么时候能开出来，急用", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票上的商品名能改一下吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头太长写不下怎么办", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "开票信息填错了，能作废重开吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票能开电子版的吗，纸质的太慢了", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "下单时忘了填发票，现在还能补开吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票金额跟我实付的不一样，怎么回事", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票上的名字打错一个字，能改吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我买了两单，发票能合并开一张吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票内容想改成明细，不要开成一批", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "刚下的单发票信息填错了，能帮我改下订单吗", "labels": ["发票", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "下单时候忘选发票了，现在还能补开吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "能不能把两张订单的发票合并开一张", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个订单的发票麻烦开一下，抬头是公司", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我要开票，但是运费能不能也算进去", "labels": ["发票", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "能不能开去年的发票，补开的", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "退货了发票怎么处理，要红冲吗", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头能开个人吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票丢了能补开吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头写个人还是公司有区别吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "之前开的发票抬头不对，帮我作废重开", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "抬头写错了，能重开一张不", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "刚下的单，发票信息还能改吗，顺便把地址也改下", "labels": ["发票", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个能开专票吗，普票我不要", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "能不能把发票开成个人抬头", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "开票信息填错了，能作废重开不", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票和纸质发票能都给我吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "开票信息填错了，重开要收费吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西发票还没收到，顺便问下快递到哪了", "labels": ["发票", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票下载链接失效了，能再发一次吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票和纸质发票有啥区别，哪个快", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头要改成我们公司新名字，怎么操作", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头要改成公司名，怎么改", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "下单时忘了选发票，现在还能补开不", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票内容能不能开成办公用品", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票寄到哪个地址啊，能改吗", "labels": ["发票", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "发票金额跟我付的钱对不上，咋回事", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "开票要多久啊，能不能加急，我急着用", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票能不能开成去年的日期", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，发票要一起寄回去吗", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头要改成公司名，税号也要加上", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，顺便问下发票要不要一起寄回", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "发票金额怎么比我付的少啊", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票金额跟我实付的不一样，咋回事", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西降价了想退差价，发票要重新开吗", "labels": ["发票", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "发票内容能不能改成办公用品", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "之前开的发票丢了，能重新开一张吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票要开运费那部分吗，运费能开票不", "labels": ["发票", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票下载链接失效了，重新发我一份", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票开的是我名字，能改成我老公的吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头写错了，能重开一张不", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我要开专票，需要提供啥资料", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "抬头写错了，能重新开一张吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "开票信息填错了，重开要多久", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "开票申请提交了没反应，帮我看看", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票下载链接打不开咋办", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "帮我开个公司抬头的发票，要税号", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票发我邮箱里行吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "买的时候没要发票，现在补开还来得及吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我这张发票想换成增值税专用发票可以吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票能开明细吗，不要只写一批货物", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我要退货，顺便问下发票要不要一起寄回去", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我要开票，但是订单还没发货", "labels": ["发票", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "电子发票下载链接失效了，再发我一份", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票丢了能补开吗，报销要用", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "我换货了，发票要重新开吗", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "发票丢了能重新开一张吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "下单时忘了填发票信息，现在还能补开吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个订单我要开专票，需要提供啥资料", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票税率是多少，能开13个点吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头能不能加个备注，写项目名称", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "能不能把发票和商品分开寄", "labels": ["发票", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我换货了，新订单的发票怎么开", "labels": ["发票", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "发票抬头多了个字，能作废重开吗", "labels": ["发票"], "origin": "synthetic", "split": "train"}
+{"question": "买的表走时不准，一天差好几分钟", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "玩具刚玩就散架了，零件还缺", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "实物跟图片差太多了，颜色完全不一样", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "床单有污渍还有异味，能换新的吗", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "面膜打开味道怪怪的，是不是过期了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "买的玩具少了个零件，孩子玩不了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的书封面破了，内页还有水渍", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的杯子是碎的，包装里全是玻璃渣", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "台灯用了半个月就不亮了，质量堪忧", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "包装破了，里面的东西也磕坏了，能换吗", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕有个亮点，是不是次品啊", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的书封面撕烂了，能给我补发一本吗", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "沙发垫子塌陷了，坐两天就扁了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的花瓶缺了个角，包装也太随便了", "labels": ["质量问题", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "收到的书封面破了，里面还有水渍", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "桌子腿是歪的，装都装不上，做工有问题", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个电饭锅用了两次就不加热了", "labels": ["质量问题", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "买的这个和详情页尺寸差好多，根本装不上", "labels": ["质量问题", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "收到的礼盒压扁了，里面的东西也碎了", "labels": ["质量问题", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "面膜打开有股怪味，不敢用了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "台灯用了两天就不亮了，怎么修", "labels": ["质量问题", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "买的书封面破了，里面还有几页是空的", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "买的灯收到就是坏的，不亮", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "充电宝鼓包了，这还能用吗有点怕", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "拉链一拉就坏了，质量也太差了吧", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "衣服有色差，实物比图片深好多", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个锅涂层一擦就掉，还敢用吗", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个包拉链拉两下就坏了，质量真不行", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的花瓶有裂纹，能退我运费吗", "labels": ["质量问题", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "衣服上有个大洞，明显是残次品", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "买的零食过期了，日期是去年的", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "键盘有几个键按下去没反应，是坏的吧", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的书封面撕烂了，内页也缺页", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子穿了三天鞋底就开胶了，能退吗", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "耳机一边没声音，刚拆开就这样", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕有划痕，是不是翻新的啊", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的货跟下单的不是一个型号，发错了吧", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "面膜打开就是干的，一点精华都没有", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "电饭煲用了半个月就跳闸，怎么修", "labels": ["质量问题", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "收到的杯子是碎的，裂了一道大口子", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的花瓶有裂纹，一碰就漏水", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个包收到就有个破洞，跟图片不一样啊", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的花瓶裂了一道缝，能补发吗", "labels": ["质量问题", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个包拉链是坏的，拉都拉不上", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕有划痕，新的怎么会有划痕", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "床单有块污渍，洗都洗不掉", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "说好的纯棉，摸着像化纤，跟描述不符", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个锅用了一次就掉涂层，是不是假货", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我买的这个和图片颜色完全不一样啊", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个电饭煲煮饭有塑料味，不敢用了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "鞋子穿了三天鞋底就开胶了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "键盘有几个键按下去没反应，是坏的", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "羽绒服跑绒跑得厉害，穿一天全是毛", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "显示器有个亮点，看着特别别扭", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的零食都过期了，还能吃吗", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个剃须刀用一次就卡住不动了，能换新的吗", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "说好的纯棉，收到一摸就是化纤的", "labels": ["质量问题", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个锅用两次涂层就掉了，怎么处理", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "床单洗了掉色，把别的衣服都染了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "说好的实木结果是人造板，这算虚假宣传吧", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "水果烂了一半，这质量也太差了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "锅盖的玻璃裂了，包装也太随便了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的碗缺了个角，还能用吗", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个充电宝充不进电，是不是假货", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "包包拉链拉不动，五金件也是歪的", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个充电宝用两天就充不进电了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "手机壳收到就有划痕，是不是二手的", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "面膜打开有股怪味，是不是变质了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "充电宝充不进电，用了一天就坏了", "labels": ["质量问题", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "买的电饭锅用两次就不加热了，什么情况", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的化妆品瓶子漏了，液体流了一箱", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "锅用了一次就粘锅，涂层都掉了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "收到的键盘有几个键按下去没反应", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "买的零食有股哈喇味，是不是坏了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我买的这个和图片完全不一样啊，颜色差好多", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "衣服掉色严重，把别的衣服都染了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "手表走时不准，还进水了", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "买的玩具零件缺了两个，装不起来", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个水壶漏水，倒水就往外渗", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个水壶烧水有铁锈味，是不是材质有问题", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "耳机一边没声音，刚拆开就是坏的", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "玩具少了个零件，孩子没法玩", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "键盘好几个键按下去没反应", "labels": ["质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "买的鞋两只不一样大，做工也有问题", "labels": ["质量问题", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "偏远地区包邮吗，我地址是乡镇的", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "预售的运费和现货一样吗，会不会更贵", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "包邮的门槛是按实付还是按原价算", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我换货的话来回运费都要我出吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "下单的时候显示运费15，怎么付款变成20了", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "下单的时候没看到运费，付款才发现多了8块", "labels": ["运费", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我买错尺码了，换货运费谁承担", "labels": ["运费", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "下单忘了用免邮券，能退我运费吗", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候显示运费15，怎么这么贵啊", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我要开发票，运费这部分能开进去吗", "labels": ["运费", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "两件一起买运费能合并算一份吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "这个运费险怎么用，退货能赔我运费吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "快递说超区要加钱，这个钱该我出吗", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我改下收货地址，运费会不会变贵", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "运费能不能便宜点，我买的多给个优惠呗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "运费发票能一起开吗，我要报销", "labels": ["运费", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西还没发货，运费能退给我吗", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "这个运费怎么算的，我买两件还要收两次吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "快递说超区要加收运费，这钱该我出吗", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "下单后运费降了能退差价吗", "labels": ["运费", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "我地址改一下，运费会不会变", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "能不能给我改个便宜点的快递，运费太高了", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "运费券在哪领，怎么用不了", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "会员是不是可以免运费，我积分够了没", "labels": ["运费", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "包邮的商品退回去运费也免吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你们家运费标准是啥，按重量还是按件数", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西有质量问题，退回去运费你们报销吗", "labels": ["运费", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我用了优惠券之后运费怎么还涨了", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "运费能开发票吗，我要报销", "labels": ["运费", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "包邮的话是发什么快递，几天能到", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "两件一起买运费能合并吗，还是分开算", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我买大了一码想换小，来回运费谁承担", "labels": ["运费", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "换货运费要我自己出的话我就不换了", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我退货运费垫付了，什么时候退给我", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退货的运费谁出，是你们承担还是我自己付", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "买完就降价了，运费能一起补给我吗", "labels": ["运费", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "包邮的商品退回去，寄回运费你们报销吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个运费怎么算的呀，我买两件要收我12块", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "开发票的话运费算在里面吗，能一起开不", "labels": ["运费", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "为啥我这边显示运费要20，别人买都免邮", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候运费显示15，怎么付款变成20了", "labels": ["运费", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "退货的运费谁出？是你们承担还是我自己付", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候显示运费15，怎么这么贵", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品标着包邮，为什么结算又收我8块", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "偏远地区运费太贵了，能不能便宜点", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "退货运费险怎么用啊，我退货还要自己掏钱吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "缺货那件不发的话，运费会退给我吗", "labels": ["运费", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我尺码买错了退回去运费谁负责", "labels": ["运费", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西超重了要补运费吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "偏远地区是不是要加运费啊，我地址在新疆", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "退货运费险怎么用，是先垫付后退给我吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "大件家具运费怎么收，包安装吗", "labels": ["运费", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候没包邮，现在降价了能补运费差价吗", "labels": ["运费", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "为什么别人买包邮我买要运费，是不是看人下菜", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "两件一起买运费能合并吗，分开寄太亏了", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "会员是不是免运费呀，我看别人说有这个权益", "labels": ["运费", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "会员是不是免运费啊，我看别人说可以", "labels": ["运费", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "下单后运费变了，能按原来的价格算吗", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "大件家具运费怎么收，上楼还要加钱吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "包邮的商品我退一半，运费还退给我不", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "能不能给我改个包邮，我买的多", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "大件家具的运费怎么收，能上门吗", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "新疆西藏发货要加运费吗，加多少", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我用了优惠券，怎么运费没跟着减", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "为什么我买同一件东西运费比上次贵了", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "包邮商品退货还要扣我运费吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "质量问题退货你们承担运费吧", "labels": ["运费", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个运费怎么算的呀，我买两件还要收两次运费吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "为什么别人买包邮我买要运费，是不是会员才免邮", "labels": ["运费", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "两件一起买运费能合并吗，分开算太亏了", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "运费险是你们送的吗，退货能赔多少", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "我付款的时候运费重复收了一次，能退吗", "labels": ["运费", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品破损了，退回去运费你们出吧", "labels": ["运费", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个运费太贵了，能不能发个便宜点的快递", "labels": ["运费", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退货运费险怎么用，能全赔吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "新疆西藏是不是不包邮，要加多少钱", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "为什么我退货要扣运费，不是七天无理由吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "运费能不能便宜点，或者到付也行", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "这个运费怎么算的，我买两件还要收两次运费吗", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "偏远地区是不是不包邮，具体哪些地方要加钱", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "下单后能改地址吗，改了运费会不会变", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "运费能不能到付，我不想先付", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "能不能把运费给我免了，我多买几件行不行", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "刚下单就降价了，运费能一起退给我不", "labels": ["运费", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "退货运费我先付了，什么时候能返给我", "labels": ["运费"], "origin": "synthetic", "split": "train"}
+{"question": "运费付了但是订单取消了钱退哪", "labels": ["运费", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "活动赠品没给我发，是不是漏了", "labels": ["优惠活动", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "店铺优惠和平台优惠能同时享受吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这个券的有效期到啥时候啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "新人首单立减在哪领，我怎么没看到", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这个活动是不是只有新用户才能参加", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "满减是自动减还是要自己领券啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "拼单活动还差一个人，能帮我凑吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我买的衣服参加活动了，但尺码不对想换，活动价还保留吗", "labels": ["优惠活动", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "那个满300减50的活动现在还能参加吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "买两件打八折，那我买三件怎么算", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我下单了但想换个尺码，活动价还能保留吗", "labels": ["优惠活动", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我参加活动买的东西缺货了，活动价还能保留吗", "labels": ["优惠活动", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我领的券怎么下单用不了呢", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "买一送一送的是同款还是随机发", "labels": ["优惠活动", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "拼单活动怎么参加，要几个人才能成团", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "优惠券在哪领啊，我找半天没找到入口", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动商品有质量问题能退吗", "labels": ["优惠活动", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我买的那个券怎么退啊，顺便问下能开发票吗", "labels": ["优惠活动", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "限时秒杀没抢到，还会再上吗", "labels": ["优惠活动", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "会员日折扣和积分能叠加吗", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "这个折扣是限购一件还是随便买", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我领的券过期了还能补给我吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "双十一的预售活动什么时候开始", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "下单时用了活动价，现在想改地址，活动还有效吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "那个满300减50的活动怎么参加啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "积分能换优惠券吗，在哪换", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "双十一的预售活动现在还能报名吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我领的券过期了还能补回来吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动赠品什么时候发，跟包裹一起吗", "labels": ["优惠活动", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我参加的活动说返现，钱啥时候到账", "labels": ["优惠活动", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "活动赠品啥时候发货啊", "labels": ["优惠活动", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我朋友说有个隐藏优惠券，怎么弄啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这个满减是自动减还是要自己领券", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动页面显示包邮，为啥结算还要运费", "labels": ["优惠活动", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候没看到有优惠券选项", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "新人首单立减的优惠在哪看，我下单没减", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "优惠券用错了能退回来重新用吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我领的券过期了能给我补一张吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "学生认证有优惠吗，怎么弄", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "第二件半价是全场都算还是只有指定款", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "新人首单立减怎么没给我减", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动价和会员价哪个更便宜", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候没看到有优惠券入口", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "第二件半价的活动是全场都算吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我参加活动的订单支付失败了咋办", "labels": ["优惠活动", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付款的时候活动价没生效，多扣钱了", "labels": ["优惠活动", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "满减是按原价算还是按折后价算", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "双十一的预售定金能退吗，活动规则没看懂", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "直播间说的那个专属价怎么领", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动说送赠品，我收到货咋没有赠品", "labels": ["优惠活动", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "新人首单立减怎么领啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "优惠券能开发票吗，开票金额按哪个算", "labels": ["优惠活动", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个活动价包邮吗，还要运费不", "labels": ["优惠活动", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "活动期间下的单能改地址吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "满减活动是不是要凑单才划算", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候有活动，现在想退货，优惠券还退我吗", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品参加百亿补贴吗，价格差好多", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "优惠活动什么时候结束，我想等活动最后一天买", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "满减的券能叠加两张吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我用了优惠券买的，退货的话券会退给我吗", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "下单时忘了用券，能取消重下吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候有活动，现在发货了还能享受吗", "labels": ["优惠活动", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "优惠券可以叠加使用吗，两张一起用行不行", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "那个满300减50的活动怎么参加啊 我加购物车了没看到减", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "会员日折扣是几号，怎么参加", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "第二件半价是自动减还是要自己领券", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动商品能不能开发票啊", "labels": ["优惠活动", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个活动是不是只有会员才能参加", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的优惠券在哪换，我积分够不够", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我用了券买的，退货券会退给我吗", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "优惠券领了怎么用不了 是不是要凑单 顺便问下这个能退货吗", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个满减活动到什么时候结束", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动商品缺货了，补货后还算活动价吗", "labels": ["优惠活动", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "第二件半价的活动还有吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动商品尺码不全了还能参加吗", "labels": ["优惠活动", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个限时秒杀几点开始啊，怕错过", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这个优惠券是全场通用还是限品类", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "会员日折扣是几号啊，我是不是错过了", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我券领了但是购物车里没显示", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "参加活动的商品还能七天无理由退吗", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "活动价买的能开发票吗，按哪个金额开", "labels": ["优惠活动", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品参加双十一预售吗，定金能抵多少", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动价买的能退吗，我想换个颜色", "labels": ["优惠活动", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "满减和优惠券能一起叠加用吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "活动期间下单的运费还收吗", "labels": ["优惠活动", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "我买的降了，退差价，退货运费谁出啊", "labels": ["价保", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "昨天买的今天降了，差价退我，不然我就退货重买", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "价保期是多久 我上周买的还能保吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我前天买的那个现在降价了，能退差价吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保期内降价了，差价退我，另外这个尺码能换小一码吗", "labels": ["价保", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "刚买就降价 差价退了 但我评价已经发了能改吗", "labels": ["价保", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "我买贵了，现在页面价格低好多，退我差价", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我前天买的那个现在降价了 能退差价吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "买完就降 差价退我 不然我就退了重买", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保申请要提供什么 截图就行吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "东西有质量问题 而且现在又降价了 差价退不退", "labels": ["价保", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "价保是不是七天啊，我第六天降的能退吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候199现在169 退我30差价行不行", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保申请在哪，我买的那个降了二十", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保申请入口在哪 我找不到 买完就降价了", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "同一件商品我买完就降 能补差价不 另外发票能重开吗", "labels": ["价保", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "东西还没到就降价了，这钱能退回来不", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候199现在169，能补我30块差价不", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候没活动 现在降价了 差价给退吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品降价了 但我发票已经开了 还能补差价吗", "labels": ["价保", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "刚下单第二天就降价了，差价给补一下呗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "买贵了 现在便宜二十 能退我差价吗 运费谁出", "labels": ["价保", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "降价了退差价 顺便问下这个质量有问题能退吗", "labels": ["价保", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "刚买完就降价 心里不平衡 能补差价吗 不然我就退了", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品降价了 我要退差价 怎么操作", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品降价了 差价退我 另外帮我看看保修期多久", "labels": ["价保", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "刚买就降 我要补差价 顺便问下会员有没有额外优惠", "labels": ["价保", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我昨天下的单今天就降价 差价退一下", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的鞋降了50 能价保吗 顺便问下码数偏小不", "labels": ["价保", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "东西还没收到就降价了 差价能退不", "labels": ["价保", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买完降价了 差价能退吗 运费谁出啊", "labels": ["价保", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "价保怎么算的 是按我实付还是原价退差价", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "买完就降价，退差价，另外这个保修期是多久", "labels": ["价保", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "这个降了八十 差价能补吗 我是会员有没有额外权益", "labels": ["价保", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候没包邮 现在降价还包邮了 差价怎么算", "labels": ["价保", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "我买的降了要退差价，之前那个差评能删掉吗", "labels": ["价保", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "刚买两天就降价 退差价 顺便问下保修多久", "labels": ["价保", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "申请价保要什么条件 我买的那个降了", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "昨天买的今天就降，差价必须退给我", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "买贵了想退差价，另外这个尺码我拿不准要不要换大一号", "labels": ["价保", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我下单后地址填错了 现在又降价 能改地址再退差价吗", "labels": ["价保", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个降价了 我还没评价 能先给我退差价吗", "labels": ["价保", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "我买贵了想退差价 顺便问下会员积分能不能补", "labels": ["价保", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "买完降价了，退差价，还有我那个包裹怎么还没到", "labels": ["价保", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "价保退的差价能提到余额吗 还是只能原路退", "labels": ["价保", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "降价了想补差价 结果发现没货了 什么时候补货", "labels": ["价保", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "价保期内降价了 但我的订单地址填错了 能改吗", "labels": ["价保", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "降价了退差价，我账号登不上顺便看下", "labels": ["价保", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "买贵了 差价退到哪 原路返回吗", "labels": ["价保", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "降价补差价 顺便问下这个还有货吗 想再买一个", "labels": ["价保", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "价保能退多少，还有那个满减活动我能不能参加", "labels": ["价保", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "价保是几天内有效啊 我第六天降的算吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保申请了三天了还没到账 催一下", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的那个今天便宜了 差价退我 还有发票能补开吗", "labels": ["价保", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "价保怎么弄啊，我买的那个降了", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保和七天无理由能一起用吗 我买完就降价了", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "降价补差价 顺便问下什么时候补货 我想再买一件", "labels": ["价保", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候199现在169 差价能退不", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的那个降了五十 退差价要多久到账", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保是退到原支付方式吗 我买完降价了", "labels": ["价保", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "东西还没收到就降价了，差价退给我，顺便帮我催下快递", "labels": ["价保", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "昨天买的今天降了 差价退到哪里 原路返回吗", "labels": ["价保", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "刚买完就降价 我要退了重新买 差价太亏了", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "降价了要补差价，这个质量也有点问题", "labels": ["价保", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "刚下单就降价了，差价退我，这个材质是不是纯棉的", "labels": ["价保", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "刚买完就降价，我要退差价，不然我就退货了", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "刚买就降价，退差价，顺便帮我改下收货地址", "labels": ["价保", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "价保申请入口在哪 找半天没找到", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "刚下单就便宜了三十块，给我补个差价呗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保是几天内有效啊，我上周买的还能补吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保是几天内有效啊 我买了一个礼拜了", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "价保期内降价了 但是我这单用了券 还能退差价吗", "labels": ["价保", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这个价保怎么申请啊 我买完就降了", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "这个降价了能补差价吗，我买的时候没货等了好久", "labels": ["价保", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "价保是不是要自己申请 不申请就不给退啊", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "保价能保多久 我买了一个月了还能退差价吗", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "我买的时候199现在169 差的钱退我", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "东西还没到就降价了 能补差价吗 顺便问下快递到哪了", "labels": ["价保", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "价保能退多少？我买的那件现在便宜了，还想开个发票", "labels": ["价保", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个保价是不是骗人的 我申请了没人理", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "降价了想退差价 顺便问下这个能换大一号吗", "labels": ["价保", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "下单才两小时就降价 这差价必须退给我", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "这个价保怎么申请啊，我买完就便宜了", "labels": ["价保"], "origin": "synthetic", "split": "train"}
+{"question": "银行卡支付老是跳转失败，是不是你们系统问题", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款失败好几次了，是不是我账号被限制了", "labels": ["支付", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "我下单付款了但没收到货，钱能先退我吗", "labels": ["支付", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "支付方式里怎么没有云闪付，能加一个吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "你们支持微信支付吗，我这边只有微信有钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "分期付款怎么弄，我想分三期还", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "银行卡支付失败，换成支付宝可以吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "支付限额了，说超了单笔上限，怎么提高", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "钱扣了两次，订单只显示一个，多的那笔能退回来吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "重复下单重复付款了，能退一笔吗", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "分期付款的手续费怎么算的，能提前还清吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付款一直失败，换了张卡还是不行，咋回事啊", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款能不能退到我另一张卡上，原来那张卡注销了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款退到原卡上，但我卡换了新卡号，还能收到吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西降价了，能不能把差价退我，顺便说下退款方式", "labels": ["支付", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "退款原路返回要几天啊，我急着用这笔钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "分期付款的手续费是怎么算的", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付完款页面卡住了，没显示成功，钱到底扣没扣", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "运费是付款的时候一起扣吗，还是到付", "labels": ["支付", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "重复扣款那笔钱退回来是原路返回还是退余额", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款退到余额里了，我想让它退回银行卡可以吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款的时候一直转圈，最后显示超时，但钱好像扣了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我下单付款了但订单没生成，钱去哪了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付了钱但订单显示未支付，是不是要重新付一遍", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款原路返回要多久，我等着这笔钱用", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付款时选错支付方式了，能改吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "支付方式能改吗，我想用花呗付这单", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "你们支持微信支付不？我这边只有微信有钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "重复扣款了，多扣的那笔什么时候退给我", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "付款失败好几次了，是不是要换浏览器", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "钱扣了两次，订单就一个，多的那笔能退回来吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款时提示余额不足，可我卡里明明有钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付款成功了但显示待支付，是不是系统出问题了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "重复扣款了，能不能顺便把发票也给我开了", "labels": ["支付", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "付了钱订单没生成，钱去哪了，帮我查下", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款失败后我重新付了一次，会不会扣两次钱啊", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "重复扣款了，一笔订单扣了两次钱，赶紧帮我处理下", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我退款了但优惠券没退回来，这券还能用吗", "labels": ["支付", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我付款的时候选错支付方式了，能改吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款到账太慢了，都一周了还没收到，顺便问下退货怎么寄", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "退款能不能不退到原卡，我那张卡不用了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "支付超时了订单自动取消，可钱好像已经扣了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付了两次款，多的那笔退回来运费算谁的", "labels": ["支付", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "我付款时选错了支付方式，能改成别的吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "下单付款时提示余额不足，可我卡里明明有钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付了款想取消订单，钱能原路退回来吗", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我用了优惠券付款，结果扣的是原价，多扣的钱退哪去", "labels": ["支付", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "退款能不能退到微信，我原来是用银行卡付的", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我付款成功但没生成订单，钱去哪了", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "退款显示成功了我没收到，是不是退到别的地方了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我用的花呗分期，为啥下单的时候没这个选项", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款是原路返回吗，我那张卡已经注销了怎么办", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "下单付款时提示余额不足，但我卡里明明有钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款成功了但订单被取消了，钱什么时候退给我", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "分期付款怎么弄啊，想分三期，付款页面没看到这个选项", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "能不能货到付款，我不太想先付钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "支付密码忘了，怎么重新设置一下", "labels": ["支付", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "退款能不能原路返回啊，我那张卡已经注销了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款时提示银行卡限额，这个要怎么弄", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付款的时候能不能用两张券一起抵", "labels": ["支付", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "能不能货到付款啊，我不太想先付钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "支付密码忘了，怎么重新设置啊", "labels": ["支付", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "退款显示已原路返回，但我没收到，是不是退到别人卡上了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我用了优惠券付款，结果扣的是原价，这钱能退吗", "labels": ["支付", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "你们支持微信支付吗，我支付宝里没钱了", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "重复扣款了，多的钱退回来要几天，顺便问下发票能一起开吗", "labels": ["支付", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "退款原路返回要多久，我这边等着用钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付完款页面卡住了，没跳转，这单算成功了吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "退款原路返回要几天啊，我急着用钱", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我想用花呗分期付，怎么选不了分期啊", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "下单付款后想改收货地址，钱会不会受影响", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我付款失败好几次了，是不是你们系统有问题", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "我多付了一笔钱，退回来的时候能退到余额吗", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "重复扣款了，多扣那笔什么时候能到账", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "付完款页面卡住了，不知道到底成没成功，急", "labels": ["支付"], "origin": "synthetic", "split": "train"}
+{"question": "钱付了但订单显示未支付，麻烦帮我看看", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "帮我改收货人，另外这个订单能用优惠券吗", "labels": ["订单修改", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "帮我改下地址，顺便问下大概几天能到", "labels": ["订单修改", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "下单买错颜色了，还没发货能改吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦把订单的收货时间改成周末送", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个单子能改下收货人电话吗，写的是我朋友的", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "取消订单后积分会退给我吗", "labels": ["订单修改", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "帮我取消订单吧，我重新拍一个", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个单还没发货吧，帮我取消一下谢谢", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单里手机号写错了，麻烦改下联系方式", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单能取消吗，这个商品缺货了我想换别的", "labels": ["订单修改", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "能不能把订单里的备注改一下，写放门口", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单里手机号写错了，帮我改一下联系方式", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "帮我取消这个订单，钱什么时候退回来", "labels": ["订单修改", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "订单想取消，但已经发货了是不是得走退货", "labels": ["订单修改", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "地址填错了要改，顺便问下大概几天能到", "labels": ["订单修改", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我想把收货地址换到公司去，可以改吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "取消订单吧，这个商品缺货了我想等有货再买", "labels": ["订单修改", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "帮我取消订单吧，重新拍一个", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单想改收货人，我账号登不上了怎么办", "labels": ["订单修改", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "刚付款发现地址选成老家了，赶紧帮我改下", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "帮我取消订单吧，钱什么时候退回来", "labels": ["订单修改", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "订单能改地址吗，我搬家了", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "收货人名字填成我老公的了，改成我自己的行不行", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "改下收货地址，另外这个尺码我拿不准要不要换大一号", "labels": ["订单修改", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "收货地址想换成公司那边，可以改不", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单里数量点错了，能改成两件吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单地址写错了帮我改，还有评价能删掉吗", "labels": ["订单修改", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "地址改一下，改成公司那边，快递能送到吗", "labels": ["订单修改", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "刚下的单地址写错了，能帮我改一下收货地址吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单里的尺码选错了，能改成L码吗", "labels": ["订单修改", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "下单后发现买错颜色了，能改订单里的颜色吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "刚付款的订单想取消，钱会退回来吗", "labels": ["订单修改", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "刚付款就后悔了，能帮我取消吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "改下地址，另外这件衣服有质量问题我要退", "labels": ["订单修改", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "地址改一下，顺便问下现在还有没有满减活动", "labels": ["订单修改", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我那个订单不要了，麻烦帮我取消一下", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "下单后发现买错颜色了，能改订单吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "地址改一下，另外这个商品是纯棉的吗", "labels": ["订单修改", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "取消订单的话运费会退给我吗", "labels": ["订单修改", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "地址改一下，另外发票抬头也要改", "labels": ["订单修改", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "地址少写了楼栋号，帮我补一下", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单还没发货，我想把数量改成两件", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单下重复了，帮我取消其中一个", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "收货人名字填成我老公的了，能改成我的吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "下单地址填错，能改到隔壁小区吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "地址少写了楼栋号，帮我补一下行不行", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单取消吧，我尺码选错了想换个大一码的", "labels": ["订单修改", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "订单备注写错了，能帮我改下备注内容吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "收货人电话要换一个，怎么改", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单下重复了，帮我取消一个", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单取消掉，我重新买，刚看到降价了能补差价吗", "labels": ["订单修改", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "下单时选错规格了，能改订单信息不", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦把订单的收货时间改到周末送", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我想把订单的收货人改成我妈，可以吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我地址填的是老家，能改成现在住的地方吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单信息改一下，还有发票抬头也要一起改", "labels": ["订单修改", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "改下地址，刚才付款好像扣了两次钱", "labels": ["订单修改", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "订单想改地址，但我账号登不上了怎么办", "labels": ["订单修改", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "订单里手机号写错了，能改吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单上的地址写错区了，麻烦改下", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个单子先别发了我要取消，运费会退给我吗", "labels": ["订单修改", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "帮我取消订单，积分会退回来吗", "labels": ["订单修改", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "订单备注写错了想改一下，另外发票抬头也要改", "labels": ["订单修改", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "我想取消订单重新买，重新买还能用那个优惠券吗", "labels": ["订单修改", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "帮我改下收货人电话，另外这个能开发票吗", "labels": ["订单修改", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "下单时选错规格了，能帮我改下订单内容吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个订单我要取消，运费会退给我吗", "labels": ["订单修改", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "地址少写了楼栋号，能补上吗", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "地址改一下，另外这个商品现在还有货吗", "labels": ["订单修改", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "帮我改收货地址，还有这个能用优惠券吗", "labels": ["订单修改", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "刚下的单地址写错了，帮我改一下收货地址", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我不想要了，麻烦把这个订单取消掉", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "订单里手机号写错了，麻烦帮我改下", "labels": ["订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "缺货的话我先取消订单，等有货再买", "labels": ["库存补货", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "补货通知怎么设置啊，我想第一时间买", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个缺货好久了，是不是不补了，我要不要退", "labels": ["库存补货", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货的话我先下单，等有货再发可以吗", "labels": ["库存补货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "补货了能用积分换吗，这个现在缺货", "labels": ["库存补货", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "这个颜色缺货，能不能帮我留一件", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个没货了，补货后能开发票吗", "labels": ["库存补货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "缺货的话我先拍下等补货行不行，能开发票吗", "labels": ["库存补货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个套装缺货了，单件有货吗", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货的这款保修多久啊，补货了想买", "labels": ["库存补货", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下这个啥时候有货，我着急送人", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货商品还能用优惠券吗，等补货的时候", "labels": ["库存补货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这款补货要多久，现在有优惠券能用吗", "labels": ["库存补货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "缺货等补货，顺便问下这个材质是纯棉的吗", "labels": ["库存补货", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "缺货的订单你们会自己取消吗，还是等补货", "labels": ["库存补货", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这个颜色没货了，别的颜色有吗，还是都要等补货", "labels": ["库存补货", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "XL码一直显示无货，是停产了还是暂时缺", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "上次买的那个缺货退款了，现在有货了吗", "labels": ["库存补货", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "断货好几天了，到底还上不上架", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个尺码没货了，我该等补货还是买大一号", "labels": ["库存补货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "没货等补货，顺便问下包邮吗", "labels": ["库存补货", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "这款一直缺货，是不是质量有问题下架了", "labels": ["库存补货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我上次买的那个没货了，还会再上吗", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个型号什么时候补货，急用", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个什么时候补货，我上次没抢到", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "请问补货大概要几天，急用", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "到货提醒怎么设置啊，我想蹲一下", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个爆款啥时候能到货，蹲了好久了", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "断货好几天了，大概多久能到货", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "到货了能通知我一下不，想买这个", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我拍的那款没货了，能不能换别的颜色，还是要等补货", "labels": ["库存补货", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问补货一般几天到，我等着用", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个颜色没货了，什么时候能再上架", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个缺货了，之前买的能退吗", "labels": ["库存补货", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "到货了能不能通知我一下，谢谢", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "请问下批货大概什么时候到，想囤点", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个套装缺货，单件有货吗", "labels": ["库存补货", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "补货之后价格会不会变啊，现在没货", "labels": ["库存补货", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "XL没货了，我平时穿L，这个偏大吗，有货了想买", "labels": ["库存补货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个尺码一直显示无货，是卖完了还是下架了", "labels": ["库存补货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "没货的话能不能先付钱预定，到货再发", "labels": ["库存补货", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我想要的尺码没货了，别的码有吗", "labels": ["库存补货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "到货了能通知我一下不，谢谢", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个商品缺货，我之前的订单能改地址等补货吗", "labels": ["库存补货", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "这款断货了，补货要多久，运费还是包邮吗", "labels": ["库存补货", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "补货到货后价格会变吗，现在有活动价吗", "labels": ["库存补货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "显示无货，是暂时缺还是彻底不卖了", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货商品能不能预约，到货优先发我", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个款还有货吗，显示已售罄", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "没货的话我先拍下等补货行不行", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个一直缺货，是不是要等很久，能预约吗", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我想要的这个断码了，还会补吗", "labels": ["库存补货", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "补货通知怎么设置啊，这个没货了", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "没货了，等补货的时候能用优惠券吗", "labels": ["库存补货", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这个没货了，补货后质量跟之前一样吗", "labels": ["库存补货", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "没货了，能不能先登记一下到货通知我", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候还有货，现在缺货了，能补发吗", "labels": ["库存补货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "缺货商品什么时候补，我买的时候能包邮吗", "labels": ["库存补货", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "到货通知我开了，是不是有货就会提醒", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "这个缺货的能开发票吗，等补货买的话", "labels": ["库存补货", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "没货了，补货到货能不能发短信提醒我", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货了还能买吗，大概几天补上", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我上次买的那个断货了，什么时候能再上", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "补货了麻烦发个消息，我等着下单", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "补货了记得给我发消息，我等着买", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货的话我先下单行不行，等有货再发", "labels": ["库存补货", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "有货了记得提醒我，我要买两件", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我买的那个缺货了，补货后发货走哪家快递", "labels": ["库存补货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问这款什么时候补货，急用", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "补货后还是这个价吗，会不会涨价", "labels": ["库存补货", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "这个型号没货了，大概多久能到货", "labels": ["库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "缺货中，我先付款等补货行不行", "labels": ["库存补货", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "断货了，啥时候有货，我评价里想晒单", "labels": ["库存补货", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "缺货了，补货后能用积分兑换吗", "labels": ["库存补货", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "这个补货要等多久，急用，能不能加急发", "labels": ["库存补货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "这个啥时候有货，我买完要是降价能补差价不", "labels": ["库存补货", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "这个行李箱是20寸的吗 能登机吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下这个洗发水孕妇可以用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个防晒霜防水吗 需要卸妆吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "无人机能带上飞机吗", "labels": ["商品信息"], "origin": "pool", "split": "train"}
+{"question": "请问这个衣服是纯棉的还是混纺的", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个锅能用在燃气灶上吗 要是买回来不合适能退吗", "labels": ["商品信息", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我买这个给三岁小孩吃可以吗，一天吃几次", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个沙发是真皮的还是pu的，坐垫能拆洗吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个显示器多少赫兹的 打游戏够用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这件羽绒服充绒量多少克 是白鸭绒吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个咖啡机是自动的还是半自动的，好操作吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个锅是不粘的吗，能用电磁炉吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个行李箱是几寸的，能带上飞机吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个洗发水是控油的还是滋润的，适合油头吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个猫粮是幼猫吃的还是成猫吃的", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这款跑步鞋适合扁平足穿吗，鞋底软不软", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个沙发是真皮还是pu的 尺寸多少", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个电饭煲内胆是啥涂层，会不会掉", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个净水器滤芯多久换一次啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "宝宝多大可以吃这个米粉，一天吃几次", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这款咖啡豆是深烘还是浅烘的", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "会飞的手机多少钱一台7ff1", "labels": ["商品信息"], "origin": "pool", "split": "train"}
+{"question": "这个行李箱是几寸的，能带上飞机吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个洗衣液能洗真丝吗，会不会伤衣服", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个面膜多久敷一次比较好", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个洗发水是控油的还是滋润的，我头皮爱出油", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个充电宝能带上飞机吗，多少毫安，保修几年", "labels": ["商品信息", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "这个耳机是降噪的吗 续航多久", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个电饭煲几升的，够四个人吃吗，包邮不", "labels": ["商品信息", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "这个羽绒服充绒量多少克，零下十度能穿吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "面膜一盒几片，多久用一次比较好", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个保温杯能装碳酸饮料吗，保温多久", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个沙发是真皮的还是pu的，尺寸多大", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个猫粮适合幼猫吃吗，蛋白质含量多少", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个护肤品含酒精吗，我过敏能退吗", "labels": ["商品信息", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个净水器滤芯多久换一次啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个榨汁机功率多大，用久了会不会有质量问题啊", "labels": ["商品信息", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个锅是不粘的吗 能用电磁炉吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个玩具适合几岁小孩玩 有没有小零件", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个沙发是什么材质的，真皮还是pu", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个护肤品成分表能发我看看吗 顺便能开发票不", "labels": ["商品信息", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个防晒霜是物理防晒还是化学的，防水吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个维生素一天吃几粒 饭前还是饭后", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个保健品一天吃几粒，饭前还是饭后吃", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个猫粮适合几个月的小猫吃啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "猫粮是全价粮吗 幼猫能吃吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个面霜是啥成分啊 敏感肌能用不", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个衣服啥材质的 会不会起球啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这件衣服面料成分是啥，我165高110斤穿M还是L", "labels": ["商品信息", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个净水器滤芯多久换一次，换芯贵不贵", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个奶粉是原装进口的吗 大概几天能到货", "labels": ["商品信息", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "这个鞋是偏大还是偏小，我平时穿38的", "labels": ["商品信息", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个奶粉是国产还是进口的，保质期多久，能开发票吗", "labels": ["商品信息", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个吹风机多少瓦的 声音大不大", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个衣服是什么面料 会不会起球 我165穿哪个码", "labels": ["商品信息", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "这个洗衣液是机洗用的吗，手洗会不会伤手", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个奶粉是几段的，一岁半喝哪个", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这件羽绒服充绒量多少克啊，含绒量呢", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个衣服什么材质的，洗了会不会缩水", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个净水器滤芯多久换一次啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "会飞的手机多少钱一台", "labels": ["商品信息"], "origin": "pool", "split": "train"}
+{"question": "请问这个精华是白天用还是晚上用啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个电饭煲几升的 三口人够用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个床垫软硬度怎么样，适合腰不好的人吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这款手机电池容量多大，支持快充吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这件羽绒服充绒量多少克 是白鸭绒吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个台灯能调亮度吗，护眼不", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个精华孕妇可以用吗 有啥功效", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个防晒霜是物理防晒还是化学的 防水吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个保健品一天吃几粒 饭前还是饭后", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个口红是哑光还是滋润的 显白吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个维生素是饭前吃还是饭后吃啊", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "请问这个锅是不粘锅吗 能用电磁炉吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个行李箱是20寸能上飞机吗 材质结实不", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个咖啡豆是深烘还是浅烘 酸不酸", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个锅具能用洗碗机洗吗 会不会掉涂层", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个防晒霜spf多少，防水吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个空气炸锅容量多大，几个人用合适，现在有活动吗", "labels": ["商品信息", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "这款空气炸锅容量多少升，够三个人用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个按摩仪保修多久啊 用起来会不会伤皮肤", "labels": ["商品信息", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "面膜一周敷几次啊 敷完要洗吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个空气炸锅容量多少升 够三个人用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个沙发是真皮还是pu的 尺寸多大", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个咖啡是速溶的还是挂耳的 苦不苦", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个手机充电器多少瓦的，能开发票吗", "labels": ["商品信息", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这个床垫是软的还是硬的 适合腰不好的人吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个充电宝多少毫安 能带上飞机不", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这件羽绒服充绒量多少克，含绒量百分之几", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "手机支持双卡双待吗，电池多少毫安", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "面膜一周敷几次比较好，孕妇能用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这款手表防水多少米，能游泳戴吗", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "这个维生素是咀嚼片还是吞服的", "labels": ["商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "上门维修怎么预约", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我申请维修了，单号在哪看", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "保修期内维修要自己出运费吗", "labels": ["保修维修", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "维修要寄回厂家吗，运费谁出啊", "labels": ["保修维修", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "我买的电饭煲坏了，怎么申请维修", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "维修单号在哪看，客服帮我查下", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "保修期内修了两次还是坏的咋办", "labels": ["保修维修", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个保修是几年啊，过了还能付费修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "这个扫地机器人保修几年，电池算保修范围吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "保修卡丢了还能保修吗，机器是去年买的", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "保修期是从下单日算还是收货日算", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我这个型号还有配件能修吗", "labels": ["保修维修", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "维修申请提交三天了，进度咋查", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "想申请维修，但我不想要了能直接退吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "这个保修卡丢了还能保修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我地址改了，维修寄回地址也要改", "labels": ["保修维修", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我买的鞋开胶了，能修吗还是只能退", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "寄回去修要自己出运费吗", "labels": ["保修维修", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "耳机一边不响了，能保修换新吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "刚买一个月就坏了，能直接换新不修吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我这个电饭煲还在保修期内吗，坏了想修", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "过保了还能修吗，大概多少钱", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "发票丢了还能保修吗", "labels": ["保修维修", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "手表进水了，保修管不管这个", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "维修要寄回哪里，运费谁出啊", "labels": ["保修维修", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕碎了保修管吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "这个表保修几年，全国联保吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "刚买两天就坏了，是修还是退", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我申请维修了，什么时候能寄回来", "labels": ["保修维修", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "修好了寄回来运费谁承担", "labels": ["保修维修", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "保修期是从下单算还是收货算", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "笔记本保修期内修了两次还没好，能换新吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕碎了，保修能修吗，还是得自己掏钱", "labels": ["保修维修", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "这个牌子的售后维修点在哪，能上门修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "这个保修期是多久啊，坏了能免费修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我寄修的机器你们收到了吗", "labels": ["保修维修", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "维修进度到哪了，都寄过去一周了", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "维修换的配件是原厂的吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "人为损坏还能保修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "延保服务怎么买，划算吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "发票丢了影响保修吗", "labels": ["保修维修", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "维修单号查不到进度，帮我看看", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "耳机一边没声音了，怎么申请维修啊", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "换的配件是原厂的吗，保修多久", "labels": ["保修维修", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "我洗衣机不转了，能安排师傅上门维修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我这边维修点在哪，能自己送过去吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "冰箱保修期是几年，从哪天开始算", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "过保了还能修不，大概多少钱", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我寄回去修的件到哪了，能查下进度不", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "平板保修期内维修要多久，急用", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "全国联保是随便哪家店都能修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "人为损坏还能保修不", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "保修期内维修要收费吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "修了两次还是坏的，能退吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "电视保修期内坏了，维修要发票吗", "labels": ["保修维修", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "保修期内维修要收零件费吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我买的耳机保修期内坏了，怎么申请维修", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "保修到期前想检查一下，怎么弄", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "维修点在哪，我自己送过去行吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "怎么预约上门维修啊", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "延保服务怎么买，保修能延长多久", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "耳机一边没声音了，能保修换新吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "上次报修的工单怎么还没人联系我", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "维修点离我太远了，能上门吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕碎了，保修管不管这个", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "维修点在哪，能自己送过去吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "屏幕碎了算保修范围吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "我买的锅保修期内坏了，能修还是只能换", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "空调保修几年，上门维修要收上门费吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "申请维修要填什么资料", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "寄回去维修的运费谁出啊", "labels": ["保修维修", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "修好了寄回来大概几天到", "labels": ["保修维修", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我买的鞋开胶了，能保修吗", "labels": ["保修维修", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "东西还在保修期内，修要花钱不", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "这个保修是只修不换吗", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "手机屏幕摔碎了，保修能修吗，要花钱不", "labels": ["保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "注册新号 之前那张优惠券还能用不", "labels": ["账号", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "换绑手机号要多久 我急着下单买东西", "labels": ["账号", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "账号密码改了 别的设备还登着 怎么退", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我密码忘了咋整啊，登不上去了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "换绑手机号 原来的号还能收验证码吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "换绑手机号要多久生效，旧号还能收短信吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我两个账号能合并吗 积分都在里面", "labels": ["账号", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我账号被冻结了，说异常，能解开吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "换绑手机号后 会员等级还在吗", "labels": ["账号", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "老账号登不上 里面评价记录还在吗", "labels": ["账号", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "我号好像被盗了 一直提示异地登录", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "注册的时候收不到验证码，一直提示失败", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我账号里绑的旧手机号收不到货通知了", "labels": ["账号", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "人脸识别登录一直失败 进不去", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "想注销这个账号，怎么弄啊", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "微信登录绑定的号能解绑吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号被冻结了，说我违规，能解封吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "邮箱注册的账号密码忘了，邮箱也登不上咋办", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号登不上，想问问会员等级会不会掉", "labels": ["账号", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "账号登进去购物车东西全没了，是不是被盗了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我两个账号想合并，积分能一起算不", "labels": ["账号", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "账号被限制登录了 是不是因为退货太多", "labels": ["账号", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我手机号换了，账号还能登吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "手机号换了 想换个绑定的号码", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号怎么注册啊 找不到入口", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "想换个手机号绑定，原来那个号不用了咋弄", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号好像被人登了，我这边老是被挤下线", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "登录一直显示密码错误 但我没改过", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "忘记密码了，怎么找回啊急", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号异常要申诉，需要提供什么材料", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "注册新号的时候提示我手机号已注册过", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "登录不上，我那个待发货的订单还能改地址吗", "labels": ["账号", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "登不上账号 之前买的还能退吗", "labels": ["账号", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "密码想改一下，在哪改", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "密码重置后 之前开的发票还能查到吗", "labels": ["账号", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "账号被盗了 绑的卡会不会被扣钱", "labels": ["账号", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "密码找回的短信一直收不到，是不是号码错了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "注册新号的话，之前那单的发票还能开吗", "labels": ["账号", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "账号异常登不上，我的快递到哪了也查不了", "labels": ["账号", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "账号注销了还能恢复吗，后悔了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "注册时提示手机号已被占用 咋回事", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "想注销这个账号 怎么弄", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "登录后我的收货地址全没了，是不是被盗了", "labels": ["账号", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "换绑手机号后，之前买的还能申请退货吗", "labels": ["账号", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我账号实名认证信息能改吗，填错了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "同一个手机号能注册两个账号吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我密码忘了登不上去了咋办啊", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号被限制登录了，说我违规，啥情况", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号被盗了，里面还有张优惠券没了", "labels": ["账号", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "换绑手机号要多久生效，会影响我买东西吗", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "登录密码忘了，绑定的手机号也停机了怎么办", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号实名认证信息能改吗，填错了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "微信登录绑定不了，提示已被占用", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我账号绑定的手机号是别人的，怎么解绑", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "账号异常登不了 我的快递到哪了", "labels": ["账号", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "验证码收不到 登录不了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "我两个账号合并一下行不行，积分都在里面", "labels": ["账号", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "登录一直提示账号异常，让我验证身份", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "登录要人脸识别，我人在国外弄不了", "labels": ["账号"], "origin": "synthetic", "split": "train"}
+{"question": "密码重置后之前绑的支付方式还在吗", "labels": ["账号", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我买完降价了，积分能补吗", "labels": ["会员积分", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的券买完降价了能价保吗", "labels": ["会员积分", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "为啥我消费了没涨积分，是不是要确认收货才算", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的锅具材质是啥，能用电磁炉吗", "labels": ["会员积分", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的东西能开发票不", "labels": ["会员积分", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "积分快过期了，能换点啥划算的", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换要付钱吗，能用微信支付不", "labels": ["会员积分", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "评价晒单给的积分什么时候到", "labels": ["会员积分", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "为啥我评价了没给积分奖励", "labels": ["会员积分", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "积分啥时候过期啊，我攒了好久的", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的礼品是啥材质的啊", "labels": ["会员积分", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "我账号积分突然少了好多，咋回事", "labels": ["会员积分", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "积分啥时候过期啊，我攒了好多了", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我账号里的积分怎么突然少了好多", "labels": ["会员积分", "账号"], "origin": "synthetic", "split": "train"}
+{"question": "会员积分规则在哪看啊，我咋找不到", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的商品质量有问题能退吗", "labels": ["会员积分", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的商品质量咋样啊，是正品吗", "labels": ["会员积分", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换活动跟满减能一起用吗", "labels": ["会员积分", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的礼品啥时候发货，快递单号给我下", "labels": ["会员积分", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "会员等级怎么升啊，升了有啥好处", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "会员积分能抵运费吗", "labels": ["会员积分", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "我下单了积分没到账，是不是要等收货才算", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的礼品缺货了，啥时候补", "labels": ["会员积分", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的东西坏了能保修吗", "labels": ["会员积分", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "积分怎么查还剩多少", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分抵扣的订单取消了，积分退回来吗", "labels": ["会员积分", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我退货了，那笔积分会不会被扣回去", "labels": ["会员积分", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的优惠券怎么用不了，是不是有门槛", "labels": ["会员积分", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "积分年底会清零吗，我攒了好几千呢", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我下单的时候用了积分抵扣，后来退货了积分退回来吗", "labels": ["会员积分", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的商品介绍在哪看，有啥参数", "labels": ["会员积分", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西怎么没给积分啊，是不是漏了", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的商品有质量问题咋办", "labels": ["会员积分", "质量问题"], "origin": "synthetic", "split": "train"}
+{"question": "我退货了积分会不会被扣回去", "labels": ["会员积分", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我评价晒单了，说好的积分奖励咋没到账", "labels": ["会员积分", "评价"], "origin": "synthetic", "split": "train"}
+{"question": "为啥我付款了积分没加，是不是支付没成功", "labels": ["会员积分", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "积分抵扣的订单能改地址吗", "labels": ["会员积分", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "我生日当月是不是有双倍积分啊", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我买完就降价了，积分能补吗", "labels": ["会员积分", "价保"], "origin": "synthetic", "split": "train"}
+{"question": "会员等级怎么升啊，要花多少钱才能到金卡", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "下单的时候积分抵扣怎么没生效", "labels": ["会员积分", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "钻石会员有啥特权啊，跟普通会员差在哪", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分能换啥东西，在哪换啊", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分怎么攒快一点，有没有啥活动", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的礼品保修吗", "labels": ["会员积分", "保修维修"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的东西能开发票不", "labels": ["会员积分", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的礼品啥时候发货，能查物流吗", "labels": ["会员积分", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的东西能退吗，不想要了", "labels": ["会员积分", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的优惠券怎么用不了", "labels": ["会员积分", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "黄金会员有啥专属权益，跟普通的有啥区别", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "会员积分能转给别人吗，我想给我妈用", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的订单地址填错了能改吗", "labels": ["会员积分", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "会员等级怎么升啊，要多少积分", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西怎么没给我加积分啊", "labels": ["会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换要运费吗，是不是包邮", "labels": ["会员积分", "运费"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的礼品啥时候发货，能查下物流不", "labels": ["会员积分", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "积分换的鞋子尺码选错了能换吗", "labels": ["会员积分", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的尺码选错了能换吗", "labels": ["会员积分", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "积分兑换的东西缺货了，还能换别的吗", "labels": ["会员积分", "库存补货"], "origin": "synthetic", "split": "train"}
+{"question": "我给的评价显示不出来，是不是被吞了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励的优惠券在哪看", "labels": ["评价", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "晒单奖励怎么还没发给我", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价里能加视频吗，怎么传", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价被商家回复了，我能再改吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价写错了想重新评，可以吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励是返现还是给券啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "东西退了评价还在吗，能删不", "labels": ["评价", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "我晒单的图传不上去，是不是格式不对", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "好评返现的红包在哪领", "labels": ["评价", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "晒单评价怎么上传视频啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价完给积分吗，我看别人说有", "labels": ["评价", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "评价能改吗，我想重新写一下", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价能匿名吗，不想显示名字", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单返现的活动还有吗", "labels": ["评价", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "评价能改星级吗，手滑点错了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我给了差评，商家让我删，能删吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我那个评价写错了想删掉，咋弄啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "差评删不掉啊，客服帮我处理下", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价完给的积分啥时候到账", "labels": ["评价", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "评价怎么加图片啊，找不到入口", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价完给积分还是给钱啊", "labels": ["评价", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "刚发的评价能撤回吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价怎么修改，找不到编辑按钮", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价修改有次数限制吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价里说质量有问题，能顺便退货不", "labels": ["评价", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "评价完能改星级吗，手滑点成一星了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "差评删了还能再评一次吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "刚收到货想晒个图，在哪发评价", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励是返现还是给积分啊", "labels": ["评价", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "这个订单我想评价但显示不能评，为啥", "labels": ["评价", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "晒单活动规则在哪看，要写多少字", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价有奖的话是给券还是给钱", "labels": ["评价", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "晒单有奖励吗，怎么参加", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励说给红包，一直没收到", "labels": ["评价", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我评价写错了想删，顺便问下发票能重开吗", "labels": ["评价", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "我想追加评价，可以吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单有奖励吗，怎么领", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "怎么把之前那条评价删掉啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单后多久审核通过啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单的图传不上去咋回事", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价完给的那积分啥时候到账", "labels": ["评价", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "我想把好评改成差评，怎么操作", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "差评不小心点错了，能帮我删了吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励啥时候到账啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单奖励没收到，是不是要审核", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价完多久能显示出来啊", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价里能加视频吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价发不出去，一直提示失败", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单返的钱是退到哪里的", "labels": ["评价", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我想匿名评价可以吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价里提到快递太慢，能改吗", "labels": ["评价", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "晒单评价有奖励吗，怎么领", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "晒单要拍几张图才算合格呀", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价完发现尺码说错了，想改一下", "labels": ["评价", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "评价能改吗？刚发的想重新写一下", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励的规则在哪看，写清楚点", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价可以匿名吗，不想显示名字", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价有字数要求吗，写少了行不行", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价能不能改一下，我打错星了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价里提到发票的事，会被删吗", "labels": ["评价", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "这条评价不是我写的，能删掉吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "收到货了想晒图，在哪上传照片", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价里写了退货的事，能帮我删了重写吗", "labels": ["评价", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "评价写错了想重新编辑一下", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价可以匿名发吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "能不能把那条差评撤了，商家联系我了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励没收到，是不是要联系客服", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励的券在哪看", "labels": ["评价", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "评价奖励啥时候发，我晒单好几天了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "之前那条评价被删了，是你们删的吗", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "评价能不能改一下，我打错字了", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价完发现尺码说错了，能改不", "labels": ["评价", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "我评价写错了尺码，能改一下不", "labels": ["评价", "尺码"], "origin": "synthetic", "split": "train"}
+{"question": "晒单要拍几张图才算合格", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "我评价里写了错别字，能修改不", "labels": ["评价"], "origin": "synthetic", "split": "train"}
+{"question": "这个能寄到国外吗，我人在国外", "labels": ["其他", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们有没有企业采购的渠道", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个产品有没有检测报告啊", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个包装能不能低调点 别写商品名", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想加盟你们家，怎么联系招商的人", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个产品有没有检测报告或者证书", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下这个是不是正品 有没有授权", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个能不能定制刻字啊 想送人", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们有没有实体店啊，想去店里看看", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们有没有赠品 送不送小样", "labels": ["其他", "商品信息"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个品牌有没有官方公众号", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们家有没有卖那种能放冰箱里的小收纳盒啊", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们家有没有线下自提点 我想自己去拿", "labels": ["其他", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "你们家客服电话是多少啊 我打不通", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想批量采购一百件，有没有企业采购的渠道", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们招不招人 想投个简历", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "这个能不能开发票，另外我想问下会员积分怎么算", "labels": ["其他", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我催一下 我这边有点急", "labels": ["其他", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "这个能不能分期啊 我手头有点紧", "labels": ["其他", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我想给朋友买当礼物，能帮忙写贺卡吗", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们客服几点下班，晚上有人吗", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下这个能不能定制刻字，刻我女朋友名字", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想投诉上次那个客服态度特别差", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下能不能开企业采购的专票", "labels": ["其他", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我催一下，我着急用，谢谢", "labels": ["其他", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们这个牌子是哪个国家的", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们家有没有回收旧衣服的活动", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下有没有礼品包装服务", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个能不能定制刻字啊", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下能不能货到付款，我不太会弄", "labels": ["其他", "支付"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们有没有合作加盟的方式", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们有没有回收旧包装的服务", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们有没有以旧换新的活动啊", "labels": ["其他", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们实体店在哪个城市有啊", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我看看这个适不适合孕妇用，顺便问下有没有优惠券", "labels": ["其他", "优惠活动"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我改下收货时间 我白天不在家", "labels": ["其他", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "你们家客服电话是多少，我打过去问点事", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们有没有会员日 那天买便宜", "labels": ["其他", "会员积分"], "origin": "synthetic", "split": "train"}
+{"question": "你们家客服电话是多少啊，我想找人工", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我买的东西想送人，能不要放价格单吗", "labels": ["其他", "订单修改"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下这个包装盒能不能回收，环保那种", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们公司招人吗，我想投个简历", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们公司地址在哪 想上门看看", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们营业时间是几点到几点", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下你们有没有公益捐赠的活动可以参加", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "这个能不能开发票，顺便问下你们几点上班", "labels": ["其他", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "能不能帮我推荐一下送长辈的礼物，预算三百左右", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "能不能给我推荐一款适合送人的 我挑花眼了", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想加盟你们家，怎么联系招商", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下能不能开个收据，公司报销用", "labels": ["其他", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "客服在吗，我有个事想问问，就是你们能不能开发票顺便帮我改下收货地址", "labels": ["其他", "发票"], "origin": "synthetic", "split": "train"}
+{"question": "我想问下能不能帮我留个言给老板", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你们这个牌子是国产的还是进口的呀", "labels": ["其他"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问我买错码了 想换大一码 顺便问下什么时候能到", "labels": ["尺码", "物流"], "origin": "augmented", "split": "train"}
+{"question": "东西还没到我就想退了行不行,谢谢", "labels": ["退换货", "物流"], "origin": "augmented", "split": "train"}
+{"question": "想问下活动商品尺寸不全了还能参加吗", "labels": ["优惠活动", "尺码"], "origin": "augmented", "split": "train"}
+{"question": "我领的券怎么下单用不了呢,谢谢", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "两件一起买运费能合并吗，分开寄太亏了,急", "labels": ["运费", "物流"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下发票抬头要改成公司名，税号也要加上", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "想问下我160 90斤 这裤子拍XS会不会短", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "请问积分兑换要付钱吗，能用微信支付不", "labels": ["会员积分", "支付"], "origin": "augmented", "split": "train"}
+{"question": "请问内衣尺寸怎么选 下胸围75上胸围88", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问晒单的图传不上去咋回事", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "到货通知我开了，是不是有货就会提醒,谢谢", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "我要把整单都退了，怎么弄,谢谢", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问退钱是退到原卡里吗", "labels": ["退换货", "支付"], "origin": "augmented", "split": "train"}
+{"question": "这个内衣码数怎么选 下胸围量出来是75,在线等", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "请问偏远地区运费太贵了，能不能便宜点", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "这个运费太贵了，能不能发个便宜点的包裹,谢谢", "labels": ["运费", "物流"], "origin": "augmented", "split": "train"}
+{"question": "延保服务怎么买，保修能延长多久,谢谢", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "请问我评价里写了退了的事，能帮我删了重写吗", "labels": ["评价", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问换一件运费要我自己出吗", "labels": ["退换货", "运费"], "origin": "augmented", "split": "train"}
+{"question": "想问下会员等级怎么升啊，要花价格多少才能到金卡", "labels": ["会员积分"], "origin": "augmented", "split": "train"}
+{"question": "下单的时候显示运费15，怎么付款变成20了,急", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下没货了，等补货的时候能用券吗", "labels": ["库存补货", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "我买的东西超重了要补运费吗,谢谢", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问你们这个锅是不粘的吗 能用电磁炉吗", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "晒单有奖励吗，怎么领,急", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下活动价买的能开发票吗，按哪个金额开", "labels": ["优惠活动", "发票"], "origin": "augmented", "split": "train"}
+{"question": "想退了但是包装扔了还能退不,谢谢", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问收到的杯子是碎的，包装里全是玻璃渣", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "这个缺货的能开发票吗，等补货买的话,急", "labels": ["库存补货", "发票"], "origin": "augmented", "split": "train"}
+{"question": "想问下退钱款到账太慢了，都一周了还没收到，顺便问下退掉怎么寄", "labels": ["支付", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "请问发票抬头多了个字，能作废重开吗", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "这个运费怎么算的呀，我买两件要收我12块,谢谢", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "我付款成功了但显示待支付，是不是系统出问题了,在线等", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我买大了想换小一码 怎么弄", "labels": ["尺码", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "地址少写了楼栋号，帮我补一下行不行,在线等", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问这个羽绒服偏大还是偏小 我一般穿s", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "下单买错颜色了，还没寄出能改吗,谢谢", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "想问下退钱款能不能退到微信，我原来是用银行卡付的", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "评价奖励没收到，是不是要联系人工客服,在线等", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "这个活动价包邮吗，还要运费不,急", "labels": ["优惠活动", "运费"], "origin": "augmented", "split": "train"}
+{"question": "请问我买的东西能发顺丰吗，加钱也行", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "请问这个衣服什么材质的，洗了会不会缩水", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下账号被盗了，里面还有张券没了", "labels": ["账号", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问刚下的单发票信息填错了，能帮我改下订单吗", "labels": ["发票", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问订单下重复了，帮我取消其中一个", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "想问下能不能改下收货地址，包裹还没发吧", "labels": ["物流", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "会员积分能抵运费吗,急", "labels": ["会员积分", "运费"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下刚买就降 我要补差价 顺便问下会员有没有额外优惠", "labels": ["价保", "会员积分"], "origin": "augmented", "split": "train"}
+{"question": "我想问下你们公司地址在哪 想上门看看,在线等", "labels": ["其他"], "origin": "augmented", "split": "train"}
+{"question": "请问我想问下这个能不能定制刻字，刻我女朋友名字", "labels": ["其他"], "origin": "augmented", "split": "train"}
+{"question": "这个单还没寄出吧，帮我取消一下谢谢,急", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "想问下评价能匿名吗，不想显示名字", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我买的这个和图片完全不一样啊，颜色差好多", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "想问下能不能发到菜鸟驿站我自己去取", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "请问我买了两件只收到一件，另一件呢", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "我用了券，怎么运费没跟着减,谢谢", "labels": ["运费", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我买的时候没活动 现在降价了 差价给退吗", "labels": ["价保"], "origin": "augmented", "split": "train"}
+{"question": "买小了一码 换一件的话运费谁出,在线等", "labels": ["尺码", "运费"], "origin": "augmented", "split": "train"}
+{"question": "鞋码跟平时运动鞋一样吗 我脚宽,在线等", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "这个面霜是啥成分啊 敏感肌能用不,谢谢", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "请问地址填错了要改，顺便问下大概几天能到", "labels": ["订单修改", "物流"], "origin": "augmented", "split": "train"}
+{"question": "收到的书封面破了，里面还有水渍,急", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "订单里数量点错了，能改成两件吗,在线等", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "下单付款后想改收货地址，钱会不会受影响,在线等", "labels": ["支付", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "我买的东西有品质问题，退回去运费你们报销吗,在线等", "labels": ["运费", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下优惠活动什么时候结束，我想等活动最后一天买", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "能不能发顺丰，我加钱也行,在线等", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下你们这个产品有没有检测报告啊", "labels": ["其他"], "origin": "augmented", "split": "train"}
+{"question": "键盘有几个键按下去没反应，是坏的吧,急", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "换绑手机号后，之前买的还能申请退掉吗,急", "labels": ["账号", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "请问桌子腿是歪的，装都装不上，做工有问题", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问这款手机电池容量多大，支持快充吗", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "想问下下单地址填错，能改到隔壁小区吗", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下那个满300减50的活动怎么参加啊 我加购物车了没看到减", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "积分换的商品介绍在哪看，有啥参数,在线等", "labels": ["会员积分", "商品信息"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问缺货那件不发的话，运费会退给我吗", "labels": ["运费", "库存补货"], "origin": "augmented", "split": "train"}
+{"question": "支付限额了，说超了单笔上限，怎么提高,急", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问下单两天了还没安排发货，啥时候发", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "品质问题退了你们承担运费吧,谢谢", "labels": ["运费", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问这个价保怎么申请啊 我买完就降了", "labels": ["价保"], "origin": "augmented", "split": "train"}
+{"question": "这个颜色没货了，别的颜色有吗，还是都要等补货,在线等", "labels": ["库存补货", "商品信息"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问我用了券买的，退掉的话券会退给我吗", "labels": ["优惠活动", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "下单两天了还没揽收，是不是漏发了,急", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问包邮的话是发什么包裹，几天能到", "labels": ["运费", "物流"], "origin": "augmented", "split": "train"}
+{"question": "积分兑换的订单地址填错了能改吗,谢谢", "labels": ["会员积分", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "价保是几天内有效啊 我买了一个礼拜了,谢谢", "labels": ["价保"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下换个新的运费要我自己出的话我就不换了", "labels": ["运费", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问我寄回去修的件到哪了，能查下进度不", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "补货了能用积分换吗，这个现在缺货,谢谢", "labels": ["库存补货", "会员积分"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这件羽绒服充绒量多少克啊，含绒量呢", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "发票要开运费那部分吗，运费能开发票不,急", "labels": ["发票", "运费"], "origin": "augmented", "split": "train"}
+{"question": "活动期间下的单能改地址吗,在线等", "labels": ["优惠活动", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "活动商品有品质问题能退吗,在线等", "labels": ["优惠活动", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问我账号绑定的手机号是别人的，怎么解绑", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "活动说送赠品，我收到货咋没有赠品,急", "labels": ["优惠活动", "物流"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问刚收到货想晒个图，在哪发评价", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "缺货中，我先付款等补货行不行,急", "labels": ["库存补货", "支付"], "origin": "augmented", "split": "train"}
+{"question": "评价完能改星级吗，手滑点成一星了,在线等", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "缺货商品还能用券吗，等补货的时候,急", "labels": ["库存补货", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "想问下订单里手机号写错了，麻烦改下联系方式", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "想问下发票能不能开成去年的日期", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "请问申请维修要填什么资料", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问维修进度到哪了，都寄过去一周了", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问连衣裙我腰围68 选S会不会勒", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下发的是哪家物流啊，我想查下物流", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这个童鞋内长多少 我家娃脚长15cm", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问这个订单我要开专票，需要提供啥资料", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这个包装盒能不能回收，环保那种,急", "labels": ["其他"], "origin": "augmented", "split": "train"}
+{"question": "台灯用了半个月就不亮了，品质堪忧,在线等", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "请问晒单评价有奖励吗，怎么领", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下包裹显示异常件，帮我看看咋了", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "订单信息改一下，还有发票抬头也要一起改,急", "labels": ["订单修改", "发票"], "origin": "augmented", "split": "train"}
+{"question": "收货人电话要换一个，怎么改,在线等", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "想问下我评价里提到物流太慢，能改吗", "labels": ["评价", "物流"], "origin": "augmented", "split": "train"}
+{"question": "请问这个防晒霜spf多少，防水吗", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下密码想改一下，在哪改", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "积分能换券吗，在哪换,谢谢", "labels": ["优惠活动", "会员积分"], "origin": "augmented", "split": "train"}
+{"question": "积分换的东西坏了能保修吗,在线等", "labels": ["会员积分", "保修维修"], "origin": "augmented", "split": "train"}
+{"question": "换一件的话要重新拍吗还是直接换,在线等", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "我165 100斤 这件卫衣拍S还是M啊,谢谢", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下换绑手机号要多久生效，会影响我买东西吗", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我昨天下的单今天就降价 差价退一下", "labels": ["价保"], "origin": "augmented", "split": "train"}
+{"question": "想问下这个显示器多少赫兹的 打游戏够用吗", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问面膜打开味道怪怪的，是不是过期了", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "想问下这个衣服啥材质的 会不会起球啊", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "我要退了，用券买的钱退吗,急", "labels": ["退换货", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "请问新人首单立减怎么领啊", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "请问人为损坏还能保修不", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "说好的纯棉，摸着像化纤，跟描述不符,急", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "请问维修点在哪，能自己送过去吗", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "连衣裙s码和m码差多少 我卡在中间,在线等", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "请问能不能帮我改下收货时间 我白天不在家", "labels": ["其他", "物流"], "origin": "augmented", "split": "train"}
+{"question": "申请价保要什么条件 我买的那个降了,谢谢", "labels": ["价保"], "origin": "augmented", "split": "train"}
+{"question": "刚付款就后悔了，能帮我取消吗,在线等", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问收到的书封面撕烂了，能给我补发一本吗", "labels": ["质量问题", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "账号异常登不了 我的包裹到哪了,在线等", "labels": ["账号", "物流"], "origin": "augmented", "split": "train"}
+{"question": "密码找回的短信一直收不到，是不是号码错了,急", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "我要退了，顺便把发票也退了吧,谢谢", "labels": ["退换货", "发票"], "origin": "augmented", "split": "train"}
+{"question": "评价可以匿名吗，不想显示名字,在线等", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "银行卡支付失败，换成支付宝可以吗,谢谢", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "这个表保修几年，全国联保吗,谢谢", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "收到货有点破损，能换一件新的不,急", "labels": ["退换货", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "我平时穿M 这家码偏小吗 要不要拍L,急", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问能不能把订单里的备注改一下，写放门口", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问价保和七天无理由能一起用吗 我买完就降价了", "labels": ["价保", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "想问下店铺优惠和平台优惠能同时享受吗", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "我买两件怎么分开发了，另一个还没到,在线等", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "这个活动是不是只有新用户才能参加,在线等", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下裤子尺寸表写的腰围是平铺还是拉伸的", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "想问下过保了还能修吗，大概价格多少", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "能不能催一下物流，急用,急", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "想问下注册时提示手机号已被占用 咋回事", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "能不能把两张订单的发票合并开一张,急", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "发票抬头能开个人吗,急", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "想问下这个维生素是咀嚼片还是吞服的", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "想问下积分兑换的商品品质有问题能退吗", "labels": ["会员积分", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问面膜打开有股怪味，不敢用了", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "注册新号的时候提示我手机号已注册过,谢谢", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "我评价写错了码数，能改一下不,谢谢", "labels": ["评价", "尺码"], "origin": "augmented", "split": "train"}
+{"question": "没货了，补货到货能不能发短信提醒我,在线等", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "两件一起买运费能合并吗，还是分开算,急", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我下单的时候显示运费15，怎么这么贵啊", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "刚下单就降价了，差价退我，这个材质是不是纯棉的,谢谢", "labels": ["价保", "商品信息"], "origin": "augmented", "split": "train"}
+{"question": "想问下刚付款的订单想取消，钱会退回来吗", "labels": ["订单修改", "支付"], "origin": "augmented", "split": "train"}
+{"question": "这款跑步鞋适合扁平足穿吗，鞋底软不软,急", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "想问下老账号登不上 里面评价记录还在吗", "labels": ["账号", "评价"], "origin": "augmented", "split": "train"}
+{"question": "这个维生素一天吃几粒 饭前还是饭后,在线等", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "发票抬头太长写不下怎么办,谢谢", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下限时秒杀没抢到，还会再上吗", "labels": ["优惠活动", "库存补货"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问下单后运费变了，能按原来的价格算吗", "labels": ["运费", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "我这边疫情管控，包裹还能送吗,急", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "请问付款失败后我重新付了一次，会不会扣两次钱啊", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下换一件要多久才能寄回来", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "我评价写错了想删，顺便问下发票能重开吗,急", "labels": ["评价", "发票"], "origin": "augmented", "split": "train"}
+{"question": "积分怎么查还剩多少,急", "labels": ["会员积分"], "origin": "augmented", "split": "train"}
+{"question": "想问下为什么别人买包邮我买要运费，是不是会员才免邮", "labels": ["运费", "会员积分"], "origin": "augmented", "split": "train"}
+{"question": "想问下我想追加评价，可以吗", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "退了地址在哪看，我要寄回去,急", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "请问包裹一直卡在中转站不动了", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "能不能给我推荐一款适合送人的 我挑花眼了,急", "labels": ["其他"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问包裹被退回了，是啥情况啊", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下包邮商品退掉还要扣我运费吗", "labels": ["运费", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "想问下件被退回了，说是地址不详，咋回事", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "拆封了还能退吗,谢谢", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "想问下重复扣款那笔钱退回来是原路返回还是退余额", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "请问账号密码改了 别的设备还登着 怎么退", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "请问退掉运费我先付了，什么时候能返给我", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "这个商品参加双十一预售吗，定金能抵多少,在线等", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "我这个电饭煲还在保修期内吗，坏了想修,在线等", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "买完就降价了，运费能一起补给我吗,急", "labels": ["运费", "价保"], "origin": "augmented", "split": "train"}
+{"question": "开发票信息填错了，能作废重开不,在线等", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我给的评价显示不出来，是不是被吞了", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问评价完给积分吗，我看别人说有", "labels": ["评价", "会员积分"], "origin": "augmented", "split": "train"}
+{"question": "这个充电宝多少毫安 能带上飞机不,急", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "那个满300减50的活动现在还能参加吗,急", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "请问你们这个爆款啥时候能到货，蹲了好久了", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "请问收到的化妆品瓶子漏了，液体流了一箱", "labels": ["质量问题", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "这个外套版型偏小吗 要不要买大一码,在线等", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问这个行李箱是20寸的吗 能登机吗", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问退钱款原路返回要几天啊，我急着用钱", "labels": ["支付"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下缺货了还能买吗，大概几天补上", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "请问下批货大概多久能到，想囤点,急", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这个咖啡豆是深烘还是浅烘 酸不酸", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我买的预售款啥时候能发出来", "labels": ["物流", "库存补货"], "origin": "augmented", "split": "train"}
+{"question": "请问我肩宽40 这件衬衫M码能穿吗", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "我买的时候说三天到，现在都五天了,在线等", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问断货好几天了，到底还上不上架", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "我退钱了但券没退回来，这券还能用吗,谢谢", "labels": ["支付", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "请问我腿粗 这条裤子买大一码会不会太肥", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这个折扣是限购一件还是随便买", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下买的零食有股哈喇味，是不是坏了", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "想问下这个榨汁机功率多大，用久了会不会有品质问题啊", "labels": ["商品信息", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "发票金额怎么比我付的少啊,在线等", "labels": ["发票"], "origin": "augmented", "split": "train"}
+{"question": "说好的纯棉，收到一摸就是化纤的,谢谢", "labels": ["质量问题", "商品信息"], "origin": "augmented", "split": "train"}
+{"question": "这件羽绒服充绒量多少克 是白鸭绒吗,急", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "双十一的预售活动什么时候开始,在线等", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "包裹显示已签收但我没收到，帮我查下,谢谢", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问这个洗发水是控油的还是滋润的，我头皮爱出油", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "积分兑换活动跟满减能一起用吗,急", "labels": ["会员积分", "优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "我腿粗 这个裤子买大一码会不会太肥,谢谢", "labels": ["尺码"], "origin": "augmented", "split": "train"}
+{"question": "想问下我买大了想换小一码，寄回去的运费谁出", "labels": ["物流", "尺码"], "origin": "augmented", "split": "train"}
+{"question": "登录一直提示账号异常，让我验证身份,在线等", "labels": ["账号"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下退钱款金额怎么比我付的少", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "运费能不能到付，我不想先付,在线等", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "想问下买的书封面破了，里面还有几页是空的", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "到货提醒怎么设置啊，我想蹲一下,急", "labels": ["库存补货"], "origin": "augmented", "split": "train"}
+{"question": "请问我这个型号还有配件能修吗", "labels": ["保修维修", "库存补货"], "origin": "augmented", "split": "train"}
+{"question": "退了的运费谁出，是你们承担还是我自己付,在线等", "labels": ["运费", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "请问收到的礼盒压扁了，里面的东西也碎了", "labels": ["质量问题", "物流"], "origin": "augmented", "split": "train"}
+{"question": "请问收货人名字填成我老公的了，能改成我的吗", "labels": ["订单修改"], "origin": "augmented", "split": "train"}
+{"question": "这个用着不合适，能换一个吗,在线等", "labels": ["退换货"], "origin": "augmented", "split": "train"}
+{"question": "这个订单我要取消，运费会退给我吗,在线等", "labels": ["订单修改", "运费"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问满减活动是不是要凑单才划算", "labels": ["优惠活动"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这个净水器滤芯多久换一次，换芯贵不贵", "labels": ["商品信息"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下东西有品质问题 而且现在又降价了 差价退不退", "labels": ["价保", "质量问题"], "origin": "augmented", "split": "train"}
+{"question": "积分年底会清零吗，我攒了好几千呢,急", "labels": ["会员积分"], "origin": "augmented", "split": "train"}
+{"question": "发票丢了还能保修吗,急", "labels": ["保修维修", "发票"], "origin": "augmented", "split": "train"}
+{"question": "想问下我换个新的了，新订单的发票怎么开", "labels": ["发票", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "买的电饭锅用两次就不加热了，什么情况,谢谢", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下这个降了八十 差价能补吗 我是会员有没有额外权益", "labels": ["价保", "会员积分"], "origin": "augmented", "split": "train"}
+{"question": "麻烦问下我下单的时候显示运费15，怎么这么贵", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "想问下我拍错了想取消，还没寄出的话", "labels": ["物流", "订单修改"], "origin": "augmented", "split": "train"}
+{"question": "请问我那个评价写错了想删掉，咋弄啊", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "我买完降价了，积分能补吗,急", "labels": ["会员积分", "价保"], "origin": "augmented", "split": "train"}
+{"question": "刚下单就便宜了三十块，给我补个差价呗,谢谢", "labels": ["价保"], "origin": "augmented", "split": "train"}
+{"question": "物流信息好几天不更新了，是不是丢件了,在线等", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问我买的东西什么时候能安排发货", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "差评删了还能再评一次吗,在线等", "labels": ["评价"], "origin": "augmented", "split": "train"}
+{"question": "保修期内维修要自己出运费吗,在线等", "labels": ["保修维修", "运费"], "origin": "augmented", "split": "train"}
+{"question": "请问保修期内维修要收零件费吗", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问注册新号的话，之前那单的发票还能开吗", "labels": ["账号", "发票"], "origin": "augmented", "split": "train"}
+{"question": "床单有污渍还有异味，能换新的吗,急", "labels": ["质量问题", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "麻烦帮我查下物流，单号我发你,急", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "你好,请问屏幕碎了算保修范围吗", "labels": ["保修维修"], "origin": "augmented", "split": "train"}
+{"question": "裤子买大了想换小一码 怎么弄,急", "labels": ["尺码", "退换货"], "origin": "augmented", "split": "train"}
+{"question": "锅盖的玻璃裂了，包装也太随便了,在线等", "labels": ["质量问题"], "origin": "augmented", "split": "train"}
+{"question": "请问这个件能送到楼下驿站吗，别放包裹柜", "labels": ["物流"], "origin": "augmented", "split": "train"}
+{"question": "请问晒单返的钱是退到哪里的", "labels": ["评价", "支付"], "origin": "augmented", "split": "train"}
+{"question": "想问下物流到付的话运费多少", "labels": ["物流", "运费"], "origin": "augmented", "split": "train"}
+{"question": "这个运费怎么算的，我买两件还要收两次运费吗,急", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "退款要几天到账啊急用钱", "labels": ["退换货"], "origin": "synthetic", "split": "val"}
+{"question": "我要退货，顺便问下快递什么时候来取", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "val"}
+{"question": "我买贵了想退了重买，可以吗", "labels": ["退换货", "价保"], "origin": "synthetic", "split": "val"}
+{"question": "换货能不能换个别的尺码的", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "东西有质量问题，我要退货退款", "labels": ["退换货", "质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "衣服试了不合适 想退货 运费谁出啊", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "val"}
+{"question": "申请退货了，运费谁出啊", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "val"}
+{"question": "换货能不能换个贵点的补差价", "labels": ["退换货"], "origin": "synthetic", "split": "val"}
+{"question": "退货申请被拒了，为啥啊", "labels": ["退换货"], "origin": "synthetic", "split": "val"}
+{"question": "我要退货 但包装盒扔了 还能退不", "labels": ["退换货"], "origin": "synthetic", "split": "val"}
+{"question": "下单时选的次日达，怎么还没到", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "快递放门口丢了，这算谁的责任", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "快递被退回了，是什么原因", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "快递员说地址不详要退回，咋办", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "这个件到我们这边大概要几天", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "我买的东西到货破损了，能换一个吗，快递太暴力", "labels": ["物流", "质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "我的件卡在转运中心好几天不动了", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "发的是哪个快递公司，单号给我下", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "快递能改送到公司地址吗，家里没人", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "我退货的件寄回去了，你们收到没", "labels": ["物流", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "尺码表里那个肩宽是单面量的还是整圈啊", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "我165 100斤 这个裙子拍s还是m啊", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "我脚宽 这双鞋正常码会不会挤脚", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "帽子是均码吗 我头围58能戴不", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "这个码数偏大还是偏小啊 评论里说法不一样", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "裙子买大了能换小一码吗 换货运费谁出", "labels": ["尺码", "运费"], "origin": "synthetic", "split": "val"}
+{"question": "宝宝两岁半 身高95 拍100码合适不", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "这衣服偏大还是偏小 我微胖", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "尺码表在哪看啊 胸围那个数看不懂", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "我脚长24.5 这个鞋选39还是40啊", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
+{"question": "我要开票，但是运费能不能也开进去", "labels": ["发票", "运费"], "origin": "synthetic", "split": "val"}
+{"question": "发票金额和我付的钱不一样，怎么回事", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "能不能开专票，我这边要报销", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "发票开好了吗，什么时候能寄出来", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "开票要多久啊，我这边急着报销", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "之前开的发票能换成电子版的吗", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "发票能开成两张吗，分开报销", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "我买的这个能开发票不，顺便问下有没有优惠券", "labels": ["发票", "优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "公司抬头要加税号，帮我改下发票", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "能开电子发票吗，纸质的太麻烦了", "labels": ["发票"], "origin": "synthetic", "split": "val"}
+{"question": "衣服洗一次就掉色，还起球了", "labels": ["质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "买的零食过期了，生产日期是去年的", "labels": ["质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "手表走时不准，一天慢好几分钟", "labels": ["质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "耳机一边没声音，刚拆封就这样", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "鞋子穿了三天鞋底就开胶了，能换吗", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "衣服收到有股怪味，还有一块污渍", "labels": ["质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "衣服尺码标错了，写着L实际是S，而且还有破洞", "labels": ["质量问题", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "买的锅收到是瘪的，明显被压过", "labels": ["质量问题", "物流"], "origin": "synthetic", "split": "val"}
+{"question": "这个水壶漏水，倒水的时候底下滴个不停", "labels": ["质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "衣服尺码标错了，实际小好多，还开线", "labels": ["质量问题", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "这个面膜用完脸过敏了，是不是假货", "labels": ["质量问题"], "origin": "synthetic", "split": "val"}
+{"question": "这个运费能开发票吗，我要报销", "labels": ["运费", "发票"], "origin": "synthetic", "split": "val"}
+{"question": "我这边下单运费显示0，是不是搞错了", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "包邮门槛是按实付还是按原价算的", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "运费能不能到付啊，我先垫付了再找你们要", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "这个运费比商品还贵，能不能免了", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "我拍错了尺码想换，换货运费谁承担", "labels": ["运费", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "我这边是新疆的，运费要加多少钱", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "为什么同一个东西我买要运费，活动价就包邮", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "你们家是不是全场包邮的，我看有的商品要运费", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "偏远地区运费要加价吗，我这边是乡镇", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "运费可以到付吗，我不想先付", "labels": ["运费"], "origin": "synthetic", "split": "val"}
+{"question": "活动价和会员价能一起用吗", "labels": ["优惠活动", "会员积分"], "origin": "synthetic", "split": "val"}
+{"question": "这个券怎么用不了，说我不满足条件", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "我下了单还没发货，能帮我改成用优惠券的价格吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "这个券能用在特价商品上吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "优惠券的使用门槛是按原价还是活动价算", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "双十一的预售定金能抵多少啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "新用户首单立减在哪领啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "优惠券能开发票吗，开票金额算哪个", "labels": ["优惠活动", "发票"], "origin": "synthetic", "split": "val"}
+{"question": "优惠券用完了还能补发一张吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "活动规则里写的赠品没收到", "labels": ["优惠活动", "物流"], "origin": "synthetic", "split": "val"}
+{"question": "券过期了还能给我补回来吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "我买贵了 现在有券更便宜 这算价保吗", "labels": ["价保", "优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "东西降价了 差价退我 另外这个保修是几年", "labels": ["价保", "保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "刚付完款就降价了，这差价必须退给我吧", "labels": ["价保"], "origin": "synthetic", "split": "val"}
+{"question": "刚收到货就降价了 差价退我 另外想改下收货地址", "labels": ["价保", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "买完第二天就搞活动降价，能申请价保吗", "labels": ["价保"], "origin": "synthetic", "split": "val"}
+{"question": "买完第二天降价 客服说不能价保 我要投诉", "labels": ["价保"], "origin": "synthetic", "split": "val"}
+{"question": "我买的时候贵，现在便宜了，能补差价顺便把发票重开一下吗", "labels": ["价保", "发票"], "origin": "synthetic", "split": "val"}
+{"question": "价保退的差价能算积分吗，我买的降了", "labels": ["价保", "会员积分"], "origin": "synthetic", "split": "val"}
+{"question": "我买贵了 现在活动价便宜好多 能补差价吗", "labels": ["价保"], "origin": "synthetic", "split": "val"}
+{"question": "这个降了五十，差价能退到原路吗", "labels": ["价保", "支付"], "origin": "synthetic", "split": "val"}
+{"question": "银行卡支付一直报错，换支付宝可以吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "付款的时候一直转圈，最后钱扣了订单没了", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "退款到账要几天，是退回原来的付款方式吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "钱扣了两次，订单就一个，多的那次能退回来吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "钱扣了两次，订单就一个，多扣的能退回来吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "重复扣的那笔钱退回来了，但是退到哪了我没看到", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "花呗分期能用吗，付款的时候没看到这个选项", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "我付款失败好几次了，是不是因为收货地址填错了", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "付款的时候一直转圈圈，是不是网络问题还是你们系统问题", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "支付密码输错几次被锁了，怎么解开", "labels": ["支付", "账号"], "origin": "synthetic", "split": "val"}
+{"question": "订单里的商品型号写错了，帮我改一下", "labels": ["订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "收货人改成别人，保修还能用吗", "labels": ["订单修改", "保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "麻烦把订单取消，我评价还能改吗", "labels": ["订单修改", "评价"], "origin": "synthetic", "split": "val"}
+{"question": "地址填错了改一下，顺便问下大概几天能到", "labels": ["订单修改", "物流"], "origin": "synthetic", "split": "val"}
+{"question": "取消订单后库存会放出来吗，我怕抢不到", "labels": ["订单修改", "库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "地址想换个地方寄，还没发货吧，能改不", "labels": ["订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "取消订单后钱多久退回来", "labels": ["订单修改", "支付"], "origin": "synthetic", "split": "val"}
+{"question": "地址要改，另外这个坏了保修多久", "labels": ["订单修改", "保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "刚下的单地址写错了，能帮我改下收货地址吗", "labels": ["订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "到货通知怎么设置啊，这个没货了", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "这个材质是纯棉的吗，没货的话啥时候补", "labels": ["库存补货", "商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "我账号里收藏的这个一直没货，啥时候补", "labels": ["库存补货", "账号"], "origin": "synthetic", "split": "val"}
+{"question": "啥时候有货啊，我等着下单呢", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "这个没货了，能不能先帮我留着，补货了给我发", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "什么时候上架新一批，我要买三箱", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "这款缺货了，到货后能发短信提醒我吗", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "请问这个什么时候补货，我付款一直失败", "labels": ["库存补货", "支付"], "origin": "synthetic", "split": "val"}
+{"question": "这个白色的M码啥时候有货啊，等好久了", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "断货好久了，能不能催一下补货", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "这个奶粉适合几个月的宝宝喝啊", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个台灯是护眼的吗，色温能调不", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "请问这个锅是不粘的吗，能用电磁炉吗", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个奶粉适合几个月宝宝喝啊", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个手机支持双卡双待吗 电池多大", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个锅是几层复合底的，另外发什么快递啊", "labels": ["商品信息", "物流"], "origin": "synthetic", "split": "val"}
+{"question": "这个行李箱是几寸的，能登机吗，轮子结实不", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "请问这个保健品孕妇能吃吗，有啥禁忌", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个洗面奶孕妇能用吗 成分安全不", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个手机壳是软壳还是硬壳 会发黄吗", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "这个电饭煲内胆是什么材质的，会不会掉涂层", "labels": ["商品信息"], "origin": "synthetic", "split": "val"}
+{"question": "维修期间能先给我发个备用的吗", "labels": ["保修维修", "库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "保修期内换的配件还保修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "保修需要提供什么凭证", "labels": ["保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "刚买一个月就坏了，能直接换新的吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "这个能延保吗，怎么买延保服务", "labels": ["保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "维修单号怎么查进度", "labels": ["保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "保修是几年啊，说明书上没写清", "labels": ["保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "保修期内维修要发票吗", "labels": ["保修维修", "发票"], "origin": "synthetic", "split": "val"}
+{"question": "耳机一边没声音，能保修换新吗", "labels": ["保修维修", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "这个保修是只换不修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "val"}
+{"question": "微信登录的号能改成手机号登录不", "labels": ["账号"], "origin": "synthetic", "split": "val"}
+{"question": "账号好像被人盗了，订单都不是我下的", "labels": ["账号", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "账号登不上 想改收货地址改不了", "labels": ["账号", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "找回密码的链接点进去是空的，咋回事", "labels": ["账号"], "origin": "synthetic", "split": "val"}
+{"question": "我账号里还有优惠券，换绑手机号券会丢吗", "labels": ["账号", "优惠活动"], "origin": "synthetic", "split": "val"}
+{"question": "我账号登不上了，密码输了好几遍都说错误", "labels": ["账号"], "origin": "synthetic", "split": "val"}
+{"question": "注册时填的昵称能改吗，还有头像", "labels": ["账号"], "origin": "synthetic", "split": "val"}
+{"question": "签到能得积分吗，一天能签几次", "labels": ["会员积分"], "origin": "synthetic", "split": "val"}
+{"question": "积分换的尺码能换吗，换大一号", "labels": ["会员积分", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "积分兑换的赠品缺货了怎么办", "labels": ["会员积分", "库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "积分兑换的券能开发票吗", "labels": ["会员积分", "发票"], "origin": "synthetic", "split": "val"}
+{"question": "会员积分规则在哪看，怎么算的", "labels": ["会员积分"], "origin": "synthetic", "split": "val"}
+{"question": "我积分快过期了能延期吗", "labels": ["会员积分"], "origin": "synthetic", "split": "val"}
+{"question": "积分有效期是多久啊，快过期了咋办", "labels": ["会员积分"], "origin": "synthetic", "split": "val"}
+{"question": "晒单要几张图才算合格", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "评价完想追加评论怎么操作", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "晒单活动结束了还能补发奖励吗", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "我评价里发错图了，能帮我删了重发不", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "想追加评价，收到货用了一阵子", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "评价里提到物流慢，能改评价吗", "labels": ["评价", "物流"], "origin": "synthetic", "split": "val"}
+{"question": "评价有字数要求吗，随便写行不行", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "想追评怎么操作，找不到按钮", "labels": ["评价"], "origin": "synthetic", "split": "val"}
+{"question": "之前那条评价我想删，会影响我账号吗", "labels": ["评价", "账号"], "origin": "synthetic", "split": "val"}
+{"question": "我想问下这个是不是正品，有授权吗", "labels": ["其他"], "origin": "synthetic", "split": "val"}
+{"question": "我想问下你们有没有线下自提点", "labels": ["其他"], "origin": "synthetic", "split": "val"}
+{"question": "你们这个app怎么老闪退啊，用不了", "labels": ["其他"], "origin": "synthetic", "split": "val"}
+{"question": "这个能不能开发票啊 我要报销", "labels": ["其他", "发票"], "origin": "synthetic", "split": "val"}
+{"question": "我上次买的东西想再买一份送人，有货吗", "labels": ["其他", "库存补货"], "origin": "synthetic", "split": "val"}
+{"question": "能不能帮我查下我上次买的那单 我忘了", "labels": ["其他", "订单修改"], "origin": "synthetic", "split": "val"}
+{"question": "你们有没有线下体验店可以试用的", "labels": ["其他"], "origin": "synthetic", "split": "val"}
+{"question": "包裹还没到，我不想要了能退吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "test"}
+{"question": "想换个别的款，差价怎么算", "labels": ["退换货", "价保"], "origin": "synthetic", "split": "test"}
+{"question": "退款怎么还没到账啊，都三天了", "labels": ["退换货"], "origin": "synthetic", "split": "test"}
+{"question": "收到的东西是坏的 我要退掉 顺便开个发票", "labels": ["退换货", "发票"], "origin": "synthetic", "split": "test"}
+{"question": "买的时候用了券，退货券还退吗", "labels": ["退换货", "优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "退货要自己出邮费吗，有运费险没", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "买大了想换小一码，怎么操作", "labels": ["退换货", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "刚下的单能取消吗 还没发货", "labels": ["退换货", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "我退的货物流显示签收了，退款呢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "test"}
+{"question": "换货寄回来的运费你们承担吗", "labels": ["退换货", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "这个快递怎么这么慢，都一周了", "labels": ["物流"], "origin": "synthetic", "split": "test"}
+{"question": "快递单号查不到信息，是不是没发", "labels": ["物流"], "origin": "synthetic", "split": "test"}
+{"question": "能不能帮我催一下快递，急用", "labels": ["物流"], "origin": "synthetic", "split": "test"}
+{"question": "包裹外包装破了，里面东西会不会坏", "labels": ["物流", "质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "能不能帮我拦截下快递，不想要了", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "我地址填错了，快递还能改吗", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "物流信息一直不更新，是不是丢件了", "labels": ["物流"], "origin": "synthetic", "split": "test"}
+{"question": "我想改下收货时间，周末再送", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "偏远地区发货吗，大概几天能到", "labels": ["物流"], "origin": "synthetic", "split": "test"}
+{"question": "我地址写错了，快递还能改吗", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "我买大了一码 想换小的 有货吗", "labels": ["尺码", "库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "我腰围78 这个牛仔裤选29还是30", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "尺码表在哪看啊 我胸围92该选哪个码", "labels": ["尺码", "商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "我180 140斤 上衣拍L还是XL 急", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "我170 130斤 这个连衣裙选m还是l 急", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "我170 120斤 这个风衣m码够不够", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "换码的话要重新下单吗 还是直接申请换", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "我脚长24.5 平时39 这个买39还是40啊", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "这个卫衣是宽松版型吗 我平时m码要不要买s", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "裤子尺码表里那个2尺2是多大腰围啊", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
+{"question": "发票开错了要重开，运费谁出啊", "labels": ["发票", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "我要开公司抬头的发票，需要提供什么资料", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "发票开好了吗，我这边催着要", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "发票上的税号写错了，麻烦换开", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "发票能开个人抬头吗，不写公司", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "发票上能不能不写明细，就写个总金额", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "我要开发票，怎么弄啊", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "我买了两单，发票能合在一起开吗", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "下单时忘了选发票，现在还能补开吗", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "发票上的商品名称能改一下吗，写得太笼统了", "labels": ["发票"], "origin": "synthetic", "split": "test"}
+{"question": "键盘有几个键按下去没反应", "labels": ["质量问题", "保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "耳机一边没声音，刚拆封就是坏的", "labels": ["质量问题", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "这个充电宝充不进电，是不是坏的", "labels": ["质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "买的零食过期了，还能吃吗这", "labels": ["质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "说好的纯棉，收到摸着像化纤，跟描述不符", "labels": ["质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "衣服洗一次就开线了，这质量也太差了吧", "labels": ["质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "买的鞋码数不对，而且鞋头还有胶水印", "labels": ["质量问题", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "这个电饭煲煮饭夹生，是不是质量有问题", "labels": ["质量问题", "保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "这个包背了几天带子就断了", "labels": ["质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "收到的礼盒压扁了，送人都没法送", "labels": ["质量问题", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "买的是纯棉的，收到一看标签写聚酯纤维，跟描述不符", "labels": ["质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "能不能给我改个包邮，我多买一件凑单", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "我地址改一下，运费会不会跟着变", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "运费能不能到付，我不想先垫钱", "labels": ["运费"], "origin": "synthetic", "split": "test"}
+{"question": "换货运费怎么算，寄回去和寄过来都要钱吗", "labels": ["运费", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "我取消订单了，之前付的运费退不退", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "我这边快递点要收超区费，这钱你们出吗", "labels": ["运费", "物流"], "origin": "synthetic", "split": "test"}
+{"question": "运费能不能到付啊，我不想先付", "labels": ["运费", "支付"], "origin": "synthetic", "split": "test"}
+{"question": "这个商品运费怎么比别家贵这么多", "labels": ["运费"], "origin": "synthetic", "split": "test"}
+{"question": "这单运费太贵了，能不能便宜点或者包邮", "labels": ["运费"], "origin": "synthetic", "split": "test"}
+{"question": "满多少才包邮啊，我这单还差一点点", "labels": ["运费"], "origin": "synthetic", "split": "test"}
+{"question": "我地址填错了，改地址会不会影响运费", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "秒杀活动几点开始啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "满199包邮这个活动，我差几块钱能凑单吗", "labels": ["优惠活动", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "我参加活动买大了，能换小一码吗", "labels": ["优惠活动", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "活动什么时候结束啊，我想等发工资再买", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "满减凑单的东西能改地址吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "这个券能用在特价商品上不", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "活动结束了还能补领优惠券吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "限时秒杀没抢到还能再放一批吗", "labels": ["优惠活动", "库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "限时秒杀是几点开始，我怕错过", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "我凑单差一点到满减，能加个便宜的东西吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "优惠券和满减能一起用吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "降价了想退差价 另外这个尺码买大了能换小一码吗", "labels": ["价保", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "这个价保怎么申请啊 我买完第二天就降了", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "我买的东西降价了，能退差价不，多久到账", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "我前天买的那个耳机今天降了六十块，能退差价吗", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "刚下单就便宜了三十块 给我补个差价呗", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "我买的那件衣服现在便宜了 差价退我 另外有点开线", "labels": ["价保", "质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "价保和七天无理由是一回事吗 我买完降价了", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "刚买完就降了五十 心里不平衡 能补差价不", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "买完第二天就降 客服说不能保 我要投诉", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "价保能退几次啊 我买完降了两回", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "支付密码忘了，改密码之后还能正常付款吗", "labels": ["支付", "账号"], "origin": "synthetic", "split": "test"}
+{"question": "想改成对公转账付款，可以吗", "labels": ["支付", "发票"], "origin": "synthetic", "split": "test"}
+{"question": "退款为什么退到余额里了，我要原路返回银行卡", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "我付了钱但订单显示未支付，急死了", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "用信用卡付款有手续费吗，会不会多扣钱", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "我想用信用卡付款，但是一直提示支付方式不支持", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "退款到账是退到余额还是原路退回呀", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "重复扣款了，麻烦帮我退一下，顺便问下退款要几天到账", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "退款是原路返回吗，我用的花呗付的", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "能不能货到付款，我不想先付钱", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "订单信息填错了想改，顺便问下这个材质是纯棉的吗", "labels": ["订单修改", "商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "下单时选错颜色了，订单能改吗，顺便问下能不能换货", "labels": ["订单修改", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "订单还没发货，我想把收货地址换到公司", "labels": ["订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "改地址的话运费会不会变啊", "labels": ["订单修改", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "订单取消后重新下单，价格降了能补差价不", "labels": ["订单修改", "价保"], "origin": "synthetic", "split": "test"}
+{"question": "收货人名字填成我朋友了，能改成我自己的吗", "labels": ["订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "订单备注写错了，能帮我删掉吗", "labels": ["订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "我不想要了，这个订单能取消吗", "labels": ["订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "地址写错了帮我改下，还有这个收到有点破损能换吗", "labels": ["订单修改", "质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "什么时候补货啊，我上次买的那个有质量问题想再买一个", "labels": ["库存补货", "质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "你们这个款是不是不生产了，一直没货", "labels": ["库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "缺货了还能补吗？我想买两件", "labels": ["库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "到货了能通知我一下不，我加个提醒", "labels": ["库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "断货好几天了，大概多久能补上", "labels": ["库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "缺货了，到货后价格会不会变，能保价吗", "labels": ["库存补货", "价保"], "origin": "synthetic", "split": "test"}
+{"question": "这个尺码断货了，补货的时候能帮我留一件吗", "labels": ["库存补货", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "缺货了还能补吗？想买两件", "labels": ["库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "这个型号一直缺货，是不是停产了呀", "labels": ["库存补货", "商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "请问补货时间，另外我地址填错了能改吗", "labels": ["库存补货", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "这个面膜成分表能发我看看吗，我过敏体质，顺便问下不合适能退吗", "labels": ["商品信息", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "这个面霜是啥成分啊，敏感肌能用不", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这个电饭煲内胆是什么材质 会不会掉涂层", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这个锅具套装含哪些东西，几件套啊", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这款跑步鞋适合跑马拉松吗，缓震怎么样", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这个保温杯能装碳酸饮料吗 保温多久", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这个鞋是正码吗 我平时穿38的该拍多大", "labels": ["商品信息", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "面膜一周敷几次啊 孕妇可以用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "请问这个咖啡豆是深烘还是浅烘，酸不酸", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "洗发水是氨基酸的还是皂基的 油头能用吗", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这个精华液有啥功效，能淡斑吗", "labels": ["商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "这个电饭煲保修几年啊，坏了能上门修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "这个剃须刀保修多久，刀头坏了算保修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "这个延保服务怎么买", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "保修卡丢了还能保修吗", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "修好了又坏，能再保修一次吗", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "刚买的吹风机就坏了，能直接保修维修不", "labels": ["保修维修", "质量问题"], "origin": "synthetic", "split": "test"}
+{"question": "过了保修期还能修吗，大概多少钱", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "我申请维修了，能改寄回地址吗", "labels": ["保修维修", "订单修改"], "origin": "synthetic", "split": "test"}
+{"question": "维修要多久啊，急用", "labels": ["保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "维修要多久能寄回来，急用", "labels": ["保修维修", "物流"], "origin": "synthetic", "split": "test"}
+{"question": "账号登录后显示会员等级没了，积分也清零了", "labels": ["账号", "会员积分"], "origin": "synthetic", "split": "test"}
+{"question": "忘记密码了，用邮箱能找回吗", "labels": ["账号"], "origin": "synthetic", "split": "test"}
+{"question": "账号被冻结了 说我异常 咋解", "labels": ["账号"], "origin": "synthetic", "split": "test"}
+{"question": "登录一直显示密码错误，可我明明没改过", "labels": ["账号"], "origin": "synthetic", "split": "test"}
+{"question": "账号密码想改一下，在哪改啊", "labels": ["账号"], "origin": "synthetic", "split": "test"}
+{"question": "手机号换了，怎么把绑定的号改一下", "labels": ["账号"], "origin": "synthetic", "split": "test"}
+{"question": "找回密码的邮件一直没收到", "labels": ["账号"], "origin": "synthetic", "split": "test"}
+{"question": "我积分怎么突然少了好多，帮我查查", "labels": ["会员积分"], "origin": "synthetic", "split": "test"}
+{"question": "黄金会员有啥权益啊，比普通会员多啥", "labels": ["会员积分"], "origin": "synthetic", "split": "test"}
+{"question": "积分兑换的礼品保修吗，坏了找谁", "labels": ["会员积分", "保修维修"], "origin": "synthetic", "split": "test"}
+{"question": "我账号登不上去了，积分会不会丢", "labels": ["会员积分", "账号"], "origin": "synthetic", "split": "test"}
+{"question": "会员生日有双倍积分吗", "labels": ["会员积分"], "origin": "synthetic", "split": "test"}
+{"question": "积分换的礼品要运费吗，包邮不", "labels": ["会员积分", "运费"], "origin": "synthetic", "split": "test"}
+{"question": "积分能换啥东西，在哪换", "labels": ["会员积分"], "origin": "synthetic", "split": "test"}
+{"question": "我想把差评删了重新写一个", "labels": ["评价"], "origin": "synthetic", "split": "test"}
+{"question": "晒单返现那个活动怎么参加呀", "labels": ["评价"], "origin": "synthetic", "split": "test"}
+{"question": "评价奖励没到账，是不是要联系客服", "labels": ["评价", "其他"], "origin": "synthetic", "split": "test"}
+{"question": "我买的那个还没收到，能先评价吗", "labels": ["评价", "物流"], "origin": "synthetic", "split": "test"}
+{"question": "晒单要拍几张图才算数", "labels": ["评价"], "origin": "synthetic", "split": "test"}
+{"question": "我评价里写了发票的事，想删掉重发", "labels": ["评价", "发票"], "origin": "synthetic", "split": "test"}
+{"question": "晒单奖励的券在哪领", "labels": ["评价", "优惠活动"], "origin": "synthetic", "split": "test"}
+{"question": "评价怎么上传图片啊，找不到入口", "labels": ["评价"], "origin": "synthetic", "split": "test"}
+{"question": "差评能撤销吗，问题解决了想改好评", "labels": ["评价"], "origin": "synthetic", "split": "test"}
+{"question": "能不能帮我转人工客服，机器人答不上来", "labels": ["其他"], "origin": "synthetic", "split": "test"}
+{"question": "你们支持货到付款吗 我不太会用手机付", "labels": ["其他", "支付"], "origin": "synthetic", "split": "test"}
+{"question": "能不能帮我看看这个适不适合孕妇用", "labels": ["其他", "商品信息"], "origin": "synthetic", "split": "test"}
+{"question": "我想投诉一个客服 态度太差了 怎么弄", "labels": ["其他"], "origin": "synthetic", "split": "test"}
+{"question": "有没有实体店啊 我想去店里买", "labels": ["其他"], "origin": "synthetic", "split": "test"}
+{"question": "你们招不招人啊，我想来应聘", "labels": ["其他"], "origin": "synthetic", "split": "test"}
+{"question": "我想问下你们公司地址在哪，能开发票吗", "labels": ["其他", "发票"], "origin": "synthetic", "split": "test"}

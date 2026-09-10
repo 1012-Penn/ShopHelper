@@ -270,3 +270,19 @@ class FaithCase(Base):
     last_seen_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
     resolution: Mapped[str | None] = mapped_column(String(300), nullable=True)
     resolved_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
+class TopicClassification(Base):
+    """ch10：微调分类器旁路批量归类结果。实时对话主链路不写这张表。"""
+
+    __tablename__ = "topic_classifications"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    question_id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        ForeignKey("low_confidence_questions.id"), unique=True, nullable=False,
+    )
+    labels: Mapped[list] = mapped_column(JSON, nullable=False)
+    classified_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

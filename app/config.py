@@ -76,3 +76,10 @@ class Settings(BaseSettings):
     tools_debug: bool = False            # TOOLS_DEBUG=true 时注册 debug 慢工具(验收 6 用)
     mcp_logistics_url: str = "http://127.0.0.1:8001/mcp"    # 物流 MCP Server(Streamable HTTP)
     mcp_aftersales_url: str = "http://127.0.0.1:8002/mcp"   # 售后 MCP Server
+
+    # ch10:主题分类器(旁路批量归类,模型文件缺失时接口 503,不影响聊天主链路)
+    topic_model_dir: str = "models/topic_classifier"
+    topic_threshold: float = 0.5          # label_config.json 有值时以其为准
+    topic_max_len: int = 96
+    topic_batch_size: int = 16
+    topic_classify_batch_limit: int = 200

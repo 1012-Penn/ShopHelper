@@ -3,6 +3,7 @@ from sqlalchemy import func, select, update
 from sqlalchemy.orm import sessionmaker
 
 from app.models import Conversation, ConversationSummary, Message, RequestUsage
+from app.topic_taxonomy import TOPIC_LABELS
 
 
 class UsageStore:
@@ -173,3 +174,58 @@ class ConversationStore:
                     "updated_at": c.updated_at.isoformat() if c.updated_at else "",
                 })
             return items
+
+
+class TopicStore:
+    """ch10 主题归类结果(topic_classifications)与问题池的桥:旁路批量专用,主链路不碰。"""
+
+    def __init__(self, session_factory: sessionmaker) -> None:
+        self._factory = session_factory
+
+    def pending_questions(self, limit: int = 200) -> list[dict]:
+        """池里尚未归类的问题,按入池先后攒批。"""
+        from app.models import LowConfidenceQuestion, TopicClassification
+
+        with self._factory() as session:
+            classified = select(TopicClassification.question_id).scalar_subquery()
+            rows = session.execute(
+                select(LowConfidenceQuestion.id, LowConfidenceQuestion.raw_question)
+                .where(LowConfidenceQuestion.id.not_in(classified))
+                .order_by(LowConfidenceQuestion.id).limit(limit)
+            ).all()
+            return [{"id": row.id, "question": row.raw_question or ""} for row in rows]
+
+    def save_results(self, results: list[tuple[int, list[str]]]) -> int:
+        """upsert:uk_question_id 一题一行,重跑归类覆盖旧标签。"""
+        from app.models import TopicClassification
+
+        with self._factory() as session:
+            for question_id, labels in results:
+                existing = session.execute(
+                    select(TopicClassification)
+                    .where(TopicClassification.question_id == question_id)
+                ).scalar_one_or_none()
+                if existing is None:
+                    session.add(TopicClassification(question_id=question_id, labels=labels))
+                else:
+                    existing.labels = labels
+            session.commit()
+            return len(results)
+
+    def distribution(self) -> dict:
+        """17 类全量计数(含 0),喂给后台主题分布页。"""
+        from app.models import LowConfidenceQuestion, TopicClassification
+
+        with self._factory() as session:
+            total_pool = session.scalar(select(func.count(LowConfidenceQuestion.id))) or 0
+            rows = session.scalars(select(TopicClassification.labels)).all()
+        counts = {label: 0 for label in TOPIC_LABELS}
+        for labels in rows:
+            for label in labels or []:
+                if label in counts:
+                    counts[label] += 1
+        return {
+            "items": [{"label": label, "count": counts[label]} for label in TOPIC_LABELS],
+            "classified": len(rows),
+            "unclassified": total_pool - len(rows),
+        }

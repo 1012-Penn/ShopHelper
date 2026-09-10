@@ -22,3 +22,6 @@ logs/
 
 # Superpowers worktrees
 .worktrees/
+
+# ch10:模型训练产物(checkpoint/ONNX 不进 git,重建命令见 README)
+models/

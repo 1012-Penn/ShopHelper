@@ -131,6 +131,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from app.observability import ObservabilityService
     app.state.observability = ObservabilityService(settings, app.state.usage_store)
     app.state.graph = app.state.observability.bind_graph(compiled_graph)
+    # ch10:主题分类器旁路(模型文件缺失时接口 503,不影响聊天主链路)
+    from app.store import TopicStore
+    from app.topic_classifier import TopicClassifierService
+    app.state.topic_store = TopicStore(session_factory)
+    app.state.topic_classifier = TopicClassifierService(settings)
     app.include_router(chat.router)
     app.include_router(feedback.router)
     app.include_router(review_queue.router)
@@ -141,6 +146,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(extract.router)
     app.include_router(tickets.router)
     app.include_router(conversations.router)
+    from app.routers import topics
+    app.include_router(topics.router)
 
     @app.get("/")
     async def index() -> FileResponse:
@@ -153,6 +160,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/admin/evals")
     async def eval_admin() -> FileResponse:
         return FileResponse(STATIC_DIR / "eval-runs.html")
+
+    @app.get("/admin/topics")
+    async def topics_admin() -> FileResponse:
+        return FileResponse(STATIC_DIR / "topics.html")
 
     return app
 
