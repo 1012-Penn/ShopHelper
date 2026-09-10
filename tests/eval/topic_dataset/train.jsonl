@@ -1556,3 +1556,89 @@
 {"question": "请问晒单返的钱是退到哪里的", "labels": ["评价", "支付"], "origin": "augmented", "split": "train"}
 {"question": "想问下物流到付的话运费多少", "labels": ["物流", "运费"], "origin": "augmented", "split": "train"}
 {"question": "这个运费怎么算的，我买两件还要收两次运费吗,急", "labels": ["运费"], "origin": "augmented", "split": "train"}
+{"question": "请问买小了想换大一号,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下鞋子买大了想换 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问买小了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问拍错码了想退", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下拍大了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问买小了想换大一号,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问拍小了想退,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下裤子买大了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "买回来大了想换小的,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "拍错码了想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问裤子买大了想退,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问上衣买小了想换大一点的,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下码数买大了想换,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问拍小了想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问买回来大了想换小的 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下拍错码了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问买大了想退", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下买回来大了想换小的,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下买小了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下码数买大了想换 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "买小了想退,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问大了一码想退,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "拍错码了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下买大了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问大了一码想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问买大了不合身想退", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问鞋子买大了想换", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下买回来大了想换小的,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "买大了不合身想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下买小了想换大一号 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "小了一码想换,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问拍错码了想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问下单买大了想退掉 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问买小了想换大一号", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下大了一码想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下小了一码想换,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问拍错码了想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问鞋子买大了想换,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问码数买大了想换 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下买大了想换小一码,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问买大了想换小一码", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问鞋子买大了想换", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问裤子买大了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问上衣买小了想换大一点的 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问买大了想退,谢谢", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问下单买大了想退掉,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问买小了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问买小了想退", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下买小了想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问拍大了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下拍大了想退,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "想问下拍大了想退", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问大了一码想退 帮帮忙", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "请问裤子买大了想退", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下码数买大了想换,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "你好,请问上衣买小了想换大一点的,在线等", "labels": ["尺码", "退换货"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下换的新品几天能寄出 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问退完款再买啥时候能到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货寄回去后多久寄新的过来", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换一件的话多久能收到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退货后新订单能当天发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下退货后新订单能当天发货吗 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问退货后重拍多久能发货", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问换一件的话多久能收到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问换货什么时候能发货 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问退货后新订单能当天发货吗 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下换一件的话多久能收到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问退完款再买啥时候能到", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退货后重拍多久能发货", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退货后重拍多久能发货 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退完款再买啥时候能到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退货重买能加急发货吗 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问换的新品几天能寄出 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货的运费谁出,多久能到", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下换货寄回去后多久寄新的过来 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货什么时候能发货", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问换货的快递单号发我下 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问换一件的话多久能收到", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换的新品几天能寄出 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货的快递单号发我下", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下退货重买能加急发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换货的运费谁出,多久能到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "换的新品几天能寄出", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}

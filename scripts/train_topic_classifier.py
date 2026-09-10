@@ -28,7 +28,9 @@ DEFAULT_THRESHOLD = 0.5
 class TopicDataset(Dataset):
     def __init__(self, rows: list[dict], tokenizer, max_len: int) -> None:
         self.texts = [row["question"] for row in rows]
-        self.encodings = tokenizer(self.texts, truncation=True, max_length=max_len)
+        # transformers 5.x 下取单条是 tokenizers.Encoding,统一转 np 再在 __getitem__ 还原列表
+        self.encodings = tokenizer(self.texts, truncation=True, max_length=max_len,
+                                   return_tensors="np")
         self.multi_hot = [[1.0 if label in row["labels"] else 0.0 for label in TOPIC_LABELS]
                           for row in rows]
 
@@ -36,7 +38,7 @@ class TopicDataset(Dataset):
         return len(self.texts)
 
     def __getitem__(self, idx: int) -> dict:
-        item = dict(self.encodings[idx])
+        item = {key: value[idx].tolist() for key, value in self.encodings.items()}
         item["multi_hot"] = self.multi_hot[idx]
         return item
 
@@ -109,6 +111,7 @@ def main() -> None:
         save_total_limit=2,
         seed=42,
         dataloader_num_workers=0,     # CPU 训练 + 内存紧,不开多进程
+        remove_unused_columns=False,  # multi_hot 不是 forward 签名列,禁用 Trainer 的自动剥列
         report_to=[],
     )
     trainer = Trainer(model=model, args=hub_args, train_dataset=train_set, eval_dataset=val_set,

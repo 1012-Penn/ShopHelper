@@ -55,8 +55,8 @@ class TopicClassifierService:
             return []
         self._ensure_loaded()
         cleaned = [clean_question(q) for q in questions]
-        encodings = self._tokenizer(cleaned, truncation=True, max_length=self._max_len)
-        batch = self._tokenizer.pad(encodings, padding=True, return_tensors="np")
+        batch = self._tokenizer(cleaned, truncation=True, max_length=self._max_len,
+                                padding=True, return_tensors="np")
         feed = {name: batch[name] for name in (i.name for i in self._session.get_inputs())}
         logits = self._session.run(None, feed)[0]
         probs = 1.0 / (1.0 + np.exp(-logits))

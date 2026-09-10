@@ -14,7 +14,7 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from app.topic_taxonomy import LABEL_COUNT, TOPIC_LABELS
-from scripts.train_topic_classifier import load_jsonl, make_collate
+from scripts.train_topic_classifier import load_jsonl
 
 ACCEPTANCE_SAMPLE = "买大了想退"  # 验收 3:须同时命中多个类目
 
@@ -26,10 +26,9 @@ def predict_texts(model, tokenizer, texts: list[str], max_len: int, threshold: f
     with torch.no_grad():
         for start in range(0, len(texts), batch_size):
             chunk = texts[start:start + batch_size]
-            enc = tokenizer(chunk, truncation=True, max_length=max_len)
-            batch = make_collate(tokenizer)([{"multi_hot": [0.0] * LABEL_COUNT, **e} for e in enc])
-            del batch["labels"]
-            logits = model(**batch).logits
+            enc = tokenizer(chunk, truncation=True, max_length=max_len,
+                            padding=True, return_tensors="pt")
+            logits = model(**enc).logits
             all_probs.append(torch.sigmoid(logits).numpy())
     probs = np.concatenate(all_probs)
     return probs, (probs >= threshold).astype(int)
