@@ -37,9 +37,9 @@ TDD 说明:后端可单测代码严格测试先行;数据/训练/评测类产出
 
 - [x] `static/topics.html`(Vibe:17 类横向条形图 + 归类一批按钮,纯 CSS)
 - [x] `scripts/acceptance_ch10.py`(report/classify/multilabel 三场景)
-- [ ] 真机:第一轮 19/20(自加的退换×物流组合句漏 物流),第三轮补样重训后复跑
+- [x] 真机:四轮数据迭代后 **20/20 全过**(微 F1 0.932/宏 0.936;分布页有数;三条多诉求句全中)
 
 ## 收口
 
-- [ ] code review(requesting-code-review)+ verification-before-completion
+- [x] code review(主线程全量 diff,3 处 lint 修复,0 功能问题)+ 全量回归 375 passed
 - [ ] README/.env.example ch10 段落;dev-notes 六样留痕;合并 main;推 GitHub

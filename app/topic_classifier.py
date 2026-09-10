@@ -11,7 +11,7 @@ import numpy as np
 from app.config import Settings
 from app.store import TopicStore
 from app.topic_data import clean_question
-from app.topic_taxonomy import LABEL_COUNT, TOPIC_LABELS, validate_labels
+from app.topic_taxonomy import TOPIC_LABELS, validate_labels
 
 
 class TopicClassifierService:

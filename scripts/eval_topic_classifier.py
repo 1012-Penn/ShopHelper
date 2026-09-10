@@ -13,7 +13,7 @@ import torch
 from sklearn.metrics import confusion_matrix, precision_recall_fscore_support
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-from app.topic_taxonomy import LABEL_COUNT, TOPIC_LABELS
+from app.topic_taxonomy import TOPIC_LABELS
 from scripts.train_topic_classifier import load_jsonl
 
 ACCEPTANCE_SAMPLE = "买大了想退"  # 验收 3:须同时命中多个类目

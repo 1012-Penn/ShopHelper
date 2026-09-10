@@ -81,9 +81,8 @@ def seed_demo_pool() -> int:
             LowConfidenceQuestion.id == TopicClassification.question_id
         ).filter(TopicClassification.id.is_(None)).count()
     if pending == 0:
-        from scripts.build_topic_dataset import generate_demo_questions
         from app.llm import make_extract_model
-        from scripts.build_topic_dataset import BareQuestions
+        from scripts.build_topic_dataset import BareQuestions, generate_demo_questions
         model = make_extract_model(Settings()).with_structured_output(
             BareQuestions, method="function_calling")
         questions += [q for q in generate_demo_questions(model, 40)
