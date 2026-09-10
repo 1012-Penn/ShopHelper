@@ -1946,7 +1946,7 @@
 {"question": "麻烦问下退货后新订单能当天发货吗 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "请问退货后重拍多久能发货", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "请问换一件的话多久能收到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
-{"question": "麻烦问下退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "麻烦问下退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "尺码", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "请问换货什么时候能发货 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "请问退货后新订单能当天发货吗 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "麻烦问下换一件的话多久能收到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
@@ -1960,11 +1960,11 @@
 {"question": "麻烦问下换货寄回去后多久寄新的过来 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "换货什么时候能发货", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "请问换货的快递单号发我下 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
-{"question": "请问退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "请问退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "尺码", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "请问换一件的话多久能收到", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "换的新品几天能寄出 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "换货的快递单号发我下", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
-{"question": "退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
+{"question": "退了重新买个小一码的,能快点发货吗", "labels": ["退换货", "尺码", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "麻烦问下退货重买能加急发货吗", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "换货的运费谁出,多久能到 谢谢", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}
 {"question": "换的新品几天能寄出", "labels": ["退换货", "物流"], "origin": "synthetic", "split": "train"}

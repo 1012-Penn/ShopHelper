@@ -15,12 +15,12 @@ TDD 说明:后端可单测代码严格测试先行;数据/训练/评测类产出
 
 - [x] `scripts/train_topic_classifier.py`(Context7 核对:problem_type=multi_label_classification →
       BCEWithLogitsLoss;EarlyStoppingCallback + load_best_model_at_end)
-- [ ] 真跑:基座 hfl/chinese-roberta-wwm-ext 下载(HF 大文件被 Xet 通道卡死,已改 curl 断点续传
+- [x] 真跑:基座 hfl/chinese-roberta-wwm-ext 下载(HF 大文件被 Xet 通道卡死,已改 curl 断点续传
       hf-mirror)→ CPU 训练 ≤8 轮早停,产物 `models/topic_classifier/`(gitignore)+ 指标 JSON
 
 ## Task 3 · 评测
 
-- [ ] `scripts/eval_topic_classifier.py`:各类目 P/R/F1 + 17 张二分类混淆矩阵 + 错例清单 +
+- [x] `scripts/eval_topic_classifier.py`:各类目 P/R/F1 + 17 张二分类混淆矩阵 + 错例清单 +
       「买大了想退」多标签断言(退出码 3 = 验收 3 不过)→ reports/ 两份产物
 
 ## Task 4 · 旁路部署 ✅(除真机联跑)
@@ -31,13 +31,13 @@ TDD 说明:后端可单测代码严格测试先行;数据/训练/评测类产出
       init.sql 同步;真库已 apply(COMMENT utf8mb4 验证无误)
 - [x] `app/topic_classifier.py`(ONNX 惰性加载)、`app/store.py` TopicStore、
       `app/routers/topics.py`、config topic_* 五项、main.py 接线 + /admin/topics
-- [ ] `scripts/export_topic_onnx.py`(含 torch/ORT 对齐校验)+ `scripts/classify_topics.py` 真跑
+- [x] `scripts/export_topic_onnx.py`(含 torch/ORT 对齐校验,偏差 6.44e-06)+ `scripts/classify_topics.py` 真跑(池内 5 条全归类)
 
 ## Task 5 · 前端 + 真机验收
 
 - [x] `static/topics.html`(Vibe:17 类横向条形图 + 归类一批按钮,纯 CSS)
 - [x] `scripts/acceptance_ch10.py`(report/classify/multilabel 三场景)
-- [ ] 真机:起 uvicorn → 灌演示问题 → 批量归类 → 分布页有数 → 三场景全过
+- [ ] 真机:第一轮 19/20(自加的退换×物流组合句漏 物流),第三轮补样重训后复跑
 
 ## 收口
 

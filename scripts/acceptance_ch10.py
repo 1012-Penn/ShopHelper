@@ -60,16 +60,34 @@ def scenario_report() -> None:
 
 
 def seed_demo_pool() -> int:
-    """演示问题灌入真实问题池(幂等:池里已有的原话跳过),返回新灌条数。"""
+    """演示问题灌入真实问题池(幂等:池里已有的原话跳过),返回新灌条数。
+
+    池内待归类为 0 时(上一轮验收已把演示问题归类过),现造一批新演示问题,
+    保证验收永远能演示「攒够一批归一次」的产量。
+    """
     from sqlalchemy import select
 
     from app.config import Settings
     from app.db import make_engine, make_session_factory
-    from app.models import LowConfidenceQuestion
-
-    questions = [json.loads(line)["question"] for line in
-                 DEMO_POOL.read_text(encoding="utf-8").splitlines() if line.strip()]
+    from app.models import LowConfidenceQuestion, TopicClassification
     factory = make_session_factory(make_engine(Settings()))
+    questions = [json.loads(line)["question"] for line in
+                 DEMO_POOL.read_text(encoding="utf-8").splitlines() if line.strip()] \
+        if DEMO_POOL.is_file() else []
+    with factory() as session:
+        existing = set(session.scalars(select(LowConfidenceQuestion.raw_question)).all())
+        pending = session.query(LowConfidenceQuestion.id).outerjoin(
+            TopicClassification,
+            LowConfidenceQuestion.id == TopicClassification.question_id
+        ).filter(TopicClassification.id.is_(None)).count()
+    if pending == 0:
+        from scripts.build_topic_dataset import generate_demo_questions
+        from app.llm import make_extract_model
+        from scripts.build_topic_dataset import BareQuestions
+        model = make_extract_model(Settings()).with_structured_output(
+            BareQuestions, method="function_calling")
+        questions += [q for q in generate_demo_questions(model, 40)
+                      if q not in existing]
     seeded = 0
     with factory() as session:
         existing = set(session.scalars(select(LowConfidenceQuestion.raw_question)).all())
