@@ -86,7 +86,11 @@ def main() -> None:
 
     train_set = TopicDataset(load_jsonl(data_dir / "train.jsonl"), tokenizer, args.max_len)
     val_set = TopicDataset(load_jsonl(data_dir / "val.jsonl"), tokenizer, args.max_len)
-    print(f"[data] train={len(train_set)} val={len(val_set)} max_len={args.max_len}")
+    # transformers 5.x 只有 warmup_steps(没有 warmup_ratio),按 10% 步数折算
+    steps_per_epoch = -(-len(train_set) // args.batch_size)
+    warmup_steps = max(1, round(0.1 * args.epochs * steps_per_epoch))
+    print(f"[data] train={len(train_set)} val={len(val_set)} max_len={args.max_len} "
+          f"steps/epoch={steps_per_epoch} warmup={warmup_steps}")
 
     hub_args = TrainingArguments(
         output_dir=str(model_dir / "runs"),
@@ -95,7 +99,7 @@ def main() -> None:
         per_device_eval_batch_size=args.batch_size * 2,
         learning_rate=args.lr,
         weight_decay=0.01,            # 正则:全参微调防过拟合第一道闸
-        warmup_ratio=0.1,
+        warmup_steps=warmup_steps,
         eval_strategy="epoch",
         save_strategy="epoch",
         load_best_model_at_end=True,

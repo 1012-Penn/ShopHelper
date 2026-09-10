@@ -12,6 +12,9 @@
 ```bash
 pip install virtualenv && python3 -m virtualenv .venv
 .venv/bin/pip install fastapi==0.141.1 uvicorn==0.52.4 langchain==1.4.0 langchain-openai==1.6.0 pydantic-settings==2.15.0 httpx==0.28.1 "pymilvus[milvus-lite]==3.0.1" jieba==0.42.1 mcp==1.30.0 langchain-mcp-adapters==0.3.2 jsonschema==4.26.0 "sqlalchemy>=2.0" pymysql cryptography "langfuse>=3.8,<5" pytest==9.1.1 pytest-asyncio==1.4.0
+# ch10 训练/推理额外依赖(CPU 版 torch,避免拉 2GB 的 CUDA 包):
+.venv/bin/pip install --index-url https://download.pytorch.org/whl/cpu torch
+.venv/bin/pip install transformers onnxruntime scikit-learn
 ```
 
 ## 配置
@@ -36,7 +39,7 @@ docker compose up -d        # 等约 30 秒初始化
 .venv/bin/python -m db.seed_conversations
 ```
 
-> 已有旧数据卷时需 `docker compose down -v` 重建,ch04 新表(low_confidence_questions / faith_cases)才会由 init.sql 创建;旧库增量迁移另 apply `db/ch09.sql`(request_usage)与 `db/ch09-observability-flywheel.sql`(review_queue / eval_runs + low_confidence_questions 加 matched_review_id、retrieved_chunks 两列);首次 `build_kb` 会检测到 ch03 旧 Milvus 集合并自动重建为 v2(dense+BM25+category)。
+> 已有旧数据卷时需 `docker compose down -v` 重建,ch04 新表(low_confidence_questions / faith_cases)才会由 init.sql 创建;旧库增量迁移另 apply `db/ch09.sql`(request_usage)与 `db/ch09-observability-flywheel.sql`(review_queue / eval_runs + low_confidence_questions 加 matched_review_id、retrieved_chunks 两列);ch10 另 apply `db/ch10-topic-classifier.sql`(topic_classifications);首次 `build_kb` 会检测到 ch03 旧 Milvus 集合并自动重建为 v2(dense+BM25+category)。
 
 ## 知识库建库与挖知识
 
@@ -67,6 +70,24 @@ docker compose up -d        # 等约 30 秒初始化
 - 检索质量(ch03 基线集):`.venv/bin/python scripts/eval_retrieval.py --set tests/eval/retrieval_samples.jsonl --strategy dense`(基线 hit@3 = 12/12)
 - **检索四策略对比(ch04,需已建库)**:`.venv/bin/python scripts/eval_retrieval.py`——dense / bm25 / hybrid / hybrid_rerank 四策略 × Recall@3/5/10 + MRR@10,按 A_policy / B_model / C_colloquial / E_multi 四桶分列,报告落 `reports/ch04-retrieval-report.md`(`--strategy bm25` 单策略、`--no-rewrite` 关改写对照)。真跑基线(ch04 校准后):hybrid_rerank R@10 A=1.00 / B=1.00 / C=0.88 / E=1.00,C 桶 MRR@10=0.875 四策略最高;唯一漏网 C04「这个东西能便宜点不」(四策略共用硬题)
 - **生成忠实度(ch04)**:`.venv/bin/python scripts/eval_faithfulness.py`——hybrid_rerank 生成带引用答案 → LLM 裁判判编造 → Faithfulness 分桶报告 + 编造个案进 faith_cases 台账(真跑 31/32,A 桶 0.88)
+
+## 训练主题分类器(ch10)
+
+微调 `hfl/chinese-roberta-wwm-ext`(全参,17 类多标签),把飞轮低置信度问题按主题批量归类,好决定先补哪块知识。17 类权威术语表在 `app/topic_taxonomy.py`(修归保修维修、退归退换货;运费管钱、物流管货;价保是补差价、优惠活动是券和满减),训练/预标/落库/前端共用这一份。
+
+```bash
+.venv/bin/python -m scripts.build_topic_dataset        # ① 捞池+清洗+LLM 造数预标+分层 80/10/10+增强(约 5 分钟,需 OPENAI key)
+.venv/bin/python -m scripts.build_topic_dataset --demo-only   #    只补验收用演示问题(demo_pool.jsonl,不进训练)
+.venv/bin/python -m scripts.train_topic_classifier     # ② 全参微调:weight_decay+warmup 正则,验证集微 F1 早停(CPU 约 20-40 分钟)
+.venv/bin/python -m scripts.eval_topic_classifier      # ③ 留出测试集:各类目 P/R/F1+混淆矩阵+错例清单 → reports/ch10-*.md
+.venv/bin/python -m scripts.export_topic_onnx          # ④ 导出 ONNX(带 torch/ORT 对齐校验)
+.venv/bin/python -m scripts.classify_topics            # ⑤ 旁路批量归类:捞池里未归类问题→落 topic_classifications
+```
+
+- 语料(train 1558/val 163/test 163,含池内真实问题纠错预标)与训练指标在 `tests/eval/topic_dataset/` 与 `reports/ch10-training-metrics.json` 进 git;模型 checkpoint/ONNX(~400MB)在 `models/topic_classifier/` 不进 git,按上面命令重建。
+- 首次下载基座模型若卡住:新版 huggingface_hub 的 Xet 通道经常连不通,可用 `HF_HUB_DISABLE_XET=1 HF_ENDPOINT=https://hf-mirror.com` 重试,或直接 curl 断点续传 `hf-mirror.com/hfl/chinese-roberta-wwm-ext/resolve/main/pytorch_model.bin` 到本地目录后 `--base-model` 指过去。
+- 真机验收:`.venv/bin/python scripts/acceptance_ch10.py --scenario all`(评测报告/灌池批量归类/多标签三场景)。
+- 后台主题分布页 <http://127.0.0.1:8000/admin/topics>:17 类问题量条形图 + 「归类一批」按钮;实时对话主链路不调分类器,接口模型缺失时 503。
 
 ## 启动
 
