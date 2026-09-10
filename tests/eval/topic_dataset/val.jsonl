@@ -10,8 +10,8 @@
 {"question": "我要退货 但包装盒扔了 还能退不", "labels": ["退换货"], "origin": "synthetic", "split": "val"}
 {"question": "下单时选的次日达，怎么还没到", "labels": ["物流"], "origin": "synthetic", "split": "val"}
 {"question": "快递放门口丢了，这算谁的责任", "labels": ["物流"], "origin": "synthetic", "split": "val"}
-{"question": "快递被退回了，是什么原因", "labels": ["物流"], "origin": "synthetic", "split": "val"}
-{"question": "快递员说地址不详要退回，咋办", "labels": ["物流"], "origin": "synthetic", "split": "val"}
+{"question": "快递被退回了，是什么原因", "labels": ["物流", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "快递员说地址不详要退回，咋办", "labels": ["物流", "退换货"], "origin": "synthetic", "split": "val"}
 {"question": "这个件到我们这边大概要几天", "labels": ["物流"], "origin": "synthetic", "split": "val"}
 {"question": "我买的东西到货破损了，能换一个吗，快递太暴力", "labels": ["物流", "质量问题"], "origin": "synthetic", "split": "val"}
 {"question": "我的件卡在转运中心好几天不动了", "labels": ["物流"], "origin": "synthetic", "split": "val"}
@@ -23,7 +23,7 @@
 {"question": "我脚宽 这双鞋正常码会不会挤脚", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
 {"question": "帽子是均码吗 我头围58能戴不", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
 {"question": "这个码数偏大还是偏小啊 评论里说法不一样", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
-{"question": "裙子买大了能换小一码吗 换货运费谁出", "labels": ["尺码", "运费"], "origin": "synthetic", "split": "val"}
+{"question": "裙子买大了能换小一码吗 换货运费谁出", "labels": ["尺码", "运费", "退换货"], "origin": "synthetic", "split": "val"}
 {"question": "宝宝两岁半 身高95 拍100码合适不", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
 {"question": "这衣服偏大还是偏小 我微胖", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
 {"question": "尺码表在哪看啊 胸围那个数看不懂", "labels": ["尺码"], "origin": "synthetic", "split": "val"}
@@ -54,7 +54,7 @@
 {"question": "包邮门槛是按实付还是按原价算的", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "val"}
 {"question": "运费能不能到付啊，我先垫付了再找你们要", "labels": ["运费"], "origin": "synthetic", "split": "val"}
 {"question": "这个运费比商品还贵，能不能免了", "labels": ["运费"], "origin": "synthetic", "split": "val"}
-{"question": "我拍错了尺码想换，换货运费谁承担", "labels": ["运费", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "我拍错了尺码想换，换货运费谁承担", "labels": ["运费", "尺码", "退换货"], "origin": "synthetic", "split": "val"}
 {"question": "我这边是新疆的，运费要加多少钱", "labels": ["运费"], "origin": "synthetic", "split": "val"}
 {"question": "为什么同一个东西我买要运费，活动价就包邮", "labels": ["运费", "优惠活动"], "origin": "synthetic", "split": "val"}
 {"question": "你们家是不是全场包邮的，我看有的商品要运费", "labels": ["运费"], "origin": "synthetic", "split": "val"}
@@ -83,10 +83,10 @@
 {"question": "这个降了五十，差价能退到原路吗", "labels": ["价保", "支付"], "origin": "synthetic", "split": "val"}
 {"question": "银行卡支付一直报错，换支付宝可以吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
 {"question": "付款的时候一直转圈，最后钱扣了订单没了", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "val"}
-{"question": "退款到账要几天，是退回原来的付款方式吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
-{"question": "钱扣了两次，订单就一个，多的那次能退回来吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
-{"question": "钱扣了两次，订单就一个，多扣的能退回来吗", "labels": ["支付"], "origin": "synthetic", "split": "val"}
-{"question": "重复扣的那笔钱退回来了，但是退到哪了我没看到", "labels": ["支付"], "origin": "synthetic", "split": "val"}
+{"question": "退款到账要几天，是退回原来的付款方式吗", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "钱扣了两次，订单就一个，多的那次能退回来吗", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "钱扣了两次，订单就一个，多扣的能退回来吗", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "val"}
+{"question": "重复扣的那笔钱退回来了，但是退到哪了我没看到", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "val"}
 {"question": "花呗分期能用吗，付款的时候没看到这个选项", "labels": ["支付"], "origin": "synthetic", "split": "val"}
 {"question": "我付款失败好几次了，是不是因为收货地址填错了", "labels": ["支付", "订单修改"], "origin": "synthetic", "split": "val"}
 {"question": "付款的时候一直转圈圈，是不是网络问题还是你们系统问题", "labels": ["支付"], "origin": "synthetic", "split": "val"}
@@ -97,7 +97,7 @@
 {"question": "地址填错了改一下，顺便问下大概几天能到", "labels": ["订单修改", "物流"], "origin": "synthetic", "split": "val"}
 {"question": "取消订单后库存会放出来吗，我怕抢不到", "labels": ["订单修改", "库存补货"], "origin": "synthetic", "split": "val"}
 {"question": "地址想换个地方寄，还没发货吧，能改不", "labels": ["订单修改"], "origin": "synthetic", "split": "val"}
-{"question": "取消订单后钱多久退回来", "labels": ["订单修改", "支付"], "origin": "synthetic", "split": "val"}
+{"question": "取消订单后钱多久退回来", "labels": ["订单修改", "支付", "退换货"], "origin": "synthetic", "split": "val"}
 {"question": "地址要改，另外这个坏了保修多久", "labels": ["订单修改", "保修维修"], "origin": "synthetic", "split": "val"}
 {"question": "刚下的单地址写错了，能帮我改下收货地址吗", "labels": ["订单修改"], "origin": "synthetic", "split": "val"}
 {"question": "到货通知怎么设置啊，这个没货了", "labels": ["库存补货"], "origin": "synthetic", "split": "val"}
@@ -139,7 +139,7 @@
 {"question": "我账号登不上了，密码输了好几遍都说错误", "labels": ["账号"], "origin": "synthetic", "split": "val"}
 {"question": "注册时填的昵称能改吗，还有头像", "labels": ["账号"], "origin": "synthetic", "split": "val"}
 {"question": "签到能得积分吗，一天能签几次", "labels": ["会员积分"], "origin": "synthetic", "split": "val"}
-{"question": "积分换的尺码能换吗，换大一号", "labels": ["会员积分", "尺码"], "origin": "synthetic", "split": "val"}
+{"question": "积分换的尺码能换吗，换大一号", "labels": ["会员积分", "尺码", "退换货"], "origin": "synthetic", "split": "val"}
 {"question": "积分兑换的赠品缺货了怎么办", "labels": ["会员积分", "库存补货"], "origin": "synthetic", "split": "val"}
 {"question": "积分兑换的券能开发票吗", "labels": ["会员积分", "发票"], "origin": "synthetic", "split": "val"}
 {"question": "会员积分规则在哪看，怎么算的", "labels": ["会员积分"], "origin": "synthetic", "split": "val"}

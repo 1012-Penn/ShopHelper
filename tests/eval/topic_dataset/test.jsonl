@@ -18,7 +18,7 @@
 {"question": "我想改下收货时间，周末再送", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "test"}
 {"question": "偏远地区发货吗，大概几天能到", "labels": ["物流"], "origin": "synthetic", "split": "test"}
 {"question": "我地址写错了，快递还能改吗", "labels": ["物流", "订单修改"], "origin": "synthetic", "split": "test"}
-{"question": "我买大了一码 想换小的 有货吗", "labels": ["尺码", "库存补货"], "origin": "synthetic", "split": "test"}
+{"question": "我买大了一码 想换小的 有货吗", "labels": ["尺码", "库存补货", "退换货"], "origin": "synthetic", "split": "test"}
 {"question": "我腰围78 这个牛仔裤选29还是30", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
 {"question": "尺码表在哪看啊 我胸围92该选哪个码", "labels": ["尺码", "商品信息"], "origin": "synthetic", "split": "test"}
 {"question": "我180 140斤 上衣拍L还是XL 急", "labels": ["尺码"], "origin": "synthetic", "split": "test"}
@@ -62,7 +62,7 @@
 {"question": "我地址填错了，改地址会不会影响运费", "labels": ["运费", "订单修改"], "origin": "synthetic", "split": "test"}
 {"question": "秒杀活动几点开始啊", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
 {"question": "满199包邮这个活动，我差几块钱能凑单吗", "labels": ["优惠活动", "运费"], "origin": "synthetic", "split": "test"}
-{"question": "我参加活动买大了，能换小一码吗", "labels": ["优惠活动", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "我参加活动买大了，能换小一码吗", "labels": ["优惠活动", "尺码", "退换货"], "origin": "synthetic", "split": "test"}
 {"question": "活动什么时候结束啊，我想等发工资再买", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
 {"question": "满减凑单的东西能改地址吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "test"}
 {"question": "这个券能用在特价商品上不", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
@@ -71,10 +71,10 @@
 {"question": "限时秒杀是几点开始，我怕错过", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
 {"question": "我凑单差一点到满减，能加个便宜的东西吗", "labels": ["优惠活动", "订单修改"], "origin": "synthetic", "split": "test"}
 {"question": "优惠券和满减能一起用吗", "labels": ["优惠活动"], "origin": "synthetic", "split": "test"}
-{"question": "降价了想退差价 另外这个尺码买大了能换小一码吗", "labels": ["价保", "尺码"], "origin": "synthetic", "split": "test"}
+{"question": "降价了想退差价 另外这个尺码买大了能换小一码吗", "labels": ["价保", "尺码", "退换货"], "origin": "synthetic", "split": "test"}
 {"question": "这个价保怎么申请啊 我买完第二天就降了", "labels": ["价保"], "origin": "synthetic", "split": "test"}
-{"question": "我买的东西降价了，能退差价不，多久到账", "labels": ["价保"], "origin": "synthetic", "split": "test"}
-{"question": "我前天买的那个耳机今天降了六十块，能退差价吗", "labels": ["价保"], "origin": "synthetic", "split": "test"}
+{"question": "我买的东西降价了，能退差价不，多久到账", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "我前天买的那个耳机今天降了六十块，能退差价吗", "labels": ["价保", "退换货"], "origin": "synthetic", "split": "test"}
 {"question": "刚下单就便宜了三十块 给我补个差价呗", "labels": ["价保"], "origin": "synthetic", "split": "test"}
 {"question": "我买的那件衣服现在便宜了 差价退我 另外有点开线", "labels": ["价保", "质量问题"], "origin": "synthetic", "split": "test"}
 {"question": "价保和七天无理由是一回事吗 我买完降价了", "labels": ["价保"], "origin": "synthetic", "split": "test"}
@@ -83,13 +83,13 @@
 {"question": "价保能退几次啊 我买完降了两回", "labels": ["价保"], "origin": "synthetic", "split": "test"}
 {"question": "支付密码忘了，改密码之后还能正常付款吗", "labels": ["支付", "账号"], "origin": "synthetic", "split": "test"}
 {"question": "想改成对公转账付款，可以吗", "labels": ["支付", "发票"], "origin": "synthetic", "split": "test"}
-{"question": "退款为什么退到余额里了，我要原路返回银行卡", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "退款为什么退到余额里了，我要原路返回银行卡", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "test"}
 {"question": "我付了钱但订单显示未支付，急死了", "labels": ["支付"], "origin": "synthetic", "split": "test"}
 {"question": "用信用卡付款有手续费吗，会不会多扣钱", "labels": ["支付"], "origin": "synthetic", "split": "test"}
 {"question": "我想用信用卡付款，但是一直提示支付方式不支持", "labels": ["支付"], "origin": "synthetic", "split": "test"}
-{"question": "退款到账是退到余额还是原路退回呀", "labels": ["支付"], "origin": "synthetic", "split": "test"}
-{"question": "重复扣款了，麻烦帮我退一下，顺便问下退款要几天到账", "labels": ["支付"], "origin": "synthetic", "split": "test"}
-{"question": "退款是原路返回吗，我用的花呗付的", "labels": ["支付"], "origin": "synthetic", "split": "test"}
+{"question": "退款到账是退到余额还是原路退回呀", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "重复扣款了，麻烦帮我退一下，顺便问下退款要几天到账", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "test"}
+{"question": "退款是原路返回吗，我用的花呗付的", "labels": ["支付", "退换货"], "origin": "synthetic", "split": "test"}
 {"question": "能不能货到付款，我不想先付钱", "labels": ["支付"], "origin": "synthetic", "split": "test"}
 {"question": "订单信息填错了想改，顺便问下这个材质是纯棉的吗", "labels": ["订单修改", "商品信息"], "origin": "synthetic", "split": "test"}
 {"question": "下单时选错颜色了，订单能改吗，顺便问下能不能换货", "labels": ["订单修改", "退换货"], "origin": "synthetic", "split": "test"}
