@@ -4,6 +4,7 @@ import asyncio
 from fastapi import APIRouter, HTTPException, Request
 
 from app.schemas import ReviewApproveRequest
+from app.flywheel import ReviewConflictError
 
 router = APIRouter(prefix="/api/review-queue")
 
@@ -29,9 +30,27 @@ async def approve_review(review_id: int, body: ReviewApproveRequest, request: Re
             request.app.state.flywheel.approve, review_id, body.approved_answer)
     except KeyError:
         raise HTTPException(status_code=404, detail="待审问题不存在")
+    except ReviewConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc))
-    return {"approved": True, "knowledge_chunk_id": chunk_id}
+    return await _approval_result(request, chunk_id)
+
+
+async def _approval_result(request: Request, chunk_id: int) -> dict:
+    status = await asyncio.to_thread(request.app.state.flywheel.index_status, chunk_id)
+    return {"approved": True, "knowledge_chunk_id": chunk_id, "index_status": status}
+
+
+@router.post("/{review_id}/retry-index")
+async def retry_index(review_id: int, request: Request) -> dict:
+    try:
+        chunk_id = await asyncio.to_thread(request.app.state.flywheel.retry_index, review_id)
+    except KeyError:
+        raise HTTPException(status_code=404, detail="待审问题不存在")
+    except ReviewConflictError as exc:
+        raise HTTPException(status_code=409, detail=str(exc))
+    return await _approval_result(request, chunk_id)
 
 
 @router.post("/{review_id}/reject")

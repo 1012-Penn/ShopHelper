@@ -1,8 +1,11 @@
 """退款售后确定性子流程:槽位→取数→扩写→强制政策检索。"""
+import asyncio
+import threading
+
 from app.graph.refund import make_refund_nodes
 from app.prompts import ExpandedQueries
-from tests.helpers import StubExtractModel
 from app.retrieval import Retrieved
+from tests.helpers import StubExtractModel
 
 
 class StubService:
@@ -33,7 +36,7 @@ class StubKB:
         for cid in ids:
             rows.append(type("Row", (), {"questions": f"问题{cid}\n变体", "answer": f"答案{cid}",
                                          "category": "退货政策",
-                                         "section_path": f"退货政策.md > 节{cid}"})())
+                                         "section_path": f"退货政策.md > 节{cid}", "id": cid})())
         return rows
 
 
@@ -41,8 +44,8 @@ class StubPool:
     def __init__(self):
         self.inserted = []
 
-    def insert(self, source, session_id, question, reason):
-        self.inserted.append((source, question, reason))
+    def insert(self, source, session_id, question, reason, retrieved_chunks=None):
+        self.inserted.append((source, question, reason, retrieved_chunks))
 
 
 def _state(**kw):
@@ -139,7 +142,101 @@ async def test_policy_retrieve_merges_dedup_renumbers():
     assert len(frames[1]["items"]) == 3
     assert "node=policy_retrieve" in out["trace"][-1]
     assert all(use_rewrite is False for _, use_rewrite in service.calls)  # 扩写产物不二次改写
+    assert [query for query, _ in service.calls] == list(mapping.keys())  # 顺序逐条检索
     assert pool.inserted == []
+
+
+async def test_policy_retrieve_excludes_low_confidence_candidates():
+    class LowConfidenceService:
+        def retrieve(self, query, strategy="hybrid_rerank", category=None, use_rewrite=True):
+            candidates = {"政策一": [Retrieved(chunk_id=11, score=0.9),
+                                  Retrieved(chunk_id=12, score=0.8)],
+                          "政策二": [Retrieved(chunk_id=11, score=0.95),
+                                  Retrieved(chunk_id=13, score=0.88)]}[query]
+            return type("R", (), {
+                "items": candidates,
+                "low_confidence": True,
+                "reason": "reranker unavailable",
+                "degraded": True,
+            })()
+
+    pool = StubPool()
+    expander = StubExtractModel(result=ExpandedQueries(queries=["政策一", "政策二"]))
+    retrieve = make_refund_nodes(expander, LowConfidenceService(), StubKB(), pool, top_k=2)[4]
+
+    out = await retrieve(_state(expand_queries=["政策一", "政策二"]), writer=None)
+
+    assert out["evidence"] == [] and out["low_confidence"] is True
+    assert "reranker unavailable" in out["low_reason"]
+    assert pool.inserted and pool.inserted[0][0] == "retrieval_low_conf"
+    assert [item["chunk_id"] for item in out["retrieved_chunks"]] == [11, 13]
+    assert out["retrieved_chunks"][0]["score"] == 0.95
+    assert out["retrieved_chunks"][0]["answer"] == "答案11"
+    assert [item["chunk_id"] for item in pool.inserted[0][3]] == [11, 13]
+
+
+async def test_policy_retrieve_mixed_confidence_only_uses_trusted_evidence():
+    class MixedService:
+        def retrieve(self, query, strategy="hybrid_rerank", category=None, use_rewrite=True):
+            if query == "可信查询":
+                items, low = [Retrieved(11, 0.8)], False
+            else:
+                items, low = [Retrieved(12, 0.99)], True
+            return type("R", (), {"items": items, "low_confidence": low,
+                                   "reason": "重排失败" if low else ""})()
+
+    frames = []
+    retrieve = make_refund_nodes(StubExtractModel(), MixedService(), StubKB(), StubPool())[4]
+    out = await retrieve(_state(expand_queries=["可信查询", "降级查询"]), writer=frames.append)
+
+    assert [item["chunk_id"] for item in out["evidence"]] == [11]
+    assert [item["chunk_id"] for item in frames[-1]["items"]] == [11]
+
+
+async def test_policy_retrieve_offloads_blocking_retrieval_and_chunk_lookup():
+    retrieve_started, retrieve_release = threading.Event(), threading.Event()
+    chunks_started, chunks_release = threading.Event(), threading.Event()
+
+    class BlockingService:
+        def retrieve(self, query, strategy="hybrid_rerank", category=None, use_rewrite=True):
+            retrieve_started.set()
+            retrieve_release.wait()
+            return type("R", (), {"items": [Retrieved(11, 0.9)],
+                                   "low_confidence": False, "reason": ""})()
+
+    class BlockingKB:
+        def get_chunks(self, ids):
+            chunks_started.set()
+            chunks_release.wait()
+            return [type("Row", (), {"id": 11, "questions": "Q", "answer": "A",
+                                     "category": "C", "section_path": "S"})()]
+
+    expander = StubExtractModel(result=ExpandedQueries(queries=["政策一"]))
+    retrieve = make_refund_nodes(expander, BlockingService(), BlockingKB(), StubPool())[4]
+    loop = asyncio.get_running_loop()
+
+    async def prove_loop_is_live(started, release):
+        await asyncio.wait_for(asyncio.to_thread(started.wait), timeout=2)
+        progressed = asyncio.Event()
+        loop.call_soon(progressed.set)
+        await asyncio.wait_for(progressed.wait(), timeout=2)
+        assert not release.is_set(), "blocking call was released before the loop progressed"
+
+    watchdog = threading.Timer(3, lambda: (retrieve_release.set(), chunks_release.set()))
+    watchdog.start()
+    try:
+        task = asyncio.create_task(retrieve(_state(expand_queries=["政策一"]), writer=None))
+        await prove_loop_is_live(retrieve_started, retrieve_release)
+        retrieve_release.set()
+        await prove_loop_is_live(chunks_started, chunks_release)
+        chunks_release.set()
+        out = await task
+    finally:
+        retrieve_release.set()
+        chunks_release.set()
+        watchdog.cancel()
+
+    assert out["evidence"][0]["answer"] == "A"
 
 
 async def test_policy_retrieve_empty_evidence_lands_pool():

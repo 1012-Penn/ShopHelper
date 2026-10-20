@@ -15,9 +15,10 @@ def _emit(writer, frame: dict) -> None:
 
 def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
     async def retrieve_node(state, writer=None, config=None) -> dict:
-        result = service.retrieve(state["resolved_message"], strategy="hybrid_rerank")
-        rows = kb.get_chunks([r.chunk_id for r in result.items])
-        evidence = [
+        result = await asyncio.to_thread(
+            service.retrieve, state["resolved_message"], strategy="hybrid_rerank")
+        rows = await asyncio.to_thread(kb.get_chunks, [r.chunk_id for r in result.items])
+        evidence = [] if result.low_confidence else [
             {"n": i + 1, "chunk_id": r.chunk_id,
              "question": (row.questions.splitlines() or [""])[0], "answer": row.answer,
              "category": row.category, "section_path": row.section_path or "",

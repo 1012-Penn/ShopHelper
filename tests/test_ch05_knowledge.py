@@ -1,4 +1,6 @@
 """知识路径:强制检索 → 置信度闸 → 弱证据兜底不进 Agent。"""
+import asyncio
+import threading
 from types import SimpleNamespace
 
 from app.graph.knowledge import make_knowledge_nodes
@@ -42,6 +44,66 @@ async def test_retrieve_empty_marks_low_confidence():
     retrieve, _, _ = make_knowledge_nodes(_service(low=True, reason="知识库无相关内容"), _kb(), FakePool())
     out = await retrieve(_state(resolved_message="量子力学怎么退货"))
     assert out["evidence"] == [] and out["low_confidence"] is True
+
+
+async def test_low_confidence_candidates_are_snapshot_only():
+    retrieve, _, _ = make_knowledge_nodes(
+        _service(items=[SimpleNamespace(chunk_id=7, score=0.9)], low=True,
+                 reason="reranker unavailable"), _kb(), FakePool())
+
+    out = await retrieve(_state(resolved_message="退货政策是什么"))
+
+    assert out["evidence"] == []
+    assert out["low_confidence"] is True
+    assert out["retrieved_chunks"][0]["chunk_id"] == 7
+    assert out["retrieved_chunks"][0]["answer"] == "七天无理由退货。"
+
+
+async def test_retrieve_offloads_blocking_service_and_chunk_lookup():
+    service_started, service_release = threading.Event(), threading.Event()
+    kb_started, kb_release = threading.Event(), threading.Event()
+
+    class BlockingService:
+        def retrieve(self, query, strategy):
+            service_started.set()
+            service_release.wait()
+            return SimpleNamespace(items=[SimpleNamespace(chunk_id=7, score=0.9)],
+                                   low_confidence=False, reason="")
+
+    class BlockingKB:
+        def get_chunks(self, ids):
+            kb_started.set()
+            kb_release.wait()
+            return [SimpleNamespace(questions="Q", answer="A", category="C",
+                                    section_path="S")]
+
+    retrieve, _, _ = make_knowledge_nodes(BlockingService(), BlockingKB(), FakePool())
+    loop = asyncio.get_running_loop()
+
+    async def prove_loop_is_live(started, release):
+        await asyncio.wait_for(asyncio.to_thread(started.wait), timeout=2)
+        progressed = asyncio.Event()
+        loop.call_soon(progressed.set)
+        await asyncio.wait_for(progressed.wait(), timeout=2)
+        assert not release.is_set(), "blocking call was released before the loop progressed"
+
+    # Watchdog only prevents a broken inline call from hanging the test process;
+    # success is determined by the explicit loop-progress event above.
+    watchdog = threading.Timer(3, lambda: (service_release.set(), kb_release.set()))
+    watchdog.start()
+    try:
+        task = asyncio.create_task(retrieve(_state(resolved_message="Q")))
+        await prove_loop_is_live(service_started, service_release)
+        service_release.set()
+        await prove_loop_is_live(kb_started, kb_release)
+        kb_release.set()
+        out = await task
+    finally:
+        service_release.set()
+        kb_release.set()
+        watchdog.cancel()
+
+    assert out["evidence"][0]["answer"] == "A"
 
 
 async def test_gate_weak_evidence_falls_back_and_pools():

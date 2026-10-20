@@ -135,17 +135,23 @@ def cascade_layer1(rows: list[dict], layer1_from: int | None,
 def build_layered(l1_rows: list[dict], l2_rows: list[dict], summary_text: str | None,
                   head_chars: int, sliding: int) -> dict:
     """组装模型面上下文素材;层 2 渲染总量超滑窗时从最老端丢弃(仅本轮,不动锚点)。"""
-    l2_msgs = render_layer2(l2_rows, head_chars)
+    # 每个渲染块保留来源行:空助手行不产消息,不能用原始行号推算裁剪边界。
+    l2_blocks = [(row, msg) for row in l2_rows
+                 for msg in render_layer2([row], head_chars)]
     l1_msgs = rows_to_messages(l1_rows)
     dropped = 0
-    while l2_msgs and _list_tokens(l2_msgs) + _list_tokens(l1_msgs) > sliding:
-        l2_msgs.pop(0)
+    window_tokens = sum(_msg_tokens(msg) for _, msg in l2_blocks) + _list_tokens(l1_msgs)
+    while l2_blocks and window_tokens > sliding:
+        _, msg = l2_blocks.pop(0)
+        window_tokens -= _msg_tokens(msg)
         dropped += 1
     if dropped:
         logger.warning("层2 渲染超滑窗,丢弃最老 %d 条(仅本轮,不动锚点)", dropped)
+    kept_l2_rows = [row for row, _ in l2_blocks]
+    l2_msgs = [msg for _, msg in l2_blocks]
     return {"layer2_msgs": l2_msgs, "layer1_msgs": l1_msgs,
             "summary_text": summary_text or "",
-            "history_text": render_history_text(summary_text, l2_rows, l1_rows, head_chars),
+            "history_text": render_history_text(summary_text, kept_l2_rows, l1_rows, head_chars),
             "n_window": len(l2_msgs) + len(l1_msgs),
             "tokens_l1": _list_tokens(l1_msgs), "tokens_l2": _list_tokens(l2_msgs),
             "dropped": dropped}

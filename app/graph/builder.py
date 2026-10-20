@@ -123,7 +123,9 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
                             {"fetch_order": "fetch_order", "ask_order": "ask_order"})
     g.add_edge("fetch_order", "expand")
     g.add_edge("expand", "policy_retrieve")
-    g.add_edge("policy_retrieve", "agent")
+    g.add_conditional_edges(
+        "policy_retrieve", lambda s: "fallback" if s["low_confidence"] else "agent",
+        {"fallback": "fallback", "agent": "agent"})
     g.add_edge("retrieve", "gate")
     g.add_conditional_edges("gate", lambda s: "fallback" if not s["gate_passed"] else "agent",
                             {"fallback": "fallback", "agent": "agent"})

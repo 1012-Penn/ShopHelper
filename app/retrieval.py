@@ -221,7 +221,8 @@ class RetrievalService:
         # hybrid_rerank:精排 Top-N;reranker 缺失或调用失败降级 RRF 序(质量掉档,记 warning 并标记)
         if self._reranker is None:
             logger.warning("reranker 未配置,hybrid_rerank 降级为 RRF 序")
-            return RetrievalResult(cand[: self._final_top_k], False, "", fallback, rewritten,
+            return RetrievalResult(cand[: self._final_top_k], True, "重排器不可用,候选仅供诊断",
+                                   fallback, rewritten,
                                    search_text, degraded=True)
         texts = self._chunk_texts([r.chunk_id for r in cand])
         try:
@@ -229,7 +230,8 @@ class RetrievalService:
                                            top_n=self._final_top_k)
         except Exception as exc:
             logger.warning("重排失败,降级 RRF 序:%s", exc)
-            return RetrievalResult(cand[: self._final_top_k], False, "", fallback, rewritten,
+            return RetrievalResult(cand[: self._final_top_k], True,
+                                   "重排失败,候选仅供诊断", fallback, rewritten,
                                    search_text, degraded=True)
         items = [Retrieved(chunk_id=cand[idx].chunk_id, score=score) for idx, score in ranked]
         if not items:

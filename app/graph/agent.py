@@ -140,7 +140,6 @@ def make_agent_node(model, engine, settings, pool):
                     tc["name"], json.dumps(tc["args"], ensure_ascii=False),
                     conversation_id=state["session_id"], tool_call_id=tc["id"],
                     on_write_intercept=_write_intercept(writer, state))
-                result = truncate_tool_result(result, settings.tool_result_max_tokens)
                 parsed = _safe_json(result)
                 if isinstance(parsed, dict):
                     retrieved_chunks.extend(parsed.get("retrieved_chunks") or [])
@@ -157,8 +156,11 @@ def make_agent_node(model, engine, settings, pool):
                             it["n"] = n_offset + it["n"]
                             citations.append(it)
                         n_offset += len(tool_items)
-                        result = json.dumps(parsed, ensure_ascii=False)
                         _emit(writer, {"type": "citations", "items": list(citations)})
+                    # 快照供本地状态与问题池排查;不要作为工具证据回灌模型。
+                    parsed.pop("retrieved_chunks", None)
+                    result = json.dumps(parsed, ensure_ascii=False)
+                result = truncate_tool_result(result, settings.tool_result_max_tokens)
                 emitted.append(ToolMessage(content=result, tool_call_id=tc["id"]))
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
         # 熔断:回溯最近一条 assistant 文本作收敛答复(工具 JSON 不是给人看的答案);全程无文本则给引导语。

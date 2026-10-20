@@ -99,9 +99,14 @@ class Ticket(Base):
 
 class KnowledgeChunk(Base):
     __tablename__ = "knowledge_chunks"
+    __table_args__ = (UniqueConstraint("review_id", name="uk_knowledge_review"),)
 
     id: Mapped[int] = mapped_column(
         BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    review_id: Mapped[int | None] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"),
+        ForeignKey("review_queue.id", ondelete="SET NULL"), nullable=True
     )
     category: Mapped[str] = mapped_column(String(255), nullable=False)
     questions: Mapped[str] = mapped_column(Text, nullable=False)
