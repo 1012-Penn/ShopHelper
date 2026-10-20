@@ -35,6 +35,8 @@ pip install virtualenv && python3 -m virtualenv .venv
 
 ```bash
 docker compose up -d        # 等约 30 秒初始化
+# 本次可靠性升级必需,新库和已完成 ch09 的旧库均执行一次;升级旧库时先停止旧服务。
+docker exec -i shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper < db/reliability-review-index.sql
 .venv/bin/python -m db.seed
 .venv/bin/python -m db.seed_conversations
 ```
@@ -63,6 +65,20 @@ docker compose up -d        # 等约 30 秒初始化
 ```bash
 .venv/bin/pytest
 ```
+
+审核可靠性升级将“审核已保存”和“已写入知识库”分开显示。`POST /api/review-queue/{id}/approve`
+保留原响应字段,新增 `index_status` (`done` / `pending`);向量化失败仍返回审核成功及 `pending`。
+同一审核重复提交相同答案复用原知识,不同答案返回 409。后台切换到“已通过”可找到待索引条目,
+点击重试或调用 `POST /api/review-queue/{id}/retry-index`。待索引状态保存在 SQL,服务重启后仍可重试,
+不需要后台任务服务。新迁移只关联历史最小 ID 的知识块,不会删除已有重复内容。
+
+真实 MySQL 迁移及并发回归可显式指定独立测试库后执行
+`SHOPHELPER_TEST_MYSQL_URL='mysql+pymysql://用户名:密码@地址/shophelper_test_reliability?charset=utf8mb4' .venv/bin/python -m pytest tests/test_review_mysql.py -q`。
+该测试会清空指定库,仅接受 `shophelper_test_` 前缀;默认测试不连接真实 MySQL。
+审核页面的 DOM 行为测试使用 Node.js,未安装时跳过。
+
+重排服务缺失或故障时,知识与退款路径不再采用未经置信度判定的候选生成答案;
+候选保留供问题池诊断,对话给出确定性兜底。
 
 ## 跑评估
 

@@ -83,6 +83,35 @@ def test_query_faq_contract_shape_and_miss():
     assert miss["items"] == [] and miss["low_confidence"] is True and miss["reason"]
 
 
+def test_query_faq_keeps_low_confidence_candidates_out_of_evidence():
+    from app.retrieval import RetrievalResult, Retrieved
+    from app.tools.base import ToolContext, ToolRegistryV2
+    from app.tools.builtin import register_builtin
+
+    factory = make_session_factory(create_memory_engine())
+    kb = KnowledgeBaseStore(factory)
+    _, ids = kb.replace_doc_chunks("diag", [
+        Chunk("售后", "退货政策", "七天无理由退货。", "policy.md > 退货", "policy", True),
+    ])
+
+    class LowConfidenceService:
+        def retrieve(self, keyword, strategy, category=None):
+            return RetrievalResult([Retrieved(ids[0], 0.02)], low_confidence=True,
+                                   reason="重排器不可用", degraded=True)
+
+    registry = ToolRegistryV2()
+    register_builtin(registry, ToolContext(session_factory=factory,
+                                          service=LowConfidenceService(), kb=kb))
+    faq = {tool.name: tool for tool in registry.bind_tools()}["query_faq"]
+
+    out = json.loads(faq.invoke({"keyword": "怎么退货"}))
+
+    assert out["items"] == []
+    assert out["low_confidence"] is True and out["reason"] == "重排器不可用"
+    assert out["retrieved_chunks"][0]["chunk_id"] == ids[0]
+    assert out["retrieved_chunks"][0]["answer"] == "七天无理由退货。"
+
+
 def test_query_faq_never_raises_on_backend_failure():
     class ExplodingEmbedder:
         def embed(self, texts):

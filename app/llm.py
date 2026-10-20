@@ -10,6 +10,7 @@ def make_chat_model(settings: Settings) -> ChatOpenAI:
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
         temperature=settings.chat_temperature,
+        max_tokens=settings.max_output_tokens,
         max_retries=settings.llm_max_retries,  # 上游偶发 429/1305 全局限流,亚秒退避扛不住
     )
 
@@ -21,5 +22,6 @@ def make_extract_model(settings: Settings, model: str | None = None) -> ChatOpen
         api_key=settings.openai_api_key,
         base_url=settings.openai_base_url,
         temperature=settings.extract_temperature,
+        max_tokens=settings.max_output_tokens,
         max_retries=settings.llm_max_retries,
     )

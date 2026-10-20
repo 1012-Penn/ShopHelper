@@ -61,3 +61,13 @@ def test_make_chat_model_uses_settings():
     assert m.model_name == "m1"
     assert m.temperature == 0.3
     assert m.openai_api_base == "https://example.com/v1"
+
+
+def test_all_model_factories_enforce_configured_output_budget():
+    from app.llm import make_extract_model
+
+    settings = Settings(openai_api_key="sk-test", max_output_tokens=123, _env_file=None)
+    for factory in (make_chat_model, make_extract_model):
+        model = factory(settings)
+        assert model.max_tokens == 123
+        assert model._default_params.get("max_completion_tokens", model._default_params.get("max_tokens")) == 123

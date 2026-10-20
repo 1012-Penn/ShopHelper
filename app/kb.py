@@ -68,13 +68,12 @@ class KnowledgeBaseStore:
             session.commit()
             return old_ids, new_ids
 
-    def pending_chunks(self) -> list[KnowledgeChunk]:
+    def pending_chunks(self, chunk_ids: list[int] | None = None) -> list[KnowledgeChunk]:
+        stmt = select(KnowledgeChunk).where(KnowledgeChunk.vectorize_status == "pending")
+        if chunk_ids is not None:
+            stmt = stmt.where(KnowledgeChunk.id.in_(chunk_ids))
         with self._factory() as session:
-            return session.scalars(
-                select(KnowledgeChunk)
-                .where(KnowledgeChunk.vectorize_status == "pending")
-                .order_by(KnowledgeChunk.id)
-            ).all()
+            return session.scalars(stmt.order_by(KnowledgeChunk.id)).all()
 
     def mark_vectorized(self, chunk_ids: list[int]) -> None:
         if not chunk_ids:
@@ -186,7 +185,8 @@ class FaithCaseLedger:
             session.commit()
 
 
-def vectorize_pending(kb: KnowledgeBaseStore, vectors, embedder, *, max_chunks: int | None = None, batch_size: int = 16) -> int:
+def vectorize_pending(kb: KnowledgeBaseStore, vectors, embedder, *, max_chunks: int | None = None,
+                      batch_size: int = 16, chunk_ids: list[int] | None = None) -> int:
     """扫 pending → embed → Milvus upsert → 回填 done;成功一批记一批,返回处理块数。
 
     中断安全:upsert 与 mark_vectorized 都幂等,重跑对已 upsert 未 mark 的块只是重复覆盖。
@@ -195,7 +195,7 @@ def vectorize_pending(kb: KnowledgeBaseStore, vectors, embedder, *, max_chunks: 
     done = 0
     while max_chunks is None or done < max_chunks:
         limit = batch_size if max_chunks is None else min(batch_size, max_chunks - done)
-        rows = kb.pending_chunks()
+        rows = kb.pending_chunks(chunk_ids=chunk_ids)
         if not rows:
             break
         rows = rows[:limit]

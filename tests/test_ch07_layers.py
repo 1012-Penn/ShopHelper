@@ -182,3 +182,34 @@ def test_rows_to_messages_carries_ids():
     msgs = rows_to_messages(_rows(("u", "a")))
     assert msgs[0].id == "100" and isinstance(msgs[0], HumanMessage)
     assert msgs[1].id == "101" and isinstance(msgs[1], AIMessage)
+
+
+def test_trimmed_history_text_matches_kept_messages_with_skipped_rows():
+    rows = [
+        {"id": 1, "role": "user", "content": "应当丢弃的早期问题" * 20},
+        {"id": 2, "role": "assistant", "content": None,
+         "tool_calls": [{"name": "query", "args": {}, "id": "call1"}]},
+        {"id": 3, "role": "tool", "content": "不得泄露的原始工具JSON", "tool_call_id": "call1"},
+        {"id": 4, "role": "assistant", "content": "保留的回复"},
+    ]
+    budget = estimate_tokens("保留的回复")
+    layered = build_layered([], rows, "已有摘要", head_chars=60, sliding=budget)
+    assert [m.content for m in layered["layer2_msgs"]] == ["保留的回复"]
+    assert layered["dropped"] == 2  # 空助手行不占渲染消息
+    assert "应当丢弃" not in layered["history_text"]
+    assert "工具结果已省略" not in layered["history_text"]
+    assert "原始工具JSON" not in layered["history_text"]
+    assert "客服:保留的回复" in layered["history_text"]
+    assert "【早期对话梗概】已有摘要" in layered["history_text"]
+
+
+def test_history_text_keeps_tool_placeholder_when_it_survives_trimming():
+    rows = [{"id": 1, "role": "user", "content": "丢弃的问题" * 100},
+            {"id": 2, "role": "assistant", "content": None},
+            {"id": 3, "role": "tool", "content": "隐藏的原文", "tool_call_id": "c"},
+            {"id": 4, "role": "assistant", "content": "最新回复"}]
+    layered = build_layered([], rows, None, head_chars=60,
+                            sliding=estimate_tokens("[工具结果已省略]") + estimate_tokens("最新回复"))
+    assert "丢弃的问题" not in layered["history_text"]
+    assert layered["history_text"].endswith("[工具结果已省略]\n客服:最新回复")
+    assert "隐藏的原文" not in layered["history_text"]

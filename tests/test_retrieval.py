@@ -98,8 +98,8 @@ def test_dense_floor_constant():
     assert RETRIEVAL_SCORE_FLOOR == 0.5
 
 
-def test_rerank_failure_degrades_to_rrf():
-    """rerank API 挂掉 → 降级 RRF 序(有结果、不低置信、不抛错),spec §4 降级语义。"""
+def test_rerank_failure_degrades_to_rejected_diagnostic_candidates():
+    """rerank API 挂掉 → 保留 RRF 候选诊断,但降级结果不作为证据。"""
     class ExplodingReranker:
         def rerank(self, query, documents, top_n=None):
             raise RuntimeError("rerank api down")
@@ -119,7 +119,7 @@ def test_rerank_failure_degrades_to_rrf():
     svc = RetrievalService(FakeEmbedding(), vectors, kb, rewriter=None,
                            reranker=ExplodingReranker())
     r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
-    assert r.items and not r.low_confidence  # 降级仍有候选
+    assert r.items and r.low_confidence and r.reason and r.degraded
 
 
 def test_category_injection_sanitized_and_falls_back(service):
@@ -146,3 +146,4 @@ def test_degraded_flag_on_missing_reranker():
     svc = RetrievalService(FakeEmbedding(), vectors, kb, rewriter=None, reranker=None)
     r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
     assert r.items and r.degraded is True
+    assert r.low_confidence is True and r.reason

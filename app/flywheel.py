@@ -1,12 +1,20 @@
 """低置信度问题的数据飞轮:标准化、语义去重、审核与知识库待向量化写入。"""
+import logging
 from dataclasses import dataclass
 from typing import Callable
 
 from pydantic import BaseModel, Field
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker
 
 from app.models import KnowledgeChunk, LowConfidenceQuestion, ReviewQueue
+
+logger = logging.getLogger(__name__)
+
+
+class ReviewConflictError(ValueError):
+    """已有核准内容冲突,或当前审核状态不允许重试索引。"""
 
 
 @dataclass(frozen=True)
@@ -97,18 +105,21 @@ class FlywheelService:
 
     def list_reviews(self, status: str = "待审") -> list[dict]:
         with self._factory() as session:
-            rows = session.scalars(
-                select(ReviewQueue).where(ReviewQueue.review_status == status)
+            rows = session.execute(
+                select(ReviewQueue, KnowledgeChunk)
+                .outerjoin(KnowledgeChunk, KnowledgeChunk.review_id == ReviewQueue.id)
+                .where(ReviewQueue.review_status == status)
                 .order_by(ReviewQueue.occurrence_count.desc(), ReviewQueue.updated_at.desc())
             ).all()
-            return [self._review_dict(row) for row in rows]
+            return [self._review_dict(row, chunk) for row, chunk in rows]
 
     def detail(self, review_id: int) -> dict | None:
         with self._factory() as session:
             row = session.get(ReviewQueue, review_id)
             if row is None:
                 return None
-            result = self._review_dict(row)
+            chunk = session.scalar(select(KnowledgeChunk).where(KnowledgeChunk.review_id == review_id))
+            result = self._review_dict(row, chunk)
             questions = session.scalars(
                 select(LowConfidenceQuestion)
                 .where(LowConfidenceQuestion.matched_review_id == review_id)
@@ -122,37 +133,95 @@ class FlywheelService:
             return result
 
     @staticmethod
-    def _review_dict(row: ReviewQueue) -> dict:
+    def _review_dict(row: ReviewQueue, chunk: KnowledgeChunk | None = None) -> dict:
         return {
             "id": row.id, "normalized_question": row.normalized_question,
             "ai_suggested_answer": row.ai_suggested_answer or "",
             "occurrence_count": row.occurrence_count, "review_status": row.review_status,
             "approved_answer": row.approved_answer or "",
+            "knowledge_chunk_id": chunk.id if chunk is not None else None,
+            "index_status": chunk.vectorize_status if chunk is not None else None,
         }
 
     def approve(self, review_id: int, approved_answer: str) -> int:
-        """审核通过:写 knowledge_chunks(pending),由后续 vectorize_pending 双写。"""
+        """先原子保存审核与唯一知识,再尽力索引;同答案重放返回原知识 id。"""
         answer = (approved_answer or "").strip()
         if not answer:
             raise ValueError("核准答案不能为空")
+        try:
+            chunk_id = self._save_approval(review_id, answer)
+        except IntegrityError:
+            # MySQL 对审核行加锁;唯一约束同时兜住无行锁后端及并发创建竞争。
+            with self._factory() as session:
+                chunk = session.scalar(select(KnowledgeChunk)
+                                       .where(KnowledgeChunk.review_id == review_id))
+                if chunk is None:
+                    raise  # 不吞掉其他数据库约束错误
+                self._check_answer(chunk, answer)
+                chunk_id = chunk.id
+        self._try_index(chunk_id)
+        return chunk_id
+
+    @staticmethod
+    def _check_answer(chunk: KnowledgeChunk, answer: str) -> None:
+        if chunk.answer != answer:
+            raise ReviewConflictError("该问题已有已核准答案,重复提交不得修改")
+
+    def _save_approval(self, review_id: int, answer: str) -> int:
+        with self._factory() as session:
+            review = session.scalar(select(ReviewQueue).where(ReviewQueue.id == review_id)
+                                    .with_for_update())
+            if review is None:
+                raise KeyError(f"review_queue 不存在:{review_id}")
+            chunk = session.scalar(select(KnowledgeChunk).where(KnowledgeChunk.review_id == review_id))
+            if chunk is not None:
+                self._check_answer(chunk, answer)
+            else:
+                chunk = KnowledgeChunk(
+                    review_id=review_id, category="飞轮补全",
+                    questions=review.normalized_question, answer=answer,
+                    section_path=f"review_queue:{review_id}", content_type="faq", is_key_clause=0,
+                )
+                session.add(chunk)
+            review.review_status = "通过"
+            review.approved_answer = answer
+            session.flush()
+            chunk_id = chunk.id
+            session.commit()
+            return chunk_id
+
+    def _try_index(self, chunk_id: int) -> None:
+        if self._kb is None or self._vectors is None or self._embedder is None:
+            return
+        if self.index_status(chunk_id) == "done":
+            return
+        from app.kb import vectorize_pending
+
+        try:
+            vectorize_pending(self._kb, self._vectors, self._embedder, chunk_ids=[chunk_id])
+        except Exception:
+            logger.warning("审核已保存,索引待重试 chunk_id=%s", chunk_id, exc_info=True)
+
+    def index_status(self, chunk_id: int) -> str:
+        with self._factory() as session:
+            chunk = session.get(KnowledgeChunk, chunk_id)
+            if chunk is None:
+                raise KeyError(f"knowledge_chunk 不存在:{chunk_id}")
+            return chunk.vectorize_status
+
+    def retry_index(self, review_id: int) -> int:
         with self._factory() as session:
             review = session.get(ReviewQueue, review_id)
             if review is None:
                 raise KeyError(f"review_queue 不存在:{review_id}")
-            review.review_status = "通过"
-            review.approved_answer = answer
-            chunk = KnowledgeChunk(
-                category="飞轮补全", questions=review.normalized_question, answer=answer,
-                section_path=f"review_queue:{review_id}", content_type="faq", is_key_clause=0,
-            )
-            session.add(chunk)
-            session.flush()
+            if review.review_status != "通过":
+                raise ReviewConflictError("仅已通过审核的问题可重试索引")
+            chunk = session.scalar(select(KnowledgeChunk).where(KnowledgeChunk.review_id == review_id))
+            if chunk is None:
+                raise ReviewConflictError("该审核尚未关联知识条目")
             chunk_id = chunk.id
-            session.commit()
-            if self._kb is not None and self._vectors is not None and self._embedder is not None:
-                from app.kb import vectorize_pending
-                vectorize_pending(self._kb, self._vectors, self._embedder)
-            return chunk_id
+        self._try_index(chunk_id)
+        return chunk_id
 
     def reject(self, review_id: int) -> None:
         with self._factory() as session:

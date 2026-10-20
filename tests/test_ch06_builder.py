@@ -64,3 +64,49 @@ async def test_build_graph_escalation_low_confidence_escalates(monkeypatch):
     assert small.calls == 1 and big.calls == 1  # 小模型先判,低置信触发大模型重判
     assert final["intent"] == "闲聊"
     assert any("escalated=true" in line for line in final["trace"])
+
+
+async def test_refund_policy_candidates_rejected_by_graph_fall_back():
+    from types import SimpleNamespace
+
+    from app.config import Settings
+    from app.graph.builder import build_graph, initial_state
+    from app.guard import LowConfidencePool
+    from app.kb import KnowledgeBaseStore
+    from app.retrieval import Retrieved
+    from app.store import ConversationStore
+    from app.tools.audit import ToolAuditStore
+    from app.tools.base import ToolRegistryV2
+    from app.tools.engine import ToolEngine
+    from app.prompts import ExpandedQueries
+    from tests.conftest import make_session_factory
+    from tests.helpers import StubExtractModel
+
+    class LowConfidenceService:
+        def retrieve(self, query, strategy="hybrid_rerank", category=None, use_rewrite=True):
+            return SimpleNamespace(items=[Retrieved(1, 0.99)], low_confidence=True,
+                                   reason="reranker unavailable", degraded=True)
+
+    class CountingModel(_Fixed):
+        def bind_tools(self, tools):
+            return self
+
+    settings = Settings(openai_api_key="sk-test", _env_file=None)
+    factory = make_session_factory()
+    store = ConversationStore(factory)
+    pool = LowConfidencePool(factory)
+    kb = KnowledgeBaseStore(factory)
+    agent_model = CountingModel("This must not reach the agent")
+    intent_model = _Fixed('{"intent": "退款退货", "confidence": 0.99}')
+    engine = ToolEngine(ToolRegistryV2(), ToolAuditStore(factory))
+    graph = build_graph(
+        agent_model, engine, settings, store, pool, LowConfidenceService(), kb,
+        resolver=EchoResolver({}), expander=StubExtractModel(
+            result=ExpandedQueries(queries=["退款政策"])), intent_model=intent_model)
+
+    final = await graph.ainvoke(initial_state(1, "订单1001的商品能退吗", None),
+                                {"configurable": {"thread_id": "refund-low-confidence"}})
+
+    assert agent_model.calls == 0
+    assert final["evidence"] == []
+    assert "无法给出可靠答案" in final["final_reply"]

@@ -58,26 +58,63 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
 
     async def policy_retrieve_node(state, writer=None, config=None) -> dict:
         merged: dict[int, float] = {}
+        diagnostic: dict[int, dict] = {}
+        rejected_reasons: list[str] = []
         for q in state["expand_queries"]:
             try:
-                result = service.retrieve(q, strategy="hybrid_rerank", use_rewrite=False)
+                result = await asyncio.to_thread(
+                    service.retrieve, q, strategy="hybrid_rerank", use_rewrite=False)
             except Exception:
                 logger.warning("政策检索失败,该查询按空结果处理", exc_info=True)
+                rejected_reasons.append("政策检索服务暂不可用")
+                continue
+            if result.low_confidence:
+                if result.reason:
+                    rejected_reasons.append(result.reason)
+                else:
+                    rejected_reasons.append("政策检索结果置信度低")
+            snapshot_fn = getattr(result, "snapshot", None)
+            try:
+                snapshots = snapshot_fn(top_k) if callable(snapshot_fn) else [
+                    {"rank": i + 1, "chunk_id": item.chunk_id, "score": item.score,
+                     "rerank_score": item.score}
+                    for i, item in enumerate(result.items[:top_k])
+                ]
+            except Exception:
+                logger.warning("政策候选快照构建失败,回退到 items", exc_info=True)
+                snapshots = [
+                    {"rank": i + 1, "chunk_id": item.chunk_id, "score": item.score,
+                     "rerank_score": item.score}
+                    for i, item in enumerate(result.items[:top_k])
+                ]
+            for item in snapshots:
+                cid = item.get("chunk_id")
+                if cid is None:
+                    continue
+                score = item.get("score", item.get("rerank_score", 0.0))
+                previous = diagnostic.get(cid)
+                if previous is None or score > previous["score"]:
+                    diagnostic[cid] = {**item, "chunk_id": cid, "score": score,
+                                       "rerank_score": item.get("rerank_score", score)}
+            if result.low_confidence:
                 continue
             for r in result.items:
                 if r.chunk_id not in merged or r.score > merged[r.chunk_id]:
                     merged[r.chunk_id] = r.score
         top = sorted(merged.items(), key=lambda kv: -kv[1])[:top_k]
+        snapshots = sorted(diagnostic.values(), key=lambda item: -item["score"])[:top_k]
+        snapshot_ids = [item["chunk_id"] for item in snapshots]
+        chunk_ids = list(dict.fromkeys([*snapshot_ids, *(cid for cid, _ in top)]))
         try:
-            rows = kb.get_chunks([cid for cid, _ in top])
+            rows = await asyncio.to_thread(kb.get_chunks, chunk_ids)
         except Exception:
             logger.warning("政策检索获取 chunk 详情失败,按空证据处理", exc_info=True)
+            rejected_reasons.append("政策检索详情暂不可用")
             rows = []
         by_id = {r.id: r for r in rows if hasattr(r, "id")}
-        if by_id:
-            valid_items = [(cid, sc, by_id[cid]) for cid, sc in top if cid in by_id]
-        else:
-            valid_items = [(cid, sc, row) for (cid, sc), row in zip(top, rows)]
+        if not by_id:
+            by_id = dict(zip(chunk_ids, rows))
+        valid_items = [(cid, sc, by_id[cid]) for cid, sc in top if cid in by_id]
         evidence = [
             {"n": i + 1, "chunk_id": cid,
              "question": (row.questions.splitlines() or [""])[0] if getattr(row, "questions", None) else "",
@@ -86,8 +123,19 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
              "section_path": getattr(row, "section_path", "") or ""}
             for i, (cid, _score, row) in enumerate(valid_items)
         ]
+        for item in snapshots:
+            row = by_id.get(item["chunk_id"])
+            if row is not None:
+                item.update({"question": (row.questions.splitlines() or [""])[0]
+                             if getattr(row, "questions", None) else "",
+                             "answer": getattr(row, "answer", "") or "",
+                             "category": getattr(row, "category", "") or "",
+                             "section_path": getattr(row, "section_path", "") or ""})
         _emit(writer, {"type": "tool_status", "name": "query_faq", "label": "政策检索"})
         low = not evidence
+        low_reason = ";".join(dict.fromkeys(rejected_reasons))
+        if low and not low_reason:
+            low_reason = "子流程政策检索无证据"
         if evidence:
             _emit(writer, {"type": "citations", "items": list(evidence)})
         else:
@@ -95,12 +143,13 @@ def make_refund_nodes(expander, service, kb, pool, top_k: int = 10):
                 # 落池可能内联标准化/查重(LLM),放线程池避免阻塞事件循环
                 await asyncio.to_thread(
                     pool.insert, "retrieval_low_conf", state["session_id"],
-                    state["user_message"], "子流程政策检索无证据")
+                    state["user_message"], low_reason, retrieved_chunks=snapshots)
             except Exception:
                 logger.warning("低置信度池写入失败", exc_info=True)
         top1 = f"{top[0][1]:.2f}" if top else "0.00"
         return {"evidence": evidence, "low_confidence": low,
-                "low_reason": "子流程政策检索无证据" if low else "",
+                "retrieved_chunks": snapshots,
+                "low_reason": low_reason if low else "",
                 "trace": [*state["trace"],
                           f"node=policy_retrieve queries={len(state['expand_queries'])} "
                           f"merged={len(merged)} top1={top1} n={len(evidence)}"]}

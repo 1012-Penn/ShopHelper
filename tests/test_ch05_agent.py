@@ -152,6 +152,88 @@ async def test_query_faq_low_confidence_pools():
     assert [f for f in rec.frames if f["type"] == "citations"] == []  # 低置信不出证据
 
 
+async def test_low_confidence_snapshot_is_pooled_but_not_replayed_to_model():
+    snapshot = [{"chunk_id": 71, "score": 0.04,
+                 "answer": "SECRET_DIAGNOSTIC_TEXT", "text": "SECRET_DIAGNOSTIC_TEXT"}]
+    raw_result = json.dumps({"items": [], "low_confidence": True,
+                             "reason": "reranker unavailable",
+                             "retrieved_chunks": snapshot,
+                             "padding": "x" * 12000}, ensure_ascii=False)
+
+    class Registry:
+        def bind_tools(self):
+            return []
+
+        def labels(self):
+            return {"query_faq": "FAQ 检索"}
+
+    class Engine:
+        registry = Registry()
+
+        async def execute(self, *args, **kwargs):
+            return raw_result
+
+    pool = FakePool()
+    model = ScriptedToolModel([
+        ("tools", [_tc("query_faq", {"keyword": "测试问题"}, "snap1")]),
+        ("text", "根据查询结果无法回答。"),
+    ])
+    settings = _settings(tool_result_max_tokens=100)
+    node = make_agent_node(model, Engine(), settings, pool)
+
+    out = await node(_state(session_id=9, user_message="测试问题", resolved_message="测试问题"))
+
+    replayed = next(m for m in model.prompts[1] if type(m).__name__ == "ToolMessage")
+    assert pool.rows[0][0] == "retrieval_low_conf"
+    assert pool.rows[0][4] == snapshot
+    assert out["retrieved_chunks"] == snapshot
+    assert "retrieved_chunks" not in replayed.content
+    assert "SECRET_DIAGNOSTIC_TEXT" not in replayed.content
+    assert "工具结果已截断" in replayed.content
+
+
+async def test_trusted_tool_citations_still_renumber_and_hide_diagnostic_snapshot():
+    snapshot = [{"chunk_id": 81, "answer": "internal diagnostic"}]
+    result = json.dumps({
+        "items": [{"n": 1, "chunk_id": 81, "question": "退货政策", "answer": "七天退货"}],
+        "low_confidence": False,
+        "retrieved_chunks": snapshot,
+    }, ensure_ascii=False)
+
+    class Registry:
+        def bind_tools(self):
+            return []
+
+        def labels(self):
+            return {"query_faq": "FAQ 检索"}
+
+    class Engine:
+        registry = Registry()
+
+        async def execute(self, *args, **kwargs):
+            return result
+
+    rec = Recorder()
+    model = ScriptedToolModel([
+        ("tools", [_tc("query_faq", {"keyword": "退货政策"}, "cite1")]),
+        ("text", "支持七天退货[1]。"),
+    ])
+    node = make_agent_node(model, Engine(), _settings(), FakePool())
+
+    out = await node(_state(session_id=9, user_message="退货政策", resolved_message="退货政策",
+                            evidence=[{"n": 1, "chunk_id": 7, "question": "已有政策",
+                                       "answer": "已有依据", "section_path": "p.md > policy"}]),
+                     writer=rec)
+
+    replayed = next(m for m in model.prompts[1] if type(m).__name__ == "ToolMessage")
+    assert "retrieved_chunks" not in replayed.content
+    assert "internal diagnostic" not in replayed.content
+    assert json.loads(replayed.content)["items"][0]["n"] == 2
+    citations = [frame for frame in rec.frames if frame["type"] == "citations"]
+    assert citations[-1]["items"][-1]["n"] == 2
+    assert out["retrieved_chunks"] == snapshot
+
+
 async def test_cutoff_prefers_last_assistant_text():
     """熔断前有过部分文本(如"已为您查询到")时,收敛用该文本而非引导语。"""
     model = ScriptedToolModel([
