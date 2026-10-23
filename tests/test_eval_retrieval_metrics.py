@@ -1,44 +1,136 @@
-"""检索评估指标:命中判定与 Recall@K / MRR 纯函数(不发网络、不碰库)。"""
-from types import SimpleNamespace
+"""严格检索判定纯函数测试。
 
-from scripts.eval_retrieval import chunk_is_relevant, recall_mrr
+重点回归扩库后出现的泛词假阳性：只含 `24 小时`/`7 天`/`定制` 但没有
+完整证据 quote 的 chunk，不得再被算作相关。
+"""
+from dataclasses import dataclass
 
-ROW = SimpleNamespace(section_path="退货政策.md > 邮费与运费",
-                      questions="邮费与运费", answer="普通订单邮费 8 元,满 99 元包邮。")
-ROW_OTHER = SimpleNamespace(section_path="商品FAQ.md > 物流", questions="多久能发货", answer="48 小时内。")
-CASE = {"expect_doc": "退货政策.md", "expect_keywords": ["邮费"]}
+import pytest
 
-
-def test_chunk_is_relevant():
-    assert chunk_is_relevant(ROW, CASE)
-    assert not chunk_is_relevant(ROW_OTHER, CASE)
-
-
-def test_chunk_is_relevant_section_pin():
-    case = {**CASE, "expect_section": "邮费与运费"}
-    assert chunk_is_relevant(ROW, case)
-    row_other_section = SimpleNamespace(section_path="退货政策.md > 退款说明",
-                                        questions="退款", answer="邮费说明")
-    assert not chunk_is_relevant(row_other_section, case)
+from scripts.eval_metrics import (
+    EvalDataError,
+    chunk_covers,
+    coverage_rank,
+    evidence_group_recall,
+    needs_from_case,
+    normalize_span,
+    resolve_gold_chunks,
+    single_chunk_rank,
+)
 
 
-def test_recall_and_mrr():
-    # rank 4(pos=3)才命中:Recall@3 未中、@5/@10 中,MRR = 1/4
-    rows_by_id = {1: ROW_OTHER, 2: ROW_OTHER, 3: ROW_OTHER, 4: ROW}
-    hits, rr = recall_mrr([(1, 0.9), (2, 0.8), (3, 0.7), (4, 0.6)], rows_by_id, CASE)
-    assert hits == {3: False, 5: True, 10: True}
-    assert rr == 1.0 / 4
+@dataclass(frozen=True)
+class Row:
+    id: int
+    section_path: str
+    questions: str
+    answer: str
 
 
-def test_recall_hit_at_rank3_counts_for_k3():
-    # rank 3(pos=2)∈ top3:Recall@3 应命中
-    rows_by_id = {1: ROW_OTHER, 2: ROW_OTHER, 3: ROW}
-    hits, rr = recall_mrr([(1, 0.9), (2, 0.8), (3, 0.7)], rows_by_id, CASE)
-    assert hits == {3: True, 5: True, 10: True}
-    assert rr == 1.0 / 3
+ROWS = {
+    1: Row(1, "商品FAQ.md > 商品FAQ > 售后 > 怎么申请退货?", "怎么申请退货?",
+           "在订单详情页点击「申请售后」,选择退货原因后提交,客服会在 24 小时内审核。"),
+    2: Row(2, "商品FAQ.md > 商品FAQ > 商品型号 > SH-W20 智能手表有什么功能?",
+           "SH-W20 智能手表有什么功能?",
+           "SH-W20 智能手表,售价 399 元,支持血氧监测、GPS 定位、NFC 刷卡,续航 7 天,一年质保。"),
+    3: Row(3, "商品FAQ.md > 商品FAQ > 售后 > 换货和维修怎么选?", "换货和维修怎么选?",
+           "签收后 7 天内可换货;超过 7 天走保修维修。"),
+    4: Row(4, "退货政策.md > 退货政策 > 不予退货情形", "不予退货情形",
+           "定制类商品、贴身衣物、已激活的虚拟商品不予退货。生鲜食品仅限质量问题退货。"),
+    5: Row(5, "退货政策.md > 退货政策 > 邮费与运费", "邮费与运费",
+           "普通订单邮费 8 元,单笔满 99 元包邮。质量问题退货,运费由商家承担;"
+           "非质量问题退货,运费由买家自行承担。偏远地区额外补收 5 元运费。"),
+    6: Row(6, "退货政策.md > 退货政策 > 退款时效", "退款时效",
+           "退货商品验收通过后,退款原路返回,1-3 个工作日到账。"),
+}
 
 
-def test_recall_miss_all():
-    rows_by_id = {1: ROW_OTHER}
-    hits, rr = recall_mrr([(1, 0.9)], rows_by_id, CASE)
-    assert hits == {3: False, 5: False, 10: False} and rr == 0.0
+def _case(evidence, **extra):
+    return {"id": "T", "answerable": True, "required_evidence": evidence, **extra}
+
+
+def test_normalize_span_nfkc_and_whitespace():
+    assert normalize_span("Ａ  B\n C") == "A B C"
+    assert normalize_span("普通订单邮费 8 元,") == "普通订单邮费 8 元,"
+
+
+def test_chunk_covers_requires_doc_section_and_all_quotes():
+    a07 = {"doc": "商品FAQ.md", "section": "怎么申请退货?",
+           "quotes": ["客服会在 24 小时内审核。"]}
+    assert chunk_covers(ROWS[1], needs_from_case(_case([a07]))[0])
+    # 只含 24 小时、但不是审核句：不算命中
+    assert not chunk_covers(ROWS[3], needs_from_case(_case([a07]))[0])
+    # section 不匹配
+    assert not chunk_covers(ROWS[2], needs_from_case(_case([a07]))[0])
+    # doc 不匹配
+    assert not chunk_covers(ROWS[4], needs_from_case(_case([a07]))[0])
+
+
+def test_b07_quote_pins_w20_not_generic_7_days():
+    b07 = {"doc": "商品FAQ.md", "section": "SH-W20",
+           "quotes": ["SH-W20 智能手表,售价 399 元,支持血氧监测、GPS 定位、NFC 刷卡,续航 7 天"]}
+    need = needs_from_case(_case([b07]))[0]
+    assert chunk_covers(ROWS[2], need)
+    assert not chunk_covers(ROWS[3], need)  # 换货条目只含 7 天
+
+
+def test_a04_quote_pins_exclusion_not_generic_custom():
+    a04 = {"doc": "退货政策.md", "section": "不予退货情形",
+           "quotes": ["定制类商品、贴身衣物、已激活的虚拟商品不予退货。"]}
+    need = needs_from_case(_case([a04]))[0]
+    assert chunk_covers(ROWS[4], need)
+    assert not chunk_covers(ROWS[5], need)
+
+
+def test_multi_quote_same_chunk_is_and():
+    need = needs_from_case(_case([{
+        "doc": "退货政策.md", "section": "邮费与运费",
+        "quotes": ["单笔满 99 元包邮", "偏远地区额外补收 5 元运费"],
+    }]))[0]
+    assert chunk_covers(ROWS[5], need)
+    assert not chunk_covers(ROWS[6], need)
+
+
+def test_resolve_gold_chunks_and_missing_evidence():
+    case = _case([
+        {"doc": "商品FAQ.md", "section": "怎么申请退货?", "quotes": ["客服会在 24 小时内审核。"]},
+    ])
+    assert resolve_gold_chunks(case, ROWS) == [frozenset({1})]
+    bad = _case([{"doc": "商品FAQ.md", "section": "怎么申请退货?", "quotes": ["不存在的句子"]}])
+    with pytest.raises(EvalDataError):
+        resolve_gold_chunks(bad, ROWS)
+
+
+def test_coverage_rank_takes_max_group_rank_and_respects_cap():
+    case = _case([
+        {"doc": "商品FAQ.md", "section": "怎么申请退货?", "quotes": ["客服会在 24 小时内审核。"]},
+        {"doc": "退货政策.md", "section": "退款时效", "quotes": ["1-3 个工作日到账"]},
+    ])
+    gold = resolve_gold_chunks(case, ROWS)
+    assert coverage_rank([5, 1, 6], gold) == 3
+    assert coverage_rank([5, 1, 6], gold, cap=2) is None
+    assert coverage_rank([5, 1], gold) is None
+
+
+def test_single_chunk_rank_requires_one_chunk_for_all_evidence():
+    split = _case([
+        {"doc": "退货政策.md", "section": "邮费与运费", "quotes": ["质量问题退货,运费由商家承担"]},
+        {"doc": "退货政策.md", "section": "退款时效", "quotes": ["1-3 个工作日到账"]},
+    ])
+    assert single_chunk_rank([5, 6], split, ROWS) is None
+
+    same = _case([{
+        "doc": "退货政策.md", "section": "邮费与运费",
+        "quotes": ["单笔满 99 元包邮", "偏远地区额外补收 5 元运费"],
+    }])
+    assert single_chunk_rank([5, 6], same, ROWS) == 1
+
+
+def test_evidence_group_recall():
+    case = _case([
+        {"doc": "商品FAQ.md", "section": "怎么申请退货?", "quotes": ["客服会在 24 小时内审核。"]},
+        {"doc": "退货政策.md", "section": "退款时效", "quotes": ["1-3 个工作日到账"]},
+    ])
+    gold = resolve_gold_chunks(case, ROWS)
+    assert evidence_group_recall([1, 5], gold) == 0.5
+    assert evidence_group_recall([1, 6], gold) == 1.0

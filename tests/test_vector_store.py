@@ -79,6 +79,12 @@ def test_legacy_collection_recreated(tmp_path):
     assert {"text", "sparse", "category"} <= names
 
 
+def test_all_ids(store):
+    assert set(store.all_ids()) == {1, 2, 3}
+    store.delete([2])
+    assert set(store.all_ids()) == {1, 3}
+
+
 def test_delete(store):
     store.delete([1])
     assert store.count() == 2

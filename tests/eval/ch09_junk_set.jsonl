@@ -1,8 +1,13 @@
-{"id": "J01", "bucket": "junk", "query": "会飞的手机怎么买", "notes": "ch04 遗留词面重叠 junk,交生成自评兜底"}
-{"id": "J02", "bucket": "junk", "query": "怎么用微波炉煮火锅", "notes": "家电类纯噪声"}
-{"id": "J03", "bucket": "junk", "query": "帮我写一首关于月亮的诗", "notes": "创作类,知识库无关"}
-{"id": "J04", "bucket": "junk", "query": "隔壁超市鸡蛋多少钱一斤", "notes": "生活杂询,店外信息"}
-{"id": "J05", "bucket": "junk", "query": "手机贴膜能防弹吗", "notes": "词面相关(手机)但语义无关"}
-{"id": "J06", "bucket": "junk", "query": "怎么申请诺贝尔数学奖", "notes": "不存在的事物"}
-{"id": "J07", "bucket": "junk", "query": "明天小区停水吗", "notes": "物业信息,知识库无关"}
-{"id": "J08", "bucket": "junk", "query": "猫为什么喜欢盒子", "notes": "闲聊科普,纯噪声"}
+{"id": "J01", "bucket": "H_hard_negative", "query": "会飞的手机保修多久", "answerable": false, "topical_docs": [], "tempting_sections": [], "absent_terms": ["飞行手机保修", "会飞的手机保修"], "unanswerable_because": "知识库只有概念商品、价格和到店体验说明，没有保修信息", "notes": "飞轮已回写概念商品 chunk；原「怎么买」可由「仅限到店体验」回答，故改为未覆盖的保修问题"}
+{"id": "J02", "bucket": "junk", "query": "怎么用微波炉煮火锅", "answerable": false, "notes": "家电类纯噪声"}
+{"id": "J03", "bucket": "junk", "query": "帮我写一首关于月亮的诗", "answerable": false, "notes": "创作类,知识库无关"}
+{"id": "J04", "bucket": "junk", "query": "隔壁超市鸡蛋多少钱一斤", "answerable": false, "notes": "生活杂询,店外信息"}
+{"id": "J05", "bucket": "junk", "query": "手机贴膜能防弹吗", "answerable": false, "notes": "词面相关(手机)但语义无关"}
+{"id": "J06", "bucket": "junk", "query": "怎么申请诺贝尔数学奖", "answerable": false, "notes": "不存在的事物"}
+{"id": "J07", "bucket": "junk", "query": "明天小区停水吗", "answerable": false, "notes": "物业信息,知识库无关"}
+{"id": "J08", "bucket": "junk", "query": "猫为什么喜欢盒子", "answerable": false, "notes": "闲聊科普,纯噪声"}
+{"id": "H01", "bucket": "H_hard_negative", "query": "SH-E300 支持无线充电吗", "answerable": false, "topical_docs": ["商品FAQ.md"], "tempting_sections": ["SH-E300 无线降噪耳机怎么样?"], "absent_terms": ["无线充电"], "unanswerable_because": "知识库只写蓝牙/降噪/续航，没有充电方式", "notes": "词面高度同域"}
+{"id": "H02", "bucket": "H_hard_negative", "query": "会员生日礼包里面有什么", "answerable": false, "topical_docs": ["商品FAQ.md"], "tempting_sections": ["会员有什么权益?"], "absent_terms": ["礼包内容", "生日礼包包含"], "unanswerable_because": "知识库只写有生日礼包，没有写礼包内容", "notes": "同域但缺具体内容"}
+{"id": "H03", "bucket": "H_hard_negative", "query": "发票抬头可以修改吗", "answerable": false, "topical_docs": ["商品FAQ.md"], "tempting_sections": ["可以开发票吗?"], "absent_terms": ["修改抬头", "抬头修改", "修改发票抬头"], "unanswerable_because": "知识库只写下单时备注抬头，没有写开票后修改", "notes": "开票后修改未覆盖"}
+{"id": "H04", "bucket": "H_hard_negative", "query": "SH-W20 可以安装微信吗", "answerable": false, "topical_docs": ["商品FAQ.md"], "tempting_sections": ["SH-W20 智能手表有什么功能?"], "absent_terms": ["安装微信", "微信应用"], "unanswerable_because": "知识库只写血氧/GPS/NFC，没有写第三方应用安装", "notes": "型号功能未覆盖"}
+{"id": "H05", "bucket": "H_hard_negative", "query": "人为损坏维修具体收多少钱", "answerable": false, "topical_docs": ["售后手册.md"], "tempting_sections": ["人为损坏与过保"], "absent_terms": ["具体收费", "收费金额", "维修价格"], "unanswerable_because": "知识库只写按检测结果收费，没有写具体金额", "notes": "同域但缺价格"}

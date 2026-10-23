@@ -4,7 +4,9 @@
 依赖(embedder/vectors/kb/rewriter/reranker)全部构造注入,测试可替换身。
 低置信判定:候选空(知识库无相关内容)或精排结果未通过证据置信度闸。
 """
+import hashlib
 import logging
+from collections import defaultdict
 from dataclasses import dataclass
 
 from app.kb import KnowledgeBaseStore, vector_text
@@ -23,6 +25,13 @@ class Retrieved:
 
 
 @dataclass(frozen=True)
+class PreparedQuery:
+    """一次改写结果;评估时四策略共用,避免每条策略各改一次。"""
+    rewritten: str
+    search_text: str
+
+
+@dataclass(frozen=True)
 class EvidenceCalibration:
     """证据闸阈值,由 ch04 评估集校准并可由脚本产物覆盖。"""
 
@@ -32,6 +41,14 @@ class EvidenceCalibration:
     margin_floor: float = 0.0
     combined_floor: float = 0.15
     source: str = "ch04_eval_set"
+
+    def __post_init__(self) -> None:
+        if int(self.min_effective_count) < 1:
+            raise ValueError("min_effective_count 必须 >= 1")
+        for name in ("top1_floor", "effective_score_floor", "margin_floor", "combined_floor"):
+            value = float(getattr(self, name))
+            if not 0.0 <= value <= 1.0:
+                raise ValueError(f"{name} 必须在 [0,1] 内:{value}")
 
 
 @dataclass(frozen=True)
@@ -55,6 +72,7 @@ class RetrievalResult:
     search_text: str = ""
     degraded: bool = False  # reranker 缺失/失败降级 RRF 序时为 True(未精排,证据质量降档)
     evidence_confidence: EvidenceConfidence | None = None
+    evidence_entailment: bool | None = None  # v2:LLM 判断证据是否真的回答问题;None=未启用/失败
 
     def snapshot(self, top_k: int = 3) -> list[dict]:
         """保留入池时可供人工审核的 Top-K 原始 chunk id 与精排分数。"""
@@ -104,38 +122,183 @@ def evidence_confidence(items: list[Retrieved], calibration: EvidenceCalibration
                               calibration.source)
 
 
-def calibrate_evidence_thresholds(samples: list[dict], min_recall: float = 1.0) -> EvidenceCalibration:
-    """在带标注的 ch04 样本上选出仍满足目标 Recall 的最高 Top1 门槛。
+CALIBRATION_SEED = 20261023
+CALIBRATION_HOLDOUT_RATIO = 1 / 3
 
-    其余阈值取正样本的最小值(放行全部相关题的下界),combined_floor 按同一条
-    合成公式对正样本重算后取最小值——保证校准产物的闸对全部正样本放行。
+
+def _sample_label(sample: dict) -> int:
+    if "label" in sample:
+        return int(sample["label"])
+    return int(bool(sample.get("relevant")))
+
+
+def _split_samples(samples: list[dict], holdout_ratio: float,
+                   seed: int) -> tuple[list[dict], list[dict]]:
+    """按 (label, bucket) 分层；同组内按 sha256(id+seed) 排序取前 1/3 做留出。"""
+    groups: dict[tuple[int, str], list[dict]] = defaultdict(list)
+    for sample in samples:
+        groups[(_sample_label(sample), str(sample.get("bucket", "")))].append(sample)
+    calibration: list[dict] = []
+    holdout: list[dict] = []
+    for key in sorted(groups):
+        items = sorted(groups[key], key=lambda s: hashlib.sha256(
+            f"{s['id']}:{seed}".encode()).hexdigest())
+        n_hold = int(round(len(items) * holdout_ratio))
+        if holdout_ratio <= 0:
+            n_hold = 0
+        elif len(items) > 1:
+            n_hold = min(max(n_hold, 1), len(items) - 1)
+        else:
+            n_hold = 0
+        holdout.extend(items[:n_hold])
+        calibration.extend(items[n_hold:])
+    return calibration, holdout
+
+
+def _passes(sample: dict, top1_floor: float, margin_floor: float,
+            min_count: int) -> bool:
+    return (int(sample.get("effective_count", 0)) >= min_count
+            and float(sample.get("top1_relevance", 0.0)) >= top1_floor
+            and float(sample.get("top1_top2_margin", 0.0)) >= margin_floor)
+
+
+def _evaluate_thresholds(samples: list[dict], top1_floor: float,
+                         margin_floor: float, min_count: int) -> dict:
+    positives = [s for s in samples
+                 if _sample_label(s) == 1 and s.get("evidence_retrieved", True)]
+    retrieval_miss = [s["id"] for s in samples
+                      if _sample_label(s) == 1 and not s.get("evidence_retrieved", True)]
+    negatives = [s for s in samples if _sample_label(s) == 0]
+    passed_positive = [s for s in positives
+                       if _passes(s, top1_floor, margin_floor, min_count)]
+    blocked_positive = [s["id"] for s in positives
+                        if not _passes(s, top1_floor, margin_floor, min_count)]
+    hard_false = [s["id"] for s in negatives
+                  if s.get("bucket") == "H_hard_negative"
+                  and _passes(s, top1_floor, margin_floor, min_count)]
+    ood_false = [s["id"] for s in negatives
+                 if s.get("bucket") != "H_hard_negative"
+                 and _passes(s, top1_floor, margin_floor, min_count)]
+    recall = len(passed_positive) / len(positives) if positives else 0.0
+    denominator = len(passed_positive) + len(hard_false) + len(ood_false)
+    precision = len(passed_positive) / denominator if denominator else 0.0
+    f2 = (5 * precision * recall / (4 * precision + recall)
+          if (4 * precision + recall) > 0 else 0.0)
+    return {
+        "positives": len(positives),
+        "positive_recall": round(recall, 6),
+        "positive_blocked_ids": blocked_positive,
+        "retrieval_miss_ids": retrieval_miss,
+        "hard_negative_false_accept_ids": hard_false,
+        "ood_false_accept_ids": ood_false,
+        "precision": round(precision, 6),
+        "f2": round(f2, 6),
+        "top1_floor": top1_floor,
+        "margin_floor": margin_floor,
+        "min_effective_count": min_count,
+    }
+
+
+def calibrate_evidence_thresholds(
+    samples: list[dict],
+    *,
+    effective_score_floor: float = 0.03,
+    holdout_ratio: float = CALIBRATION_HOLDOUT_RATIO,
+    seed: int = CALIBRATION_SEED,
+) -> tuple[EvidenceCalibration, dict, dict, dict]:
+    """在正样本/同域硬负例/OOD 上网格搜索阈值。
+
+    目标（字典序）：硬负例零误放 → 正样本召回最大 → OOD 误放最少 → F2 最大
+    → 更保守的阈值。无可行解时 status=infeasible，调用方不得覆盖生产配置。
+    combined_floor 固定 0，combined_score 仅作诊断。
     """
-    positives = [s for s in samples if bool(s.get("relevant"))]
-    if not positives:
-        raise ValueError("校准集至少需要一条 relevant=true 样本")
-    candidates = sorted({float(s["top1_relevance"]) for s in positives}, reverse=True)
-    target = max(0.0, min(1.0, float(min_recall)))
-    top1_floor = min(candidates)
-    for candidate in candidates:
-        recall = sum(float(s["top1_relevance"]) >= candidate for s in positives) / len(positives)
-        if recall >= target:
-            top1_floor = candidate
-            break
-    combined_floor = min(
-        combined_confidence_score(float(s["top1_relevance"]),
-                                  float(s.get("top1_top2_margin", 0.0)),
-                                  int(s.get("effective_count", 1)))
-        for s in positives
+    if not samples:
+        raise ValueError("校准集为空")
+    normalized = [
+        {**sample, "label": _sample_label(sample),
+         "evidence_retrieved": bool(sample.get("evidence_retrieved", True))}
+        for sample in samples
+    ]
+    calibration, holdout = _split_samples(normalized, holdout_ratio, seed)
+    split_ids = {
+        "seed": seed,
+        "holdout_ratio": holdout_ratio,
+        "calibration_ids": [s["id"] for s in calibration],
+        "holdout_ids": [s["id"] for s in holdout],
+    }
+    eligible = [s for s in calibration
+                if s["label"] == 1 and s["evidence_retrieved"]]
+    if not eligible:
+        metrics = {
+            "status": "infeasible",
+            "reason": "校准集没有检索到证据的正样本",
+            "positives": 0,
+            "positive_recall": 0.0,
+            "positive_blocked_ids": [],
+            "retrieval_miss_ids": [s["id"] for s in calibration if s["label"] == 1],
+            "hard_negative_false_accept_ids": [],
+            "ood_false_accept_ids": [],
+            "precision": 0.0,
+            "f2": 0.0,
+            "top1_floor": 0.03,
+            "margin_floor": 0.0,
+            "min_effective_count": 1,
+        }
+        calibration_obj = EvidenceCalibration(
+            top1_floor=0.03, effective_score_floor=effective_score_floor,
+            min_effective_count=1, margin_floor=0.0, combined_floor=0.0,
+            source="ch04_eval_set+v2")
+        return calibration_obj, metrics, {**metrics, "status": "infeasible"}, split_ids
+
+    top1_values = sorted({0.0} | {round(float(s.get("top1_relevance", 0.0)), 6)
+                                  for s in calibration})
+    margin_values = sorted({0.0} | {round(float(s.get("top1_top2_margin", 0.0)), 6)
+                                     for s in calibration})
+    candidates = [
+        _evaluate_thresholds(calibration, top1_floor, margin_floor, min_count)
+        for top1_floor in top1_values
+        for margin_floor in margin_values
+        for min_count in (1, 2, 3)
+    ]
+    feasible = [c for c in candidates if not c["hard_negative_false_accept_ids"]]
+    if not feasible:
+        fallback = max(candidates, key=lambda c: (
+            c["positive_recall"], -len(c["ood_false_accept_ids"]), c["f2"]))
+        fallback = {**fallback, "status": "infeasible"}
+        calibration_obj = EvidenceCalibration(
+            top1_floor=fallback["top1_floor"],
+            effective_score_floor=effective_score_floor,
+            min_effective_count=max(1, fallback["min_effective_count"]),
+            margin_floor=fallback["margin_floor"],
+            combined_floor=0.0, source="ch04_eval_set+v2")
+        holdout_metrics = _evaluate_thresholds(
+            holdout, fallback["top1_floor"], fallback["margin_floor"],
+            fallback["min_effective_count"])
+        holdout_metrics["status"] = "infeasible"
+        return calibration_obj, fallback, holdout_metrics, split_ids
+
+    best = min(feasible, key=lambda c: (
+        -c["positive_recall"],
+        len(c["ood_false_accept_ids"]),
+        -c["f2"],
+        -c["top1_floor"],
+        -c["margin_floor"],
+        -c["min_effective_count"],
+    ))
+    best = {**best, "status": "ok"}
+    calibration_obj = EvidenceCalibration(
+        top1_floor=best["top1_floor"],
+        effective_score_floor=effective_score_floor,
+        min_effective_count=best["min_effective_count"],
+        margin_floor=best["margin_floor"],
+        combined_floor=0.0,
+        source="ch04_eval_set+v2",
     )
-    return EvidenceCalibration(
-        top1_floor=top1_floor,
-        effective_score_floor=min(float(s.get("effective_score_floor", s["top1_relevance"]))
-                                  for s in positives),
-        min_effective_count=min(int(s.get("effective_count", 1)) for s in positives),
-        margin_floor=min(float(s.get("top1_top2_margin", 0.0)) for s in positives),
-        combined_floor=round(combined_floor, 6),
-        source="ch04_eval_set",
-    )
+    holdout_metrics = _evaluate_thresholds(
+        holdout, best["top1_floor"], best["margin_floor"],
+        best["min_effective_count"])
+    holdout_metrics["status"] = "ok"
+    return calibration_obj, best, holdout_metrics, split_ids
 
 
 def sanitize_category(category: str | None) -> str | None:
@@ -156,7 +319,8 @@ class RetrievalService:
                  candidates: int = 50, final_top_k: int = 10,
                  dense_score_floor: float = RETRIEVAL_SCORE_FLOOR,
                  rerank_score_floor: float = 0.30,
-                 evidence_calibration: EvidenceCalibration | None = None) -> None:
+                 evidence_calibration: EvidenceCalibration | None = None,
+                 evidence_judge=None, evidence_top_n: int = 3) -> None:
         self._embedder = embedder
         self._vectors = vectors
         self._kb = kb
@@ -168,17 +332,27 @@ class RetrievalService:
         self._rerank_floor = rerank_score_floor
         self._evidence_calibration = evidence_calibration or EvidenceCalibration(
             top1_floor=rerank_score_floor)
+        self._evidence_judge = evidence_judge
+        self._evidence_top_n = max(1, int(evidence_top_n))
+
+    def prepare_query(self, query: str, use_rewrite: bool = True) -> PreparedQuery:
+        """一次性改写;评估脚本可先缓存再让四策略共用。"""
+        if not use_rewrite or self._rewriter is None:
+            return PreparedQuery(query, query)
+        qr = self._rewriter.rewrite(query)
+        rewritten = qr.normalized.strip() or query
+        search_text = bm25_query_text(QueryRewrite(normalized=rewritten, synonyms=qr.synonyms))
+        return PreparedQuery(rewritten, search_text)
 
     def retrieve(self, query: str, strategy: str = "hybrid_rerank",
-                 category: str | None = None, use_rewrite: bool = True) -> RetrievalResult:
+                 category: str | None = None, use_rewrite: bool = True,
+                 prepared: PreparedQuery | None = None) -> RetrievalResult:
         if strategy not in STRATEGIES:
             raise ValueError(f"未知检索策略:{strategy}")
 
-        rewritten, search_text = query, query
-        if use_rewrite and self._rewriter is not None:
-            qr = self._rewriter.rewrite(query)
-            rewritten = qr.normalized.strip() or query
-            search_text = bm25_query_text(QueryRewrite(normalized=rewritten, synonyms=qr.synonyms))
+        if prepared is None:
+            prepared = self.prepare_query(query, use_rewrite=use_rewrite)
+        rewritten, search_text = prepared.rewritten, prepared.search_text
         category = sanitize_category(category)
         expr = f'category == "{category}"' if category else None
 
@@ -220,21 +394,46 @@ class RetrievalService:
 
         # hybrid_rerank:精排 Top-N;reranker 缺失或调用失败降级 RRF 序(质量掉档,记 warning 并标记)
         if self._reranker is None:
-            logger.warning("reranker 未配置,hybrid_rerank 降级为 RRF 序")
-            return RetrievalResult(cand[: self._final_top_k], False, "", fallback, rewritten,
+            logger.warning("reranker 未配置,hybrid_rerank 降级为 RRF 序,证据闸无法判定")
+            return RetrievalResult(cand[: self._final_top_k], True,
+                                   "重排不可用,证据闸无法判定", fallback, rewritten,
                                    search_text, degraded=True)
         texts = self._chunk_texts([r.chunk_id for r in cand])
         try:
             ranked = self._reranker.rerank(rewritten, [texts.get(r.chunk_id, "") for r in cand],
                                            top_n=self._final_top_k)
         except Exception as exc:
-            logger.warning("重排失败,降级 RRF 序:%s", exc)
-            return RetrievalResult(cand[: self._final_top_k], False, "", fallback, rewritten,
+            logger.warning("重排失败,降级 RRF 序,证据闸无法判定:%s", exc)
+            return RetrievalResult(cand[: self._final_top_k], True,
+                                   "重排不可用,证据闸无法判定", fallback, rewritten,
                                    search_text, degraded=True)
         items = [Retrieved(chunk_id=cand[idx].chunk_id, score=score) for idx, score in ranked]
         if not items:
             return RetrievalResult([], True, "知识库无相关内容", fallback, rewritten, search_text)
         confidence = evidence_confidence(items, self._evidence_calibration)
+
+        # v2:语义层优先。判断器说“证据真的回答了”就放行(即使分数低);
+        # 说“没回答”就拒答(即使分数高);判断器不可用时回退分数闸。
+        verdict = None
+        if self._evidence_judge is not None:
+            documents = [texts.get(item.chunk_id, "")
+                         for item in items[: self._evidence_top_n]]
+            documents = [doc for doc in documents if doc]
+            if documents:
+                try:
+                    verdict = self._evidence_judge.judge(query, documents)
+                except Exception as exc:
+                    logger.warning("证据蕴含校验失败,回退分数闸:%s", exc)
+        if verdict is not None:
+            if not verdict.answered:
+                reason = f"证据未直接回答问题:{verdict.reason or '判断器未给出理由'}"
+                return RetrievalResult(items, True, reason, fallback, rewritten, search_text,
+                                       evidence_confidence=confidence,
+                                       evidence_entailment=False)
+            return RetrievalResult(items, False, "", fallback, rewritten, search_text,
+                                   evidence_confidence=confidence,
+                                   evidence_entailment=True)
+
         if not confidence.passed:
             # 低置信不进 Agent,但保留候选快照给问题池和人工审核。
             reason = (f"证据置信度低(top1={confidence.top1_relevance:.2f}, "

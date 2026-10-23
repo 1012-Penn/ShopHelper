@@ -157,12 +157,19 @@ def build_default_registry(session_factory, embedder=None, vectors=None, top_k=N
             rewriter = rewriter or make_rewriter(settings)
         reranker = reranker if reranker is not None else make_reranker(settings)
 
+    evidence_judge = None
+    if production and settings.evidence_entailment_enabled:
+        from app.evidence import make_evidence_judge
+        evidence_judge = make_evidence_judge(settings)
+
     kb = KnowledgeBaseStore(session_factory)
     service = RetrievalService(
         embedder, vectors, kb, rewriter=rewriter, reranker=reranker,
         candidates=settings.hybrid_candidates if production else 50,
         final_top_k=top_k,
         rerank_score_floor=settings.rerank_score_floor if production else 0.30,
+        evidence_judge=evidence_judge,
+        evidence_top_n=settings.evidence_entailment_top_n if production else 3,
     )
     registry = ToolRegistryV2()
     register_builtin(registry, ToolContext(

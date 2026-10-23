@@ -122,6 +122,18 @@ class KnowledgeVectorStore:
             return
         self._get_client().delete(self._collection, ids=ids)
 
+    def all_ids(self) -> list[int]:
+        """返回集合内全部主键;评估前用它与 MySQL 做一致性守卫。
+
+        Lite 场景下 chunk 数很小;上限 16384 足够。更大规模应改用 query iterator。
+        """
+        client = self._loaded_client()
+        if client is None:
+            return []
+        rows = client.query(self._collection, filter="id >= 0",
+                            output_fields=["id"], limit=16384)
+        return [int(r["id"]) for r in rows]
+
     def count(self) -> int:
         if not self._exists():
             return 0
