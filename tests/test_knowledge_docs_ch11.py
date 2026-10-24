@@ -158,30 +158,70 @@ def test_new_docs_have_required_sections():
     for sku in ("SH-E300", "SH-E120", "SH-K870", "SH-K104", "SH-B5", "SH-W20"):
         assert sku in skus
 
-    # 现有 SKU 的价格必须与商品FAQ一致。
-    prices = {
-        "SH-E300": "299 元",
-        "SH-E120": "99 元",
-        "SH-K870": "199 元",
-        "SH-K104": "219 元",
-        "SH-B5": "129 元",
-        "SH-W20": "399 元",
-    }
+    # 从 FAQ 抽取 SKU→价格精确映射,再与目录价格表逐项比对。
     faq = _text("商品FAQ.md")
-    for sku, price in prices.items():
-        assert price in faq, f"商品FAQ 中 {sku} 价格不是 {price}"
-        candidates = [line for line in catalog.splitlines() if sku in line and price in line]
-        assert candidates, f"商品目录中 {sku} 缺少价格 {price}"
+    faq_prices = dict(re.findall(r"(SH-[A-Z]\d+)[^\n]*?售价 (\d+) 元", faq))
+    assert faq_prices == {
+        "SH-E300": "299",
+        "SH-E120": "99",
+        "SH-K870": "199",
+        "SH-K104": "219",
+        "SH-B5": "129",
+        "SH-W20": "399",
+    }, faq_prices
+
+    catalog_prices = {}
+    for line in catalog.splitlines():
+        match = re.match(r"\|\s*(SH-[A-Z]\d+)\s*\|[^|]*\|\s*(\d+)\s*元\s*\|", line)
+        if match:
+            catalog_prices[match.group(1)] = match.group(2)
+    assert len(catalog_prices) == len(skus), (len(catalog_prices), len(skus))
+    for sku, price in faq_prices.items():
+        assert catalog_prices.get(sku) == price, (
+            f"商品目录中 {sku} 价格 {catalog_prices.get(sku)!r} 与 FAQ 的 {price!r} 不一致"
+        )
+    assert "配件类 SH-C60 与 SH-T50" in catalog and "质保半年" in catalog
+    assert "| SH-K104 | SH-K870 | 键位更少,轴体不同 |" in catalog
 
     orders = _text("订单与支付.md")
-    order_ids = set(re.findall(r"\bORD-\d{4}\b", orders))
-    assert 10 <= len(order_ids) <= 12, sorted(order_ids)
-    for status in ("未支付", "已支付未发货", "已发货", "已签收", "已取消", "退货中", "已退款"):
-        assert status in orders, f"订单文档缺少状态:{status}"
+    status_by_order = {}
+    for line in orders.splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if cells and re.fullmatch(r"ORD-\d{4}", cells[0]):
+            status_by_order[cells[0]] = cells[-1]
+    expected_orders = {
+        "ORD-1001": "未支付",
+        "ORD-1002": "已支付未发货",
+        "ORD-1003": "已发货",
+        "ORD-1004": "已签收",
+        "ORD-1005": "已取消",
+        "ORD-1006": "退货中",
+        "ORD-1007": "已退款",
+        "ORD-1008": "已签收",
+        "ORD-1009": "已发货",
+        "ORD-1010": "已支付未发货",
+        "ORD-1011": "已退款",
+    }
+    assert status_by_order == expected_orders
+    assert set(status_by_order.values()) == {
+        "未支付",
+        "已支付未发货",
+        "已发货",
+        "已签收",
+        "已取消",
+        "退货中",
+        "已退款",
+    }
+    assert "超过 30 分钟未支付将自动取消" in orders
+    assert "个人客户支持微信支付、支付宝、银联卡" in orders
+    assert "对公转账仅面向企业客户" in orders
 
     versions = _text("政策版本说明.md")
     assert "2026-06-01" in versions
     assert "2026-05-31" in versions
+    assert "自 2024-01-01 起至 2026-05-31" in versions
     assert "7 天" in versions and "15 天" in versions
     assert "supersedes" in versions
 
@@ -233,14 +273,22 @@ def test_new_docs_do_not_contain_hard_negative_absent_terms():
         for term in ABSENT_TERMS:
             assert _norm(term) not in text, f"{doc} 出现硬负例缺失词:{term}"
 
-    # SH-E300 全篇不写充电方式;售后核验指引不写任何金额。
-    e300 = [chunk for chunk in _chunks("商品目录.md") if "SH-E300" in chunk.questions]
-    assert e300
-    for chunk in e300:
-        assert "充电" not in chunk.answer, "SH-E300 条目不得写充电方式"
+    # 商品目录全篇不得出现充电相关信息(尤其 SH-E300 的充电方式)。
+    charging_terms = ("充电", "充电器", "充电接口", "无线充电")
+    for chunk in _chunks("商品目录.md"):
+        for term in charging_terms:
+            assert term not in chunk.answer, (
+                f"商品目录不得写充电信息({term}):{chunk.section_path}"
+            )
 
+    # 售后核验指引不得出现任何金额或计价字样。
     verification = _text("售后核验指引.md")
-    assert not re.search(r"\d+\s*元", verification), "售后核验指引不得写收费金额"
+    assert not re.search(r"收费|价格|金额|元|块|角", verification), (
+        "售后核验指引不得写收费金额"
+    )
+    assert not re.search(r"[一二三四五六七八九十百千万零两]+\s*(?:元|块|角)", verification), (
+        "售后核验指引不得用中文数字写金额"
+    )
 
 
 def test_knowledge_contains_no_eval_markers():
