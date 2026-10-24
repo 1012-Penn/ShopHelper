@@ -1,0 +1,28 @@
+# 售后事实(种子,Task 4 扩充)。
+facts:
+  - fact_id: AFTERSALES-WARRANTY-YEARS
+    entity_type: after_sales
+    entity_id: warranty
+    key: duration_years
+    value: 1
+    unit: 年
+    conditions: [整机, 非人为损坏]
+    source_ref: SRC-MANUAL
+    evidence_ids: [EV-AFTERSALES-WARRANTY-YEARS]
+  - fact_id: AFTERSALES-REPAIR-WORKDAYS
+    entity_type: after_sales
+    entity_id: repair
+    key: duration_workdays
+    value: "7-15"
+    unit: 工作日
+    source_ref: SRC-MANUAL
+    evidence_ids: [EV-AFTERSALES-REPAIR-WORKDAYS]
+  - fact_id: AFTERSALES-RETURN-REVIEW-HOURS
+    entity_type: after_sales
+    entity_id: returns
+    key: review_hours
+    value: 24
+    unit: 小时
+    source_ref: SRC-MANUAL
+    evidence_ids: [EV-AFTERSALES-RETURN-REVIEW-HOURS]
+    notes: 同一证据单元还要求验货在 48 小时内完成,两句必须同块引用。

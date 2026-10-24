@@ -1,0 +1,25 @@
+# 退货政策事实(种子,Task 4 扩充)。
+facts:
+  - fact_id: POLICY-RETURN-WINDOW
+    entity_type: policy
+    entity_id: returns
+    key: return_window_days
+    value: 7
+    unit: 天
+    source_ref: SRC-POLICY-RETURNS
+    evidence_ids: [EV-POLICY-RETURN-WINDOW]
+  - fact_id: POLICY-REFUND-WORKDAYS
+    entity_type: policy
+    entity_id: returns
+    key: refund_arrival_workdays
+    value: "1-3"
+    unit: 工作日
+    source_ref: SRC-POLICY-RETURNS
+    evidence_ids: [EV-POLICY-REFUND-WORKDAYS]
+  - fact_id: POLICY-NON-RETURNABLE-CATEGORIES
+    entity_type: policy
+    entity_id: returns
+    key: non_returnable_categories
+    value: [定制类商品, 贴身衣物, 已激活的虚拟商品]
+    source_ref: SRC-POLICY-RETURNS
+    evidence_ids: [EV-POLICY-NON-RETURNABLE-CATEGORIES]

@@ -1,0 +1,27 @@
+# 促销与优惠事实(种子,Task 4 扩充)。
+facts:
+  - fact_id: PROMO-FREE-SHIPPING-THRESHOLD
+    entity_type: promotion
+    entity_id: free_shipping
+    key: order_threshold
+    value: 99
+    unit: 元
+    source_ref: SRC-POLICY-RETURNS
+    evidence_ids: [EV-PROMO-FREE-SHIPPING-THRESHOLD]
+  - fact_id: PROMO-MEMBER-DISCOUNT
+    entity_type: promotion
+    entity_id: membership
+    key: discount
+    value: 95折
+    conditions: [会员]
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-PROMO-MEMBER-DISCOUNT]
+  - fact_id: PROMO-EXPEDITE-FEE
+    entity_type: promotion
+    entity_id: expedited_shipping
+    key: fee
+    value: 10
+    unit: 元
+    conditions: [部分地区]
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-PROMO-EXPEDITE-FEE]

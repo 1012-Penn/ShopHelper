@@ -1,0 +1,33 @@
+# 订单事实(种子)。
+# 局限:现有语料没有真实订单记录,这里用对全部订单生效的物流/取消政策事实代理,
+# entity_id 统一为 order_default;Task 4 补入真实订单语料后应改为具体订单号。
+facts:
+  - fact_id: ORDERS-SHIP-WITHIN-HOURS
+    entity_type: order
+    entity_id: order_default
+    key: ship_within_hours
+    value: 48
+    unit: 小时
+    conditions: [现货商品]
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-ORDERS-SHIP-WITHIN-HOURS]
+    notes: 现有语料无真实订单数据,以订单级物流政策代理,Task 4 需复核。
+  - fact_id: ORDERS-CANCEL-BEFORE-SHIP
+    entity_type: order
+    entity_id: order_default
+    key: cancel_allowed_before_shipment
+    value: true
+    conditions: [未发货]
+    source_ref: SRC-POLICY-RETURNS
+    evidence_ids: [EV-ORDERS-CANCEL-BEFORE-SHIP]
+    notes: 现有语料无真实订单数据,以订单级取消政策代理,Task 4 需复核。
+  - fact_id: ORDERS-DELIVERY-DAYS-STANDARD
+    entity_type: order
+    entity_id: order_default
+    key: delivery_days_standard
+    value: "3-5"
+    unit: 天
+    conditions: [普通快递]
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-ORDERS-DELIVERY-DAYS-STANDARD]
+    notes: 现有语料无真实订单数据,以订单级配送时效代理,Task 4 需复核。

@@ -1,0 +1,130 @@
+# ch11 事实来源与证据单元。
+# 每个 EvidenceUnit 的 quotes 必须逐字出现在所引文档中,且全部落在同一个切分块内。
+sources:
+  - source_id: SRC-POLICY-RETURNS
+    type: internal_rule
+    title: 退货政策
+    uri: knowledge/退货政策.md
+    retrieved_at: 2026-10-24
+    license: 内部演示资料(ShopHelper 自建语料)
+    used_for: fact
+    author: ShopHelper 项目组
+    reviewer: 待业务复核
+    confidence: high
+  - source_id: SRC-FAQ
+    type: internal_rule
+    title: 商品FAQ
+    uri: knowledge/商品FAQ.md
+    retrieved_at: 2026-10-24
+    license: 内部演示资料(ShopHelper 自建语料)
+    used_for: fact
+    author: ShopHelper 项目组
+    reviewer: 待业务复核
+    confidence: high
+  - source_id: SRC-MANUAL
+    type: internal_rule
+    title: 售后手册
+    uri: knowledge/售后手册.md
+    retrieved_at: 2026-10-24
+    license: 内部演示资料(ShopHelper 自建语料)
+    used_for: fact
+    author: ShopHelper 项目组
+    reviewer: 待业务复核
+    confidence: high
+
+evidence_units:
+  - evidence_id: EV-CATALOG-SH-E300-PRICE
+    fact_ids: [CATALOG-SH-E300-PRICE]
+    doc: 商品FAQ.md
+    section: SH-E300 无线降噪耳机怎么样?
+    quotes:
+      - "SH-E300 头戴式无线降噪耳机,售价 299 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。"
+  - evidence_id: EV-CATALOG-SH-E120-PRICE
+    fact_ids: [CATALOG-SH-E120-PRICE]
+    doc: 商品FAQ.md
+    section: SH-E120 半入耳耳机怎么样?
+    quotes:
+      - "SH-E120 半入耳无线耳机,售价 99 元,蓝牙 5.0,续航 24 小时,不支持主动降噪,整机一年质保。"
+  - evidence_id: EV-CATALOG-SH-K870-PRICE
+    fact_ids: [CATALOG-SH-K870-PRICE]
+    doc: 商品FAQ.md
+    section: SH-K870 机械键盘是什么配置?
+    quotes:
+      - "SH-K870 87 键机械键盘,青轴,白光背光,售价 199 元,支持全键无冲,一年质保。"
+
+  - evidence_id: EV-ORDERS-SHIP-WITHIN-HOURS
+    fact_ids: [ORDERS-SHIP-WITHIN-HOURS]
+    doc: 商品FAQ.md
+    section: 多久能发货?
+    quotes:
+      - "现货商品 48 小时内发出,预售商品按页面标注时间发货。"
+  - evidence_id: EV-ORDERS-CANCEL-BEFORE-SHIP
+    fact_ids: [ORDERS-CANCEL-BEFORE-SHIP]
+    doc: 退货政策.md
+    section: 订单取消
+    quotes:
+      - "未发货可取消,原路退回;已发货不能直接取消,可拒收或签收后走退货。到账时间见上文。"
+  - evidence_id: EV-ORDERS-DELIVERY-DAYS-STANDARD
+    fact_ids: [ORDERS-DELIVERY-DAYS-STANDARD]
+    doc: 商品FAQ.md
+    section: 物流一般几天到?
+    quotes:
+      - "普通快递 3-5 天送达,偏远地区 5-7 天。"
+
+  - evidence_id: EV-POLICY-RETURN-WINDOW
+    fact_ids: [POLICY-RETURN-WINDOW]
+    doc: 退货政策.md
+    section: 七天无理由退货
+    quotes:
+      - "商品自签收之日起 7 天内,支持七天无理由退货。"
+  - evidence_id: EV-POLICY-REFUND-WORKDAYS
+    fact_ids: [POLICY-REFUND-WORKDAYS]
+    doc: 退货政策.md
+    section: 退款时效
+    quotes:
+      - "退货商品验收通过后,退款原路返回,1-3 个工作日到账。"
+  - evidence_id: EV-POLICY-NON-RETURNABLE-CATEGORIES
+    fact_ids: [POLICY-NON-RETURNABLE-CATEGORIES]
+    doc: 退货政策.md
+    section: 不予退货情形
+    quotes:
+      - "定制类商品、贴身衣物、已激活的虚拟商品不予退货。"
+
+  - evidence_id: EV-PROMO-FREE-SHIPPING-THRESHOLD
+    fact_ids: [PROMO-FREE-SHIPPING-THRESHOLD]
+    doc: 退货政策.md
+    section: 邮费与运费
+    quotes:
+      - "普通订单邮费 8 元,单笔满 99 元包邮。"
+  - evidence_id: EV-PROMO-MEMBER-DISCOUNT
+    fact_ids: [PROMO-MEMBER-DISCOUNT]
+    doc: 商品FAQ.md
+    section: 会员有什么权益?
+    quotes:
+      - "会员享 95 折、生日礼包、优先客服通道。"
+  - evidence_id: EV-PROMO-EXPEDITE-FEE
+    fact_ids: [PROMO-EXPEDITE-FEE]
+    doc: 商品FAQ.md
+    section: 支持加急发货吗?
+    quotes:
+      - "部分地区支持加急,加急费 10 元,优先安排发货,不承诺次日达。"
+
+  - evidence_id: EV-AFTERSALES-WARRANTY-YEARS
+    fact_ids: [AFTERSALES-WARRANTY-YEARS]
+    doc: 售后手册.md
+    section: 保修范围与期限
+    quotes:
+      - "整机保修 1 年,自签收之日起算;非人为损坏免费维修,人为损坏或过保按检测结果收费;申请时需提供订单号。"
+  - evidence_id: EV-AFTERSALES-REPAIR-WORKDAYS
+    fact_ids: [AFTERSALES-REPAIR-WORKDAYS]
+    doc: 售后手册.md
+    section: 维修时长与费用
+    quotes:
+      - "维修一般 7-15 个工作日;无法修复时换新,同型号无货则退款;过保维修先报价,用户确认后再修。"
+  - evidence_id: EV-AFTERSALES-RETURN-REVIEW-HOURS
+    fact_ids: [AFTERSALES-RETURN-REVIEW-HOURS]
+    doc: 售后手册.md
+    section: 退货处理细则
+    quotes:
+      - "退货申请提交后,客服会在 24 小时内完成审核。"
+      - "仓库收到商品后,会在 48 小时内完成验货。"

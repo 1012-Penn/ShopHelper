@@ -1,0 +1,27 @@
+# 商品目录事实(种子,Task 4 扩充到全量)。
+facts:
+  - fact_id: CATALOG-SH-E300-PRICE
+    entity_type: sku
+    entity_id: SH-E300
+    key: price
+    value: 299
+    unit: 元
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-CATALOG-SH-E300-PRICE]
+    notes: 售价口径为官方页面标价,不含活动优惠。
+  - fact_id: CATALOG-SH-E120-PRICE
+    entity_type: sku
+    entity_id: SH-E120
+    key: price
+    value: 99
+    unit: 元
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-CATALOG-SH-E120-PRICE]
+  - fact_id: CATALOG-SH-K870-PRICE
+    entity_type: sku
+    entity_id: SH-K870
+    key: price
+    value: 199
+    unit: 元
+    source_ref: SRC-FAQ
+    evidence_ids: [EV-CATALOG-SH-K870-PRICE]
