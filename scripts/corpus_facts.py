@@ -63,6 +63,7 @@ class Fact(_StrictModel):
     supersedes: list[str] = Field(default_factory=list)
     source_ref: str
     evidence_ids: list[str] = Field(min_length=1)
+    conflict_group: str = ""
     notes: str = ""
 
 
@@ -207,18 +208,12 @@ def _value_key(value: FactValue) -> tuple:
 
 
 def _ranges_overlap(left: Fact, right: Fact) -> bool:
-    """任一侧缺少起止边界时视为无界,与任何区间都重叠。"""
-    if (
-        left.effective_from is None
-        or left.effective_to is None
-        or right.effective_from is None
-        or right.effective_to is None
-    ):
-        return True
-    return (
-        left.effective_from <= right.effective_to
-        and right.effective_from <= left.effective_to
-    )
+    """缺失的起止边界按 date.min/date.max 视为无界,再按闭区间判断重叠。"""
+    left_from = left.effective_from if left.effective_from is not None else date.min
+    left_to = left.effective_to if left.effective_to is not None else date.max
+    right_from = right.effective_from if right.effective_from is not None else date.min
+    right_to = right.effective_to if right.effective_to is not None else date.max
+    return left_from <= right_to and right_from <= left_to
 
 
 def _supersedes_cycles(facts: dict[str, Fact]) -> list[str]:
@@ -249,7 +244,11 @@ def _supersedes_cycles(facts: dict[str, Fact]) -> list[str]:
 def validate_factbook(
     book: FactBook, docs_dir: Path = DOCS_DIR, *, manifest: CorpusManifest | None = None
 ) -> list[str]:
-    """返回人类可读的问题列表;空列表表示通过。校验问题不抛异常。"""
+    """返回人类可读的问题列表;空列表表示通过。
+
+    事实/证据类校验问题一律以字符串返回,不抛校验异常;若 manifest 自身缺失或非法,
+    ``load_manifest()`` 仍会抛 ``CorpusManifestError``(那是语料注册表损坏,不是事实问题)。
+    """
     docs_dir = Path(docs_dir)
     manifest = manifest or load_manifest()
     types = doc_types(manifest)
@@ -263,6 +262,11 @@ def validate_factbook(
         for evidence_id in fact.evidence_ids:
             if evidence_id not in book.evidence:
                 issues.append(f"fact {fact_id} 引用了不存在的 evidence: {evidence_id}")
+            elif fact_id not in book.evidence[evidence_id].fact_ids:
+                issues.append(
+                    f"fact {fact_id} 与 evidence {evidence_id} 引用不互惠:"
+                    f" {evidence_id}.fact_ids 未包含该 fact"
+                )
         if (
             fact.effective_from is not None
             and fact.effective_to is not None
@@ -285,6 +289,11 @@ def validate_factbook(
         for fact_id in unit.fact_ids:
             if fact_id not in book.facts:
                 issues.append(f"evidence {evidence_id} 的 fact_id 不存在: {fact_id}")
+            elif evidence_id not in book.facts[fact_id].evidence_ids:
+                issues.append(
+                    f"evidence {evidence_id} 与 fact {fact_id} 引用不互惠:"
+                    f" fact.evidence_ids 未回引该 evidence"
+                )
 
         if unit.doc not in registered:
             issues.append(f"evidence {evidence_id} 的 doc 未在 manifest 登记: {unit.doc}")
@@ -347,10 +356,13 @@ def validate_factbook(
             for right in items[left_index + 1 :]:
                 if _value_key(left.value) == _value_key(right.value):
                     continue
-                if _ranges_overlap(left, right):
-                    issues.append(
-                        f"{entity_type}/{entity_id}/{key} 的值冲突且生效区间重叠:"
-                        f" {left.fact_id} vs {right.fact_id}"
-                    )
+                if not _ranges_overlap(left, right):
+                    continue
+                if left.conflict_group and left.conflict_group == right.conflict_group:
+                    continue
+                issues.append(
+                    f"{entity_type}/{entity_id}/{key} 的值冲突且生效区间重叠:"
+                    f" {left.fact_id} vs {right.fact_id}"
+                )
 
     return issues

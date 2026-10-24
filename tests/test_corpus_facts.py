@@ -321,6 +321,76 @@ def test_overlapping_conflicting_values_rejected():
     assert any("重叠" in issue for issue in issues)
 
 
+def test_disjoint_one_sided_ranges_do_not_conflict():
+    fact_old = _fact("POLICY-RETURN-WINDOW", value=7, effective_to="2024-12-31")
+    fact_new = _fact(
+        "POLICY-RETURN-WINDOW-NEW", value=30, effective_from="2025-01-01"
+    )
+    evidence = (
+        _evidence("EV-POLICY-RETURN-WINDOW", [fact_old.fact_id]),
+        _evidence("EV-POLICY-RETURN-WINDOW-NEW", [fact_new.fact_id]),
+    )
+
+    assert validate_factbook(_book((fact_old, fact_new), evidence)) == []
+
+
+def test_same_conflict_group_allows_overlap():
+    fact_old = _fact(
+        "POLICY-RETURN-WINDOW", value=7, conflict_group="CG-RETURN-WINDOW"
+    )
+    fact_new = _fact(
+        "POLICY-RETURN-WINDOW-NEW", value=30, conflict_group="CG-RETURN-WINDOW"
+    )
+    evidence = (
+        _evidence("EV-POLICY-RETURN-WINDOW", [fact_old.fact_id]),
+        _evidence("EV-POLICY-RETURN-WINDOW-NEW", [fact_new.fact_id]),
+    )
+
+    assert validate_factbook(_book((fact_old, fact_new), evidence)) == []
+
+
+@pytest.mark.parametrize(
+    ("left_group", "right_group"),
+    [("CG-A", "CG-B"), ("", "CG-A"), ("", "")],
+)
+def test_different_or_empty_conflict_group_rejected(left_group, right_group):
+    fact_old = _fact("POLICY-RETURN-WINDOW", value=7, conflict_group=left_group)
+    fact_new = _fact(
+        "POLICY-RETURN-WINDOW-NEW", value=30, conflict_group=right_group
+    )
+    evidence = (
+        _evidence("EV-POLICY-RETURN-WINDOW", [fact_old.fact_id]),
+        _evidence("EV-POLICY-RETURN-WINDOW-NEW", [fact_new.fact_id]),
+    )
+
+    issues = validate_factbook(_book((fact_old, fact_new), evidence))
+
+    assert any("重叠" in issue for issue in issues)
+
+
+def test_fact_declared_evidence_must_reciprocate():
+    fact = _fact("POLICY-RETURN-WINDOW")
+    other = _fact("POLICY-OTHER", key="other").model_copy(
+        update={"evidence_ids": ["EV-POLICY-RETURN-WINDOW"]}
+    )
+    # EV-POLICY-RETURN-WINDOW 只声明了 other,而 fact 却引用了它
+    unit = _evidence("EV-POLICY-RETURN-WINDOW", [other.fact_id])
+
+    issues = validate_factbook(_book((fact, other), (unit,)))
+
+    assert any("互惠" in issue and "POLICY-RETURN-WINDOW" in issue for issue in issues)
+
+
+def test_evidence_declared_fact_must_reciprocate():
+    fact = _fact("POLICY-OTHER", key="other")
+    own_evidence = _evidence("EV-POLICY-OTHER", [fact.fact_id])
+    extra_evidence = _evidence("EV-EXTRA", [fact.fact_id])
+
+    issues = validate_factbook(_book((fact,), (own_evidence, extra_evidence)))
+
+    assert any("互惠" in issue and "EV-EXTRA" in issue for issue in issues)
+
+
 def test_identical_values_may_overlap():
     fact_a = _fact("POLICY-RETURN-WINDOW", value=7)
     fact_b = _fact("POLICY-RETURN-WINDOW-NEW", value=7)

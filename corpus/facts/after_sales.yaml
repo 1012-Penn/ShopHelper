@@ -6,9 +6,10 @@ facts:
     key: duration_years
     value: 1
     unit: 年
-    conditions: [整机, 非人为损坏]
+    conditions: [整机]
     source_ref: SRC-MANUAL
     evidence_ids: [EV-AFTERSALES-WARRANTY-YEARS]
+    notes: 保修期自签收之日起算;「非人为损坏免费维修」是费用条件,不属于保修期限条件。
   - fact_id: AFTERSALES-REPAIR-WORKDAYS
     entity_type: after_sales
     entity_id: repair
