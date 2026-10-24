@@ -1,10 +1,10 @@
 # ch11 语料 manifest:knowledge/*.md 的注册表与规模契约。
 # content_type 直接传给 app.chunking.chunk_markdown;未登记文档会让 build_kb 报错。
-# Task 3 扩充 5 份文档后,expected_docs 改 8、expected_chunks_* 改 120–180。
+# 当前登记 8 份文档,默认切分规模为 120–180 chunk(dry-run 校验)。
 corpus_version: corpus-v1
-expected_docs: 3
-expected_chunks_min: 50
-expected_chunks_max: 80
+expected_docs: 8
+expected_chunks_min: 120
+expected_chunks_max: 180
 expected_facts_min: null
 expected_facts_max: null
 docs:
@@ -15,5 +15,20 @@ docs:
     content_type: faq
     role: faq
   - file: 售后手册.md
+    content_type: manual
+    role: manual
+  - file: 商品目录.md
+    content_type: manual
+    role: catalog
+  - file: 订单与支付.md
+    content_type: manual
+    role: orders
+  - file: 会员与优惠.md
+    content_type: policy
+    role: promotion
+  - file: 政策版本说明.md
+    content_type: policy
+    role: policy
+  - file: 售后核验指引.md
     content_type: manual
     role: manual
