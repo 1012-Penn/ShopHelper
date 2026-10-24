@@ -135,8 +135,13 @@ def run_retrieval_case(
         "l1": {
             "n": 1 if gold else 0,
             "coverage_rank": coverage_rank(ranked, gold, cap=cap) if gold else None,
+            "r3": coverage_rank(ranked, gold, cap=3) if gold else None,
+            "r5": coverage_rank(ranked, gold, cap=5) if gold else None,
+            "r10": coverage_rank(ranked, gold, cap=10) if gold else None,
             "group_recall": evidence_group_recall(ranked, gold, cap=cap) if gold else None,
             "single_chunk_rank": single_chunk_rank(ranked, case, all_rows, cap=cap) if gold else None,
+            "single1": single_chunk_rank(ranked, case, all_rows, cap=1) if gold else None,
+            "single3": single_chunk_rank(ranked, case, all_rows, cap=3) if gold else None,
             "mrr": mrr_at(ranked, gold, k=cap) if gold else None,
             "evidence_precision": evidence_precision(ranked, support, cap=cap) if gold else None,
             "hard_negative_hit_rate": (
@@ -265,6 +270,7 @@ def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
     trace["expected_behavior"] = case.get("expected_behavior", "")
     trace["as_of_date"] = case.get("as_of_date")
     trace["requires_tools"] = list(case.get("requires_tools") or [])
+    trace["forbidden_claims"] = list(case.get("forbidden_claims") or [])
     trace["failure_labels"]: list[str] = []
     if config.mode in {"full"}:
         trace = run_answer_case(case, trace, ctx, config)

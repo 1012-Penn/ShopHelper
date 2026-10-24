@@ -31,6 +31,7 @@ from scripts.eval_dataset import (
 )
 from scripts.eval_metrics import resolve_gold_chunks
 from scripts.eval_prompts import EVAL_ANSWER_PROMPT, EVAL_JUDGE_PROMPT, prompt_sha256
+from scripts.eval_report import aggregate_traces, write_report
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "reports" / "ch11"
@@ -434,11 +435,8 @@ def main(argv: list[str] | None = None) -> int:
         split_out.mkdir(parents=True, exist_ok=True)
         dump_traces(traces, split_out / "traces.jsonl")
         write_contract(split_out / "contract.json", contract)
-        summary = _summarize(traces)
-        (split_out / "summary.json").write_text(
-            json.dumps(summary, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
-        )
-        _write_report(split_out, summary, contract, split)
+        summary = aggregate_traces(traces)
+        write_report(split_out, summary, contract, traces)
         all_traces.extend(traces)
     print(f"split={','.join(splits)} mode={args.mode} traces={len(all_traces)}")
     return 0
