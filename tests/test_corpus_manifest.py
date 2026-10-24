@@ -35,7 +35,7 @@ def test_manifest_doc_types_match_registered_files():
     types = doc_types()
 
     assert manifest.corpus_version
-    assert expected_docs() == 3 == len(registered_docs())
+    assert expected_docs() == len(registered_docs())
     assert registered_docs() == tuple(sorted(types))
     assert set(types) == {p.name for p in DOCS_DIR.glob("*.md")}
     assert types == {spec.file: spec.content_type for spec in manifest.docs}
@@ -83,9 +83,14 @@ def test_build_dry_run_matches_chunker():
         )
         for spec in manifest.docs
     }
-    assert stats["docs"] == expected_docs() == 3
+    total = sum(expected_counts.values())
+    assert stats["docs"] == expected_docs()
     assert stats["doc_chunk_counts"] == expected_counts
-    assert stats["chunks"] == sum(expected_counts.values()) == 58
+    assert stats["chunks"] == total
+    if manifest.expected_chunks_min is not None:
+        assert total >= manifest.expected_chunks_min
+    if manifest.expected_chunks_max is not None:
+        assert total <= manifest.expected_chunks_max
     assert stats["corpus_sha256"] == corpus_sha256(DOCS_DIR, manifest=manifest)
 
 

@@ -164,8 +164,9 @@ def main() -> None:
         help="只切分并校验 manifest 规模,不连 MySQL/Milvus、不构造 Settings",
     )
     parser.add_argument(
-        "--manifest-out", type=Path, nargs="?", const=DEFAULT_BUILD_MANIFEST, default=None,
-        metavar="PATH", help="真实构建后写构建清单;省略路径时写 data/build_manifest.json",
+        "--manifest-out", type=Path, nargs="?", const=DEFAULT_BUILD_MANIFEST,
+        default=DEFAULT_BUILD_MANIFEST, metavar="PATH",
+        help="真实构建后写构建清单(默认 data/build_manifest.json);dry-run 不写",
     )
     args = parser.parse_args()
 
@@ -175,6 +176,7 @@ def main() -> None:
         counts = ",".join(f"{name}={count}" for name, count in stats["doc_chunk_counts"].items())
         print(f"dry-run 通过:文档 {stats['docs']} 份,chunk {stats['chunks']} 条({counts})")
         print(f"corpus_sha256: {stats['corpus_sha256']}")
+        print(f"dry-run 不写 manifest(--manifest-out={args.manifest_out} 只对真实构建生效)")
         return
 
     # 真实构建才导入并构造 Settings/DB/嵌入客户端,dry-run 不碰这些依赖。
