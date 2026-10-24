@@ -12,6 +12,7 @@ from typing import Any
 
 from scripts.corpus_facts import FactBook, load_factbook
 from scripts.eval_dataset import validate_cases
+from scripts.frozen_case_specs import FROZEN_CASES
 
 ROOT = Path(__file__).resolve().parent.parent
 SPLITS_DIR = ROOT / "tests" / "eval" / "splits"
@@ -365,23 +366,26 @@ def _build_case(spec: dict[str, Any], book: FactBook, split: str) -> dict[str, A
         "forbidden_claims": list(spec.get("forbidden") or []),
         "expected_refusal_reason": str(spec.get("refusal_reason") or ""),
         "as_of_date": spec.get("as_of"),
-        "requires_tools": [],
-        "tool_fixtures": [],
+        "requires_tools": [tool["tool"] for tool in spec.get("tools") or []],
+        "tool_fixtures": list(spec.get("tools") or []),
         "source": "synthetic",
         "source_ref": ",".join(evidence_ids) or "corpus/facts",
         "annotator": "claude-code",
         "reviewer": "codex",
-        "review_status": "reviewed",
+        "review_status": "frozen" if split == "frozen-v1" else "reviewed",
         "notes": str(spec.get("note") or ""),
     }
     return case
 
 
+SPECS_BY_SPLIT = {"dev": DEV_CASES, "frozen-v1": FROZEN_CASES}
+
+
 def build_split(split: str, book: FactBook | None = None) -> list[dict[str, Any]]:
-    if split != "dev":
-        raise ValueError(f"本生成器当前只定义 dev;{split} 由后续任务补充")
+    if split not in SPECS_BY_SPLIT:
+        raise ValueError(f"未知 split: {split}")
     book = book or load_factbook()
-    return [_build_case(spec, book, split) for spec in DEV_CASES]
+    return [_build_case(spec, book, split) for spec in SPECS_BY_SPLIT[split]]
 
 
 def write_split(split: str, out: Path) -> int:

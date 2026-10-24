@@ -495,3 +495,74 @@ def test_dev_split_has_six_multi_turn_cases():
         "multi_constraint",
         "clarify",
     }
+
+
+FROZEN_BUCKETS = {
+    "single_hop": 18,
+    "multi_hop": 16,
+    "multi_constraint": 14,
+    "entity_mismatch": 10,
+    "policy_conflict": 8,
+    "hard_negative": 10,
+    "clarify": 8,
+    "ood": 6,
+}
+
+
+def _shingles(text: str, n: int = 12) -> set[str]:
+    return {text[i : i + n] for i in range(max(0, len(text) - n + 1))}
+
+
+def test_frozen_split_exact_counts_and_manifest_hash():
+    cases = load_split("frozen-v1")
+    assert len(cases) == 90
+    assert bucket_counts(cases) == FROZEN_BUCKETS
+    assert len({case["id"] for case in cases}) == 90
+    assert len({case["query"] for case in cases}) == 90
+    assert all(case["review_status"] == "frozen" for case in cases)
+    validate_cases(cases, split="frozen-v1", bucket_counts=FROZEN_BUCKETS)
+
+
+def test_frozen_split_evidence_and_gold_facts_are_real():
+    cases = load_split("frozen-v1")
+    validate_cases(
+        cases,
+        split="frozen-v1",
+        docs_dir=KNOWLEDGE_DIR,
+        factbook=load_factbook(),
+        bucket_counts=FROZEN_BUCKETS,
+    )
+
+
+def test_frozen_split_has_six_multi_turn_and_four_tool_cases():
+    cases = load_split("frozen-v1")
+    assert sum(1 for case in cases if case.get("conversation_context")) == 6
+    assert sum(1 for case in cases if case.get("requires_tools")) == 4
+
+
+def test_frozen_split_not_near_duplicate_of_dev():
+    dev_queries = [case["query"] for case in load_split("dev")]
+    for case in load_split("frozen-v1"):
+        frozen_grams = _shingles(case["query"])
+        if not frozen_grams:
+            continue
+        best = max(
+            (len(frozen_grams & _shingles(query)) / len(frozen_grams) for query in dev_queries),
+            default=0.0,
+        )
+        assert best < 0.8, f"{case['id']} 与 dev 题过近: {best:.2f}"
+
+
+def test_frozen_manifest_matches_file_and_counts():
+    manifest = json.loads(
+        (ROOT / "tests" / "eval" / "manifests" / "frozen-v1.json").read_text(encoding="utf-8")
+    )
+    cases = load_split("frozen-v1")
+    assert manifest["n"] == len(cases) == 90
+    assert manifest["file_sha256"] == dataset_sha256(ROOT / "tests" / "eval" / "splits" / "frozen-v1.jsonl")
+    assert manifest["canonical_sha256"] == split_sha256(cases)
+    assert manifest["buckets"] == FROZEN_BUCKETS
+    assert manifest["multi_turn"] == 6
+    assert manifest["tool_count"] == 4
+    assert manifest["reviewer"] == "codex"
+    assert all(case["review_status"] == "frozen" for case in cases)

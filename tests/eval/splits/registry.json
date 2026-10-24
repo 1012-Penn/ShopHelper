@@ -18,6 +18,23 @@
         "ood": 4
       }
     },
+    "frozen-v1": {
+      "kind": "file",
+      "n": 90,
+      "label_version": "v2",
+      "path": "tests/eval/splits/frozen-v1.jsonl",
+      "overlay": null,
+      "bucket_counts": {
+        "single_hop": 18,
+        "multi_hop": 16,
+        "multi_constraint": 14,
+        "entity_mismatch": 10,
+        "policy_conflict": 8,
+        "hard_negative": 10,
+        "clarify": 8,
+        "ood": 6
+      }
+    },
     "regression-v1": {
       "kind": "composed",
       "n": 60,
