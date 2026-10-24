@@ -80,13 +80,23 @@ def _rewrite_entry(rewriter, query: str) -> dict:
     return {"query": query, "normalized": normalized, "synonyms": synonyms, "error": error}
 
 
-def load_rewrites(cases: list[dict], cache_path: str | Path, eval_path: str | Path,
-                  model: str, rewriter, mode: str = "read") -> dict[str, QueryRewrite]:
-    """→ {case_id: QueryRewrite}。mode: read | write | refresh。"""
+def load_rewrites(cases: list[dict], cache_path: str | Path,
+                  eval_path: str | Path | None,
+                  model: str, rewriter, mode: str = "read", *,
+                  eval_sha256: str | None = None) -> dict[str, QueryRewrite]:
+    """→ {case_id: QueryRewrite}。mode: read | write | refresh。
+
+    `eval_sha256` 显式给出时优先于 `eval_path`;二者至少给一个。
+    """
     if mode not in {"read", "write", "refresh"}:
         raise ValueError(f"未知缓存模式:{mode}")
     cache_path = Path(cache_path)
-    eval_sha = eval_set_sha256(eval_path)
+    if eval_sha256 is None:
+        if eval_path is None:
+            raise ValueError("load_rewrites 需要 eval_path 或 eval_sha256")
+        eval_sha = eval_set_sha256(eval_path)
+    else:
+        eval_sha = eval_sha256
     case_by_id = {case["id"]: case for case in cases}
 
     if mode == "read":
@@ -135,3 +145,62 @@ def load_rewrites(cases: list[dict], cache_path: str | Path, eval_path: str | Pa
 def identity_rewrites(cases: list[dict]) -> dict[str, QueryRewrite]:
     return {case["id"]: QueryRewrite(normalized=case["query"], synonyms=[])
             for case in cases}
+
+
+def _load_cases(path: Path) -> list[dict]:
+    cases = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.strip():
+            cases.append(json.loads(line))
+    return cases
+
+
+def main(argv: list[str] | None = None) -> int:
+    import argparse
+    import os
+    import sys
+
+    parser = argparse.ArgumentParser(description="冻结 query 改写缓存")
+    parser.add_argument("--set", required=True, type=Path)
+    parser.add_argument("--cache", required=True, type=Path)
+    parser.add_argument("--mode", choices=("read", "write", "refresh"), default="read")
+    parser.add_argument("--model", default=os.environ.get("OPENAI_MODEL", "deepseek-chat"))
+    parser.add_argument("--allow-paid", action="store_true")
+    parser.add_argument("--max-cost-usd", type=float, default=1.0)
+    parser.add_argument("--ledger", type=Path, default=Path("data/ch11_budget.json"))
+    args = parser.parse_args(argv)
+
+    cases = _load_cases(args.set)
+    rewriter = None
+    if args.mode in {"write", "refresh"}:
+        if not args.allow_paid:
+            print("拒绝付费改写:加 --allow-paid", file=sys.stderr)
+            return 2
+        estimate = 0.0005 * len(cases)
+        if estimate > args.max_cost_usd:
+            print(
+                f"改写估算 ${estimate:.4f} 超过单次上限 ${args.max_cost_usd:.4f}",
+                file=sys.stderr,
+            )
+            return 3
+        from app.config import Settings
+        from app.rewrite import make_rewriter
+        from scripts.eval_cost import BudgetLedger
+
+        settings = Settings()
+        rewriter = make_rewriter(settings)
+        BudgetLedger(args.ledger).record(estimate, note=f"rewrite:{args.set}")
+    load_rewrites(
+        cases,
+        args.cache,
+        args.set,
+        args.model,
+        rewriter,
+        mode=args.mode,
+    )
+    print(f"rewrite cache {args.mode}: {args.cache} ({len(cases)} cases)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

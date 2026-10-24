@@ -1,0 +1,15 @@
+# ch11 评测价格表:付费调用前必须核对官方价格并把 verified 置 true。
+# 未核实前 harness 拒绝任何付费调用,--max-cost-usd 才有意义。
+version: "2026-10-24"
+currency: USD
+verified: false
+source_url: ""
+note: "占位价格,未核实;Task 15 跑付费基线前更新 source_url 与单位价格。"
+models:
+  deepseek-chat:
+    input_per_million: 0.0
+    output_per_million: 0.0
+  BAAI/bge-m3:
+    input_per_million: 0.0
+  BAAI/bge-reranker-v2-m3:
+    input_per_million: 0.0

@@ -116,3 +116,38 @@ def test_identity_rewrites():
     rewrites = identity_rewrites(CASES)
     assert rewrites["A01"].normalized == "邮费多少"
     assert rewrites["A01"].synonyms == []
+
+
+def test_explicit_eval_sha256_avoids_eval_path(tmp_path):
+    cache = tmp_path / "cache.json"
+    eval_path = _eval_file(tmp_path)
+    load_rewrites(CASES, cache, eval_path, "m", FakeRewriter(), mode="write")
+    reader = FakeRewriter()
+    from scripts.rewrite_cache import eval_set_sha256
+
+    rewrites = load_rewrites(
+        CASES, cache, None, "m", reader, mode="read", eval_sha256=eval_set_sha256(eval_path)
+    )
+    assert reader.calls == []
+    assert rewrites["A02"].normalized == "几天到 改写"
+
+
+def test_rewrite_cache_cli_read_without_paid(tmp_path):
+    from scripts.rewrite_cache import main
+
+    cache = tmp_path / "cache.json"
+    eval_path = _eval_file(tmp_path)
+    load_rewrites(CASES, cache, eval_path, "m", FakeRewriter(), mode="write")
+    code = main(["--set", str(eval_path), "--cache", str(cache), "--mode", "read", "--model", "m"])
+    assert code == 0
+
+
+def test_rewrite_cache_cli_write_requires_allow_paid(tmp_path):
+    from scripts.rewrite_cache import main
+
+    code = main([
+        "--set", str(_eval_file(tmp_path)),
+        "--cache", str(tmp_path / "cache.json"),
+        "--mode", "write",
+    ])
+    assert code == 2

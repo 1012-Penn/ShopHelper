@@ -1,9 +1,10 @@
 """对 ch04 正样本 + ch09 负样本逐题真检索,生成证据闸校准信号并可选校准。
 
 标签口径：
-- label=1：answerable=true；evidence_retrieved 表示全部 evidence 组是否进 Top-10；
+- label=1：有 required_evidence；evidence_retrieved 表示全部 evidence 组是否进 Top-10；
   检索未命中的正样本只进 retrieval_miss，不参与阈值拟合，也不再算成 junk。
-- label=0：answerable=false；含同域硬负例（H_hard_negative）和域外 junk。
+- label=0：无 required_evidence；含同域硬负例（H_hard_negative）和域外 junk；
+  clarify 题不参与正样本统计。
 
 用法：
   .venv/bin/python scripts/gen_evidence_signals.py
@@ -65,7 +66,8 @@ def signal_for(case: dict, result, effective_floor: float,
     top2 = scores[1] if len(scores) > 1 else 0.0
     margin = top1 - top2 if len(scores) > 1 else top1
     effective_count = sum(score >= effective_floor for score in scores)
-    label = 1 if case.get("answerable", True) else 0
+    # 检索正样本以“有 required_evidence”为准;clarify 不再被当成检索正样本。
+    label = 1 if case.get("required_evidence") else 0
     evidence_retrieved = False
     if label == 1:
         ranked = [item.chunk_id for item in result.items]
@@ -91,7 +93,10 @@ def _entailment_metrics(signals: list[dict]) -> dict:
     judged = [s for s in signals if s.get("entailed") is not None]
     positives = [s for s in judged if s["label"] == 1]
     hard = [s for s in judged if s["label"] == 0 and s["bucket"] == "H_hard_negative"]
-    ood = [s for s in judged if s["label"] == 0 and s["bucket"] != "H_hard_negative"]
+    ood = [
+        s for s in judged
+        if s["label"] == 0 and s["bucket"] not in {"H_hard_negative", "clarify"}
+    ]
     return {
         "enabled": bool(judged),
         "positive_total": len(positives),
@@ -132,9 +137,14 @@ def _prepare(cases: list[dict], settings: Settings,
              rewriter, args) -> dict[str, PreparedQuery]:
     if args.no_rewrite or rewriter is None:
         return {c["id"]: PreparedQuery(c["query"], c["query"]) for c in cases}
-    positives = [c for c in cases if c.get("answerable", True)]
+    positives = [c for c in cases if c.get("required_evidence")]
+    positive_sets = [
+        path for path in args.eval_sets
+        if any(case.get("required_evidence") for case in load_cases((path,)))
+    ]
+    rewrite_set = ROOT / (positive_sets[0] if positive_sets else args.eval_sets[0])
     rewrites = load_rewrites(positives, args.rewrite_cache,
-                             ROOT / DEFAULT_SETS[0], settings.openai_model,
+                             rewrite_set, settings.openai_model,
                              rewriter, mode=args.rewrite_cache_mode)
     prepared: dict[str, PreparedQuery] = {}
     for case in cases:
@@ -185,7 +195,7 @@ def main() -> int:
     cases = load_cases(tuple(args.eval_sets))
     try:
         gold_by_case = {case["id"]: resolve_gold_chunks(case, all_rows)
-                        for case in cases if case.get("answerable", True)}
+                        for case in cases if case.get("required_evidence")}
     except EvalDataError as exc:
         print(f"正样本证据无法映射:{exc}")
         return 4
