@@ -1,130 +1,928 @@
-# ch11 事实来源与证据单元。
-# 每个 EvidenceUnit 的 quotes 必须逐字出现在所引文档中,且全部落在同一个切分块内。
 sources:
-  - source_id: SRC-POLICY-RETURNS
-    type: internal_rule
-    title: 退货政策
-    uri: knowledge/退货政策.md
-    retrieved_at: 2026-10-24
-    license: 内部演示资料(ShopHelper 自建语料)
-    used_for: fact
-    author: ShopHelper 项目组
-    reviewer: 待业务复核
-    confidence: high
-  - source_id: SRC-FAQ
-    type: internal_rule
-    title: 商品FAQ
-    uri: knowledge/商品FAQ.md
-    retrieved_at: 2026-10-24
-    license: 内部演示资料(ShopHelper 自建语料)
-    used_for: fact
-    author: ShopHelper 项目组
-    reviewer: 待业务复核
-    confidence: high
-  - source_id: SRC-MANUAL
-    type: internal_rule
-    title: 售后手册
-    uri: knowledge/售后手册.md
-    retrieved_at: 2026-10-24
-    license: 内部演示资料(ShopHelper 自建语料)
-    used_for: fact
-    author: ShopHelper 项目组
-    reviewer: 待业务复核
-    confidence: high
-
+- source_id: SRC-POLICY-RETURNS
+  title: 退货政策
+  uri: knowledge/退货政策.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: &id001 2026-10-24
+- source_id: SRC-FAQ
+  title: 商品FAQ
+  uri: knowledge/商品FAQ.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
+- source_id: SRC-MANUAL
+  title: 售后手册
+  uri: knowledge/售后手册.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
+- source_id: SRC-CATALOG
+  title: 商品目录
+  uri: knowledge/商品目录.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
+- source_id: SRC-ORDERS
+  title: 订单与支付
+  uri: knowledge/订单与支付.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
+- source_id: SRC-PROMO
+  title: 会员与优惠
+  uri: knowledge/会员与优惠.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
+- source_id: SRC-POLICY-VERSIONS
+  title: 政策版本说明
+  uri: knowledge/政策版本说明.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
+- source_id: SRC-AFTERSALES-GUIDE
+  title: 售后核验指引
+  uri: knowledge/售后核验指引.md
+  type: internal_rule
+  license: 内部演示资料(ShopHelper 自建语料)
+  used_for: fact
+  author: ShopHelper 项目组
+  reviewer: 待业务复核
+  confidence: high
+  retrieved_at: *id001
 evidence_units:
-  - evidence_id: EV-CATALOG-SH-E300-PRICE
-    fact_ids: [CATALOG-SH-E300-PRICE]
-    doc: 商品FAQ.md
-    section: SH-E300 无线降噪耳机怎么样?
-    quotes:
-      - "SH-E300 头戴式无线降噪耳机,售价 299 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。"
-  - evidence_id: EV-CATALOG-SH-E120-PRICE
-    fact_ids: [CATALOG-SH-E120-PRICE]
-    doc: 商品FAQ.md
-    section: SH-E120 半入耳耳机怎么样?
-    quotes:
-      - "SH-E120 半入耳无线耳机,售价 99 元,蓝牙 5.0,续航 24 小时,不支持主动降噪,整机一年质保。"
-  - evidence_id: EV-CATALOG-SH-K870-PRICE
-    fact_ids: [CATALOG-SH-K870-PRICE]
-    doc: 商品FAQ.md
-    section: SH-K870 机械键盘是什么配置?
-    quotes:
-      - "SH-K870 87 键机械键盘,青轴,白光背光,售价 199 元,支持全键无冲,一年质保。"
-
-  - evidence_id: EV-ORDERS-SHIP-WITHIN-HOURS
-    fact_ids: [ORDERS-SHIP-WITHIN-HOURS]
-    doc: 商品FAQ.md
-    section: 多久能发货?
-    quotes:
-      - "现货商品 48 小时内发出,预售商品按页面标注时间发货。"
-  - evidence_id: EV-ORDERS-CANCEL-BEFORE-SHIP
-    fact_ids: [ORDERS-CANCEL-BEFORE-SHIP]
-    doc: 退货政策.md
-    section: 订单取消
-    quotes:
-      - "未发货可取消,原路退回;已发货不能直接取消,可拒收或签收后走退货。到账时间见上文。"
-  - evidence_id: EV-ORDERS-DELIVERY-DAYS-STANDARD
-    fact_ids: [ORDERS-DELIVERY-DAYS-STANDARD]
-    doc: 商品FAQ.md
-    section: 物流一般几天到?
-    quotes:
-      - "普通快递 3-5 天送达,偏远地区 5-7 天。"
-
-  - evidence_id: EV-POLICY-RETURN-WINDOW
-    fact_ids: [POLICY-RETURN-WINDOW]
-    doc: 退货政策.md
-    section: 七天无理由退货
-    quotes:
-      - "商品自签收之日起 7 天内,支持七天无理由退货。"
-  - evidence_id: EV-POLICY-REFUND-WORKDAYS
-    fact_ids: [POLICY-REFUND-WORKDAYS]
-    doc: 退货政策.md
-    section: 退款时效
-    quotes:
-      - "退货商品验收通过后,退款原路返回,1-3 个工作日到账。"
-  - evidence_id: EV-POLICY-NON-RETURNABLE-CATEGORIES
-    fact_ids: [POLICY-NON-RETURNABLE-CATEGORIES]
-    doc: 退货政策.md
-    section: 不予退货情形
-    quotes:
-      - "定制类商品、贴身衣物、已激活的虚拟商品不予退货。"
-
-  - evidence_id: EV-PROMO-FREE-SHIPPING-THRESHOLD
-    fact_ids: [PROMO-FREE-SHIPPING-THRESHOLD]
-    doc: 退货政策.md
-    section: 邮费与运费
-    quotes:
-      - "普通订单邮费 8 元,单笔满 99 元包邮。"
-  - evidence_id: EV-PROMO-MEMBER-DISCOUNT
-    fact_ids: [PROMO-MEMBER-DISCOUNT]
-    doc: 商品FAQ.md
-    section: 会员有什么权益?
-    quotes:
-      - "会员享 95 折、生日礼包、优先客服通道。"
-  - evidence_id: EV-PROMO-EXPEDITE-FEE
-    fact_ids: [PROMO-EXPEDITE-FEE]
-    doc: 商品FAQ.md
-    section: 支持加急发货吗?
-    quotes:
-      - "部分地区支持加急,加急费 10 元,优先安排发货,不承诺次日达。"
-
-  - evidence_id: EV-AFTERSALES-WARRANTY-YEARS
-    fact_ids: [AFTERSALES-WARRANTY-YEARS]
-    doc: 售后手册.md
-    section: 保修范围与期限
-    quotes:
-      - "整机保修 1 年,自签收之日起算;非人为损坏免费维修,人为损坏或过保按检测结果收费;申请时需提供订单号。"
-  - evidence_id: EV-AFTERSALES-REPAIR-WORKDAYS
-    fact_ids: [AFTERSALES-REPAIR-WORKDAYS]
-    doc: 售后手册.md
-    section: 维修时长与费用
-    quotes:
-      - "维修一般 7-15 个工作日;无法修复时换新,同型号无货则退款;过保维修先报价,用户确认后再修。"
-  - evidence_id: EV-AFTERSALES-RETURN-REVIEW-HOURS
-    fact_ids: [AFTERSALES-RETURN-REVIEW-HOURS]
-    doc: 售后手册.md
-    section: 退货处理细则
-    quotes:
-      - "退货申请提交后,客服会在 24 小时内完成审核。"
-      - "仓库收到商品后,会在 48 小时内完成验货。"
+- evidence_id: EV-CATALOG-SH-E300-ENTRY
+  doc: 商品目录.md
+  section: SH-E300 头戴式无线降噪耳机
+  quotes:
+  - SH-E300 头戴式无线降噪耳机,售价 299 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。
+  fact_ids:
+  - CATALOG-SH-E300-PRICE
+  - CATALOG-SH-E300-PRODUCT-TYPE
+  - CATALOG-SH-E300-ANC
+  - CATALOG-SH-E300-BLUETOOTH-VERSION
+  - CATALOG-SH-E300-BATTERY-HOURS
+  - CATALOG-SH-E300-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-E300-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-E300 | 头戴式无线降噪耳机 | 299 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-E300-STATUS
+- evidence_id: EV-CATALOG-SH-E120-ENTRY
+  doc: 商品目录.md
+  section: SH-E120 半入耳无线耳机
+  quotes:
+  - SH-E120 半入耳无线耳机,售价 99 元,蓝牙 5.0,续航 24 小时,不支持主动降噪,整机一年质保。
+  fact_ids:
+  - CATALOG-SH-E120-PRICE
+  - CATALOG-SH-E120-PRODUCT-TYPE
+  - CATALOG-SH-E120-ANC
+  - CATALOG-SH-E120-BLUETOOTH-VERSION
+  - CATALOG-SH-E120-BATTERY-HOURS
+  - CATALOG-SH-E120-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-E120-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-E120 | 半入耳无线耳机 | 99 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-E120-STATUS
+- evidence_id: EV-CATALOG-SH-E200-ENTRY
+  doc: 商品目录.md
+  section: SH-E200 入耳式无线耳机
+  quotes:
+  - SH-E200 入耳式无线耳机,售价 159 元,蓝牙 5.2,续航 18 小时,不支持主动降噪,整机一年质保。
+  fact_ids:
+  - CATALOG-SH-E200-PRICE
+  - CATALOG-SH-E200-PRODUCT-TYPE
+  - CATALOG-SH-E200-ANC
+  - CATALOG-SH-E200-BLUETOOTH-VERSION
+  - CATALOG-SH-E200-BATTERY-HOURS
+  - CATALOG-SH-E200-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-E200-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-E200 | 入耳式无线耳机 | 159 元 | 停产 |'
+  fact_ids:
+  - CATALOG-SH-E200-STATUS
+- evidence_id: EV-CATALOG-SH-K870-ENTRY
+  doc: 商品目录.md
+  section: SH-K870 87 键机械键盘
+  quotes:
+  - SH-K870 87 键机械键盘,青轴,白光背光,售价 199 元,支持全键无冲,一年质保。
+  fact_ids:
+  - CATALOG-SH-K870-PRICE
+  - CATALOG-SH-K870-PRODUCT-TYPE
+  - CATALOG-SH-K870-KEY-COUNT
+  - CATALOG-SH-K870-SWITCH-TYPE
+  - CATALOG-SH-K870-BACKLIGHT
+  - CATALOG-SH-K870-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-K870-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-K870 | 87 键机械键盘 | 199 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-K870-STATUS
+- evidence_id: EV-CATALOG-SH-K104-ENTRY
+  doc: 商品目录.md
+  section: SH-K104 104 键机械键盘
+  quotes:
+  - SH-K104 104 键机械键盘,红轴,RGB 背光,售价 219 元,支持全键无冲,一年质保。
+  fact_ids:
+  - CATALOG-SH-K104-PRICE
+  - CATALOG-SH-K104-PRODUCT-TYPE
+  - CATALOG-SH-K104-KEY-COUNT
+  - CATALOG-SH-K104-SWITCH-TYPE
+  - CATALOG-SH-K104-BACKLIGHT
+  - CATALOG-SH-K104-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-K104-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-K104 | 104 键机械键盘 | 219 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-K104-STATUS
+- evidence_id: EV-CATALOG-SH-K68-ENTRY
+  doc: 商品目录.md
+  section: SH-K68 68 键机械键盘
+  quotes:
+  - SH-K68 68 键机械键盘,红轴,白光背光,售价 149 元,支持全键无冲,一年质保。
+  fact_ids:
+  - CATALOG-SH-K68-PRICE
+  - CATALOG-SH-K68-PRODUCT-TYPE
+  - CATALOG-SH-K68-KEY-COUNT
+  - CATALOG-SH-K68-SWITCH-TYPE
+  - CATALOG-SH-K68-BACKLIGHT
+  - CATALOG-SH-K68-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-K68-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-K68 | 68 键机械键盘 | 149 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-K68-STATUS
+- evidence_id: EV-CATALOG-SH-B5-ENTRY
+  doc: 商品目录.md
+  section: SH-B5 智能手环
+  quotes:
+  - SH-B5 智能手环,售价 129 元,支持心率监测、睡眠监测、50 米防水,续航 14 天,一年质保。
+  fact_ids:
+  - CATALOG-SH-B5-PRICE
+  - CATALOG-SH-B5-PRODUCT-TYPE
+  - CATALOG-SH-B5-BATTERY-DAYS
+  - CATALOG-SH-B5-WATERPROOF
+  - CATALOG-SH-B5-HEART-RATE-MONITORING
+  - CATALOG-SH-B5-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-B5-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-B5 | 智能手环 | 129 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-B5-STATUS
+- evidence_id: EV-CATALOG-SH-B7-ENTRY
+  doc: 商品目录.md
+  section: SH-B7 智能手环
+  quotes:
+  - SH-B7 智能手环,售价 179 元,采用 AMOLED 屏,支持血氧监测与心率监测,续航 14 天,一年质保。
+  fact_ids:
+  - CATALOG-SH-B7-PRICE
+  - CATALOG-SH-B7-PRODUCT-TYPE
+  - CATALOG-SH-B7-BATTERY-DAYS
+  - CATALOG-SH-B7-AMOLED-SCREEN
+  - CATALOG-SH-B7-BLOOD-OXYGEN-MONITORING
+  - CATALOG-SH-B7-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-B7-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-B7 | 智能手环 | 179 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-B7-STATUS
+- evidence_id: EV-CATALOG-SH-W20-ENTRY
+  doc: 商品目录.md
+  section: SH-W20 智能手表
+  quotes:
+  - SH-W20 智能手表,售价 399 元,支持血氧监测、GPS 定位、NFC 刷卡,续航 7 天,一年质保。
+  fact_ids:
+  - CATALOG-SH-W20-PRICE
+  - CATALOG-SH-W20-PRODUCT-TYPE
+  - CATALOG-SH-W20-BATTERY-DAYS
+  - CATALOG-SH-W20-GPS
+  - CATALOG-SH-W20-NFC
+  - CATALOG-SH-W20-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-W20-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-W20 | 智能手表 | 399 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-W20-STATUS
+- evidence_id: EV-CATALOG-SH-W30-ENTRY
+  doc: 商品目录.md
+  section: SH-W30 智能手表
+  quotes:
+  - SH-W30 智能手表,售价 599 元,支持独立通话、GPS 定位、NFC 刷卡,续航 5 天,一年质保。
+  fact_ids:
+  - CATALOG-SH-W30-PRICE
+  - CATALOG-SH-W30-PRODUCT-TYPE
+  - CATALOG-SH-W30-BATTERY-DAYS
+  - CATALOG-SH-W30-GPS
+  - CATALOG-SH-W30-STANDALONE-CALL
+  - CATALOG-SH-W30-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-W30-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-W30 | 智能手表 | 599 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-W30-STATUS
+- evidence_id: EV-CATALOG-SH-M10-ENTRY
+  doc: 商品目录.md
+  section: SH-M10 无线鼠标
+  quotes:
+  - SH-M10 无线鼠标,售价 69 元,采用 2.4G 连接与静音按键,一年质保。
+  fact_ids:
+  - CATALOG-SH-M10-PRICE
+  - CATALOG-SH-M10-PRODUCT-TYPE
+  - CATALOG-SH-M10-CONNECTION
+  - CATALOG-SH-M10-SILENT-BUTTONS
+  - CATALOG-SH-M10-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-M10-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-M10 | 无线鼠标 | 69 元 | 清仓 |'
+  fact_ids:
+  - CATALOG-SH-M10-STATUS
+- evidence_id: EV-CATALOG-SH-P30-ENTRY
+  doc: 商品目录.md
+  section: SH-P30 移动电源
+  quotes:
+  - SH-P30 移动电源,售价 109 元,容量 20000mAh,支持双向快充,一年质保。
+  fact_ids:
+  - CATALOG-SH-P30-PRICE
+  - CATALOG-SH-P30-PRODUCT-TYPE
+  - CATALOG-SH-P30-CAPACITY-MAH
+  - CATALOG-SH-P30-FAST-CHARGE
+  - CATALOG-SH-P30-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-P30-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-P30 | 移动电源 | 109 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-P30-STATUS
+- evidence_id: EV-CATALOG-SH-C60-ENTRY
+  doc: 商品目录.md
+  section: SH-C60 编织数据线
+  quotes:
+  - SH-C60 编织数据线,售价 29 元,Type-C 接口,长度 1.5 米,半年质保。
+  fact_ids:
+  - CATALOG-SH-C60-PRICE
+  - CATALOG-SH-C60-PRODUCT-TYPE
+  - CATALOG-SH-C60-INTERFACE
+  - CATALOG-SH-C60-LENGTH-M
+  - CATALOG-SH-C60-MATERIAL
+  - CATALOG-SH-C60-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-C60-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-C60 | 编织数据线 | 29 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-C60-STATUS
+- evidence_id: EV-CATALOG-SH-S10-ENTRY
+  doc: 商品目录.md
+  section: SH-S10 蓝牙音箱
+  quotes:
+  - SH-S10 蓝牙音箱,售价 189 元,支持 IPX7 防水,续航 12 小时,一年质保。
+  fact_ids:
+  - CATALOG-SH-S10-PRICE
+  - CATALOG-SH-S10-PRODUCT-TYPE
+  - CATALOG-SH-S10-WATERPROOF
+  - CATALOG-SH-S10-BATTERY-HOURS
+  - CATALOG-SH-S10-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-S10-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-S10 | 蓝牙音箱 | 189 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-S10-STATUS
+- evidence_id: EV-CATALOG-SH-T50-ENTRY
+  doc: 商品目录.md
+  section: SH-T50 桌面支架
+  quotes:
+  - SH-T50 桌面支架,售价 79 元,铝合金材质,角度可调节,半年质保。
+  fact_ids:
+  - CATALOG-SH-T50-PRICE
+  - CATALOG-SH-T50-PRODUCT-TYPE
+  - CATALOG-SH-T50-MATERIAL
+  - CATALOG-SH-T50-ADJUSTABLE-ANGLE
+  - CATALOG-SH-T50-WARRANTY-MONTHS
+- evidence_id: EV-CATALOG-SH-T50-STATUS
+  doc: 商品目录.md
+  section: 商品价格总览
+  quotes:
+  - '| SH-T50 | 桌面支架 | 79 元 | 在售 |'
+  fact_ids:
+  - CATALOG-SH-T50-STATUS
+- evidence_id: EV-ORDER-ORD-1001-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1001 | 2026-06-02 10:15 | 248 元 | 普通会员 | 华东-上海 | 未支付 |'
+  fact_ids:
+  - ORDER-ORD-1001-STATUS
+  - ORDER-ORD-1001-PRODUCT-AMOUNT
+  - ORDER-ORD-1001-MEMBER-LEVEL
+  - ORDER-ORD-1001-REGION
+- evidence_id: EV-ORDER-ORD-1001-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1001 未支付订单
+  quotes:
+  - 支付渠道为微信支付。
+  fact_ids:
+  - ORDER-ORD-1001-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1002-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1002 | 2026-06-03 09:40 | 328 元 | 银卡会员 | 华北-北京 | 已支付未发货 |'
+  fact_ids:
+  - ORDER-ORD-1002-STATUS
+  - ORDER-ORD-1002-PRODUCT-AMOUNT
+  - ORDER-ORD-1002-MEMBER-LEVEL
+  - ORDER-ORD-1002-REGION
+- evidence_id: EV-ORDER-ORD-1002-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1002 已支付未发货订单
+  quotes:
+  - 支付渠道为支付宝,支付状态为已支付。
+  fact_ids:
+  - ORDER-ORD-1002-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1003-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1003 | 2026-06-04 14:20 | 149 元 | 普通会员 | 华南-广州 | 已发货 |'
+  fact_ids:
+  - ORDER-ORD-1003-STATUS
+  - ORDER-ORD-1003-PRODUCT-AMOUNT
+  - ORDER-ORD-1003-MEMBER-LEVEL
+  - ORDER-ORD-1003-REGION
+- evidence_id: EV-ORDER-ORD-1003-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1003 已发货订单
+  quotes:
+  - 支付渠道为微信支付。
+  fact_ids:
+  - ORDER-ORD-1003-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1004-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1004 | 2026-06-05 16:05 | 399 元 | 金卡会员 | 江浙沪-杭州 | 已签收 |'
+  fact_ids:
+  - ORDER-ORD-1004-STATUS
+  - ORDER-ORD-1004-PRODUCT-AMOUNT
+  - ORDER-ORD-1004-MEMBER-LEVEL
+  - ORDER-ORD-1004-REGION
+- evidence_id: EV-ORDER-ORD-1004-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1004 已签收订单
+  quotes:
+  - 支付渠道为银联卡。
+  fact_ids:
+  - ORDER-ORD-1004-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1005-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1005 | 2026-06-06 11:30 | 99 元 | 普通会员 | 西南-成都 | 已取消 |'
+  fact_ids:
+  - ORDER-ORD-1005-STATUS
+  - ORDER-ORD-1005-PRODUCT-AMOUNT
+  - ORDER-ORD-1005-MEMBER-LEVEL
+  - ORDER-ORD-1005-REGION
+- evidence_id: EV-ORDER-ORD-1005-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1005 已取消订单
+  quotes:
+  - 支付渠道为支付宝。
+  fact_ids:
+  - ORDER-ORD-1005-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1006-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1006 | 2026-06-07 20:10 | 299 元 | 银卡会员 | 华中-武汉 | 退货中 |'
+  fact_ids:
+  - ORDER-ORD-1006-STATUS
+  - ORDER-ORD-1006-PRODUCT-AMOUNT
+  - ORDER-ORD-1006-MEMBER-LEVEL
+  - ORDER-ORD-1006-REGION
+- evidence_id: EV-ORDER-ORD-1006-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1006 退货中订单
+  quotes:
+  - 支付渠道为微信支付。
+  fact_ids:
+  - ORDER-ORD-1006-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1007-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1007 | 2026-06-08 08:55 | 219 元 | 金卡会员 | 华北-天津 | 已退款 |'
+  fact_ids:
+  - ORDER-ORD-1007-STATUS
+  - ORDER-ORD-1007-PRODUCT-AMOUNT
+  - ORDER-ORD-1007-MEMBER-LEVEL
+  - ORDER-ORD-1007-REGION
+- evidence_id: EV-ORDER-ORD-1007-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1007 已退款订单
+  quotes:
+  - 支付渠道为支付宝。
+  fact_ids:
+  - ORDER-ORD-1007-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1008-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1008 | 2026-06-09 13:25 | 129 元 | 普通会员 | 西北-西安 | 已签收 |'
+  fact_ids:
+  - ORDER-ORD-1008-STATUS
+  - ORDER-ORD-1008-PRODUCT-AMOUNT
+  - ORDER-ORD-1008-MEMBER-LEVEL
+  - ORDER-ORD-1008-REGION
+- evidence_id: EV-ORDER-ORD-1008-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1008 已签收订单
+  quotes:
+  - 支付渠道为微信支付。
+  fact_ids:
+  - ORDER-ORD-1008-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1009-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1009 | 2026-06-10 18:45 | 678 元 | 钻石会员 | 珠三角-深圳 | 已发货 |'
+  fact_ids:
+  - ORDER-ORD-1009-STATUS
+  - ORDER-ORD-1009-PRODUCT-AMOUNT
+  - ORDER-ORD-1009-MEMBER-LEVEL
+  - ORDER-ORD-1009-REGION
+- evidence_id: EV-ORDER-ORD-1009-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1009 已发货订单
+  quotes:
+  - 支付渠道为银联卡。
+  fact_ids:
+  - ORDER-ORD-1009-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1010-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1010 | 2026-06-11 07:50 | 189 元 | 银卡会员 | 东北-沈阳 | 已支付未发货 |'
+  fact_ids:
+  - ORDER-ORD-1010-STATUS
+  - ORDER-ORD-1010-PRODUCT-AMOUNT
+  - ORDER-ORD-1010-MEMBER-LEVEL
+  - ORDER-ORD-1010-REGION
+- evidence_id: EV-ORDER-ORD-1010-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1010 已支付未发货订单
+  quotes:
+  - 支付渠道为支付宝,支付状态为已支付。
+  fact_ids:
+  - ORDER-ORD-1010-PAYMENT-CHANNEL
+- evidence_id: EV-ORDER-ORD-1011-ROW
+  doc: 订单与支付.md
+  section: 订单状态总览
+  quotes:
+  - '| ORD-1011 | 2026-06-12 21:15 | 79 元 | 普通会员 | 云南-昆明 | 已退款 |'
+  fact_ids:
+  - ORDER-ORD-1011-STATUS
+  - ORDER-ORD-1011-PRODUCT-AMOUNT
+  - ORDER-ORD-1011-MEMBER-LEVEL
+  - ORDER-ORD-1011-REGION
+- evidence_id: EV-ORDER-ORD-1011-PAYMENT
+  doc: 订单与支付.md
+  section: ORD-1011 已退款订单
+  quotes:
+  - 支付渠道为微信支付。
+  fact_ids:
+  - ORDER-ORD-1011-PAYMENT-CHANNEL
+- evidence_id: EV-POLICY-V1-WINDOW
+  doc: 政策版本说明.md
+  section: v1 版七天无理由
+  quotes:
+  - 签收日期早于 2026-06-01 的订单适用 v1。商品自签收之日起 7 天内,支持七天无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。
+  fact_ids:
+  - POLICY-RETURN-WINDOW-V1
+  - POLICY-V1-APPLIES-WHEN
+- evidence_id: EV-POLICY-V2-WINDOW
+  doc: 政策版本说明.md
+  section: v2 版十五天无理由
+  quotes:
+  - 签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。
+  - v2 仅调整无理由退货窗口,退款时效、运费与不予退货情形不变。
+  fact_ids:
+  - POLICY-RETURN-WINDOW-V2
+  - POLICY-V2-APPLIES-WHEN
+  - POLICY-V2-UNCHANGED-CLAUSES
+- evidence_id: EV-POLICY-SUPERSEDES
+  doc: 政策版本说明.md
+  section: 替代关系
+  quotes:
+  - v2 替代(supersedes)v1。
+  - 已按 v1 签收的订单继续适用 v1 直至其 7 天窗口届满,不因 v2 生效而自动延长到 15 天。
+  fact_ids:
+  - POLICY-V2-SUPERSEDES-V1
+  - POLICY-NO-RETROACTIVE-EXTENSION
+- evidence_id: EV-POLICY-DECISION
+  doc: 政策版本说明.md
+  section: 新旧版本适用判定
+  quotes:
+  - 以订单详情中的签收时间为唯一判定依据。
+  - 签收时间缺失时,以物流签收记录为准;仍无法确认的,转人工复核。
+  fact_ids:
+  - POLICY-VERSION-DECISION-BASIS
+  - POLICY-MISSING-SIGN-TIME-ACTION
+- evidence_id: EV-POLICY-CONFLICT
+  doc: 政策版本说明.md
+  section: 冲突处理
+  quotes:
+  - 同一订单只适用一个版本,不得把 v1 的 7 天与 v2 的 15 天混用。
+  - 同一版本内,《退货政策》《售后手册》与活动页表述不一致时,按对用户更友好的口径执行,并在工单中记录差异场景。
+  fact_ids:
+  - POLICY-NO-MIX-VERSIONS
+  - POLICY-CONFLICT-FAVOR-USER
+- evidence_id: EV-POLICY-RETURN-CONDITION
+  doc: 退货政策.md
+  section: 七天无理由退货
+  quotes:
+  - 商品必须保持完好,吊牌、包装齐全,不影响二次销售。
+  fact_ids:
+  - POLICY-RETURN-CONDITION
+- evidence_id: EV-POLICY-REFUND
+  doc: 退货政策.md
+  section: 退款时效
+  quotes:
+  - 退货商品验收通过后,退款原路返回,1-3 个工作日到账。微信/支付宝一般 1-3 个工作日,银行卡最长 7 个工作日,以支付渠道为准。
+  fact_ids:
+  - POLICY-REFUND-WORKDAYS
+  - POLICY-REFUND-BANK-MAX-WORKDAYS
+- evidence_id: EV-POLICY-NON-RETURNABLE
+  doc: 退货政策.md
+  section: 不予退货情形
+  quotes:
+  - 定制类商品、贴身衣物、已激活的虚拟商品不予退货。
+  - 上述情形中,定制类仅在有质量问题时可退;贴身衣物拆封后不支持退货;生鲜仅限签收当日发起的质量问题的退货。
+  fact_ids:
+  - POLICY-NON-RETURNABLE-CATEGORIES
+  - POLICY-CUSTOM-QUALITY-EXCEPTION
+  - POLICY-INTIMATE-OPENED-NONRETURNABLE
+  - POLICY-FRESH-SAME-DAY-QUALITY-ONLY
+- evidence_id: EV-POLICY-VIRTUAL
+  doc: 售后手册.md
+  section: 退货处理细则
+  quotes:
+  - 虚拟商品一旦激活不支持退款。
+  fact_ids:
+  - POLICY-VIRTUAL-ACTIVATED-NONREFUNDABLE
+- evidence_id: EV-POLICY-EXCHANGE
+  doc: 退货政策.md
+  section: 换货与退货的区别
+  quotes:
+  - 7 天内同商品可换码数/换颜色,来回费用按《售后手册》换货流程执行;超过 7 天走保修维修;定制类、贴身衣物、已激活虚拟商品不适用换货。
+  fact_ids:
+  - POLICY-EXCHANGE-WINDOW-DAYS
+  - POLICY-EXCHANGE-AFTER-WINDOW
+  - POLICY-EXCHANGE-EXCLUSIONS
+- evidence_id: EV-POLICY-SHIPPING
+  doc: 退货政策.md
+  section: 邮费与运费
+  quotes:
+  - 普通订单邮费 8 元,单笔满 99 元包邮。
+  - 质量问题退货,运费由商家承担;非质量问题退货,运费由买家自行承担。
+  - 偏远地区额外补收 5 元运费。
+  fact_ids:
+  - POLICY-SHIPPING-ORDINARY-FEE
+  - POLICY-SHIPPING-QUALITY-PAYER
+  - POLICY-SHIPPING-NONQUALITY-PAYER
+  - POLICY-SHIPPING-REMOTE-SURCHARGE
+- evidence_id: EV-POLICY-CANCEL
+  doc: 退货政策.md
+  section: 订单取消
+  quotes:
+  - 未发货可取消,原路退回;已发货不能直接取消,可拒收或签收后走退货。到账时间见上文。
+  fact_ids:
+  - POLICY-CANCEL-UNSHIPPED-ALLOWED
+  - POLICY-CANCEL-SHIPPED-ALLOWED
+- evidence_id: EV-POLICY-REJECT
+  doc: 退货政策.md
+  section: 拒收
+  quotes:
+  - 无理由拒收的费用由买家承担;发错货或运输损坏由责任方承担;拒收后原路退回。
+  fact_ids:
+  - POLICY-REJECT-NO-REASON-PAYER
+  - POLICY-REJECT-RESPONSIBLE-PAYER
+- evidence_id: EV-PROMO-TIER-TABLE
+  doc: 会员与优惠.md
+  section: 会员等级
+  quotes:
+  - '| 普通会员 | 0 | 95 折 | 1 倍 | 是 |'
+  - '| 银卡会员 | 1000 | 95 折 | 1.2 倍 | 是 |'
+  - '| 金卡会员 | 3000 | 95 折 | 1.5 倍 | 是 |'
+  - '| 钻石会员 | 8000 | 95 折 | 2 倍 | 是 |'
+  fact_ids:
+  - PROMO-TIER-NORMAL-GROWTH
+  - PROMO-TIER-SILVER-GROWTH
+  - PROMO-TIER-GOLD-GROWTH
+  - PROMO-TIER-DIAMOND-GROWTH
+- evidence_id: EV-PROMO-MEMBER-DISCOUNT
+  doc: 会员与优惠.md
+  section: 会员等级
+  quotes:
+  - 会员等级按成长值划分,所有等级均享商品 95 折与优先客服通道;等级越高,积分倍率越高。
+  fact_ids:
+  - PROMO-MEMBER-DISCOUNT
+- evidence_id: EV-PROMO-DISCOUNT-SCOPE
+  doc: 会员与优惠.md
+  section: 95 折适用范围
+  quotes:
+  - 95 折适用于商品目录中标记为「在售」的正价商品,按商品原价计算。折扣在订单结算页自动抵扣,可与店铺满减券叠加;叠加顺序为先计算 95 折,再判断满减券门槛。
+  fact_ids:
+  - PROMO-DISCOUNT-APPLICABLE-SCOPE
+  - PROMO-DISCOUNT-CALCULATION-BASE
+  - PROMO-DISCOUNT-STACKING-ORDER
+- evidence_id: EV-PROMO-DISCOUNT-EXCLUSIONS
+  doc: 会员与优惠.md
+  section: 95 折排除范围
+  quotes:
+  - 以下情形不享 95 折:清仓与停产库存商品、限时秒杀商品、虚拟商品、定制类商品、运费、加急费、安装辅材费,以及商品页明确标注「不参与会员折扣」的活动商品。排除项按商品行单独判断,不影响同单其他商品。
+  fact_ids:
+  - PROMO-DISCOUNT-EXCLUSIONS
+  - PROMO-DISCOUNT-EXCLUSION-PER-LINE
+- evidence_id: EV-PROMO-STACKING
+  doc: 会员与优惠.md
+  section: 优惠叠加规则
+  quotes:
+  - 会员 95 折可与店铺满减券、运费券叠加;满减券门槛按 95 折后的商品金额计算。加急费、偏远补运不参与任何折扣与满减。合并订单支付时,按合并后的商品总额计算满减与包邮门槛;拆单后各子订单分别计算。
+  fact_ids:
+  - PROMO-STACKING-ALLOWED
+  - PROMO-STACKING-THRESHOLD-BASE
+  - PROMO-MERGE-THRESHOLD-BASE
+  - PROMO-SPLIT-ORDERS-RECALCULATE
+- evidence_id: EV-PROMO-EXCLUSIVE
+  doc: 会员与优惠.md
+  section: 优惠互斥规则
+  quotes:
+  - 限时秒杀、清仓折扣、员工内购与 95 折互斥,同一商品只能选择一种优惠。满减券与折扣券互斥,每笔订单限用一张商品券;运费券可与商品券同时使用。
+  fact_ids:
+  - PROMO-SECKILL-DISCOUNT-MUTEX
+  - PROMO-ITEM-COUPON-PER-ORDER
+- evidence_id: EV-PROMO-SHIPPING
+  doc: 会员与优惠.md
+  section: 包邮门槛与合并订单
+  quotes:
+  - 单笔订单商品金额满 99 元包邮,未满 99 元收取普通运费 8 元。同地址、均未发货的订单可申请合并支付,包邮门槛按合并后 95 折后的商品总额计算;拆单后各子订单分别计算,可能不再满足包邮门槛。
+  fact_ids:
+  - PROMO-FREE-SHIPPING-THRESHOLD
+  - PROMO-ORDINARY-SHIPPING-FEE
+- evidence_id: EV-PROMO-REMOTE
+  doc: 会员与优惠.md
+  section: 偏远地区补运
+  quotes:
+  - 偏远地区在包邮基础上仍需补收 5 元运费;未满包邮门槛时,偏远补运与普通运费分别计算。港澳台与海外件的运费标准见《售后手册》运费表,不适用本节 5 元补运规则。偏远补运不参与会员折扣与满减。
+  fact_ids:
+  - PROMO-REMOTE-SURCHARGE
+  - PROMO-REMOTE-SURCHARGE-SEPARATE
+  - PROMO-REMOTE-SURCHARGE-NOT-DISCOUNTED
+- evidence_id: EV-PROMO-COUPON
+  doc: 会员与优惠.md
+  section: 优惠券使用限制
+  quotes:
+  - 优惠券需在有效期内使用,逾期作废。每张券限用一次,退款时已使用的券按活动规则退回或作废。满减券门槛按 95 折后的商品金额计算,不含运费、加急费与偏远补运。企业团购订单不参与会员券活动。
+  fact_ids:
+  - PROMO-COUPON-ONE-USE
+  - PROMO-ENTERPRISE-GROUP-BUY-EXCLUDED
+- evidence_id: EV-PROMO-EXPEDITE
+  doc: 商品FAQ.md
+  section: 支持加急发货吗?
+  quotes:
+  - 部分地区支持加急,加急费 10 元,优先安排发货,不承诺次日达。
+  fact_ids:
+  - PROMO-EXPEDITE-FEE
+- evidence_id: EV-AFTERSALES-WARRANTY
+  doc: 售后手册.md
+  section: 保修范围与期限
+  quotes:
+  - 整机保修 1 年,自签收之日起算;非人为损坏免费维修,人为损坏或过保按检测结果收费;申请时需提供订单号。
+  fact_ids:
+  - AFTERSALES-WARRANTY-YEARS
+  - AFTERSALES-WARRANTY-START
+  - AFTERSALES-NONHUMAN-FREE-REPAIR
+  - AFTERSALES-HUMAN-DAMAGE-CHARGED
+- evidence_id: EV-AFTERSALES-REPAIR
+  doc: 售后手册.md
+  section: 维修时长与费用
+  quotes:
+  - 维修一般 7-15 个工作日;无法修复时换新,同型号无货则退款;过保维修先报价,用户确认后再修。
+  fact_ids:
+  - AFTERSALES-REPAIR-WORKDAYS
+  - AFTERSALES-UNREPAIRABLE-ACTION
+  - AFTERSALES-OVER-WARRANTY-QUOTE-FIRST
+- evidence_id: EV-AFTERSALES-HUMAN-DAMAGE
+  doc: 售后手册.md
+  section: 人为损坏与过保
+  quotes:
+  - 进水、摔损、私自拆机等属人为损坏,不免费保修;过保维修可按检测报价,用户可选择维修或不修并寄回。
+  fact_ids:
+  - AFTERSALES-HUMAN-DAMAGE-EXAMPLES
+- evidence_id: EV-AFTERSALES-RETURN-REVIEW
+  doc: 售后手册.md
+  section: 退货处理细则
+  quotes:
+  - 退货申请提交后,客服会在 24 小时内完成审核。审核通过后,系统会自动下发退货地址,用户需在 7 天内将商品寄回,逾期未寄回的退货申请将自动关闭。
+  fact_ids:
+  - AFTERSALES-RETURN-REVIEW-HOURS
+  - AFTERSALES-RETURN-SHIP-DAYS
+- evidence_id: EV-AFTERSALES-WAREHOUSE
+  doc: 售后手册.md
+  section: 退货处理细则
+  quotes:
+  - 仓库收到商品后,会在 48 小时内完成验货。
+  fact_ids:
+  - AFTERSALES-WAREHOUSE-INSPECT-HOURS
+- evidence_id: EV-AFTERSALES-REFUND
+  doc: 售后手册.md
+  section: 退货处理细则
+  quotes:
+  - 验货通过后,退款将原路返回,1 到 3 个工作日内到账,具体到账时间以支付渠道为准。
+  fact_ids:
+  - AFTERSALES-REFUND-ARRIVAL-WORKDAYS
+- evidence_id: EV-AFTERSALES-INSPECT-FAIL
+  doc: 售后手册.md
+  section: 退货处理细则
+  quotes:
+  - 若验货不通过,客服会拍照留证并说明原因,商品将退回给用户,运费由用户承担。
+  fact_ids:
+  - AFTERSALES-INSPECT-FAIL-SHIPPING-PAYER
+- evidence_id: EV-AFTERSALES-DISPUTE
+  doc: 售后手册.md
+  section: 退货处理细则
+  quotes:
+  - 争议处理方面,若用户对验货结果有异议,可在结果下发后的 72 小时内发起申诉,平台将介入复核,复核期间暂不退回商品。
+  fact_ids:
+  - AFTERSALES-DISPUTE-APPEAL-HOURS
+- evidence_id: EV-AFTERSALES-EXCHANGE
+  doc: 售后手册.md
+  section: 换货流程
+  quotes:
+  - 支持同商品换码数、换颜色。收到商品后 7 天内提交换货申请,商品保持完好即可。换货商品将在仓库验收后 48 小时内重新发出,来回运费由商家承担。
+  fact_ids:
+  - AFTERSALES-EXCHANGE-WINDOW-DAYS
+- evidence_id: EV-AFTERSALES-DAMAGE
+  doc: 售后手册.md
+  section: 破损
+  quotes:
+  - 签收后 48 小时内拍照或视频留证;运输破损可换货或退货,费用责任按退货政策执行。
+  fact_ids:
+  - AFTERSALES-DAMAGE-REPORT-HOURS
+- evidence_id: EV-AFTERSALES-PHOTO
+  doc: 售后核验指引.md
+  section: 照片拍摄规范
+  quotes:
+  - 商品全貌至少 1 张,问题部位特写至少 2 张,包装与面单至少 1 张。
+  fact_ids:
+  - AFTERSALES-PHOTO-REQUIREMENTS
+- evidence_id: EV-AFTERSALES-VIDEO
+  doc: 售后核验指引.md
+  section: 视频拍摄规范
+  quotes:
+  - 视频需连续拍摄 10-30 秒,不得剪辑或加速。
+  fact_ids:
+  - AFTERSALES-VIDEO-DURATION-SECONDS
+- evidence_id: EV-AFTERSALES-RESPONSIBILITY
+  doc: 售后核验指引.md
+  section: 责任划分
+  quotes:
+  - 非人为质量问题由商家承担检测、维修或换货费用以及往返运费。人为损坏、私自拆机或过保商品由用户承担相应费用,具体按订单与保修条款确认。运输破损由商家先行处理并向物流责任方追偿,用户不承担费用。
+  fact_ids:
+  - AFTERSALES-QUALITY-RESPONSIBILITY
+  - AFTERSALES-HUMAN-RESPONSIBILITY
+  - AFTERSALES-TRANSPORT-RESPONSIBILITY
+- evidence_id: EV-AFTERSALES-QUALITY-DETERMINATION
+  doc: 售后核验指引.md
+  section: 质量问题认定原则
+  quotes:
+  - 是否质量问题以检测结果为准。
+  fact_ids:
+  - AFTERSALES-QUALITY-DETERMINATION
+- evidence_id: EV-REGION-NORTH
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 华北 | 8 元 | 2 元/kg | 3 天 |'
+  fact_ids:
+  - REGION-NORTH-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-EAST
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 华东 | 8 元 | 2 元/kg | 3 天 |'
+  fact_ids:
+  - REGION-EAST-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-SOUTH
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 华南 | 8 元 | 2 元/kg | 3 天 |'
+  fact_ids:
+  - REGION-SOUTH-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-SOUTHWEST
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 西南 | 10 元 | 3 元/kg | 4 天 |'
+  fact_ids:
+  - REGION-SOUTHWEST-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-NORTHWEST
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 西北 | 12 元 | 3 元/kg | 5 天 |'
+  fact_ids:
+  - REGION-NORTHWEST-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-NORTHEAST
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 东北 | 10 元 | 3 元/kg | 4 天 |'
+  fact_ids:
+  - REGION-NORTHEAST-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-XINJIANG
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 新疆 | 20 元 | 8 元/kg | 8 天 |'
+  fact_ids:
+  - REGION-XINJIANG-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-TIBET
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 西藏 | 25 元 | 9 元/kg | 10 天 |'
+  fact_ids:
+  - REGION-TIBET-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-HKMOTAI
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 港澳台 | 30 元 | 15 元/kg | 7 天 |'
+  fact_ids:
+  - REGION-HKMOTAI-FIRST-WEIGHT-FEE
+- evidence_id: EV-REGION-OVERSEAS
+  doc: 售后手册.md
+  section: 运费标准
+  quotes:
+  - '| 海外件 | 不支持直邮 | 不支持直邮 | 无 |'
+  fact_ids:
+  - REGION-OVERSEAS-DIRECT-SHIPPING

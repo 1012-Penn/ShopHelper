@@ -116,11 +116,11 @@ def test_loads_factbook_and_sha_is_stable():
 
     assert book.count() >= 10
     assert book.sha256() == book.sha256()
-    assert book.fact("POLICY-RETURN-WINDOW").value == 7
-    assert book.evidence_for_fact("POLICY-RETURN-WINDOW")
-    assert [fact.fact_id for fact in book.facts_for_entity("sku", "SH-E300")] == [
-        "CATALOG-SH-E300-PRICE"
-    ]
+    assert book.fact("POLICY-RETURN-WINDOW-V1").value == 7
+    assert book.evidence_for_fact("POLICY-RETURN-WINDOW-V1")
+    sku_fact_ids = {fact.fact_id for fact in book.facts_for_entity("sku", "SH-E300")}
+    assert "CATALOG-SH-E300-PRICE" in sku_fact_ids
+    assert len(sku_fact_ids) >= 5
     assert {fact.entity_type for fact in book.facts.values()} >= {
         "sku",
         "order",
@@ -400,3 +400,68 @@ def test_identical_values_may_overlap():
     )
 
     assert validate_factbook(_book((fact_a, fact_b), evidence)) == []
+
+
+SEVEN_ORDER_STATUSES = {
+    "未支付",
+    "已支付未发货",
+    "已发货",
+    "已签收",
+    "已取消",
+    "退货中",
+    "已退款",
+}
+
+
+def test_m1_fact_scale():
+    book = load_factbook()
+
+    assert 150 <= book.count() <= 250
+    assert 90 <= len(book.evidence) <= 130
+
+
+def test_every_fact_has_source_and_evidence():
+    book = load_factbook()
+
+    assert book.facts
+    for fact in book.facts.values():
+        assert fact.source_ref in book.sources, fact.fact_id
+        assert fact.evidence_ids, fact.fact_id
+        for evidence_id in fact.evidence_ids:
+            assert evidence_id in book.evidence, fact.fact_id
+            assert fact.fact_id in book.evidence[evidence_id].fact_ids, fact.fact_id
+
+
+def test_policy_versions_have_ordered_ranges_and_supersedes():
+    book = load_factbook()
+    v1 = book.fact("POLICY-RETURN-WINDOW-V1")
+    v2 = book.fact("POLICY-RETURN-WINDOW-V2")
+
+    assert (v1.value, v2.value) == (7, 15)
+    assert v1.effective_from is not None and v1.effective_to is not None
+    assert v2.effective_from is not None
+    assert v1.effective_from <= v1.effective_to < v2.effective_from
+    assert v2.effective_to is None or v2.effective_from <= v2.effective_to
+    assert v2.supersedes == [v1.fact_id]
+    assert v1.supersedes == []
+
+
+def test_orders_cover_seven_statuses():
+    book = load_factbook()
+    order_statuses = {
+        fact.value
+        for fact in book.facts.values()
+        if fact.entity_type == "order" and fact.key == "status"
+    }
+    order_ids = {
+        fact.entity_id
+        for fact in book.facts.values()
+        if fact.entity_type == "order" and fact.key == "status"
+    }
+
+    assert order_statuses == SEVEN_ORDER_STATUSES
+    assert order_ids == {f"ORD-{number}" for number in range(1001, 1012)}
+
+
+def test_real_corpus_validates_clean():
+    assert validate_factbook(load_factbook()) == []

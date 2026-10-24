@@ -1,29 +1,307 @@
-# 售后事实(种子,Task 4 扩充)。
 facts:
-  - fact_id: AFTERSALES-WARRANTY-YEARS
-    entity_type: after_sales
-    entity_id: warranty
-    key: duration_years
-    value: 1
-    unit: 年
-    conditions: [整机]
-    source_ref: SRC-MANUAL
-    evidence_ids: [EV-AFTERSALES-WARRANTY-YEARS]
-    notes: 保修期自签收之日起算;「非人为损坏免费维修」是费用条件,不属于保修期限条件。
-  - fact_id: AFTERSALES-REPAIR-WORKDAYS
-    entity_type: after_sales
-    entity_id: repair
-    key: duration_workdays
-    value: "7-15"
-    unit: 工作日
-    source_ref: SRC-MANUAL
-    evidence_ids: [EV-AFTERSALES-REPAIR-WORKDAYS]
-  - fact_id: AFTERSALES-RETURN-REVIEW-HOURS
-    entity_type: after_sales
-    entity_id: returns
-    key: review_hours
-    value: 24
-    unit: 小时
-    source_ref: SRC-MANUAL
-    evidence_ids: [EV-AFTERSALES-RETURN-REVIEW-HOURS]
-    notes: 同一证据单元还要求验货在 48 小时内完成,两句必须同块引用。
+- fact_id: AFTERSALES-WARRANTY-YEARS
+  entity_type: after_sales
+  entity_id: warranty
+  key: duration_years
+  value: 1
+  unit: 年
+  conditions:
+  - 整机
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-WARRANTY
+  notes: 保修期自签收之日起算;「非人为损坏免费维修」是费用条件,不属于保修期限条件。
+- fact_id: AFTERSALES-WARRANTY-START
+  entity_type: after_sales
+  entity_id: warranty
+  key: start_event
+  value: 签收之日
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-WARRANTY
+- fact_id: AFTERSALES-NONHUMAN-FREE-REPAIR
+  entity_type: after_sales
+  entity_id: warranty
+  key: non_human_damage_free_repair
+  value: true
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-WARRANTY
+- fact_id: AFTERSALES-HUMAN-DAMAGE-CHARGED
+  entity_type: after_sales
+  entity_id: warranty
+  key: human_or_expired_charged
+  value: true
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-WARRANTY
+- fact_id: AFTERSALES-REPAIR-WORKDAYS
+  entity_type: after_sales
+  entity_id: repair
+  key: duration_workdays
+  value: 7-15
+  unit: 工作日
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-REPAIR
+- fact_id: AFTERSALES-UNREPAIRABLE-ACTION
+  entity_type: after_sales
+  entity_id: repair
+  key: unrepairable_action
+  value: 换新,同型号无货则退款
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-REPAIR
+- fact_id: AFTERSALES-OVER-WARRANTY-QUOTE-FIRST
+  entity_type: after_sales
+  entity_id: repair
+  key: quote_before_repair
+  value: true
+  conditions:
+  - 过保
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-REPAIR
+- fact_id: AFTERSALES-HUMAN-DAMAGE-EXAMPLES
+  entity_type: after_sales
+  entity_id: human_damage
+  key: examples
+  value:
+  - 进水
+  - 摔损
+  - 私自拆机
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-HUMAN-DAMAGE
+- fact_id: AFTERSALES-RETURN-REVIEW-HOURS
+  entity_type: after_sales
+  entity_id: returns
+  key: review_hours
+  value: 24
+  unit: 小时
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-RETURN-REVIEW
+- fact_id: AFTERSALES-RETURN-SHIP-DAYS
+  entity_type: after_sales
+  entity_id: returns
+  key: ship_back_days
+  value: 7
+  unit: 天
+  conditions:
+  - 审核通过后
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-RETURN-REVIEW
+- fact_id: AFTERSALES-WAREHOUSE-INSPECT-HOURS
+  entity_type: after_sales
+  entity_id: returns
+  key: warehouse_inspect_hours
+  value: 48
+  unit: 小时
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-WAREHOUSE
+- fact_id: AFTERSALES-REFUND-ARRIVAL-WORKDAYS
+  entity_type: after_sales
+  entity_id: refund
+  key: arrival_workdays
+  value: 1-3
+  unit: 工作日
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-REFUND
+- fact_id: AFTERSALES-INSPECT-FAIL-SHIPPING-PAYER
+  entity_type: after_sales
+  entity_id: returns
+  key: inspect_fail_shipping_payer
+  value: 用户
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-INSPECT-FAIL
+- fact_id: AFTERSALES-DISPUTE-APPEAL-HOURS
+  entity_type: after_sales
+  entity_id: dispute
+  key: appeal_hours
+  value: 72
+  unit: 小时
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-DISPUTE
+- fact_id: AFTERSALES-EXCHANGE-WINDOW-DAYS
+  entity_type: after_sales
+  entity_id: exchange
+  key: window_days
+  value: 7
+  unit: 天
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-EXCHANGE
+- fact_id: AFTERSALES-DAMAGE-REPORT-HOURS
+  entity_type: after_sales
+  entity_id: transport_damage
+  key: report_within_hours
+  value: 48
+  unit: 小时
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-AFTERSALES-DAMAGE
+- fact_id: AFTERSALES-PHOTO-REQUIREMENTS
+  entity_type: after_sales
+  entity_id: evidence
+  key: photo_requirements
+  value:
+  - 商品全貌至少 1 张
+  - 问题部位特写至少 2 张
+  - 包装与面单至少 1 张
+  source_ref: SRC-AFTERSALES-GUIDE
+  evidence_ids:
+  - EV-AFTERSALES-PHOTO
+- fact_id: AFTERSALES-VIDEO-DURATION-SECONDS
+  entity_type: after_sales
+  entity_id: evidence
+  key: video_duration_seconds
+  value: 10-30
+  unit: 秒
+  source_ref: SRC-AFTERSALES-GUIDE
+  evidence_ids:
+  - EV-AFTERSALES-VIDEO
+- fact_id: AFTERSALES-QUALITY-RESPONSIBILITY
+  entity_type: after_sales
+  entity_id: responsibility
+  key: quality_issue_payer
+  value: 商家
+  source_ref: SRC-AFTERSALES-GUIDE
+  evidence_ids:
+  - EV-AFTERSALES-RESPONSIBILITY
+- fact_id: AFTERSALES-HUMAN-RESPONSIBILITY
+  entity_type: after_sales
+  entity_id: responsibility
+  key: human_damage_payer
+  value: 用户
+  source_ref: SRC-AFTERSALES-GUIDE
+  evidence_ids:
+  - EV-AFTERSALES-RESPONSIBILITY
+- fact_id: AFTERSALES-TRANSPORT-RESPONSIBILITY
+  entity_type: after_sales
+  entity_id: responsibility
+  key: transport_damage_handling
+  value: 商家先行处理
+  source_ref: SRC-AFTERSALES-GUIDE
+  evidence_ids:
+  - EV-AFTERSALES-RESPONSIBILITY
+- fact_id: AFTERSALES-QUALITY-DETERMINATION
+  entity_type: after_sales
+  entity_id: responsibility
+  key: quality_determination_basis
+  value: 检测结果
+  source_ref: SRC-AFTERSALES-GUIDE
+  evidence_ids:
+  - EV-AFTERSALES-QUALITY-DETERMINATION
+- fact_id: REGION-NORTH-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 华北
+  key: first_weight_fee
+  value: 8
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-NORTH
+- fact_id: REGION-EAST-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 华东
+  key: first_weight_fee
+  value: 8
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-EAST
+- fact_id: REGION-SOUTH-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 华南
+  key: first_weight_fee
+  value: 8
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-SOUTH
+- fact_id: REGION-SOUTHWEST-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 西南
+  key: first_weight_fee
+  value: 10
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-SOUTHWEST
+- fact_id: REGION-NORTHWEST-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 西北
+  key: first_weight_fee
+  value: 12
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-NORTHWEST
+- fact_id: REGION-NORTHEAST-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 东北
+  key: first_weight_fee
+  value: 10
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-NORTHEAST
+- fact_id: REGION-XINJIANG-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 新疆
+  key: first_weight_fee
+  value: 20
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-XINJIANG
+- fact_id: REGION-TIBET-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 西藏
+  key: first_weight_fee
+  value: 25
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-TIBET
+- fact_id: REGION-HKMOTAI-FIRST-WEIGHT-FEE
+  entity_type: region
+  entity_id: 港澳台
+  key: first_weight_fee
+  value: 30
+  unit: 元
+  conditions:
+  - 首重 1kg
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-HKMOTAI
+- fact_id: REGION-OVERSEAS-DIRECT-SHIPPING
+  entity_type: region
+  entity_id: 海外件
+  key: direct_shipping_supported
+  value: false
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-REGION-OVERSEAS

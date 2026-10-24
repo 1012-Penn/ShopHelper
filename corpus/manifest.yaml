@@ -5,8 +5,8 @@ corpus_version: corpus-v1
 expected_docs: 8
 expected_chunks_min: 120
 expected_chunks_max: 180
-expected_facts_min: null
-expected_facts_max: null
+expected_facts_min: 150
+expected_facts_max: 250
 docs:
   - file: 退货政策.md
     content_type: policy
