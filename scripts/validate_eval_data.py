@@ -17,6 +17,7 @@ from pathlib import Path
 
 from scripts.corpus_facts import CorpusDataError, load_factbook, validate_factbook
 from scripts.corpus_manifest import DOCS_DIR, CorpusManifestError, corpus_sha256, load_manifest
+from scripts.leakage_scan import scan_split
 from scripts.eval_dataset import (
     EXPECTED_FROZEN,
     EvalDataError,
@@ -63,6 +64,7 @@ def build_frozen_manifest(cases: list[dict], *, reviewer: str) -> dict:
     dataset_path = ROOT / entry["path"]
     manifest = load_manifest()
     factbook = load_factbook()
+    leak = scan_split("frozen-v1")
     return {
         "schema_version": 1,
         "split": "frozen-v1",
@@ -80,7 +82,20 @@ def build_frozen_manifest(cases: list[dict], *, reviewer: str) -> dict:
         "design_doc_sha256": _sha256_file(DESIGN_DOC) if DESIGN_DOC.exists() else "",
         "reviewer": reviewer,
         "frozen_at": datetime.now(timezone.utc).isoformat(),
-        "leakage": None,
+        "leakage": {
+            "blocking": sum(1 for item in leak if item.severity == "blocking"),
+            "warning": sum(1 for item in leak if item.severity == "warning"),
+            "findings": [
+                {
+                    "kind": item.kind,
+                    "detail": item.detail,
+                    "severity": item.severity,
+                    "score": item.score,
+                }
+                for item in leak
+                if item.severity == "blocking"
+            ],
+        },
     }
 
 

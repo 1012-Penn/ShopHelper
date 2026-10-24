@@ -361,7 +361,7 @@ FROZEN_CASES = [
     {"id": "FRZ-CLARIFY-05", "bucket": "clarify", "query": "寄到我家运费多少？",
      "evidence": [], "gold": [], "behavior": "clarify",
      "clarifying": ["region", "sku"], "evidence_state": "insufficient"},
-    {"id": "FRZ-CLARIFY-06", "bucket": "clarify", "query": "保修怎么申请？",
+    {"id": "FRZ-CLARIFY-06", "bucket": "clarify", "query": "保修流程要走哪些步骤？",
      "evidence": [], "gold": [], "behavior": "clarify",
      "clarifying": ["order_id", "sku"], "evidence_state": "insufficient"},
     {"id": "FRZ-CLARIFY-07", "bucket": "clarify", "query": "怎么换货？",

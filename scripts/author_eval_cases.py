@@ -226,7 +226,7 @@ DEV_CASES: list[dict[str, Any]] = [
      "query": "2026-05-20 签收的订单，v2 生效后会自动延长到 15 天吗？",
      "evidence": ["EV-POLICY-V1-WINDOW", "EV-POLICY-SUPERSEDES"],
      "gold": ["POLICY-NO-RETROACTIVE-EXTENSION"], "behavior": "answer",
-     "forbidden": ["自动延长到 15 天"], "as_of": "2026-05-20",
+     "forbidden": ["v2 生效后旧订单自动延长"], "as_of": "2026-05-20",
      "evidence_state": "conflicting"},
     {"id": "DEV-CONFLICT-04", "bucket": "policy_conflict",
      "query": "不知道签收日期，应该按 7 天还是 15 天处理？",
