@@ -42,7 +42,7 @@
       "cases": [
         {
           "path": "tests/eval/ch04_eval_set.jsonl",
-          "overlay": null
+          "overlay": "tests/eval/overlays/regression-v1.labels.json"
         },
         {
           "path": "tests/eval/ch09_junk_set.jsonl",

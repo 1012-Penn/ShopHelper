@@ -1,0 +1,81 @@
+{
+  "defaults": {
+    "schema_version": 2,
+    "split": "regression-v1",
+    "label_version": "v2-overlay"
+  },
+  "cases": {
+    "C01": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["七天内", "商品完好"],
+      "forbidden_claims": ["戴过也能无理由退"]
+    },
+    "C02": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["验收通过后", "微信/支付宝 1-3 个工作日", "银行卡最长 7 个工作日"],
+      "forbidden_claims": ["所有渠道都 1-3 天到账"]
+    },
+    "C04": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_slots": ["sku", "member_status"],
+      "required_conditions": ["会员身份", "商品参与活动", "最终价格以页面为准"],
+      "forbidden_claims": ["可以便宜", "给你打 95 折", "所有商品 95 折"],
+      "slot_aliases": {
+        "sku": ["型号", "哪款", "商品"],
+        "member_status": ["会员", "会员等级"]
+      }
+    },
+    "C05": {
+      "expected_behavior": "verify_then_answer",
+      "evidence_state": "partial",
+      "required_slots": ["order_id", "damage_photo"],
+      "required_conditions": ["需售后检测/照片凭证", "是否属质量问题以检测结果为准"],
+      "forbidden_claims": ["算质量问题", "一定可以免费退", "开胶不属于质量问题"],
+      "verification_markers": ["照片", "检测", "核验", "售后"],
+      "slot_aliases": {
+        "order_id": ["订单号", "订单编号"],
+        "damage_photo": ["照片", "凭证"]
+      }
+    },
+    "E01": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["合并支付", "同地址", "均未发货", "满 99 元"],
+      "forbidden_claims": ["任意两单都能合并凑包邮"]
+    },
+    "E03": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["定制类仅在有质量问题时可退"],
+      "forbidden_claims": ["定制商品七天后也能无理由退"]
+    },
+    "E04": {
+      "expected_behavior": "verify_then_answer",
+      "evidence_state": "partial",
+      "required_conditions": ["是否质量问题需检测", "七天内"],
+      "forbidden_claims": ["降噪坏了直接算质量问题"],
+      "verification_markers": ["检测", "核验"]
+    },
+    "E06": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["会员身份", "商品原价 129 元", "95 折后以页面为准"],
+      "forbidden_claims": ["所有商品都能 95 折"]
+    },
+    "E08": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["满 99 包邮", "偏远地区额外补收 5 元"],
+      "forbidden_claims": ["偏远地区完全包邮"]
+    },
+    "F04": {
+      "expected_behavior": "answer_with_conditions",
+      "evidence_state": "partial",
+      "required_conditions": ["大件需预约上门取件", "时间窗以客服确认为准", "取件费用按运费标准"],
+      "forbidden_claims": ["大件退货免费上门取件"]
+    }
+  }
+}

@@ -280,10 +280,10 @@ def test_requires_tools_must_be_covered_by_fixtures():
     assert "create_ticket" in str(excinfo.value)
 
 
-def test_registry_registers_only_regression_v1():
+def test_registry_registers_splits_and_regression_overlay():
     registry = load_registry()
     splits = registry["splits"]
-    assert set(splits) >= {"regression-v1"}
+    assert set(splits) >= {"regression-v1", "dev", "frozen-v1"}
     entry = splits["regression-v1"]
     assert entry["kind"] == "composed"
     assert entry["n"] == 60
@@ -292,7 +292,8 @@ def test_registry_registers_only_regression_v1():
         "tests/eval/ch04_eval_set.jsonl",
         "tests/eval/ch09_junk_set.jsonl",
     ]
-    assert all(item["overlay"] is None for item in entry["cases"])
+    assert entry["cases"][0]["overlay"] == "tests/eval/overlays/regression-v1.labels.json"
+    assert entry["cases"][1]["overlay"] is None
 
 
 def test_regression_v1_composes_old_files_with_v2_defaults():
@@ -304,14 +305,17 @@ def test_regression_v1_composes_old_files_with_v2_defaults():
     assert all(case["schema_version"] == SCHEMA_VERSION for case in cases)
     assert len({case["id"] for case in cases}) == 60
 
+    audited = {"C01", "C02", "C04", "C05", "E01", "E03", "E04", "E06", "E08", "F04"}
     for case in cases:
+        assert case["gold_facts"] == [], case["id"]
+        if not case["answerable"]:
+            assert case["expected_refusal_reason"], case["id"]
+        if case["id"] in audited:
+            continue
         expected_behavior = "answer" if case["answerable"] else "refuse"
         expected_state = "sufficient" if case["answerable"] else "insufficient"
         assert case["expected_behavior"] == expected_behavior, case["id"]
         assert case["evidence_state"] == expected_state, case["id"]
-        assert case["gold_facts"] == [], case["id"]
-        if not case["answerable"]:
-            assert case["expected_refusal_reason"], case["id"]
 
     a01 = next(case for case in cases if case["id"] == "A01")
     # 旧字段全部保留,不被 v2 默认值覆盖
