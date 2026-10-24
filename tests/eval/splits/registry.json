@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "splits": {
+    "regression-v1": {
+      "kind": "composed",
+      "n": 60,
+      "label_version": "v2-overlay",
+      "cases": [
+        {
+          "path": "tests/eval/ch04_eval_set.jsonl",
+          "overlay": null
+        },
+        {
+          "path": "tests/eval/ch09_junk_set.jsonl",
+          "overlay": null
+        }
+      ]
+    }
+  }
+}
