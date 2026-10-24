@@ -1,7 +1,9 @@
+import json
 from pathlib import Path
 
 from app.kb import KnowledgeBaseStore
 from scripts.build_kb import build
+from scripts.corpus_manifest import corpus_sha256, expected_docs
 from tests.helpers import FakeEmbedding, FakeVectorStore
 
 DOCS_DIR = Path(__file__).resolve().parent.parent / "knowledge"
@@ -15,14 +17,32 @@ def _make(db_session_factory):
 def test_build_full_and_rerun_idempotent(db_session_factory):
     kb, vectors, embedder = _make(db_session_factory)
     stats = build(DOCS_DIR, kb, vectors, embedder)
-    assert stats["docs"] == 3
+    assert stats["docs"] == expected_docs()
     assert stats["chunks"] > 10
     assert stats["vectorized"] == stats["chunks"]
     assert vectors.count() == stats["chunks"]
+    assert sum(stats["doc_chunk_counts"].values()) == stats["chunks"]
+    assert stats["corpus_sha256"] == corpus_sha256(DOCS_DIR)
     total = stats["chunks"]
     stats2 = build(DOCS_DIR, kb, vectors, embedder)  # 幂等重建
     assert stats2["chunks"] == total
     assert vectors.count() == total  # 旧向量删干净,无重复
+
+
+def test_build_writes_manifest_out(db_session_factory, tmp_path):
+    kb, vectors, embedder = _make(db_session_factory)
+    out = tmp_path / "build_manifest.json"
+    stats = build(
+        DOCS_DIR, kb, vectors, embedder,
+        embedding_model="fake-embedding", manifest_out=out,
+    )
+
+    data = json.loads(out.read_text(encoding="utf-8"))
+    assert data["corpus_sha256"] == stats["corpus_sha256"]
+    assert data["embedding_model"] == "fake-embedding"
+    assert data["chunks"] == stats["chunks"]
+    assert data["vectorized"] == stats["vectorized"]
+    assert [d["file"] for d in data["documents"]] == list(stats["doc_chunk_counts"])
 
 
 def test_build_interrupt_then_resume(db_session_factory):

@@ -1,0 +1,19 @@
+# ch11 语料 manifest:knowledge/*.md 的注册表与规模契约。
+# content_type 直接传给 app.chunking.chunk_markdown;未登记文档会让 build_kb 报错。
+# Task 3 扩充 5 份文档后,expected_docs 改 8、expected_chunks_* 改 120–180。
+corpus_version: corpus-v1
+expected_docs: 3
+expected_chunks_min: 50
+expected_chunks_max: 80
+expected_facts_min: null
+expected_facts_max: null
+docs:
+  - file: 退货政策.md
+    content_type: policy
+    role: policy
+  - file: 商品FAQ.md
+    content_type: faq
+    role: faq
+  - file: 售后手册.md
+    content_type: manual
+    role: manual

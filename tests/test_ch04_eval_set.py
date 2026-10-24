@@ -8,13 +8,15 @@ from collections import Counter
 from pathlib import Path
 
 from app.chunking import chunk_markdown
+from scripts.corpus_manifest import doc_types
 
 ROOT = Path(__file__).resolve().parent.parent
 CASES = [json.loads(ln) for ln in
          (ROOT / "tests" / "eval" / "ch04_eval_set.jsonl").read_text(encoding="utf-8").splitlines()
          if ln.strip()]
 BUCKETS = {"A_policy": 8, "B_model": 8, "C_colloquial": 8, "E_multi": 8, "F_service": 15}
-DOC_TYPES = {"退货政策.md": "policy", "商品FAQ.md": "faq", "售后手册.md": "manual"}
+# 文档名 → content_type 的唯一真源是 corpus/manifest.yaml
+DOC_TYPES = doc_types()
 
 
 def _norm(text: str) -> str:
