@@ -31,6 +31,8 @@ sys.path.insert(0, str(ROOT))
 
 BASE = os.environ.get("ACCEPT_BASE", "http://127.0.0.1:8000")
 TIMEOUT = float(os.environ.get("ACCEPT_TIMEOUT", "120"))
+ADMIN_USER = os.environ.get("ACCEPT_ADMIN_USER", "")
+ADMIN_PASSWORD = os.environ.get("ACCEPT_ADMIN_PASSWORD", "")
 
 
 def chat(client: httpx.Client, message: str, session_id: int | None = None) -> dict:
@@ -55,6 +57,23 @@ def chat(client: httpx.Client, message: str, session_id: int | None = None) -> d
 def check(name: str, ok: bool, detail: str = "") -> bool:
     print(f"{'✅' if ok else '❌'} {name}" + (f" —— {detail}" if detail else ""))
     return ok
+
+
+def admin_login(client: httpx.Client) -> bool:
+    """ch14 起 review/usage/eval 后台接口需要管理员会话。"""
+    if not ADMIN_USER or not ADMIN_PASSWORD:
+        return check("管理员登录", False,
+                     "设置 ACCEPT_ADMIN_USER / ACCEPT_ADMIN_PASSWORD")
+    response = client.post(f"{BASE}/api/admin/login",
+                           json={"username": ADMIN_USER, "password": ADMIN_PASSWORD},
+                           timeout=30)
+    if response.status_code != 200:
+        return check("管理员登录", False, f"HTTP {response.status_code}")
+    session = client.get(f"{BASE}/api/admin/session", timeout=30)
+    if session.status_code != 200:
+        return check("管理员登录", False, f"session HTTP {session.status_code}")
+    client.headers["X-CSRF-Token"] = session.json()["csrf_token"]
+    return True
 
 
 def langfuse_client() -> httpx.Client:
@@ -100,6 +119,8 @@ def scenario_flywheel() -> bool:
     ok = True
     marker = f"会飞的手机多少钱一台{uuid.uuid4().hex[:4]}"
     with httpx.Client(trust_env=False) as c:
+        if not admin_login(c):
+            return False
         out = chat(c, marker)
         ok &= check("验收2 库外问题拿到兜底话术", "无法回答" in out["reply"], out["reply"][:60])
         time.sleep(3)  # 落池内联标准化/查重(LLM)可能晚于 SSE 收尾
@@ -143,6 +164,8 @@ def scenario_feedback() -> bool:
     marker = uuid.uuid4().hex[:6]
     question = f"无人机能带上飞机吗{marker}"
     with httpx.Client(trust_env=False) as c:
+        if not admin_login(c):
+            return False
         out = chat(c, question)  # 先走一轮,留下当轮检索快照
         fb = c.post(f"{BASE}/api/feedback",
                     json={"session_id": out["session_id"], "question": question,
@@ -167,6 +190,8 @@ def scenario_feedback() -> bool:
 
 def scenario_cost() -> bool:
     with httpx.Client(trust_env=False) as c:
+        if not admin_login(c):
+            return False
         rows = c.get(f"{BASE}/api/usage/by-intent", timeout=30).json()["items"]
         ok = check("验收5 按意图汇总的 token 花销可得", bool(rows), f"{len(rows)} 个意图")
         for row in rows:
@@ -181,16 +206,18 @@ def scenario_cost() -> bool:
 
 def scenario_eval() -> bool:
     limit = os.environ.get("ACCEPT_EVAL_LIMIT", "4")
-    for i in (1, 2):
-        proc = subprocess.run(
-            [sys.executable, "scripts/run_eval.py", "--triggered-by", "手动", "--limit", limit],
-            cwd=ROOT, capture_output=True, text=True, timeout=900)
-        ok_i = proc.returncode == 0
-        print(f"{'✅' if ok_i else '❌'} 评估第 {i} 轮落表" +
-              (f" —— {proc.stdout.strip().splitlines()[-1] if proc.stdout.strip() else proc.stderr[-200:]}" if not ok_i else ""))
-        if not ok_i:
-            return False
     with httpx.Client(trust_env=False) as c:
+        if not admin_login(c):
+            return False
+        for i in (1, 2):
+            proc = subprocess.run(
+                [sys.executable, "scripts/run_eval.py", "--triggered-by", "手动", "--limit", limit],
+                cwd=ROOT, capture_output=True, text=True, timeout=900)
+            ok_i = proc.returncode == 0
+            print(f"{'✅' if ok_i else '❌'} 评估第 {i} 轮落表" +
+                  (f" —— {proc.stdout.strip().splitlines()[-1] if proc.stdout.strip() else proc.stderr[-200:]}" if not ok_i else ""))
+            if not ok_i:
+                return False
         runs = c.get(f"{BASE}/api/eval-runs", timeout=30).json()["items"]
         ok = check("验收6 至少两轮评估可对比", len(runs) >= 2, f"共 {len(runs)} 轮")
         if len(runs) >= 2:

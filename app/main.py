@@ -1,9 +1,11 @@
 import logging
 from pathlib import Path
 
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, RedirectResponse
 
+from app.admin_auth import AdminPrincipal, page_guard, read_principal
+from app.admin_store import AdminAuditStore, AdminStore
 from app.config import Settings
 from app.context import derive_budgets
 from app.db import make_engine, make_session_factory
@@ -24,6 +26,14 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname
 logger = logging.getLogger(__name__)
 
 STATIC_DIR = Path(__file__).resolve().parent.parent / "static"
+
+
+async def _admin_page(request: Request, filename: str):
+    """后台页统一守卫：未登录 303 登录页，角色不足 403，通过则返回静态页。"""
+    result = await page_guard(request)
+    if not isinstance(result, AdminPrincipal):
+        return result
+    return FileResponse(STATIC_DIR / filename)
 
 
 def _ensure_app_log_handler() -> None:
@@ -136,6 +146,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from app.topic_classifier import TopicClassifierService
     app.state.topic_store = TopicStore(session_factory)
     app.state.topic_classifier = TopicClassifierService(settings)
+    # ch14:后台管理员与审计(secret 为空时登录 503,聊天主链路不受影响)
+    app.state.admin_store = AdminStore(
+        session_factory, password_iterations=settings.admin_password_iterations)
+    app.state.admin_audit_store = AdminAuditStore(session_factory)
+    if not settings.admin_session_secret:
+        logger.warning("[auth] ADMIN_SESSION_SECRET 未设置，后台登录将返回 503")
     app.include_router(chat.router)
     app.include_router(feedback.router)
     app.include_router(review_queue.router)
@@ -148,22 +164,37 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(conversations.router)
     from app.routers import topics
     app.include_router(topics.router)
+    from app.routers import admin as admin_router
+    app.include_router(admin_router.router)
 
     @app.get("/")
     async def index() -> FileResponse:
         return FileResponse(STATIC_DIR / "index.html")
 
+    @app.get("/admin/login")
+    def admin_login_page(request: Request):
+        if read_principal(request) is not None:
+            return RedirectResponse("/admin/review", status_code=303)
+        return FileResponse(STATIC_DIR / "admin-login.html",
+                            headers={"Cache-Control": "no-store"})
+
+    @app.get("/admin/assets/admin.js")
+    def admin_asset() -> FileResponse:
+        return FileResponse(STATIC_DIR / "admin-auth.js",
+                            media_type="application/javascript",
+                            headers={"Cache-Control": "no-store"})
+
     @app.get("/admin/review")
-    async def review_admin() -> FileResponse:
-        return FileResponse(STATIC_DIR / "review-queue.html")
+    async def review_admin(request: Request):
+        return await _admin_page(request, "review-queue.html")
 
     @app.get("/admin/evals")
-    async def eval_admin() -> FileResponse:
-        return FileResponse(STATIC_DIR / "eval-runs.html")
+    async def eval_admin(request: Request):
+        return await _admin_page(request, "eval-runs.html")
 
     @app.get("/admin/topics")
-    async def topics_admin() -> FileResponse:
-        return FileResponse(STATIC_DIR / "topics.html")
+    async def topics_admin(request: Request):
+        return await _admin_page(request, "topics.html")
 
     return app
 

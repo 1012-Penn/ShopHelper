@@ -20,6 +20,7 @@
     button:disabled { opacity: .55; cursor: default; }
     .toolbar { display: flex; gap: 8px; margin-top: 10px; }
     .source { margin-top: 10px; padding: 10px; border-radius: 8px; background: #f6f8fc; white-space: pre-wrap; }
+    .error { color: #d34b4b; }
     @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -29,26 +30,45 @@
     <section><h3>待审队列</h3><div id="items">加载中…</div></section>
     <section><h3 id="title">选择一条问题查看详情</h3><div id="detail" class="muted">人工审核时请对照原话和召回片段。</div></section>
   </main>
+  <script src="/admin/assets/admin.js"></script>
   <script>
     const items = document.getElementById("items"), detail = document.getElementById("detail"), title = document.getElementById("title");
     let selected = null;
-    async function load() {
-      const res = await fetch("/api/review-queue");
-      const body = await res.json();
-      items.innerHTML = "";
-      for (const row of body.items || []) {
-        const b = document.createElement("button"); b.className = "item";
-        b.innerHTML = '<span class="count"></span><span class="question"></span><div class="muted"></div>';
-        b.querySelector(".count").textContent = "×" + row.occurrence_count;
-        b.querySelector(".question").textContent = row.normalized_question;
-        b.querySelector(".muted").textContent = row.ai_suggested_answer || "暂无示例答案";
-        b.onclick = () => openDetail(row.id, b); items.appendChild(b);
-      }
-      if (!body.items?.length) items.textContent = "暂无待审问题";
+
+    function showError(err) {
+      detail.innerHTML = "";
+      const box = document.createElement("div");
+      box.className = "error";
+      box.textContent = err instanceof AdminAuth.ForbiddenError ? "权限不足：当前账号无此操作权限。" : (err.message || "请求失败");
+      detail.appendChild(box);
     }
+
+    async function load() {
+      try {
+        const body = await AdminAuth.requestJSON("/api/review-queue");
+        items.innerHTML = "";
+        for (const row of body.items || []) {
+          const b = document.createElement("button"); b.className = "item";
+          b.innerHTML = '<span class="count"></span><span class="question"></span><div class="muted"></div>';
+          b.querySelector(".count").textContent = "×" + row.occurrence_count;
+          b.querySelector(".question").textContent = row.normalized_question;
+          b.querySelector(".muted").textContent = row.ai_suggested_answer || "暂无示例答案";
+          b.onclick = () => openDetail(row.id, b); items.appendChild(b);
+        }
+        if (!body.items?.length) items.textContent = "暂无待审问题";
+      } catch (err) {
+        items.textContent = err.message || "加载失败";
+      }
+    }
+
     async function openDetail(id, button) {
       document.querySelectorAll(".item").forEach((x) => x.classList.remove("active")); button.classList.add("active");
-      selected = await (await fetch("/api/review-queue/" + id)).json();
+      try {
+        selected = await AdminAuth.requestJSON("/api/review-queue/" + id);
+      } catch (err) {
+        showError(err);
+        return;
+      }
       title.textContent = selected.normalized_question;
       detail.innerHTML = "";
       for (const q of selected.original_questions || []) {
@@ -61,11 +81,47 @@
       const bar = document.createElement("div"); bar.className = "toolbar";
       const approve = document.createElement("button"); approve.className = "primary"; approve.textContent = "通过并写入知识库";
       const reject = document.createElement("button"); reject.textContent = "驳回";
-      approve.onclick = async () => { approve.disabled = true; await fetch("/api/review-queue/" + id + "/approve", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({approved_answer: input.value})}); await load(); detail.textContent = "已通过并写入知识库。"; };
-      reject.onclick = async () => { reject.disabled = true; await fetch("/api/review-queue/" + id + "/reject", {method:"POST"}); await load(); detail.textContent = "已驳回。"; };
+      approve.onclick = async () => {
+        approve.disabled = true;
+        try {
+          await AdminAuth.requestJSON("/api/review-queue/" + id + "/approve", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ approved_answer: input.value }),
+          });
+          await load();
+          detail.textContent = "已通过并写入知识库。";
+        } catch (err) {
+          approve.disabled = false;
+          showError(err);
+        }
+      };
+      reject.onclick = async () => {
+        reject.disabled = true;
+        try {
+          await AdminAuth.requestJSON("/api/review-queue/" + id + "/reject", { method: "POST" });
+          await load();
+          detail.textContent = "已驳回。";
+        } catch (err) {
+          reject.disabled = false;
+          showError(err);
+        }
+      };
       bar.append(approve, reject); detail.appendChild(bar);
+      if (!AdminAuth.canWrite()) {
+        approve.disabled = true; reject.disabled = true;
+        const note = document.createElement("p"); note.className = "muted";
+        note.textContent = "当前账号为只读，无审核权限。";
+        detail.appendChild(note);
+      }
     }
-    load();
+
+    async function initPage() {
+      const session = await AdminAuth.init();
+      if (!session) return;
+      await load();
+    }
+    initPage();
   </script>
 </body>
 </html>

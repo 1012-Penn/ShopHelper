@@ -1,8 +1,8 @@
-"""ORM 四模型,字段与 db/init.sql 一一对应。"""
+"""ORM 模型,字段与 db/init.sql 一一对应。"""
 from datetime import datetime
 
-from sqlalchemy import (JSON, BigInteger, DateTime, Enum, ForeignKey, Integer, String,
-                        Text, UniqueConstraint, func)
+from sqlalchemy import (JSON, BigInteger, Boolean, DateTime, Enum, ForeignKey, Integer,
+                        String, Text, UniqueConstraint, func)
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -286,3 +286,53 @@ class TopicClassification(Base):
     )
     labels: Mapped[list] = mapped_column(JSON, nullable=False)
     classified_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class AdminUser(Base):
+    """ch14：后台管理员账号。角色以本表为准，口令只存 PBKDF2 哈希。"""
+
+    __tablename__ = "admin_users"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    username: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
+    role: Mapped[str] = mapped_column(
+        Enum("viewer", "operator", "admin", name="admin_role"),
+        nullable=False, default="viewer",
+    )
+    is_active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    failed_login_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    last_login_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    session_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime, server_default=func.now(), onupdate=func.now()
+    )
+
+
+class AdminAuditLog(Base):
+    """ch14：后台管理操作审计，append-only，不挂外键（审计写入不能被引用约束拦住）。"""
+
+    __tablename__ = "admin_audit_logs"
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    admin_user_id: Mapped[int | None] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), nullable=True
+    )
+    username: Mapped[str] = mapped_column(String(64), nullable=False)
+    role: Mapped[str] = mapped_column(String(16), nullable=False)
+    action: Mapped[str] = mapped_column(String(64), nullable=False)
+    target_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    target_id: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    result: Mapped[str] = mapped_column(
+        Enum("成功", "失败", name="admin_audit_result"), nullable=False, default="成功"
+    )
+    detail: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    user_agent: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())

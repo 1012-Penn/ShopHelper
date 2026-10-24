@@ -83,3 +83,11 @@ class Settings(BaseSettings):
     topic_max_len: int = 96
     topic_batch_size: int = 16
     topic_classify_batch_limit: int = 200
+
+    # ch14:后台管理员鉴权(DB 管理员表;secret 为空时后台登录 503,不阻断聊天)
+    admin_session_secret: str = ""        # 生产必须设置;python -c 'import secrets; print(secrets.token_urlsafe(48))'
+    admin_session_ttl_seconds: int = 8 * 3600
+    admin_cookie_secure: bool = False     # 本地 HTTP 为 false;生产 HTTPS 必须 true
+    admin_login_max_failures: int = 5
+    admin_login_lock_seconds: int = 900
+    admin_password_iterations: int = 600_000

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ShopHelper · 后台登录</title>
+  <style>
+    :root { color-scheme: light; }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center;
+           font: 14px system-ui, -apple-system, "Segoe UI", sans-serif;
+           color: #20242b; background: linear-gradient(135deg, #eef3ff, #f5f7fb 55%, #eefaf5); }
+    main { width: min(92vw, 380px); background: #fff; border: 1px solid #e5e8ee;
+           border-radius: 16px; padding: 28px; box-shadow: 0 18px 50px rgba(31, 45, 80, .08); }
+    h1 { margin: 0 0 6px; font-size: 20px; }
+    .hint { margin: 0 0 22px; color: #737b88; font-size: 13px; }
+    label { display: block; margin: 14px 0 6px; color: #4a5060; font-size: 13px; }
+    input { width: 100%; box-sizing: border-box; border: 1px solid #d6dae2; border-radius: 9px;
+            padding: 10px 12px; font: inherit; outline: none; }
+    input:focus { border-color: #4f7cff; box-shadow: 0 0 0 3px rgba(79, 124, 255, .14); }
+    button { width: 100%; margin-top: 20px; border: 0; border-radius: 9px; padding: 11px 14px;
+             background: #4f7cff; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: default; }
+    #error { min-height: 20px; margin-top: 12px; color: #d34b4b; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>ShopHelper 后台</h1>
+    <p class="hint">请使用管理员账号登录。审核、归类与审计按角色授权。</p>
+    <form id="login-form">
+      <label for="username">用户名</label>
+      <input id="username" name="username" autocomplete="username" required autofocus />
+      <label for="password">口令</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required />
+      <button id="submit" type="submit">登录</button>
+      <div id="error" role="alert"></div>
+    </form>
+  </main>
+  <script>
+    const form = document.getElementById("login-form");
+    const button = document.getElementById("submit");
+    const errorBox = document.getElementById("error");
+    const next = new URLSearchParams(location.search).get("next") || "/admin/review";
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorBox.textContent = "";
+      button.disabled = true;
+      button.textContent = "登录中…";
+      try {
+        const response = await fetch("/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: document.getElementById("username").value,
+            password: document.getElementById("password").value,
+            next,
+          }),
+        });
+        const body = await response.json().catch(() => ({}));
+        if (response.ok) {
+          location.replace(body.redirect_to || "/admin/review");
+          return;
+        }
+        if (response.status === 401) errorBox.textContent = "用户名或密码错误";
+        else if (response.status === 429) errorBox.textContent = "登录失败次数过多，请稍后再试";
+        else if (response.status === 403) errorBox.textContent = "请求来源校验失败";
+        else if (response.status === 503) errorBox.textContent = body.detail || "后台鉴权未配置";
+        else errorBox.textContent = body.detail || ("登录失败（" + response.status + "）");
+      } catch (err) {
+        errorBox.textContent = "网络错误，请重试";
+      } finally {
+        button.disabled = false;
+        button.textContent = "登录";
+      }
+    });
+  </script>
+</body>
+</html>

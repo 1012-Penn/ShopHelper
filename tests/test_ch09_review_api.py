@@ -3,18 +3,20 @@ from sqlalchemy import select
 
 from app.flywheel import FlywheelService
 from app.models import KnowledgeChunk, LowConfidenceQuestion, ReviewQueue
-from tests.helpers import fake_chat
+from tests.helpers import admin_login, csrf_headers, fake_chat, seed_admin
 
 
 async def make_flywheel_client(make_client, chat_text="好的"):
     client, app = await make_client(fake_chat(chat_text))
     # 生产 flywheel 绑定的是真实 MySQL factory,测试换成本用例的 SQLite factory
     app.state.flywheel = FlywheelService(app.state.session_factory)
-    return client, app
+    seed_admin(app, "operator", "operator-pass-123", "operator")
+    csrf = await admin_login(client, "operator", "operator-pass-123")
+    return client, app, csrf
 
 
 async def test_review_queue_list_detail_approve_reject(make_client):
-    client, app = await make_flywheel_client(make_client)
+    client, app, csrf = await make_flywheel_client(make_client)
 
     app.state.flywheel.insert("retrieval_low_conf", 1, "会飞的手机怎么买", "证据置信度低",
                               [{"rank": 1, "chunk_id": 7, "score": 0.42, "question": "邮费",
@@ -33,18 +35,21 @@ async def test_review_queue_list_detail_approve_reject(make_client):
     assert missing.status_code == 404
 
     approved = await client.post(f"/api/review-queue/{listed[0]['id']}/approve",
-                                 json={"approved_answer": "手机目前不能飞。"})
+                                 json={"approved_answer": "手机目前不能飞。"},
+                                 headers=csrf_headers(csrf))
     assert approved.status_code == 200 and approved.json()["approved"] is True
 
-    assert (await client.post(f"/api/review-queue/{listed[0]['id']}/reject")).status_code == 200
+    assert (await client.post(f"/api/review-queue/{listed[0]['id']}/reject",
+                              headers=csrf_headers(csrf))).status_code == 200
 
 
 async def test_approve_writes_pending_knowledge_chunk(make_client):
-    client, app = await make_flywheel_client(make_client)
+    client, app, csrf = await make_flywheel_client(make_client)
     review_id = app.state.flywheel.insert("self_check", 1, "会员积分怎么兑换", "模型自评")
 
     await client.post(f"/api/review-queue/{review_id}/approve",
-                      json={"approved_answer": "在会员页点兑换即可。"})
+                      json={"approved_answer": "在会员页点兑换即可。"},
+                      headers=csrf_headers(csrf))
 
     with app.state.session_factory() as session:
         row = session.get(ReviewQueue, review_id)
@@ -56,7 +61,7 @@ async def test_approve_writes_pending_knowledge_chunk(make_client):
 
 
 async def test_feedback_down_salvages_round_snapshot(make_client):
-    client, app = await make_flywheel_client(make_client)
+    client, app, _ = await make_flywheel_client(make_client)
     snapshot = [{"rank": 1, "chunk_id": 3, "score": 0.61, "question": "退货", "answer": "7 天无理由"}]
     app.state.round_capture.record(9, "关税怎么算", snapshot)
 
@@ -71,7 +76,7 @@ async def test_feedback_down_salvages_round_snapshot(make_client):
 
 
 async def test_feedback_down_without_round_lands_null_snapshot(make_client):
-    client, app = await make_flywheel_client(make_client)
+    client, app, _ = await make_flywheel_client(make_client)
 
     await client.post("/api/feedback", json={
         "session_id": 9, "question": "没聊过的问题", "rating": "down"})

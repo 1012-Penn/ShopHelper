@@ -28,6 +28,8 @@ sys.path.insert(0, str(ROOT))
 BASE = os.environ.get("ACCEPT_BASE", "http://127.0.0.1:8000")
 REPORT = ROOT / "reports/ch10-topic-classification-report.md"
 DEMO_POOL = ROOT / "tests/eval/topic_dataset/demo_pool.jsonl"
+ADMIN_USER = os.environ.get("ACCEPT_ADMIN_USER", "")
+ADMIN_PASSWORD = os.environ.get("ACCEPT_ADMIN_PASSWORD", "")
 
 RESULTS: list[tuple[str, bool, str]] = []
 
@@ -35,6 +37,27 @@ RESULTS: list[tuple[str, bool, str]] = []
 def record(name: str, ok: bool, detail: str = "") -> None:
     RESULTS.append((name, ok, detail))
     print(f"{'✅' if ok else '❌'} {name}" + (f" —— {detail}" if detail else ""))
+
+
+def admin_login(client: httpx.Client) -> bool:
+    """ch14 起 topics 分布/归类接口需要管理员会话与 CSRF。"""
+    if not ADMIN_USER or not ADMIN_PASSWORD:
+        record("验收2 管理员登录", False,
+               "设置 ACCEPT_ADMIN_USER / ACCEPT_ADMIN_PASSWORD")
+        return False
+    response = client.post(f"{BASE}/api/admin/login",
+                           json={"username": ADMIN_USER, "password": ADMIN_PASSWORD},
+                           timeout=30)
+    if response.status_code != 200:
+        record("验收2 管理员登录", False, f"HTTP {response.status_code}")
+        return False
+    session = client.get(f"{BASE}/api/admin/session", timeout=30)
+    if session.status_code != 200:
+        record("验收2 管理员登录", False, f"session HTTP {session.status_code}")
+        return False
+    client.headers["X-CSRF-Token"] = session.json()["csrf_token"]
+    record("验收2 管理员登录", True, f"role={session.json()['role']}")
+    return True
 
 
 def scenario_report() -> None:
@@ -110,6 +133,8 @@ def scenario_classify() -> None:
     record("验收2 演示问题灌入问题池", True, f"新灌 {seeded} 条(重复跳过)")
 
     with httpx.Client(timeout=300) as client:
+        if not admin_login(client):
+            return
         resp = client.post(f"{BASE}/api/topics/classify-batch", json={"limit": 200})
         if resp.status_code == 503:
             record("验收2 旁路批量归类", False, "模型未就绪:先 train + export 再起服务")

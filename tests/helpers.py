@@ -11,7 +11,7 @@ from pydantic import Field
 
 __all__ = ["cosine", "FakeChatWithTools", "fake_chat", "StubExtractModel", "parse_sse", "seed_kb_chunk",
            "post_chat_sse", "FakeEmbedding", "FakeVectorStore", "StubMineModel", "StubQAList", "FakeReranker", "FakeRewriter",
-           "StubExpand", "EchoResolver", "graph_state"]
+           "StubExpand", "EchoResolver", "graph_state", "seed_admin", "admin_login", "csrf_headers"]
 
 _graph_state_defaults = dict(
     session_id=1, user_message="退货政策是什么", resolved_message="", intent="",
@@ -352,3 +352,24 @@ def builtin_engine():
     registry = ToolRegistryV2()
     register_builtin(registry, ToolContext(session_factory=factory, service=service, kb=kb, top_k=3))
     return ToolEngine(registry, ToolAuditStore(factory))
+
+
+# ---------- ch14 管理员测试助手 ----------
+
+def seed_admin(app, username: str = "admin", password: str = "admin-pass-123",
+               role: str = "admin"):
+    """在测试 app 的 SQLite admin store 里种一个管理员。"""
+    return app.state.admin_store.create_user(username, password, role)
+
+
+async def admin_login(client, username: str = "admin",
+                      password: str = "admin-pass-123") -> str:
+    """登录并返回 CSRF token；Cookie 由 httpx client 自动保存。"""
+    response = await client.post("/api/admin/login",
+                                 json={"username": username, "password": password})
+    assert response.status_code == 200, response.text
+    return response.json()["csrf_token"]
+
+
+def csrf_headers(token: str) -> dict:
+    return {"X-CSRF-Token": token}

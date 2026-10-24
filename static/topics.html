@@ -40,35 +40,62 @@
       <div class="hint">柱条按各类目问题量等比缩放;0 条灰显。「其他」堆得异常多,多半是术语表没覆盖的新话题。</div>
     </section>
   </main>
+  <script src="/admin/assets/admin.js"></script>
   <script>
     const chart = document.getElementById("chart"), runBtn = document.getElementById("run");
+
     async function load() {
-      const body = await (await fetch("/api/topics/distribution")).json();
-      document.getElementById("total").textContent = body.classified + body.unclassified;
-      document.getElementById("classified").textContent = body.classified;
-      document.getElementById("unclassified").textContent = body.unclassified;
-      const max = Math.max(1, ...body.items.map(i => i.count));
-      chart.innerHTML = "";
-      for (const item of body.items) {
-        const row = document.createElement("div");
-        row.className = "row" + (item.count ? "" : " zero");
-        row.innerHTML = '<span class="label"></span><div><div class="bar"></div></div><span class="count"></span>';
-        row.querySelector(".label").textContent = item.label;
-        row.querySelector(".bar").style.width = Math.round(item.count / max * 100) + "%";
-        row.querySelector(".count").textContent = item.count;
-        chart.appendChild(row);
+      try {
+        const body = await AdminAuth.requestJSON("/api/topics/distribution");
+        document.getElementById("total").textContent = body.classified + body.unclassified;
+        document.getElementById("classified").textContent = body.classified;
+        document.getElementById("unclassified").textContent = body.unclassified;
+        const max = Math.max(1, ...body.items.map(i => i.count));
+        chart.innerHTML = "";
+        for (const item of body.items) {
+          const row = document.createElement("div");
+          row.className = "row" + (item.count ? "" : " zero");
+          row.innerHTML = '<span class="label"></span><div><div class="bar"></div></div><span class="count"></span>';
+          row.querySelector(".label").textContent = item.label;
+          row.querySelector(".bar").style.width = Math.round(item.count / max * 100) + "%";
+          row.querySelector(".count").textContent = item.count;
+          chart.appendChild(row);
+        }
+      } catch (err) {
+        chart.textContent = err.message || "加载失败";
       }
     }
+
     runBtn.onclick = async () => {
-      runBtn.disabled = true; runBtn.textContent = "归类中…(CPU 推理,几百条约半分钟)";
+      runBtn.disabled = true;
+      runBtn.textContent = "归类中…(CPU 推理,几百条约半分钟)";
       try {
-        const res = await fetch("/api/topics/classify-batch", { method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({ limit: 200 }) });
-        const body = await res.json();
-        if (!res.ok) alert("归类失败:" + (body.detail || res.status));
-        else alert("本批归类 " + body.classified + " 条");
-      } finally { runBtn.disabled = false; runBtn.textContent = "归类一批(≤200 条)"; await load(); }
+        const body = await AdminAuth.requestJSON("/api/topics/classify-batch", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ limit: 200 }),
+        });
+        alert("本批归类 " + body.classified + " 条");
+      } catch (err) {
+        if (err instanceof AdminAuth.ForbiddenError) alert("权限不足:当前账号无归类权限");
+        else alert("归类失败:" + (err.message || err));
+      } finally {
+        runBtn.disabled = !AdminAuth.canWrite();
+        runBtn.textContent = AdminAuth.canWrite() ? "归类一批(≤200 条)" : "只读账号：无归类权限";
+        await load();
+      }
     };
-    load();
+
+    async function initPage() {
+      const session = await AdminAuth.init();
+      if (!session) return;
+      if (!AdminAuth.canWrite()) {
+        runBtn.disabled = true;
+        runBtn.textContent = "只读账号：无归类权限";
+      }
+      await load();
+    }
+    initPage();
   </script>
 </body>
 </html>
