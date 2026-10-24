@@ -525,10 +525,16 @@ def validate_cases(
 
         if split in NEW_SPLITS and bucket not in BUCKETS:
             issues.append(f"{case_id}: bucket 不在 v2 分类中: {bucket!r}")
+        if split in NEW_SPLITS:
+            unknown = sorted(set(case) - set(EvalCase.model_fields))
+            if unknown:
+                issues.append(f"{case_id}: 新 split 含未知字段: {', '.join(unknown)}")
         if split in NEW_SPLITS and behavior in ANSWER_BEHAVIORS and not (
             case.get("gold_facts") or []
         ):
             issues.append(f"{case_id}: 新 split 的 answer* 题缺少 gold_facts")
+        if behavior != "refuse" and answerable is not True:
+            issues.append(f"{case_id}: 非 refuse 题必须 answerable=true")
 
         if behavior == "refuse":
             if answerable is not False:
@@ -542,6 +548,11 @@ def validate_cases(
                 issues.append(f"{case_id}: clarify 必须 answerable=true")
             if not (case.get("clarifying_slots") or []):
                 issues.append(f"{case_id}: clarify 缺少 clarifying_slots")
+        elif behavior == "answer_with_conditions":
+            if not (case.get("required_conditions") or []):
+                issues.append(
+                    f"{case_id}: answer_with_conditions 缺少 required_conditions"
+                )
         elif behavior == "verify_then_answer":
             if not (case.get("required_conditions") or []):
                 issues.append(f"{case_id}: verify_then_answer 缺少 required_conditions")

@@ -116,6 +116,29 @@ def test_schema_rejects_clarify_without_slots():
     assert "clarifying_slots" in str(excinfo.value)
 
 
+def test_schema_rejects_answer_with_conditions_without_conditions():
+    bad = _case(expected_behavior="answer_with_conditions")
+    with pytest.raises(EvalDataError) as excinfo:
+        validate_cases([bad], split="dev")
+    assert "answer_with_conditions" in str(excinfo.value)
+    assert "required_conditions" in str(excinfo.value)
+
+
+def test_schema_rejects_non_refuse_when_not_answerable():
+    bad = _case(expected_behavior="answer", answerable=False)
+    with pytest.raises(EvalDataError) as excinfo:
+        validate_cases([bad], split="dev")
+    assert "非 refuse" in str(excinfo.value)
+
+
+def test_new_split_rejects_unknown_top_level_field():
+    bad = _case(required_evidenc=[])
+    with pytest.raises(EvalDataError) as excinfo:
+        validate_cases([bad], split="dev")
+    assert "未知字段" in str(excinfo.value)
+    assert "required_evidenc" in str(excinfo.value)
+
+
 def test_schema_rejects_policy_conflict_without_as_of_date():
     bad = _case(
         bucket="policy_conflict",
