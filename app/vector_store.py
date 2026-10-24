@@ -134,6 +134,25 @@ class KnowledgeVectorStore:
                             output_fields=["id"], limit=16384)
         return [int(r["id"]) for r in rows]
 
+    def all_rows(self, limit: int = 16384) -> list[dict]:
+        """返回 [{id, text, category}],供快照逐 chunk 内容校验。
+
+        只用于评测/快照核对,不进入线上检索路径。
+        """
+        client = self._loaded_client()
+        if client is None:
+            return []
+        rows = client.query(self._collection, filter="id >= 0",
+                            output_fields=["id", "text", "category"], limit=limit)
+        return [
+            {
+                "id": int(row["id"]),
+                "text": str(row.get("text") or ""),
+                "category": str(row.get("category") or ""),
+            }
+            for row in rows
+        ]
+
     def count(self) -> int:
         if not self._exists():
             return 0

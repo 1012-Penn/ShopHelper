@@ -79,6 +79,13 @@ def test_legacy_collection_recreated(tmp_path):
     assert {"text", "sparse", "category"} <= names
 
 
+def test_all_rows_returns_text_and_category(store):
+    rows = {row["id"]: row for row in store.all_rows()}
+    assert set(rows) == {1, 2, 3}
+    assert rows[1]["text"].startswith("无线蓝牙降噪耳机")
+    assert rows[2]["category"] == "售后政策"
+
+
 def test_all_ids(store):
     assert set(store.all_ids()) == {1, 2, 3}
     store.delete([2])

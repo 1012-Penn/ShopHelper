@@ -146,6 +146,12 @@ class FakeVectorStore:
             return self._rows
         return {i: r for i, r in self._rows.items() if r["category"] == cat}
 
+    def all_rows(self, limit=16384):
+        return [
+            {"id": cid, "text": row["text"], "category": row["category"]}
+            for cid, row in sorted(self._rows.items())[:limit]
+        ]
+
     def dense_search(self, vector, top_k, filter_expr=None):
         scored = [(i, cosine(vector, r["vector"])) for i, r in self._filtered(filter_expr).items()]
         scored.sort(key=lambda x: -x[1])
