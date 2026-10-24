@@ -91,3 +91,40 @@ def evidence_group_recall(ranked_ids: list[int], gold_sets: list[frozenset[int]]
         return 0.0
     hits = sum(first_rank(ranked_ids, gold, cap) is not None for gold in gold_sets)
     return hits / len(gold_sets)
+
+
+def group_recall_at(ranked_ids: list[int], gold_sets: list[frozenset[int]],
+                    k: int = 10) -> float:
+    """evidence_group_recall 的显式 Top-K 别名。"""
+    return evidence_group_recall(ranked_ids, gold_sets, cap=k)
+
+
+def mrr_at(ranked_ids: list[int], gold_sets: list[frozenset[int]],
+           k: int = 10) -> float | None:
+    """首次覆盖全部 evidence 的名次倒数;未命中返回 None。"""
+    rank = coverage_rank(ranked_ids, gold_sets, cap=k)
+    return None if rank is None else 1.0 / rank
+
+
+def evidence_precision(ranked_ids: list[int], support_ids: set[int],
+                       cap: int = 10) -> float | None:
+    """Top-K 中属于支持 chunk 的比例;Top-K 为空返回 None。"""
+    top = list(ranked_ids[:cap])
+    if not top:
+        return None
+    return sum(1 for cid in top if cid in support_ids) / len(top)
+
+
+def hard_negative_hit_rate(ranked_ids: list[int], k: int = 10) -> float:
+    """负例题是否检索到任何 chunk;单题返回 0/1,聚合时取平均。"""
+    return 1.0 if ranked_ids[:k] else 0.0
+
+
+def safe_div(num: float, den: float) -> float | None:
+    return None if den == 0 else num / den
+
+
+def macro_average(by_bucket: dict[str, float | None]) -> float | None:
+    """只对非 None 的桶取宏平均;无可用桶返回 None。"""
+    values = [value for value in by_bucket.values() if value is not None]
+    return safe_div(sum(values), float(len(values))) if values else None
