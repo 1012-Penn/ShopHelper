@@ -433,3 +433,65 @@ def test_validate_cli_unregistered_split_exits_4():
     from scripts import validate_eval_data
 
     assert validate_eval_data.main(["--split", "does-not-exist"]) == 4
+
+
+DEV_BUCKETS = {
+    "single_hop": 12,
+    "multi_hop": 11,
+    "multi_constraint": 9,
+    "entity_mismatch": 7,
+    "policy_conflict": 5,
+    "hard_negative": 7,
+    "clarify": 5,
+    "ood": 4,
+}
+
+
+def test_dev_split_exact_bucket_counts_and_schema():
+    cases = load_split("dev")
+    assert len(cases) == 60
+    assert bucket_counts(cases) == DEV_BUCKETS
+    assert len({case["id"] for case in cases}) == 60
+    assert len({case["query"] for case in cases}) == 60
+    validate_cases(cases, split="dev")
+
+
+def test_dev_split_evidence_and_gold_facts_are_real():
+    cases = load_split("dev")
+    validate_cases(
+        cases,
+        split="dev",
+        docs_dir=KNOWLEDGE_DIR,
+        factbook=load_factbook(),
+        bucket_counts=DEV_BUCKETS,
+    )
+
+
+def test_dev_split_covers_all_eight_docs():
+    cases = load_split("dev")
+    covered = {
+        evidence["doc"]
+        for case in cases
+        for evidence in case.get("required_evidence") or []
+    }
+    assert covered == {
+        "退货政策.md",
+        "商品FAQ.md",
+        "售后手册.md",
+        "商品目录.md",
+        "订单与支付.md",
+        "会员与优惠.md",
+        "政策版本说明.md",
+        "售后核验指引.md",
+    }
+
+
+def test_dev_split_has_six_multi_turn_cases():
+    cases = load_split("dev")
+    multi_turn = [case for case in cases if case.get("conversation_context")]
+    assert len(multi_turn) == 6
+    assert {case["bucket"] for case in multi_turn} == {
+        "multi_hop",
+        "multi_constraint",
+        "clarify",
+    }

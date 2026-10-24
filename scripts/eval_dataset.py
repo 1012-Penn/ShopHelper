@@ -559,7 +559,8 @@ def validate_cases(
             if not (case.get("forbidden_claims") or []):
                 issues.append(f"{case_id}: verify_then_answer 缺少 forbidden_claims")
         elif behavior == "answer":
-            if state != "sufficient":
+            # policy_conflict 的证据本身就是冲突状态,但答案可以给出确定结论。
+            if state != "sufficient" and bucket != "policy_conflict":
                 issues.append(f"{case_id}: answer 题的 evidence_state 必须为 sufficient")
 
         if bucket == "policy_conflict":

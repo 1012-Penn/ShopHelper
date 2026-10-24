@@ -1,6 +1,23 @@
 {
   "schema_version": 1,
   "splits": {
+    "dev": {
+      "kind": "file",
+      "n": 60,
+      "label_version": "v2",
+      "path": "tests/eval/splits/dev.jsonl",
+      "overlay": null,
+      "bucket_counts": {
+        "single_hop": 12,
+        "multi_hop": 11,
+        "multi_constraint": 9,
+        "entity_mismatch": 7,
+        "policy_conflict": 5,
+        "hard_negative": 7,
+        "clarify": 5,
+        "ood": 4
+      }
+    },
     "regression-v1": {
       "kind": "composed",
       "n": 60,
