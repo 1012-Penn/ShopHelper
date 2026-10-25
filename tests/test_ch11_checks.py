@@ -110,3 +110,8 @@ def test_failure_labels_for_forbidden_and_under_refusal():
     result = check_case_deterministic(case, "可以便宜 10 元。", {})
     assert "forbidden_claim" in result["failure_labels"]
     assert "under_refusal" in result["failure_labels"]
+
+
+def test_bool_negation_does_not_match_positive():
+    assert not number_covered("不支持主动降噪。", True)
+    assert number_covered("不支持主动降噪。", False)

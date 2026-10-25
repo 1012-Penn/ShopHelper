@@ -168,6 +168,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--allow-paid", action="store_true")
     parser.add_argument("--max-cost-usd", type=float, default=1.0)
     parser.add_argument("--ledger", type=Path, default=Path("data/ch11_budget.json"))
+    parser.add_argument("--pricing", type=Path, default=Path("config/pricing.yaml"))
     args = parser.parse_args(argv)
 
     cases = _load_cases(args.set)
@@ -177,6 +178,11 @@ def main(argv: list[str] | None = None) -> int:
         if not args.allow_paid:
             print("拒绝付费改写:加 --allow-paid", file=sys.stderr)
             return 2
+        from scripts.eval_cost import PricingTable
+
+        if not PricingTable.load(args.pricing).verified:
+            print("拒绝付费改写:价格表未核实(verified=false)", file=sys.stderr)
+            return 4
         estimate = 0.0005 * len(cases)
         if estimate > args.max_cost_usd:
             print(

@@ -151,3 +151,18 @@ def test_rewrite_cache_cli_write_requires_allow_paid(tmp_path):
         "--mode", "write",
     ])
     assert code == 2
+
+
+def test_rewrite_cache_cli_rejects_unverified_pricing(tmp_path):
+    from scripts.rewrite_cache import main
+
+    pricing = tmp_path / "pricing.yaml"
+    pricing.write_text("version: 't'\ncurrency: USD\nverified: false\nmodels: {}\n", encoding="utf-8")
+    code = main([
+        "--set", str(_eval_file(tmp_path)),
+        "--cache", str(tmp_path / "cache.json"),
+        "--mode", "write",
+        "--allow-paid",
+        "--pricing", str(pricing),
+    ])
+    assert code == 4

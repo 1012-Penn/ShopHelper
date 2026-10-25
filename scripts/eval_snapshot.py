@@ -102,7 +102,12 @@ def verify_consistency(
     rows = [row for row in all_rows if not is_runtime_chunk(row)]
     excluded = [int(row.id) for row in all_rows if is_runtime_chunk(row)]
     mysql_rows = {int(row.id): row for row in rows}
-    milvus_rows = {int(row["id"]): row for row in vectors.all_rows()}
+    runtime_ids = set(excluded)
+    milvus_rows = {
+        int(row["id"]): row
+        for row in vectors.all_rows()
+        if int(row["id"]) not in runtime_ids
+    }
     pending_rows = [
         row for row in kb.pending_chunks() if not is_runtime_chunk(row)
     ]

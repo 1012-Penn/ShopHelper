@@ -118,3 +118,16 @@ def test_copy_snapshot_copies_main_and_siblings(tmp_path):
     assert (tmp_path / "snap.db.lock").read_bytes() == b"lock"
     assert any(item["file"] == "snap.db" for item in report["files"])
     assert report["files"][0]["sha256"] == hashlib.sha256(b"db").hexdigest()
+
+
+def test_runtime_chunks_are_excluded_from_doc_snapshot():
+    runtime = _row(99)
+    runtime.section_path = "review_queue:4"
+    doc = _row(1)
+    doc.section_path = "退货政策.md > 邮费与运费"
+    report = _verify(
+        FakeKB([doc, runtime]),
+        FakeVectors([_vector_row(doc)]),
+    )
+    assert report.ok
+    assert report.excluded_runtime_ids == [99]

@@ -23,6 +23,7 @@ from scripts.ch11_harness import (
 )
 from scripts.eval_checks import check_case_deterministic
 from scripts.eval_contract import build_contract, write_contract
+from scripts.eval_cost import BudgetExceeded
 from scripts.eval_dataset import (
     bucket_counts,
     dataset_sha256,
@@ -185,6 +186,10 @@ def _build_context(config, args, cases):
     rewriter = make_rewriter(settings) if settings.query_rewrite_enabled else None
     prepared = _prepare_queries(cases, args, settings, rewriter, config.split)
 
+    pricing = PricingTable.load(Path(args.pricing) if args.pricing else DEFAULT_PRICING_PATH)
+    if config.allow_paid and not pricing.verified:
+        raise BudgetExceeded("价格表未核实(verified=false),拒绝任何付费调用")
+
     evidence_judge = None
     if config.mode in {"evidence", "full"} and config.allow_paid:
         evidence_judge = JsonEvidenceJudge(make_chat_model(settings))
@@ -198,7 +203,6 @@ def _build_context(config, args, cases):
         evidence_top_n=settings.evidence_entailment_top_n,
     )
 
-    pricing = PricingTable.load(Path(args.pricing) if args.pricing else DEFAULT_PRICING_PATH)
     cost = CostTracker(
         pricing, BudgetLedger(), config.max_cost_usd, allow_paid=config.allow_paid
     )

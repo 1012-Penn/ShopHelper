@@ -115,8 +115,10 @@ def number_covered(answer: str, value, unit: str = "", tolerance: float = 0.0) -
     if isinstance(value, bool):
         yes = ("支持", "是", "有", "可以", "能", "适用", "参与", "享受", "计入")
         no = ("不支持", "不是", "没有", "不可以", "不能", "否", "不参与", "不适用", "不享受", "不计入", "不叠加")
-        terms = yes if value else no
-        return any(term in normalized for term in terms)
+        # 先看否定,避免“不支持”因包含“支持”被当成 true。
+        if any(term in normalized for term in no):
+            return False if value else True
+        return any(term in normalized for term in yes) if value else False
     if isinstance(value, list):
         # 列表事实只要求答案覆盖其中一项;完整逐项覆盖交给 required_conditions。
         return any(
