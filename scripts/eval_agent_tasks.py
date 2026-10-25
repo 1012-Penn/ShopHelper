@@ -18,7 +18,7 @@ import harness
 def _failure_reasons(result: dict) -> list[str]:
     score = result["score"]
     keys = {
-        "task_complete": "task incomplete",
+        "scenario_contract_pass": "scenario contract failed",
         "selection_correct": "tool selection mismatch",
         "allowed_tools_correct": "used a tool outside the allowed set",
         "parameter_correct": "tool parameters mismatch",
@@ -44,10 +44,11 @@ async def _run(args):
             stream.write(json.dumps(result, ensure_ascii=False, sort_keys=True) + "\n")
     summary_path = output / "ch15-offline-report.md"
     summary_path.write_text(harness.render_summary_markdown(summary), encoding="utf-8")
-    failures = [result for result in results if not result["score"]["task_complete"]]
+    failures = [result for result in results
+                if not result["score"]["scenario_contract_pass"]]
     failure_lines = [
         "# CH15 Offline Failure Cases", "",
-        f"{len(failures)} of {len(results)} arm runs did not satisfy their complete gold rubric.",
+        f"{len(failures)} of {len(results)} arm runs did not satisfy their scripted scenario contract.",
         "All entries are simulated fixture results from the deterministic scripted actor.", "",
     ]
     for result in failures:

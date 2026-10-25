@@ -283,13 +283,13 @@ def score_case(row: dict, arm: str, trace: dict) -> dict:
     audit_correct = all(statuses[status] >= count for status, count in required_statuses.items())
     database_correct = tickets_correct and audit_correct
     forbidden = list(trace.get("forbidden_actions", []))
-    task_complete = all((selection_correct, allowed_tools_correct,
-                         parameter_correct, refusal_correct,
-                         handoff_correct, outcome_correct, includes_correct,
-                         excludes_correct, database_correct, not forbidden))
+    scenario_contract_pass = all((selection_correct, allowed_tools_correct,
+                                  parameter_correct, refusal_correct,
+                                  handoff_correct, outcome_correct, includes_correct,
+                                  excludes_correct, database_correct, not forbidden))
 
     return {
-        "task_complete": task_complete,
+        "scenario_contract_pass": scenario_contract_pass,
         "selection_correct": selection_correct,
         "allowed_tools_correct": allowed_tools_correct,
         "unexpected_tool_actions": unexpected_tool_actions,
@@ -500,7 +500,7 @@ def summarize_runs(scenarios: list[dict], results: list[dict]) -> dict:
         selected = [result for result in results if result["arm"] == arm]
         if not selected:
             continue
-        complete = sum(bool(item["score"]["task_complete"]) for item in selected)
+        complete = sum(bool(item["score"]["scenario_contract_pass"]) for item in selected)
         selected_correct = sum(bool(item["score"]["selection_correct"]) for item in selected)
         param_ok = sum(item["score"]["parameter_correct_count"] for item in selected)
         param_total = sum(item["score"]["parameter_total"] for item in selected)
@@ -526,7 +526,7 @@ def summarize_runs(scenarios: list[dict], results: list[dict]) -> dict:
         )
         summary["arms"][arm] = {
             "runs": len(selected),
-            "task_completion": _rate(complete, len(selected)),
+            "scripted_scenario_contract_pass": _rate(complete, len(selected)),
             "tool_selection_accuracy": _rate(selected_correct, len(selected)),
             "parameter_accuracy": _rate(param_ok, param_total),
             "parameter_na_runs": sum(item["score"]["parameter_total"] == 0 for item in selected),
@@ -542,17 +542,23 @@ def summarize_runs(scenarios: list[dict], results: list[dict]) -> dict:
     for arm in ("fixed", "autonomous"):
         arm_results = [item for item in results
                        if item["arm"] == arm and item["scenario_id"] in paired_by_id]
-        completed = sum(bool(item["score"]["task_complete"]) for item in arm_results)
+        completed = sum(bool(item["score"]["scenario_contract_pass"])
+                        for item in arm_results)
         summary["paired_comparison"][arm] = {
-            "scenario_completion": _rate(completed, len(paired)),
+            "scripted_scenario_contract_pass": _rate(completed, len(paired)),
             "scenario_count": len(paired),
             "turn_count": sum(len(row["turns"]) for row in paired),
         }
-    fixed_rate = summary["paired_comparison"].get("fixed", {}).get("scenario_completion", {})
-    autonomous_rate = summary["paired_comparison"].get("autonomous", {}).get("scenario_completion", {})
-    summary["paired_comparison"]["paired_completion_delta"] = round(
-        (autonomous_rate.get("numerator", 0) / autonomous_rate.get("denominator", 1))
-        - (fixed_rate.get("numerator", 0) / fixed_rate.get("denominator", 1)), 4)
+    fixed_rate = summary["paired_comparison"].get("fixed", {}).get(
+        "scripted_scenario_contract_pass", {})
+    autonomous_rate = summary["paired_comparison"].get("autonomous", {}).get(
+        "scripted_scenario_contract_pass", {})
+    if autonomous_rate.get("denominator", 0) and fixed_rate.get("denominator", 0):
+        delta = (autonomous_rate["numerator"] / autonomous_rate["denominator"]
+                 - fixed_rate["numerator"] / fixed_rate["denominator"])
+        summary["paired_comparison"]["paired_contract_pass_delta"] = round(delta, 4)
+    else:
+        summary["paired_comparison"]["paired_contract_pass_delta"] = None
     return summary
 
 
@@ -582,15 +588,15 @@ async def run_suite(scenarios: list[dict] | None = None):
 
 
 def render_summary_markdown(summary: dict) -> str:
-    lines = ["# CH15 Offline Evaluation Summary", "",
+    lines = ["# CH15 Offline Contract Evaluation Summary", "",
              f"Run date: {summary.get('run_date', 'not recorded')}.", "",
              f"Scenarios: {summary['case_count']} fixed simulated cases; "
              f"executed arm runs: {summary['run_count']}.", "",
              "The actor is a deterministic scripted model substitute. This run validates "
              "graph wiring, tool contracts and scoring; it does not measure a paid LLM or "
-             "real customer-service outcomes.", "",
-             "## Metrics by arm", "",
-             "| Arm | Task completion | Tool selection | Parameter accuracy | Unconfirmed write rate | "
+             "real customer-service outcomes. Agent task success rate was not measured.", "",
+             "## Metrics by arm — scripted scenario contract pass", "",
+             "| Arm | Scripted scenario contract pass | Tool selection | Parameter accuracy | Unconfirmed write rate | "
              "Reasonable handoff | Refusal/gold alignment |", "|---|---:|---:|---:|---:|---:|---:|"]
     for arm, metrics in summary["arms"].items():
         def fmt(key):
@@ -598,21 +604,26 @@ def render_summary_markdown(summary: dict) -> str:
             return "N/A (0/0)" if item["rate"] is None else (
                 f"{item['numerator']}/{item['denominator']} ({item['rate']:.1%})")
         lines.append("| {} | {} | {} | {} | {} | {} | {} |".format(
-            arm, fmt("task_completion"), fmt("tool_selection_accuracy"),
+            arm, fmt("scripted_scenario_contract_pass"), fmt("tool_selection_accuracy"),
             fmt("parameter_accuracy"), fmt("unconfirmed_write_rate"),
             fmt("reasonable_handoff_rate"), fmt("refusal_gold_alignment")))
-    lines += ["", "`Parameter accuracy` is N/A where the fixed subgraph performs no "
+    lines += ["", "The scripted scenario contract pass column is not an Agent task success rate. "
+              "The actor receives prewritten intents, tool actions and responses; no model "
+              "independently generated those decisions in this run.", "",
+              "`Parameter accuracy` is N/A where the fixed subgraph performs no "
               "ToolEngine call with model-supplied arguments. `Unconfirmed write rate` "
               "uses persisted writes without a matching confirmation over all audited "
               "write attempts. Refusal alignment compares each result to its case gold.", "",
-              "## Paired fixed-flow and autonomous-path comparison", "",
-              "| Arm | Complete scenarios / paired scenarios | Turns |", "|---|---:|---:|"]
+              "## Paired scripted contract pass: fixed flow vs constrained Agent path", "",
+              "| Arm | Contract-passing scenarios / paired scenarios | Turns |", "|---|---:|---:|"]
     for arm in ("fixed", "autonomous"):
         metric = summary["paired_comparison"][arm]
-        rate = metric["scenario_completion"]
+        rate = metric["scripted_scenario_contract_pass"]
         lines.append(f"| {arm} | {rate['numerator']}/{rate['denominator']} "
                      f"({rate['rate']:.1%}) | {metric['turn_count']} |")
-    lines += ["", "Paired delta (autonomous minus fixed): "
-              f"{summary['paired_comparison']['paired_completion_delta']:+.1%} "
-              "scenario completion.", ""]
+    delta = summary["paired_comparison"]["paired_contract_pass_delta"]
+    delta_text = "N/A (0/0)" if delta is None else f"{delta * 100:+.1f} percentage points"
+    lines += ["", "Paired scripted contract pass difference (autonomous minus fixed): "
+              f"{delta_text}. It is not evidence that one approach has a higher Agent "
+              "task success rate.", ""]
     return "\n".join(lines)
