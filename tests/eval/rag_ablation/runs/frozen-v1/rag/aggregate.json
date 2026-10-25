@@ -1,0 +1,2440 @@
+{
+  "schema_version": 1,
+  "experiment": "rag",
+  "split": "frozen-v1",
+  "dataset_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
+  "dataset_n": 90,
+  "protocol_sha256": "78bb6f71e3a563bb6681481abf3058ae1a1c217a453f55b135be54f3a85ea9b5",
+  "paid_calls_executed": 0,
+  "max_cost_usd_per_group": 0.0,
+  "reference_group": "baseline",
+  "groups": {
+    "baseline": {
+      "n": 90,
+      "retrieval": {
+        "positive_cases": 65,
+        "r3": {
+          "hits": 40,
+          "measured": 65,
+          "eligible": 65,
+          "unmeasured": 0,
+          "rate": 0.6153846153846154
+        },
+        "r5": {
+          "hits": 49,
+          "measured": 65,
+          "eligible": 65,
+          "unmeasured": 0,
+          "rate": 0.7538461538461538
+        },
+        "mrr": {
+          "mean": 0.5115567765567764,
+          "n": 65,
+          "eligible": 65,
+          "unmeasured": 0
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "n": 9,
+            "r3": {
+              "hits": 8,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.8888888888888888
+            },
+            "r5": {
+              "hits": 9,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.7074074074074074,
+              "n": 9,
+              "eligible": 9,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "n": 14,
+            "r3": {
+              "hits": 9,
+              "measured": 14,
+              "eligible": 14,
+              "unmeasured": 0,
+              "rate": 0.6428571428571429
+            },
+            "r5": {
+              "hits": 10,
+              "measured": 14,
+              "eligible": 14,
+              "unmeasured": 0,
+              "rate": 0.7142857142857143
+            },
+            "mrr": {
+              "mean": 0.39285714285714285,
+              "n": 14,
+              "eligible": 14,
+              "unmeasured": 0
+            }
+          },
+          "multi_hop": {
+            "n": 16,
+            "r3": {
+              "hits": 3,
+              "measured": 16,
+              "eligible": 16,
+              "unmeasured": 0,
+              "rate": 0.1875
+            },
+            "r5": {
+              "hits": 8,
+              "measured": 16,
+              "eligible": 16,
+              "unmeasured": 0,
+              "rate": 0.5
+            },
+            "mrr": {
+              "mean": 0.17090773809523813,
+              "n": 16,
+              "eligible": 16,
+              "unmeasured": 0
+            }
+          },
+          "policy_conflict": {
+            "n": 8,
+            "r3": {
+              "hits": 2,
+              "measured": 8,
+              "eligible": 8,
+              "unmeasured": 0,
+              "rate": 0.25
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 8,
+              "eligible": 8,
+              "unmeasured": 0,
+              "rate": 0.5
+            },
+            "mrr": {
+              "mean": 0.20625,
+              "n": 8,
+              "eligible": 8,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "n": 18,
+            "r3": {
+              "hits": 18,
+              "measured": 18,
+              "eligible": 18,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "r5": {
+              "hits": 18,
+              "measured": 18,
+              "eligible": 18,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.9444444444444444,
+              "n": 18,
+              "eligible": 18,
+              "unmeasured": 0
+            }
+          }
+        }
+      },
+      "answers": {
+        "strict_accuracy": {
+          "correct": 10,
+          "measured": 64,
+          "eligible": 64,
+          "unmeasured": 0,
+          "rate": 0.15625
+        },
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 11,
+          "measured": 62,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "rate": 0.1774193548387097
+        },
+        "condition_coverage": {
+          "mean": 0.7361111111111112,
+          "measured": 36,
+          "eligible": 36,
+          "unmeasured": 0
+        },
+        "citation_supported_cases": {
+          "supported": 12,
+          "measured": 64,
+          "rate": 0.1875
+        },
+        "unsupported_claims": {
+          "unsupported": 79,
+          "claims": 150,
+          "rate": 0.5266666666666666,
+          "cases_with_unsupported_claims": 43,
+          "case_ids": [
+            "FRZ-CLARIFY-03",
+            "FRZ-CLARIFY-07",
+            "FRZ-CLARIFY-08",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-08",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-16",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18"
+          ]
+        },
+        "over_refusal": {
+          "refused": 7,
+          "measured": 70,
+          "eligible": 70,
+          "unmeasured": 0,
+          "rate": 0.1,
+          "case_ids": [
+            "FRZ-CLARIFY-01",
+            "FRZ-CLARIFY-02",
+            "FRZ-CLARIFY-05",
+            "FRZ-CONSTRAINT-13",
+            "FRZ-ENTITY-09",
+            "FRZ-MULTI-11",
+            "FRZ-MULTI-14"
+          ]
+        }
+      },
+      "operations": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 90,
+          "p50": 41.924,
+          "p95": 70.327
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 90,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 0
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.063618
+      },
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
+            "count": 11,
+            "case_ids": [
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-08",
+              "FRZ-CONSTRAINT-02",
+              "FRZ-ENTITY-08",
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-14"
+            ]
+          },
+          "answer_wrong_fact": {
+            "count": 13,
+            "case_ids": [
+              "FRZ-CONSTRAINT-01",
+              "FRZ-CONSTRAINT-02",
+              "FRZ-CONSTRAINT-08",
+              "FRZ-CONSTRAINT-11",
+              "FRZ-CONSTRAINT-12",
+              "FRZ-ENTITY-08",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15"
+            ]
+          },
+          "citation_unsupported": {
+            "count": 45,
+            "case_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08",
+              "FRZ-CONSTRAINT-01",
+              "FRZ-CONSTRAINT-07",
+              "FRZ-CONSTRAINT-09",
+              "FRZ-CONSTRAINT-10",
+              "FRZ-CONSTRAINT-11",
+              "FRZ-CONSTRAINT-12",
+              "FRZ-ENTITY-01",
+              "FRZ-ENTITY-04",
+              "FRZ-ENTITY-08",
+              "FRZ-ENTITY-10",
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-16",
+              "FRZ-SINGLE-02",
+              "FRZ-SINGLE-03",
+              "FRZ-SINGLE-04",
+              "FRZ-SINGLE-05",
+              "FRZ-SINGLE-06",
+              "FRZ-SINGLE-07",
+              "FRZ-SINGLE-08",
+              "FRZ-SINGLE-09",
+              "FRZ-SINGLE-10",
+              "FRZ-SINGLE-11",
+              "FRZ-SINGLE-14",
+              "FRZ-SINGLE-15",
+              "FRZ-SINGLE-16",
+              "FRZ-SINGLE-17",
+              "FRZ-SINGLE-18"
+            ]
+          },
+          "clarify_missing_slot": {
+            "count": 3,
+            "case_ids": [
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-03",
+              "FRZ-ENTITY-09"
+            ]
+          },
+          "clarify_over_asking": {
+            "count": 7,
+            "case_ids": [
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-04",
+              "FRZ-CLARIFY-06",
+              "FRZ-CLARIFY-07",
+              "FRZ-CLARIFY-08",
+              "FRZ-CONFLICT-04",
+              "FRZ-ENTITY-09"
+            ]
+          },
+          "over_refusal": {
+            "count": 7,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14"
+            ]
+          },
+          "verification_overclaim": {
+            "count": 1,
+            "case_ids": [
+              "FRZ-CONSTRAINT-03"
+            ]
+          }
+        },
+        "unmeasured": {}
+      }
+    },
+    "decompose_once": {
+      "n": 90,
+      "retrieval": {
+        "positive_cases": 65,
+        "r3": {
+          "hits": 39,
+          "measured": 62,
+          "eligible": 65,
+          "unmeasured": 3,
+          "rate": 0.6290322580645161
+        },
+        "r5": {
+          "hits": 47,
+          "measured": 62,
+          "eligible": 65,
+          "unmeasured": 3,
+          "rate": 0.7580645161290323
+        },
+        "mrr": {
+          "mean": 0.5145353302611365,
+          "n": 62,
+          "eligible": 65,
+          "unmeasured": 3
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "n": 9,
+            "r3": {
+              "hits": 8,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.8888888888888888
+            },
+            "r5": {
+              "hits": 9,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.7074074074074074,
+              "n": 9,
+              "eligible": 9,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "n": 14,
+            "r3": {
+              "hits": 8,
+              "measured": 13,
+              "eligible": 14,
+              "unmeasured": 1,
+              "rate": 0.6153846153846154
+            },
+            "r5": {
+              "hits": 9,
+              "measured": 13,
+              "eligible": 14,
+              "unmeasured": 1,
+              "rate": 0.6923076923076923
+            },
+            "mrr": {
+              "mean": 0.34615384615384615,
+              "n": 13,
+              "eligible": 14,
+              "unmeasured": 1
+            }
+          },
+          "multi_hop": {
+            "n": 16,
+            "r3": {
+              "hits": 3,
+              "measured": 14,
+              "eligible": 16,
+              "unmeasured": 2,
+              "rate": 0.21428571428571427
+            },
+            "r5": {
+              "hits": 7,
+              "measured": 14,
+              "eligible": 16,
+              "unmeasured": 2,
+              "rate": 0.5
+            },
+            "mrr": {
+              "mean": 0.17032312925170068,
+              "n": 14,
+              "eligible": 16,
+              "unmeasured": 2
+            }
+          },
+          "policy_conflict": {
+            "n": 8,
+            "r3": {
+              "hits": 2,
+              "measured": 8,
+              "eligible": 8,
+              "unmeasured": 0,
+              "rate": 0.25
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 8,
+              "eligible": 8,
+              "unmeasured": 0,
+              "rate": 0.5
+            },
+            "mrr": {
+              "mean": 0.20625,
+              "n": 8,
+              "eligible": 8,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "n": 18,
+            "r3": {
+              "hits": 18,
+              "measured": 18,
+              "eligible": 18,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "r5": {
+              "hits": 18,
+              "measured": 18,
+              "eligible": 18,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.9444444444444444,
+              "n": 18,
+              "eligible": 18,
+              "unmeasured": 0
+            }
+          }
+        }
+      },
+      "answers": {
+        "strict_accuracy": {
+          "correct": 10,
+          "measured": 61,
+          "eligible": 64,
+          "unmeasured": 3,
+          "rate": 0.16393442622950818
+        },
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 11,
+          "measured": 62,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "rate": 0.1774193548387097
+        },
+        "condition_coverage": {
+          "mean": 0.7272727272727273,
+          "measured": 33,
+          "eligible": 36,
+          "unmeasured": 3
+        },
+        "citation_supported_cases": {
+          "supported": 12,
+          "measured": 61,
+          "rate": 0.19672131147540983
+        },
+        "unsupported_claims": {
+          "unsupported": 79,
+          "claims": 150,
+          "rate": 0.5266666666666666,
+          "cases_with_unsupported_claims": 43,
+          "case_ids": [
+            "FRZ-CLARIFY-03",
+            "FRZ-CLARIFY-07",
+            "FRZ-CLARIFY-08",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-08",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-16",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18"
+          ]
+        },
+        "over_refusal": {
+          "refused": 0,
+          "measured": 63,
+          "eligible": 70,
+          "unmeasured": 7,
+          "rate": 0.0,
+          "case_ids": []
+        }
+      },
+      "operations": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 67,
+          "p50": 42.981,
+          "p95": 69.361
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 67,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 67
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.063618
+      },
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
+            "count": 10,
+            "case_ids": [
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-08",
+              "FRZ-CONSTRAINT-02",
+              "FRZ-ENTITY-08",
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-08"
+            ]
+          },
+          "answer_wrong_fact": {
+            "count": 13,
+            "case_ids": [
+              "FRZ-CONSTRAINT-01",
+              "FRZ-CONSTRAINT-02",
+              "FRZ-CONSTRAINT-08",
+              "FRZ-CONSTRAINT-11",
+              "FRZ-CONSTRAINT-12",
+              "FRZ-ENTITY-08",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15"
+            ]
+          },
+          "citation_unsupported": {
+            "count": 45,
+            "case_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08",
+              "FRZ-CONSTRAINT-01",
+              "FRZ-CONSTRAINT-07",
+              "FRZ-CONSTRAINT-09",
+              "FRZ-CONSTRAINT-10",
+              "FRZ-CONSTRAINT-11",
+              "FRZ-CONSTRAINT-12",
+              "FRZ-ENTITY-01",
+              "FRZ-ENTITY-04",
+              "FRZ-ENTITY-08",
+              "FRZ-ENTITY-10",
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-16",
+              "FRZ-SINGLE-02",
+              "FRZ-SINGLE-03",
+              "FRZ-SINGLE-04",
+              "FRZ-SINGLE-05",
+              "FRZ-SINGLE-06",
+              "FRZ-SINGLE-07",
+              "FRZ-SINGLE-08",
+              "FRZ-SINGLE-09",
+              "FRZ-SINGLE-10",
+              "FRZ-SINGLE-11",
+              "FRZ-SINGLE-14",
+              "FRZ-SINGLE-15",
+              "FRZ-SINGLE-16",
+              "FRZ-SINGLE-17",
+              "FRZ-SINGLE-18"
+            ]
+          },
+          "clarify_missing_slot": {
+            "count": 1,
+            "case_ids": [
+              "FRZ-CLARIFY-03"
+            ]
+          },
+          "clarify_over_asking": {
+            "count": 5,
+            "case_ids": [
+              "FRZ-CLARIFY-04",
+              "FRZ-CLARIFY-06",
+              "FRZ-CLARIFY-07",
+              "FRZ-CLARIFY-08",
+              "FRZ-CONFLICT-04"
+            ]
+          },
+          "verification_overclaim": {
+            "count": 1,
+            "case_ids": [
+              "FRZ-CONSTRAINT-03"
+            ]
+          }
+        },
+        "unmeasured": {
+          "retrieval": {
+            "count": 23,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-HARD-01",
+              "FRZ-HARD-02",
+              "FRZ-HARD-03",
+              "FRZ-HARD-04",
+              "FRZ-HARD-05",
+              "FRZ-HARD-06",
+              "FRZ-HARD-07",
+              "FRZ-HARD-08",
+              "FRZ-HARD-09",
+              "FRZ-HARD-10",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14",
+              "FRZ-OOD-01",
+              "FRZ-OOD-02",
+              "FRZ-OOD-03",
+              "FRZ-OOD-04",
+              "FRZ-OOD-05",
+              "FRZ-OOD-06"
+            ],
+            "reasons": {
+              "单次运行预算不足:已花 $0.0000,本次估算 $0.0003,上限 $0.0000": 23
+            }
+          },
+          "answer": {
+            "count": 23,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-HARD-01",
+              "FRZ-HARD-02",
+              "FRZ-HARD-03",
+              "FRZ-HARD-04",
+              "FRZ-HARD-05",
+              "FRZ-HARD-06",
+              "FRZ-HARD-07",
+              "FRZ-HARD-08",
+              "FRZ-HARD-09",
+              "FRZ-HARD-10",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14",
+              "FRZ-OOD-01",
+              "FRZ-OOD-02",
+              "FRZ-OOD-03",
+              "FRZ-OOD-04",
+              "FRZ-OOD-05",
+              "FRZ-OOD-06"
+            ],
+            "reasons": {
+              "单次运行预算不足:已花 $0.0000,本次估算 $0.0003,上限 $0.0000": 23
+            }
+          },
+          "rag": {
+            "count": 23,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-HARD-01",
+              "FRZ-HARD-02",
+              "FRZ-HARD-03",
+              "FRZ-HARD-04",
+              "FRZ-HARD-05",
+              "FRZ-HARD-06",
+              "FRZ-HARD-07",
+              "FRZ-HARD-08",
+              "FRZ-HARD-09",
+              "FRZ-HARD-10",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14",
+              "FRZ-OOD-01",
+              "FRZ-OOD-02",
+              "FRZ-OOD-03",
+              "FRZ-OOD-04",
+              "FRZ-OOD-05",
+              "FRZ-OOD-06"
+            ],
+            "reasons": {
+              "单次运行预算不足:已花 $0.0000,本次估算 $0.0003,上限 $0.0000": 23
+            }
+          }
+        }
+      }
+    },
+    "controlled_loop": {
+      "n": 90,
+      "retrieval": {
+        "positive_cases": 65,
+        "r3": {
+          "hits": 39,
+          "measured": 62,
+          "eligible": 65,
+          "unmeasured": 3,
+          "rate": 0.6290322580645161
+        },
+        "r5": {
+          "hits": 47,
+          "measured": 62,
+          "eligible": 65,
+          "unmeasured": 3,
+          "rate": 0.7580645161290323
+        },
+        "mrr": {
+          "mean": 0.5145353302611365,
+          "n": 62,
+          "eligible": 65,
+          "unmeasured": 3
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "n": 9,
+            "r3": {
+              "hits": 8,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.8888888888888888
+            },
+            "r5": {
+              "hits": 9,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.7074074074074074,
+              "n": 9,
+              "eligible": 9,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "n": 14,
+            "r3": {
+              "hits": 8,
+              "measured": 13,
+              "eligible": 14,
+              "unmeasured": 1,
+              "rate": 0.6153846153846154
+            },
+            "r5": {
+              "hits": 9,
+              "measured": 13,
+              "eligible": 14,
+              "unmeasured": 1,
+              "rate": 0.6923076923076923
+            },
+            "mrr": {
+              "mean": 0.34615384615384615,
+              "n": 13,
+              "eligible": 14,
+              "unmeasured": 1
+            }
+          },
+          "multi_hop": {
+            "n": 16,
+            "r3": {
+              "hits": 3,
+              "measured": 14,
+              "eligible": 16,
+              "unmeasured": 2,
+              "rate": 0.21428571428571427
+            },
+            "r5": {
+              "hits": 7,
+              "measured": 14,
+              "eligible": 16,
+              "unmeasured": 2,
+              "rate": 0.5
+            },
+            "mrr": {
+              "mean": 0.17032312925170068,
+              "n": 14,
+              "eligible": 16,
+              "unmeasured": 2
+            }
+          },
+          "policy_conflict": {
+            "n": 8,
+            "r3": {
+              "hits": 2,
+              "measured": 8,
+              "eligible": 8,
+              "unmeasured": 0,
+              "rate": 0.25
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 8,
+              "eligible": 8,
+              "unmeasured": 0,
+              "rate": 0.5
+            },
+            "mrr": {
+              "mean": 0.20625,
+              "n": 8,
+              "eligible": 8,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "n": 18,
+            "r3": {
+              "hits": 18,
+              "measured": 18,
+              "eligible": 18,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "r5": {
+              "hits": 18,
+              "measured": 18,
+              "eligible": 18,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.9444444444444444,
+              "n": 18,
+              "eligible": 18,
+              "unmeasured": 0
+            }
+          }
+        }
+      },
+      "answers": {
+        "strict_accuracy": {
+          "correct": 10,
+          "measured": 61,
+          "eligible": 64,
+          "unmeasured": 3,
+          "rate": 0.16393442622950818
+        },
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 11,
+          "measured": 62,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "rate": 0.1774193548387097
+        },
+        "condition_coverage": {
+          "mean": 0.7272727272727273,
+          "measured": 33,
+          "eligible": 36,
+          "unmeasured": 3
+        },
+        "citation_supported_cases": {
+          "supported": 12,
+          "measured": 61,
+          "rate": 0.19672131147540983
+        },
+        "unsupported_claims": {
+          "unsupported": 79,
+          "claims": 150,
+          "rate": 0.5266666666666666,
+          "cases_with_unsupported_claims": 43,
+          "case_ids": [
+            "FRZ-CLARIFY-03",
+            "FRZ-CLARIFY-07",
+            "FRZ-CLARIFY-08",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-08",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-16",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18"
+          ]
+        },
+        "over_refusal": {
+          "refused": 0,
+          "measured": 63,
+          "eligible": 70,
+          "unmeasured": 7,
+          "rate": 0.0,
+          "case_ids": []
+        }
+      },
+      "operations": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 67,
+          "p50": 53.904,
+          "p95": 90.721
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 67,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 67
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.063618
+      },
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
+            "count": 10,
+            "case_ids": [
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-08",
+              "FRZ-CONSTRAINT-02",
+              "FRZ-ENTITY-08",
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-08"
+            ]
+          },
+          "answer_wrong_fact": {
+            "count": 13,
+            "case_ids": [
+              "FRZ-CONSTRAINT-01",
+              "FRZ-CONSTRAINT-02",
+              "FRZ-CONSTRAINT-08",
+              "FRZ-CONSTRAINT-11",
+              "FRZ-CONSTRAINT-12",
+              "FRZ-ENTITY-08",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15"
+            ]
+          },
+          "citation_unsupported": {
+            "count": 45,
+            "case_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08",
+              "FRZ-CONSTRAINT-01",
+              "FRZ-CONSTRAINT-07",
+              "FRZ-CONSTRAINT-09",
+              "FRZ-CONSTRAINT-10",
+              "FRZ-CONSTRAINT-11",
+              "FRZ-CONSTRAINT-12",
+              "FRZ-ENTITY-01",
+              "FRZ-ENTITY-04",
+              "FRZ-ENTITY-08",
+              "FRZ-ENTITY-10",
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-16",
+              "FRZ-SINGLE-02",
+              "FRZ-SINGLE-03",
+              "FRZ-SINGLE-04",
+              "FRZ-SINGLE-05",
+              "FRZ-SINGLE-06",
+              "FRZ-SINGLE-07",
+              "FRZ-SINGLE-08",
+              "FRZ-SINGLE-09",
+              "FRZ-SINGLE-10",
+              "FRZ-SINGLE-11",
+              "FRZ-SINGLE-14",
+              "FRZ-SINGLE-15",
+              "FRZ-SINGLE-16",
+              "FRZ-SINGLE-17",
+              "FRZ-SINGLE-18"
+            ]
+          },
+          "clarify_missing_slot": {
+            "count": 1,
+            "case_ids": [
+              "FRZ-CLARIFY-03"
+            ]
+          },
+          "clarify_over_asking": {
+            "count": 5,
+            "case_ids": [
+              "FRZ-CLARIFY-04",
+              "FRZ-CLARIFY-06",
+              "FRZ-CLARIFY-07",
+              "FRZ-CLARIFY-08",
+              "FRZ-CONFLICT-04"
+            ]
+          },
+          "verification_overclaim": {
+            "count": 1,
+            "case_ids": [
+              "FRZ-CONSTRAINT-03"
+            ]
+          }
+        },
+        "unmeasured": {
+          "retrieval": {
+            "count": 23,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-HARD-01",
+              "FRZ-HARD-02",
+              "FRZ-HARD-03",
+              "FRZ-HARD-04",
+              "FRZ-HARD-05",
+              "FRZ-HARD-06",
+              "FRZ-HARD-07",
+              "FRZ-HARD-08",
+              "FRZ-HARD-09",
+              "FRZ-HARD-10",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14",
+              "FRZ-OOD-01",
+              "FRZ-OOD-02",
+              "FRZ-OOD-03",
+              "FRZ-OOD-04",
+              "FRZ-OOD-05",
+              "FRZ-OOD-06"
+            ],
+            "reasons": {
+              "单次运行预算不足:已花 $0.0000,本次估算 $0.0003,上限 $0.0000": 23
+            }
+          },
+          "answer": {
+            "count": 23,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-HARD-01",
+              "FRZ-HARD-02",
+              "FRZ-HARD-03",
+              "FRZ-HARD-04",
+              "FRZ-HARD-05",
+              "FRZ-HARD-06",
+              "FRZ-HARD-07",
+              "FRZ-HARD-08",
+              "FRZ-HARD-09",
+              "FRZ-HARD-10",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14",
+              "FRZ-OOD-01",
+              "FRZ-OOD-02",
+              "FRZ-OOD-03",
+              "FRZ-OOD-04",
+              "FRZ-OOD-05",
+              "FRZ-OOD-06"
+            ],
+            "reasons": {
+              "单次运行预算不足:已花 $0.0000,本次估算 $0.0003,上限 $0.0000": 23
+            }
+          },
+          "rag": {
+            "count": 23,
+            "case_ids": [
+              "FRZ-CLARIFY-01",
+              "FRZ-CLARIFY-02",
+              "FRZ-CLARIFY-05",
+              "FRZ-CONSTRAINT-13",
+              "FRZ-ENTITY-09",
+              "FRZ-HARD-01",
+              "FRZ-HARD-02",
+              "FRZ-HARD-03",
+              "FRZ-HARD-04",
+              "FRZ-HARD-05",
+              "FRZ-HARD-06",
+              "FRZ-HARD-07",
+              "FRZ-HARD-08",
+              "FRZ-HARD-09",
+              "FRZ-HARD-10",
+              "FRZ-MULTI-11",
+              "FRZ-MULTI-14",
+              "FRZ-OOD-01",
+              "FRZ-OOD-02",
+              "FRZ-OOD-03",
+              "FRZ-OOD-04",
+              "FRZ-OOD-05",
+              "FRZ-OOD-06"
+            ],
+            "reasons": {
+              "单次运行预算不足:已花 $0.0000,本次估算 $0.0003,上限 $0.0000": 23
+            }
+          }
+        }
+      }
+    }
+  },
+  "paired_vs_reference": {
+    "decompose_once": {
+      "common_case_ids": 90,
+      "retrieval": {
+        "r3": {
+          "pairs": 62,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 62,
+          "tie_ids": [
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08"
+          ],
+          "mean_delta": 0.0
+        },
+        "r5": {
+          "pairs": 62,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 62,
+          "tie_ids": [
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08"
+          ],
+          "mean_delta": 0.0
+        },
+        "mrr": {
+          "pairs": 62,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 62,
+          "tie_ids": [
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08"
+          ],
+          "mean_delta": 0.0
+        }
+      },
+      "answers": {
+        "strict": {
+          "pairs": 61,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 61,
+          "tie_ids": [
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18"
+          ],
+          "reference_correct": 10,
+          "candidate_correct": 10,
+          "candidate_minus_reference": 0
+        }
+      }
+    },
+    "controlled_loop": {
+      "common_case_ids": 90,
+      "retrieval": {
+        "r3": {
+          "pairs": 62,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 62,
+          "tie_ids": [
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08"
+          ],
+          "mean_delta": 0.0
+        },
+        "r5": {
+          "pairs": 62,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 62,
+          "tie_ids": [
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08"
+          ],
+          "mean_delta": 0.0
+        },
+        "mrr": {
+          "pairs": 62,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 62,
+          "tie_ids": [
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-04",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08"
+          ],
+          "mean_delta": 0.0
+        }
+      },
+      "answers": {
+        "strict": {
+          "pairs": 61,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 61,
+          "tie_ids": [
+            "FRZ-CONFLICT-01",
+            "FRZ-CONFLICT-02",
+            "FRZ-CONFLICT-03",
+            "FRZ-CONFLICT-05",
+            "FRZ-CONFLICT-06",
+            "FRZ-CONFLICT-07",
+            "FRZ-CONFLICT-08",
+            "FRZ-CONSTRAINT-01",
+            "FRZ-CONSTRAINT-02",
+            "FRZ-CONSTRAINT-03",
+            "FRZ-CONSTRAINT-04",
+            "FRZ-CONSTRAINT-05",
+            "FRZ-CONSTRAINT-06",
+            "FRZ-CONSTRAINT-07",
+            "FRZ-CONSTRAINT-08",
+            "FRZ-CONSTRAINT-09",
+            "FRZ-CONSTRAINT-10",
+            "FRZ-CONSTRAINT-11",
+            "FRZ-CONSTRAINT-12",
+            "FRZ-CONSTRAINT-14",
+            "FRZ-ENTITY-01",
+            "FRZ-ENTITY-02",
+            "FRZ-ENTITY-03",
+            "FRZ-ENTITY-04",
+            "FRZ-ENTITY-05",
+            "FRZ-ENTITY-06",
+            "FRZ-ENTITY-07",
+            "FRZ-ENTITY-08",
+            "FRZ-ENTITY-10",
+            "FRZ-MULTI-01",
+            "FRZ-MULTI-02",
+            "FRZ-MULTI-03",
+            "FRZ-MULTI-04",
+            "FRZ-MULTI-05",
+            "FRZ-MULTI-06",
+            "FRZ-MULTI-07",
+            "FRZ-MULTI-08",
+            "FRZ-MULTI-09",
+            "FRZ-MULTI-10",
+            "FRZ-MULTI-12",
+            "FRZ-MULTI-13",
+            "FRZ-MULTI-15",
+            "FRZ-MULTI-16",
+            "FRZ-SINGLE-01",
+            "FRZ-SINGLE-02",
+            "FRZ-SINGLE-03",
+            "FRZ-SINGLE-04",
+            "FRZ-SINGLE-05",
+            "FRZ-SINGLE-06",
+            "FRZ-SINGLE-07",
+            "FRZ-SINGLE-08",
+            "FRZ-SINGLE-09",
+            "FRZ-SINGLE-10",
+            "FRZ-SINGLE-11",
+            "FRZ-SINGLE-12",
+            "FRZ-SINGLE-13",
+            "FRZ-SINGLE-14",
+            "FRZ-SINGLE-15",
+            "FRZ-SINGLE-16",
+            "FRZ-SINGLE-17",
+            "FRZ-SINGLE-18"
+          ],
+          "reference_correct": 10,
+          "candidate_correct": 10,
+          "candidate_minus_reference": 0
+        }
+      }
+    }
+  },
+  "pairwise_comparisons": {},
+  "paired_by_bucket": {
+    "decompose_once": {
+      "multi_hop": {
+        "common_case_ids": 16,
+        "retrieval": {
+          "r3": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "mean_delta": 0.0
+          },
+          "r5": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "mean_delta": 0.0
+          },
+          "mrr": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "mean_delta": 0.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "reference_correct": 0,
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0
+          }
+        }
+      },
+      "policy_conflict": {
+        "common_case_ids": 8,
+        "retrieval": {
+          "r3": {
+            "pairs": 8,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 8,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-04",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "mean_delta": 0.0
+          },
+          "r5": {
+            "pairs": 8,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 8,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-04",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "mean_delta": 0.0
+          },
+          "mrr": {
+            "pairs": 8,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 8,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-04",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "mean_delta": 0.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 7,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 7,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "reference_correct": 0,
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0
+          }
+        }
+      }
+    },
+    "controlled_loop": {
+      "multi_hop": {
+        "common_case_ids": 16,
+        "retrieval": {
+          "r3": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "mean_delta": 0.0
+          },
+          "r5": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "mean_delta": 0.0
+          },
+          "mrr": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "mean_delta": 0.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 14,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 14,
+            "tie_ids": [
+              "FRZ-MULTI-01",
+              "FRZ-MULTI-02",
+              "FRZ-MULTI-03",
+              "FRZ-MULTI-04",
+              "FRZ-MULTI-05",
+              "FRZ-MULTI-06",
+              "FRZ-MULTI-07",
+              "FRZ-MULTI-08",
+              "FRZ-MULTI-09",
+              "FRZ-MULTI-10",
+              "FRZ-MULTI-12",
+              "FRZ-MULTI-13",
+              "FRZ-MULTI-15",
+              "FRZ-MULTI-16"
+            ],
+            "reference_correct": 0,
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0
+          }
+        }
+      },
+      "policy_conflict": {
+        "common_case_ids": 8,
+        "retrieval": {
+          "r3": {
+            "pairs": 8,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 8,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-04",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "mean_delta": 0.0
+          },
+          "r5": {
+            "pairs": 8,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 8,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-04",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "mean_delta": 0.0
+          },
+          "mrr": {
+            "pairs": 8,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 8,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-04",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "mean_delta": 0.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 7,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 7,
+            "tie_ids": [
+              "FRZ-CONFLICT-01",
+              "FRZ-CONFLICT-02",
+              "FRZ-CONFLICT-03",
+              "FRZ-CONFLICT-05",
+              "FRZ-CONFLICT-06",
+              "FRZ-CONFLICT-07",
+              "FRZ-CONFLICT-08"
+            ],
+            "reference_correct": 0,
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0
+          }
+        }
+      }
+    }
+  },
+  "operations_by_bucket": {
+    "baseline": {
+      "multi_hop": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 16,
+          "p50": 37.232,
+          "p95": 58.76
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 16,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 0
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.014323
+      },
+      "policy_conflict": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 8,
+          "p50": 38.919,
+          "p95": 58.06
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 8,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 0
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.006839
+      }
+    },
+    "decompose_once": {
+      "multi_hop": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 14,
+          "p50": 49.528,
+          "p95": 69.361
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 14,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 14
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.014323
+      },
+      "policy_conflict": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 8,
+          "p50": 41.113,
+          "p95": 110.775
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 8,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 8
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.006839
+      }
+    },
+    "controlled_loop": {
+      "multi_hop": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 14,
+          "p50": 63.677,
+          "p95": 90.721
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 14,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 14
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.014323
+      },
+      "policy_conflict": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 8,
+          "p50": 49.784,
+          "p95": 62.474
+        },
+        "calls": {
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 8,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 8
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.006839
+      }
+    }
+  },
+  "latency_semantics": "本地产生的检索/缓存回放 wall-clock；不是新模型调用的线上延迟。付费调用为 0，故不可据此推断线上 P50/P95。",
+  "measurement_status": {
+    "baseline": {
+      "retrieval_measured": 90,
+      "answers_measured": 90,
+      "rag_measured": 90
+    },
+    "decompose_once": {
+      "retrieval_measured": 67,
+      "answers_measured": 67,
+      "rag_measured": 67
+    },
+    "controlled_loop": {
+      "retrieval_measured": 67,
+      "answers_measured": 67,
+      "rag_measured": 67
+    }
+  },
+  "cost_estimate": {
+    "currency": "USD",
+    "paid_calls_executed": 0,
+    "groups": [
+      {
+        "experiment": "rag",
+        "group": "baseline",
+        "strategy": "hybrid_rerank",
+        "estimated_usd": [
+          0.0,
+          0.0
+        ],
+        "max_cost_usd_per_group": 0.0,
+        "basis": "CH12 baseline 完整缓存重放为 $0；缓存未命中需重新估算"
+      },
+      {
+        "experiment": "rag",
+        "group": "decompose_once",
+        "strategy": "hybrid_rerank",
+        "estimated_usd": [
+          0.04,
+          0.08
+        ],
+        "max_cost_usd_per_group": 0.09,
+        "basis": "CH12 报告 90 题预估 $0.04–0.08，dev 按 60/90 缩放"
+      },
+      {
+        "experiment": "rag",
+        "group": "controlled_loop",
+        "strategy": "hybrid_rerank",
+        "estimated_usd": [
+          0.07,
+          0.15
+        ],
+        "max_cost_usd_per_group": 0.17,
+        "basis": "CH12 报告 90 题预估 $0.07–0.15，dev 按 60/90 缩放"
+      }
+    ],
+    "total_estimated_usd": [
+      0.11,
+      0.23
+    ],
+    "total_max_cost_usd_if_all_groups_run": 0.26
+  }
+}

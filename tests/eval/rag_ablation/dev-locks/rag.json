@@ -1,0 +1,17 @@
+{
+  "experiment": "rag",
+  "protocol_sha256": "78bb6f71e3a563bb6681481abf3058ae1a1c217a453f55b135be54f3a85ea9b5",
+  "group_contracts": [
+    "78bb6f71e3a563bb6681481abf3058ae1a1c217a453f55b135be54f3a85ea9b5",
+    "78bb6f71e3a563bb6681481abf3058ae1a1c217a453f55b135be54f3a85ea9b5",
+    "78bb6f71e3a563bb6681481abf3058ae1a1c217a453f55b135be54f3a85ea9b5"
+  ],
+  "dev_dataset_sha256": "a67210c9a2d56ce690eb35fc957f9b75fefb4da365e252f25532196bab5680f7",
+  "analysis_code_sha256": {
+    "ch16_analysis.py": "623140e0e76048bee5de04f8c4dd3b67c4577d3a9d7a10a00a2ce3ab1be54ed9",
+    "eval_rag_ablation.py": "df27b08da0d52e6adc559cdf9e6c7aefcf01eebb0faec2f4daf290c63b586743"
+  },
+  "locked_at_commit": "dde19f3",
+  "working_tree_dirty": true,
+  "threshold_tuning_after_lock": false
+}

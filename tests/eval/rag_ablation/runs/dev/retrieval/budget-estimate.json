@@ -1,0 +1,55 @@
+{
+  "currency": "USD",
+  "paid_calls_executed": 0,
+  "groups": [
+    {
+      "experiment": "retrieval",
+      "group": "vector",
+      "strategy": "dense",
+      "estimated_usd": [
+        0.0476,
+        0.1019
+      ],
+      "max_cost_usd_per_group": 0.12,
+      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+    },
+    {
+      "experiment": "retrieval",
+      "group": "bm25",
+      "strategy": "bm25",
+      "estimated_usd": [
+        0.0476,
+        0.1019
+      ],
+      "max_cost_usd_per_group": 0.12,
+      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+    },
+    {
+      "experiment": "retrieval",
+      "group": "rrf",
+      "strategy": "hybrid",
+      "estimated_usd": [
+        0.0476,
+        0.1019
+      ],
+      "max_cost_usd_per_group": 0.12,
+      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+    },
+    {
+      "experiment": "retrieval",
+      "group": "rrf_rerank",
+      "strategy": "hybrid_rerank",
+      "estimated_usd": [
+        0.0509,
+        0.1052
+      ],
+      "max_cost_usd_per_group": 0.12,
+      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+    }
+  ],
+  "total_estimated_usd": [
+    0.1937,
+    0.4109
+  ],
+  "total_max_cost_usd_if_all_groups_run": 0.48
+}
