@@ -78,16 +78,23 @@ class TicketRequest(BaseModel):
     session_id: int | None = Field(default=None, description="会话 id,缺省则新建")
     description: str = Field(min_length=1, description="工单问题描述")
     ticket_type: Literal["投诉", "售后", "咨询"] = Field(default="投诉", description="工单类型")
+    confirm_key: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9_-]{8,64}$",
+        description="ch12 幂等键,代表一次用户确认(双击/超时重试同键返回同一工单);缺省走旧路径不去重")
 
 
 class TicketConfirmRequest(BaseModel):
     """ch08 建工单确认流:预览卡「确认提交」回传的载荷(前端原样回显,服务端零状态)。
-    tool_name/arguments 支持 debug 写工具走同一确认通道(验收 6 制造写超时)。"""
+    tool_name/arguments 支持 debug 写工具走同一确认通道(验收 6 制造写超时)。
+    ch12:confirm_key 为「一次用户确认」幂等键(预览帧下发,确认时原样带回,ADR-3)。"""
     conversation_id: int = Field(description="会话 id")
     tool_name: str = Field(default="create_ticket", description="确认放行的写工具名")
     description: str = Field(default="", max_length=500, description="工单问题描述(create_ticket 用)")
     ticket_type: Literal["售后", "投诉", "咨询"] = Field(default="售后", description="工单类型")
     arguments: dict = Field(default_factory=dict, description="工具参数(非 create_ticket 时使用)")
+    confirm_key: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9_-]{8,64}$",
+        description="一次用户确认的幂等键;同键重复提交返回同一工单,缺省不去重")
 
 
 class TicketCancelRequest(BaseModel):

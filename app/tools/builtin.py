@@ -24,6 +24,8 @@ class CreateTicketInput(BaseModel):
     conversation_id: int = Field(description="当前会话 id")
     description: str = Field(description="问题描述")
     ticket_type: Literal["售后", "投诉", "咨询"] = Field(description="工单类型")
+    confirm_key: str | None = Field(
+        default=None, description="一次用户确认的幂等键;同键重复提交返回同一工单(ADR-3)")
 
 
 def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
@@ -95,17 +97,45 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
             }, ensure_ascii=False)
 
     @tool(args_schema=CreateTicketInput)
-    def create_ticket(conversation_id: int, description: str, ticket_type: str) -> str:
+    def create_ticket(conversation_id: int, description: str, ticket_type: str,
+                      confirm_key: str | None = None) -> str:
         """创建人工工单转人工处理。问题超出自动客服能力、用户强烈要求人工时使用。"""
+        from sqlalchemy import select
+        from sqlalchemy.exc import IntegrityError
+
+        def dedup_payload(ticket):
+            # 幂等命中:返回已建工单号,响应标记 deduplicated,调用方/前端可据此提示
+            return json.dumps({"ticket_no": ticket.ticket_no,
+                               "status": ticket.status or "待处理",
+                               "deduplicated": True}, ensure_ascii=False)
+
         ticket_no = f"T{datetime.now().strftime('%Y%m%d')}{random.randint(0, 999):03d}"
         with ctx.session_factory() as session:
+            key = (confirm_key or "").strip() or None
+            if key is not None:
+                existing = session.execute(
+                    select(Ticket).where(Ticket.confirm_key == key)).scalar_one_or_none()
+                if existing is not None:
+                    return dedup_payload(existing)
             session.add(Ticket(
                 ticket_no=ticket_no,
                 conversation_id=conversation_id,
                 description=description,
                 ticket_type=ticket_type,
+                confirm_key=key,
             ))
-            session.commit()
+            try:
+                session.commit()
+            except IntegrityError:
+                # 并发同键:唯一约束兜底,回查返回先建的那张(超时后重试/双击都不重复建单)
+                if key is None:
+                    raise
+                session.rollback()
+                existing = session.execute(
+                    select(Ticket).where(Ticket.confirm_key == key)).scalar_one_or_none()
+                if existing is not None:
+                    return dedup_payload(existing)
+                raise
         return json.dumps({"ticket_no": ticket_no, "status": "待处理"}, ensure_ascii=False)
 
     registry.register(ToolRecord(query_order, source="builtin", access="read", label="订单查询"))

@@ -10,14 +10,15 @@ router = APIRouter()
 
 @router.post("/api/tickets")
 async def create_ticket(body: TicketRequest, request: Request):
-    """ch05 按钮建单:点按钮本身就是用户确认,引擎以 confirmed 放行(审计「成功」)。"""
+    """ch05 按钮建单:点按钮本身就是用户确认,引擎以 confirmed 放行(审计「成功」)。
+    ch12:confirm_key 代表一次点击(双击/超时重试同键,再点新键),同键返回同一工单(ADR-3)。"""
     store, engine = request.app.state.store, request.app.state.engine
     if body.session_id is not None and not await store.exists(body.session_id):
         raise HTTPException(status_code=404, detail="会话不存在")
     conversation_id = await store.resolve(body.session_id)
     raw = await engine.execute("create_ticket", json.dumps({
         "conversation_id": conversation_id, "description": body.description,
-        "ticket_type": body.ticket_type,
+        "ticket_type": body.ticket_type, "confirm_key": body.confirm_key,
     }, ensure_ascii=False), conversation_id=conversation_id, confirmed=True)
     try:
         parsed = json.loads(raw)
@@ -44,7 +45,8 @@ async def confirm_ticket(body: TicketConfirmRequest, request: Request):
         raise HTTPException(status_code=422, detail="该工具不可经确认通道执行")
     if body.tool_name == "create_ticket":
         args = {"conversation_id": body.conversation_id,
-                "description": body.description, "ticket_type": body.ticket_type}
+                "description": body.description, "ticket_type": body.ticket_type,
+                "confirm_key": body.confirm_key}
         if not body.description:
             raise HTTPException(status_code=422, detail="缺少问题描述")
     else:

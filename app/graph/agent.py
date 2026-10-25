@@ -70,10 +70,15 @@ def _merge_tool_call_chunks(chunks: list[dict]) -> list[dict]:
 
 
 def _write_intercept(writer, state):
-    """引擎拦截写操作时的回调:推工单预览卡片(无状态回传,前端确认后经 confirm 端点执行)。"""
+    """引擎拦截写操作时的回调:推工单预览卡片(无状态回传,前端确认后经 confirm 端点执行)。
+    ch12:预览帧随带一次用户确认的幂等键 confirm_key(ADR-3),前端确认时原样回传,
+    双击/超时重试同键返回同一工单;不依赖可能缺失的 tool_call_id。"""
 
     def _intercept(record, args):
+        from uuid import uuid4
+
         _emit(writer, {"type": "ticket_preview",
+                       "confirm_key": uuid4().hex,
                        "ticket_type": args.get("ticket_type", "售后"),
                        "description": args.get("description", ""),
                        "conversation_id": state["session_id"]})
