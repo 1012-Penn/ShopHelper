@@ -4,6 +4,7 @@ from __future__ import annotations
 from scripts.eval_checks import (
     check_case_deterministic,
     citation_support_rate,
+    classify_behavior,
     clarifying_precision,
     clarifying_slot_recall,
     condition_coverage,
@@ -133,3 +134,8 @@ def test_date_condition_accepts_chinese_alias():
         "6 月 1 日之后签收适用 v2", ["签收日期为 2026-06-01 或之后"]
     )
     assert outcome.passed
+
+
+def test_transfer_to_human_after_verification_is_not_refusal():
+    answer = "若仍无法确认签收时间，需转人工复核 [1]。"
+    assert classify_behavior(answer) != "refuse"
