@@ -91,9 +91,49 @@ class Ticket(Base):
     conversation_id: Mapped[int] = mapped_column(
         BigInteger().with_variant(Integer, "sqlite"), nullable=False
     )
+    # ch12 幂等键(ADR-3):代表「一次用户确认」;唯一约束下同键重复提交返回同一工单。
+    # 可空=旧客户端/旧路径无键,不参与去重。
+    confirm_key: Mapped[str | None] = mapped_column(String(64), nullable=True, unique=True)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     ticket_type: Mapped[str] = mapped_column(Enum("售后", "投诉", "咨询", name="ticket_type"), nullable=False)
     status: Mapped[str] = mapped_column(Enum("待处理", "已处理", name="ticket_status"), default="待处理")
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class RagLoopStep(Base):
+    """ch12 受控 Agentic 检索步骤审计。
+
+    仅可审计(ADR-1):事后查询每轮查询/子问题/证据ID/判定/停止原因;
+    不提供断点续跑、回放或跨进程恢复——需要恢复能力时须另立设计并补杀进程恢复测试。
+    """
+
+    __tablename__ = "rag_loop_steps"
+    __table_args__ = (
+        UniqueConstraint("conversation_id", "turn_user_msg_id", "round_index", "phase",
+                         name="uk_rag_step_round"),
+    )
+
+    id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True
+    )
+    conversation_id: Mapped[int] = mapped_column(
+        BigInteger().with_variant(Integer, "sqlite"), nullable=False
+    )
+    turn_user_msg_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    round_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    phase: Mapped[str] = mapped_column(String(16), nullable=False)
+    query: Mapped[str] = mapped_column(Text, nullable=False)
+    queries: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    sub_queries: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    evidence_ids: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    new_evidence_ids: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    merged_evidence_ids: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    judge_answered: Mapped[bool | None] = mapped_column(Boolean, nullable=True)
+    analyzer_action: Mapped[str | None] = mapped_column(String(24), nullable=True)
+    conflicts: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    missing_aspects: Mapped[list | None] = mapped_column(JSON, nullable=True)
+    stop_reason: Mapped[str | None] = mapped_column(String(32), nullable=True)
+    latency_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 

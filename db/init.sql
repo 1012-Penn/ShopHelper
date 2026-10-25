@@ -5,6 +5,7 @@
 -- ch03 新建:knowledge_chunks / qa_extraction_staging
 -- ch04 新建:low_confidence_questions / faith_cases
 -- ch07 新建:conversation_summaries;conversations 加三列(summary / summary_upto_msg_id / layer1_from_msg_id)
+-- ch12 新建:rag_loop_steps;tickets 加一列 confirm_key(幂等键)
 -- ch14 新建:admin_users / admin_audit_logs(后台管理员与操作审计)
 -- 商品、订单、物流走工具内 mock,不建表
 -- 全库统一 ENGINE=InnoDB、CHARSET=utf8mb4
@@ -56,14 +57,17 @@ CREATE TABLE faq (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='常见问答';
 
 -- 人工工单:create_ticket 落地,工单号当业务主键
+-- ch12:confirm_key = 「一次用户确认」幂等键(ADR-3),唯一约束;NULL=旧客户端无键,不参与去重
 CREATE TABLE tickets (
   ticket_no       VARCHAR(32)     NOT NULL                COMMENT '工单号,如 T20260701008',
   conversation_id BIGINT UNSIGNED NOT NULL                COMMENT '关联会话,可倒查当时聊了什么',
+  confirm_key     VARCHAR(64)     NULL                    COMMENT '一次用户确认的幂等键;同键重复提交(双击/超时重试)返回同一工单',
   description     TEXT            NOT NULL                COMMENT '问题描述',
   ticket_type     ENUM('售后','投诉','咨询') NOT NULL     COMMENT '工单类型',
   status          ENUM('待处理','已处理') NOT NULL DEFAULT '待处理' COMMENT '处理状态',
   created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (ticket_no),
+  UNIQUE KEY uk_confirm_key (confirm_key),
   KEY idx_conversation_id (conversation_id),
   CONSTRAINT fk_tickets_conversation FOREIGN KEY (conversation_id) REFERENCES conversations (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='人工工单';
@@ -307,3 +311,35 @@ CREATE TABLE admin_audit_logs (
   KEY idx_admin_audit_action (action),
   KEY idx_admin_audit_created (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='后台管理操作审计,append-only';
+
+-- =============================================================
+-- ch12 · 受控 Agentic RAG · 检索步骤审计表
+-- 仅可审计(ADR-1):一轮一行记录每轮查询/子问题/证据ID/判定/停止原因,
+-- 供事后查询与运营回捞;不提供断点续跑/回放/跨进程恢复。
+-- 不挂外键,审计写入不能被引用约束拦住;写入失败只 warning 不拦检索回合。
+-- =============================================================
+
+CREATE TABLE rag_loop_steps (
+  id                 BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '审计主键',
+  conversation_id    BIGINT UNSIGNED NOT NULL                COMMENT '所属会话',
+  turn_user_msg_id   VARCHAR(64)     NOT NULL                COMMENT '本轮 user 消息 id(initial_state 生成),一轮聊天内稳定',
+  round_index        INT             NOT NULL                COMMENT '0=首轮检索,1..N=补检索轮',
+  phase              VARCHAR(16)     NOT NULL                COMMENT 'retrieve / final(全部轮次后的终判)',
+  query              TEXT            NOT NULL                COMMENT '本轮主查询(用户原问题)',
+  queries            JSON            NULL                    COMMENT '本轮实际执行的查询(含子查询)',
+  sub_queries        JSON            NULL                    COMMENT '缺口分析拆解出的子查询(未去重原始输出)',
+  evidence_ids       JSON            NULL                    COMMENT '本轮各查询返回的 chunk id',
+  new_evidence_ids   JSON            NULL                    COMMENT '本轮新并入合并集的 chunk id',
+  merged_evidence_ids JSON           NULL                    COMMENT '本轮结束后的合并 top-k chunk id',
+  judge_answered     TINYINT(1)      NULL                    COMMENT '蕴含判断器结论:1 回答了 / 0 没回答 / NULL 未判',
+  analyzer_action    VARCHAR(24)     NULL                    COMMENT '缺口分析动作:retrieve_more/clarify/refuse/escalate/answer',
+  conflicts          JSON            NULL                    COMMENT '识别到的证据冲突(逐条)',
+  missing_aspects    JSON            NULL                    COMMENT '识别到的证据缺口(逐条)',
+  stop_reason        VARCHAR(32)     NULL                    COMMENT '循环终止原因,仅本轮最后一行填',
+  latency_ms         INT UNSIGNED    NULL                    COMMENT '本轮耗时毫秒',
+  created_at         DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '记录时间',
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_rag_step_round (conversation_id, turn_user_msg_id, round_index, phase),
+  KEY idx_rag_turn (conversation_id, turn_user_msg_id),
+  KEY idx_rag_stop (stop_reason)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ch12 受控 Agentic 检索步骤审计(仅可审计,不支持断点续跑)';

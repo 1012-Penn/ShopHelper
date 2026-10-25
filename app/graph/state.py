@@ -34,3 +34,7 @@ class ChatState(TypedDict):
     pending_order_id: str         # prepare_order 抽到的单号(""=缺)
     resume_order_id: str          # 无状态回传:点选带回的订单号
     resume_question: str          # 无状态回传:点选带回的补全问题
+    # ---- ch12:受控 Agentic 检索 ----
+    rag_rounds: int               # 受控循环实际补检索轮数(0=首轮即充分,与基线同行为)
+    rag_stop_reason: str          # 停止原因(first_pass_sufficient/sufficient/rounds_exhausted/...)
+    rag_steps: list[dict]         # 每轮步骤记录(查询/子问题/证据ID/缺口判定/停止原因)

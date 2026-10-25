@@ -84,9 +84,12 @@ def _with_sink(fn):
 
 
 def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
-                resolver=None, intent_model=None, escalator=None, expander=None):
+                resolver=None, intent_model=None, escalator=None, expander=None,
+                gap_analyzer=None, rag_steps_store=None):
     """resolver/expander 缺省时生产路径自建(结构化真模型);测试经 conftest 注入替身。
-    intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。"""
+    intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。
+    ch12:retrieval_route ∈ {decompose_once, controlled_loop} 时「商品咨询」改走
+    agentic_retrieve 受控循环;默认 hybrid_rerank 图结构零变化(ADR-2)。"""
     from app.llm import make_extract_model
     from app.prompts import ExpandedQueries, ResolvedQuestion
 
@@ -134,9 +137,24 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
     g.add_conditional_edges("resolve",
                             lambda s: "prepare_order" if s.get("resume_question") else "intent",
                             {"intent": "intent", "prepare_order": "prepare_order"})
-    g.add_conditional_edges("intent", route, {
+    route_targets = {
         "retrieve": "retrieve", "agent": "agent", "complaint": "complaint",
-        "chitchat": "chitchat", "prepare_order": "prepare_order"})
+        "chitchat": "chitchat", "prepare_order": "prepare_order"}
+    if settings.retrieval_route in {"decompose_once", "controlled_loop"}:
+        from app.graph.agentic import make_agentic_retrieve_node
+        from app.rag_loop import make_gap_analyzer
+
+        max_rounds = 1 if settings.retrieval_route == "decompose_once" else settings.max_rag_rounds
+        g.add_node("agentic_retrieve", _with_sink(make_agentic_retrieve_node(
+            retrieval_service, kb, pool, settings, max_rounds=max_rounds,
+            analyzer=gap_analyzer or make_gap_analyzer(settings),
+            steps_store=rag_steps_store)))
+        # 受控循环充分→agent(沿用既有证据消费);不充分→节点内已收口,直达 log
+        g.add_conditional_edges(
+            "agentic_retrieve", lambda s: "agent" if s["gate_passed"] else "log",
+            {"agent": "agent", "log": "log"})
+        route_targets["retrieve"] = "agentic_retrieve"
+    g.add_conditional_edges("intent", route, route_targets)
     g.add_conditional_edges("prepare_order",
                             lambda s: "fetch_order" if s.get("pending_order_id") else "ask_order",
                             {"fetch_order": "fetch_order", "ask_order": "ask_order"})
@@ -183,7 +201,8 @@ def initial_state(session_id: int, user_message: str, resume=None,
             "messages": msgs, "turn_user_msg_id": user_msg_id, "layered": layered or {},
             "order": {}, "expand_queries": [], "refund_flow": False,
             "pending_order_id": "", "resume_order_id": resume_order_id,
-            "resume_question": resume_question}
+            "resume_question": resume_question,
+            "rag_rounds": 0, "rag_stop_reason": "", "rag_steps": []}
 
 
 def make_retrieval_chain(session_factory, settings):

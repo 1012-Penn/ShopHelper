@@ -1,4 +1,6 @@
 # app/config.py
+from typing import Literal
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -85,6 +87,14 @@ class Settings(BaseSettings):
     topic_max_len: int = 96
     topic_batch_size: int = 16
     topic_classify_batch_limit: int = 200
+
+    # ch12:受控 Agentic RAG(retrieval_route=hybrid_rerank 时以下参数全部不生效,图结构不变)。
+    # 新路由在新语料重新校准并验证前不得切为默认(ADR-5,校准产物当前 calibration_status=stale)。
+    retrieval_route: Literal["hybrid_rerank", "decompose_once", "controlled_loop"] = "hybrid_rerank"
+    max_rag_rounds: int = 3          # controlled_loop 最大补检索轮数(不含首轮;decompose_once 恒为 1)
+    rag_token_budget: int = 3000     # 循环内缺口分析输出 token 预算(estimate_tokens 口径)
+    rag_time_budget_s: float = 45.0  # 受控循环墙钟预算(秒)
+    rag_max_sub_queries: int = 3     # 每轮最多补检索子查询数
 
     # ch14:后台管理员鉴权(DB 管理员表;secret 为空时后台登录 503,不阻断聊天)
     admin_session_secret: str = ""        # 生产必须设置;python -c 'import secrets; print(secrets.token_urlsafe(48))'
