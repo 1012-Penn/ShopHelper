@@ -66,16 +66,38 @@ CH11 基线(frozen-v1, 90 题)显示 multi_hop R@3=0.188、policy_conflict R@3=0
 |---|---|---|
 | `retrieval_route` | `hybrid_rerank` | 三值枚举 hybrid_rerank / decompose_once / controlled_loop(ADR-2) |
 | `max_rag_rounds` | 3 | controlled_loop 最大补检索轮数(不含首轮) |
-| `rag_token_budget` | 3000 | 循环内缺口分析输出 token 预算(estimate_tokens 口径,仿 agent_token_budget) |
-| `rag_time_budget_s` | 45.0 | 循环墙钟预算(秒) |
+| `rag_token_budget` | 3000 | 循环内 LLM 调用(蕴含判断+缺口分析)的**输入+输出**估算 token 预算 |
+| `rag_time_budget_s` | 45.0 | 循环墙钟预算;单次调用再以剩余时间设超时(**不是硬上限**,见 3.2.1) |
+| `rag_call_timeout_s` | 20.0 | 单次受控调用(检索/判断/分析)墙钟上限;0=只用剩余时间 |
 | `rag_max_sub_queries` | 3 | 每轮最多子查询数 |
 
 停止原因枚举:`first_pass_sufficient / sufficient / rounds_exhausted / time_budget /
-token_budget / no_new_queries / clarify_needed / refuse_no_evidence / escalate_conflict /
-retrieval_error / analyzer_error`。全部进 trace、rag_loop_steps 与评测逐题轨迹。
+call_timeout / token_budget / no_new_queries / clarify_needed / refuse_no_evidence /
+escalate_conflict / retrieval_error / analyzer_error`。全部进 trace、rag_loop_steps 与评测逐题轨迹。
 
 查询去重:规范化(折叠空白+小写)后与已执行查询集合比对,重复子查询跳过;
 全部子查询重复时 stop=no_new_queries。
+
+#### 3.2.1 预算语义(2026-10-25 验收修正)
+
+时间:
+- 每次受控调用(首轮检索、每个子查询检索、每次蕴含判断、每次缺口分析)都以
+  `min(rag_call_timeout_s, 剩余时间)` 为墙钟超时;超时立即停止循环,不再发起后续调用。
+  因此循环实际墙钟不超过 `rag_time_budget_s` 加一次收口开销。
+- **但这不是硬上限**:超时只是「不再等待」,底层 I/O(嵌入 30s、重排 10s、上游 LLM 请求与
+  重试)无法被硬中止——线程不可取消,被放弃的调用可能仍在其自身超时内完成并产生费用。
+  停止原因会记 `time_budget`(剩余时间耗尽)或 `call_timeout`(单次上限命中),评测侧统一
+  打 `timeout` 标签。
+- 不承诺「45 秒内一定返回且不再产生任何调用」;只承诺「不再发起新调用、不等待超时调用」。
+
+token:
+- 预算计入循环内两次 LLM 调用的输入与输出:判断/分析的**提示词模板 + 查询 + 证据文本**
+  按 `estimate_tokens` 估算输入,输出按预留(判断 128、分析 192)加实际产出估算计入。
+- 调用前先做 `require_tokens(输入+输出预留)` 预检,不足即停(`token_budget`),不发起调用;
+  调用后按实际返回内容记账。`RagLoopResult.tokens_used` 输出本回合计入量,进评测轨迹。
+- 首轮检索内部的蕴含判断发生在 `RetrievalService` 内,属基线既有调用,**不计入循环预算**
+  (循环预算约束的是基线之外的补检索工作);嵌入/重排按调用计费,不计 token。
+- 估算口径与 `agent_token_budget` 一致(字符估算),是护栏不是精确账单。
 
 ### 3.3 图接入
 
@@ -99,6 +121,17 @@ round_index、query(原查询)、queries(本轮实际执行查询 JSON)、sub_qu
 merged_evidence_ids、judge_answered、analyzer_action、conflicts、stop_reason(仅末行)、
 latency_ms、created_at。写入失败仅 warning,绝不阻断回合(审计不拦执行,同 tool_audit 惯例)。
 
+### 3.5 前端确认键(2026-10-25 验收修正)
+
+- 预览卡:服务端在 `ticket_preview` 帧下发 `confirm_key`,前端确认时**原样回传**;
+  提交失败后重试复用同一帧的键。
+- 普通建单按钮与退款表单:为「一次用户提交」生成键(`crypto.randomUUID` 去连字符,
+  兜底时间戳+随机串,均满足 `[A-Za-z0-9_-]{8,64}`);失败重试沿用同键;成功后该键作废,
+  新的独立提交(新按钮实例、新表单实例、退款表单内容变更)换新键——内容变更若复用旧键,
+  后端一致性校验会 409。
+- 页面行为测试:`tests/page/ticket_confirm.cjs` 用最小 DOM 垫片在 Node 里真实执行页面
+  脚本并点击按钮,断言实际 fetch 请求体;`tests/test_ch12_page.py` 包装为 pytest。
+
 ## 4. ADR(架构决策记录;1/3/4/5 含用户 2026-10-25 修正)
 
 ### ADR-1 执行状态持久化 = 单回合闭环,`rag_loop_steps` 仅声称「可审计」
@@ -116,15 +149,21 @@ checkpointer 维持 InMemorySaver。`rag_loop_steps` 的语义边界:**只提供
 
 ### ADR-3 工单确认幂等 = 「一次用户确认」稳定请求键 + DB 唯一约束
 - 确认键(confirm_key)代表**一次用户确认动作**:预览卡下发时服务端生成并随
-  `ticket_preview` 帧带给前端,确认时原样回传;`/api/tickets` 按钮路径由前端为
-  「一次点击」生成并复用该键(重试同键、再点新键)。
+  `ticket_preview` 帧带给前端,确认时**原样回传**;普通建单与退款建单由前端为「一次
+  用户提交」生成稳定键——失败重试沿用同键,新的独立提交(含退款表单内容变更、重开表单)
+  使用新键。
 - `tickets` 表增 `confirm_key VARCHAR(64) NULL UNIQUE`;create_ticket 工具持键插入,
-  唯一约束冲突时查出已建工单并返回同一 ticket_no(响应标记 `deduplicated: true`)。
-  覆盖 `/api/tickets` 与 `/api/tickets/confirm` 两个端点。
+  唯一约束冲突时回查已建工单。覆盖 `/api/tickets` 与 `/api/tickets/confirm` 两个端点。
+- **同键命中必须核对「同一次提交」**:会话、描述、工单类型三者全一致才返回同一工单
+  (`deduplicated: true`);任一不一致返回 **409**,不得返回旧工单。预查命中与唯一约束
+  冲突后的回查走同一个比较函数(`app/tickets.py::_admit`),规则不分叉。
 - **不**依赖 `tool_call_id`(图重放/前端重建时可能变化或缺失);
   **不**用参数指纹合并两次合法提交(同内容两次独立确认 = 两个键 = 两张工单)。
+- 无 `session_id` 的匿名请求每次都会新建会话,同键重试会因会话不一致返回 409:
+  宁可拒绝也不跨会话返回旧工单(前端在动作出现时必有会话)。
 - 测试:并发双击同键只建一单;超时后同键重试返回同一工单;同内容两次独立确认
-  (不同键)建两单;无键旧路径行为不变(向后兼容,文档注明无幂等保护)。
+  (不同键)建两单;跨会话/不同描述/不同类型均 409 且不新增行;预查未命中的并发交错
+  经唯一约束回查仍执行同一一致性规则;页面行为测试证明实际请求体带键。
 
 ### ADR-4 预算与并发的真实语义(修正:台账 flock ≠ 整段互斥)
 现有 `BudgetLedger.record()` 的 `flock` 只保证**台账记录写入**的互斥;
@@ -176,9 +215,11 @@ decompose_once / controlled_loop)。`contract_diff()` 机械验证三组契约�
    OLD_SHA 校验继续通过);
 2. 默认 `retrieval_route=hybrid_rerank` 下既有测试全绿(默认路径零变化);
 3. 界限测试:轮数/token/时间熔断、查询去重(同查询不重复检索)、故障谨慎收敛、
-   停止原因记录齐全;
+   停止原因记录齐全;单次检索/判断/分析均受 `min(call_timeout_s, 剩余时间)` 约束,
+   token 预算计入输入与输出(含提示词模板),文档声明时间预算不是硬上限;
 4. `rag_loop_steps` 逐轮落库且含 turn 标识;文档与代码仅声称「可审计」(ADR-1);
-5. 工单幂等三场景(并发双击/超时重试/同内容两次独立确认)+ 无键旧路径回归;
+5. 工单幂等三场景(并发双击/超时重试/同内容两次独立确认)+ 跨会话/不同参数 409 +
+   无键旧路径回归;页面行为测试证明实际请求含 confirm_key 且重试同键;
 6. 三组 contract 除 `rag.*`/`harness.*` 外 diff 为空;
 7. baseline 缓存重放 0 新增付费调用、全局台账零新增记录(ADR-4 边界如实声明);
 8. 报告区分三级证据;未实测质量指标标「未实测」;
@@ -193,5 +234,9 @@ decompose_once / controlled_loop)。`contract_diff()` 机械验证三组契约�
   如实报告,不以 Agentic 名称代替结果;
 - 合并证据跨查询 max-score 融合,分数来自不同子查询的重排,可比性弱于单查询内排序
   (refund.py 已有同语义先例,风险接受并记录);
+- 时间预算不是硬上限:超时后底层 I/O 线程可能继续到自身超时并产生费用;若需严格费用上限,
+  须在调用侧使用可取消的客户端或缩短底层 I/O 超时;
+- 匿名会话(无 session_id)的同键重试会 409 而非去重——这是跨会话一致性校验的代价,
+  语义上比返回他人会话的旧工单安全。
 - Milvus Lite 快照为本 worktree 私有副本(只读),与 CH13 无写冲突;台账经 `--ledger`
   指向全局文件,只读校验 + 本轮零付费,无并发扣减窗口(ADR-4)。

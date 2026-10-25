@@ -169,6 +169,46 @@ def _check_gate_not_loosened() -> tuple[bool, str]:
     return True, f"app/retrieval.py、app/evidence.py、校准文件与 origin/main 零差异;{settings_note}"
 
 
+def _check_page_confirm_key() -> tuple[bool, str]:
+    """页面行为:点击确认/建单/退款后实际请求含 confirm_key,重试同键(验收修正 #1)。"""
+    import shutil
+
+    node = shutil.which("node")
+    if node is None:
+        return False, "缺少 node,无法验证页面真实请求体"
+    result = _run([node, "tests/page/ticket_confirm.cjs"])
+    if result.returncode != 0:
+        return False, (result.stdout or result.stderr or "").strip()[:300]
+    return True, (result.stdout or "").strip()[:200]
+
+
+def _check_budget_semantics() -> tuple[bool, str]:
+    """预算语义(验收修正 #3):单次调用超时受剩余时间约束,token 计入输入+输出;
+    文档不得把无法硬中止的底层调用称为硬上限。"""
+    from app.config import Settings
+    from app import rag_loop
+
+    settings = Settings(openai_api_key="sk-test", _env_file=None)
+    loop_src = (ROOT / "app" / "rag_loop.py").read_text(encoding="utf-8")
+    design = (ROOT / "docs" / "superpowers" / "specs"
+              / "2026-10-25-ch12-controlled-agentic-rag-design.md").read_text(encoding="utf-8")
+    issues = []
+    if getattr(settings, "rag_call_timeout_s", None) is None:
+        issues.append("缺少 rag_call_timeout_s")
+    for needle in ("_call_bounded", "budget.require_tokens", "tokens_used"):
+        if needle not in loop_src:
+            issues.append(f"rag_loop 缺少 {needle}")
+    if "不是硬上限" not in loop_src and "不是硬上限" not in design:
+        issues.append("未声明时间预算不是硬上限")
+    if "硬中止" not in design:
+        issues.append("设计稿未写明底层调用不可硬中止的边界")
+    limits = rag_loop.RagLoopLimits()
+    if limits.call_timeout_s <= 0:
+        issues.append("call_timeout_s 必须为正")
+    return not issues, "; ".join(issues) or (
+        f"call_timeout_s={settings.rag_call_timeout_s}s, token 预算含输入+输出, 文档声明非硬上限")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="ch12 验收")
     parser.add_argument("--ledger", type=Path, default=GLOBAL_LEDGER)
@@ -184,6 +224,8 @@ def main(argv: list[str] | None = None) -> int:
         "7-replay-zero-new-calls": _check_replay_zero_new_calls,
         "8-ledger-zero-ch12-spend": lambda: _check_ledger_zero_ch12_spend(args.ledger),
         "9-gate-not-loosened": _check_gate_not_loosened,
+        "10-page-confirm-key": _check_page_confirm_key,
+        "11-budget-semantics": _check_budget_semantics,
     }
     failed = 0
     for name, check in checks.items():
