@@ -42,7 +42,11 @@ def validate_paid_settings(settings: Any) -> None:
 
 
 class PaidRunBudget:
-    """Independent CH15 run/arm envelopes; does not read or alter CH11 ledger."""
+    """In-memory CH15 run/arm envelopes; does not read or alter CH11 ledger.
+
+    One instance must be shared by both serial arms. State is not durable across
+    process restarts, so a resumed paid run must reconcile provider spend first.
+    """
 
     def __init__(
         self,
