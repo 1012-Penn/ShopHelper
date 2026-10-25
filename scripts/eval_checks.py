@@ -115,10 +115,21 @@ def number_covered(answer: str, value, unit: str = "", tolerance: float = 0.0) -
     if isinstance(value, bool):
         yes = ("支持", "是", "有", "可以", "能", "适用", "参与", "享受", "计入")
         no = ("不支持", "不是", "没有", "不可以", "不能", "不参与", "不适用", "不享受", "不计入", "不叠加")
-        # 先看否定,避免“不支持”因包含“支持”被当成 true。
-        if any(term in normalized for term in no):
-            return False if value else True
-        return any(term in normalized for term in yes) if value else False
+
+        def _hit(term: str) -> bool:
+            for match in re.finditer(term, normalized):
+                prefix = normalized[max(0, match.start() - 2):match.start()]
+                if value:
+                    # “不支持/不参与”里的“支持/参与”不算肯定。
+                    if not prefix.endswith(("不", "没", "非")):
+                        return True
+                else:
+                    # “是否支持”是提问,不是事实。
+                    if not prefix.endswith("是"):
+                        return True
+            return False
+
+        return any(_hit(term) for term in (yes if value else no))
     if isinstance(value, list):
         # 列表事实只要求答案覆盖其中一项;完整逐项覆盖交给 required_conditions。
         return any(
@@ -151,7 +162,12 @@ def condition_coverage(
     hits = []
     for condition in conditions:
         required_numbers = _NUM_RE.findall(normalize_answer(condition))
-        if required_numbers and not all(number in normalized for number in required_numbers):
+        is_date_condition = bool(re.search(r"\d{4}\s*[-/年]\s*\d{1,2}", condition))
+        if (
+            required_numbers
+            and not is_date_condition
+            and not all(number in normalized for number in required_numbers)
+        ):
             hits.append(False)
             continue
         candidates = [
@@ -290,7 +306,7 @@ def classify_behavior(answer: str) -> str:
         return "clarify"
     if answer.lstrip().startswith(REFUSAL_MARKER) or normalized.startswith(("无法回答", "抱歉")):
         return "refuse"
-    if any(term in normalized for term in ("转人工", "查不到")) and not asks:
+    if "查不到" in normalized and not asks:
         return "refuse"
     if normalized.startswith(("请提供", "请告知", "麻烦提供", "请问")):
         return "clarify"

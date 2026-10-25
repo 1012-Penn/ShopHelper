@@ -120,3 +120,16 @@ def test_bool_negation_does_not_match_positive():
 def test_forbidden_claim_with_negation_prefix_is_not_flagged():
     assert forbidden_claims_found("不是所有商品 95 折", ["所有商品 95 折"]) == []
     assert forbidden_claims_found("所有商品 95 折", ["所有商品 95 折"]) == ["所有商品 95 折"]
+
+
+def test_bool_scopes_negation_to_the_predicate():
+    answer = "SH-B7 支持血氧监测；活动商品标注不参与折扣。"
+    assert number_covered(answer, True)
+    assert not number_covered("SH-B7 不支持血氧监测。", True)
+
+
+def test_date_condition_accepts_chinese_alias():
+    outcome = condition_coverage(
+        "6 月 1 日之后签收适用 v2", ["签收日期为 2026-06-01 或之后"]
+    )
+    assert outcome.passed

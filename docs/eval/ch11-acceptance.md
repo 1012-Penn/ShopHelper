@@ -12,7 +12,7 @@
 [ok] budget: $0.4644/$10.00
 [ok] offline-harness: eval_ch11 --mode offline frozen-v1
 [ok] snapshot: ok=true, mysql=130, milvus=130, pending=0, build_id=ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba, build_manifest_match=true
-[ok] tests: 151 passed
+[ok] tests: 153 passed
 ```
 
 ## 说明

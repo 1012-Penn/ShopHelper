@@ -73,7 +73,9 @@ def _offline(split: str, out: Path, limit: int) -> int:
     cases = load_split(split)
     if limit:
         cases = cases[:limit]
-    expected_buckets = (split_entries(load_registry()).get(split) or {}).get("bucket_counts")
+    expected_buckets = None
+    if not limit:
+        expected_buckets = (split_entries(load_registry()).get(split) or {}).get("bucket_counts")
     validate_cases(
         cases,
         split=split,
@@ -99,7 +101,7 @@ def _offline(split: str, out: Path, limit: int) -> int:
     return 1 if blocking else 0
 
 
-def _prepare_queries(cases, args, settings, rewriter, split: str):
+def _prepare_queries(cases, args, settings, rewriter, split: str, cost=None):
     from app.retrieval import PreparedQuery
     from scripts.rewrite_cache import RewriteCacheError, load_rewrites
 
@@ -117,10 +119,17 @@ def _prepare_queries(cases, args, settings, rewriter, split: str):
         mode = args.rewrite_cache_mode if (
             args.rewrite_cache_mode == "read" or args.allow_paid
         ) else "read"
+        estimated_tokens = max(1, 500 * len(cases))
+        if mode in {"write", "refresh"} and cost is not None:
+            cost.guard(estimated_tokens, settings.openai_model)
         rewrites = load_rewrites(
             cases, cache_path, split_path, settings.openai_model, rewriter,
             mode=mode,
         )
+        if mode in {"write", "refresh"} and cost is not None:
+            cost.add(
+                settings.openai_model, estimated_tokens, 0, kind="rewrite"
+            )
     except RewriteCacheError as exc:
         print(f"[warn] 改写缓存不可用,使用恒等改写: {exc}", file=sys.stderr)
         return identity, "identity"
@@ -209,6 +218,8 @@ def _build_context(config, args, cases):
     pricing = PricingTable.load(Path(args.pricing) if args.pricing else DEFAULT_PRICING_PATH)
     if config.allow_paid and not pricing.verified:
         raise BudgetExceeded("价格表未核实(verified=false),拒绝任何付费调用")
+    if config.use_judge and not config.allow_paid:
+        raise BudgetExceeded("--judge 需要 --allow-paid")
     cost = CostTracker(
         pricing, BudgetLedger(), config.max_cost_usd, allow_paid=config.allow_paid
     )
@@ -229,7 +240,9 @@ def _build_context(config, args, cases):
             settings.rerank_model,
         )
     rewriter = make_rewriter(settings) if settings.query_rewrite_enabled else None
-    prepared, rewrite_mode = _prepare_queries(cases, args, settings, rewriter, config.split)
+    prepared, rewrite_mode = _prepare_queries(
+        cases, args, settings, rewriter, config.split, cost
+    )
 
     evidence_judge = None
     if config.mode in {"evidence", "full"} and config.allow_paid:

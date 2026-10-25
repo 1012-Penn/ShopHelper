@@ -403,6 +403,8 @@ class RetrievalService:
             ranked = self._reranker.rerank(rewritten, [texts.get(r.chunk_id, "") for r in cand],
                                            top_n=self._final_top_k)
         except Exception as exc:
+            if exc.__class__.__name__ == "BudgetExceeded":
+                raise
             logger.warning("重排失败,降级 RRF 序,证据闸无法判定:%s", exc)
             return RetrievalResult(cand[: self._final_top_k], True,
                                    "重排不可用,证据闸无法判定", fallback, rewritten,
@@ -423,6 +425,8 @@ class RetrievalService:
                 try:
                     verdict = self._evidence_judge.judge(query, documents)
                 except Exception as exc:
+                    if exc.__class__.__name__ == "BudgetExceeded":
+                        raise
                     logger.warning("证据蕴含校验失败,回退分数闸:%s", exc)
         if verdict is not None:
             if not verdict.answered:

@@ -190,6 +190,12 @@ def main() -> int:
     ) and not args.allow_paid:
         print("拒绝付费调用:加 --allow-paid", flush=True)
         return 3
+    if args.allow_paid:
+        from scripts.eval_cost import PricingTable
+
+        if not PricingTable.load().verified:
+            print("拒绝付费调用:价格表未核实(verified=false)", flush=True)
+            return 4
     factory = make_session_factory(make_engine(settings))
     kb = KnowledgeBaseStore(factory)
     vectors = KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)

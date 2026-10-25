@@ -59,7 +59,7 @@ regression-v1（n=47 有证据题）：R@3 0.8298、R@5 0.9362、R@10 0.9362、M
 | forbidden_claim_rate | 0.0000（0/57） | 0.0000 |
 | clarify_slot_recall | 0.7500 | — |
 | clarify_precision | 0.5500 | — |
-| unsupported_claim_rate（claim 级微平均） | 0.5347（77/144） | 0.4851 |
+| unsupported_claim_rate（claim 级微平均） | 0.5267（79/150） | 0.4851 |
 
 - 严格正确率低的主因是**引用支持**：模型常一条答案同时标 `[1][2]`，但并非每个引用都真正支持该句；`citation_unsupported` 45 次。
 - 条件覆盖只统计有 `required_conditions` 的题；`answer_missing_condition` 11 次，说明有条件结论仍常被说成无条件。
@@ -70,7 +70,7 @@ regression-v1（n=47 有证据题）：R@3 0.8298、R@5 0.9362、R@10 0.9362、M
 | 指标 | frozen-v1 |
 |---|---:|
 | under_refusal_rate | 0.0000（0/16） |
-| over_refusal_rate | 0.1286（9/70） |
+| over_refusal_rate | 0.1000（7/70） |
 | correct_refusal_rate | 1.0000 |
 | conditional_compliance | 0.7143 |
 | verification_compliance | 0.7500 |
@@ -94,7 +94,7 @@ regression-v1（full 首跑）：106 次调用、成本 $0.0631；复跑 0 次�
 | 硬负例误放行 | 0/10 | 0/0 |
 | OOD 误放行 | 0/6 | — |
 | 禁用断言 | 0/57 | 0/10 |
-| 无证据断言（claim 级） | 77/144 | 32/63 |
+| 无证据断言（claim 级） | 79/150 | 32/63 |
 | 应拒未拒 | 0/16 | 0/13 |
 
 硬负例 `FRZ-HARD-10` 原问“表带可以单独买吗”其实可由兼容配件表回答，已改为“表带单独买多少钱”并重新冻结；修复后误放行为 0。无证据断言仍高，是下一阶段最需要修的回答层问题。

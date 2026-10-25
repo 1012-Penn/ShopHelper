@@ -28,7 +28,7 @@
     "frozen-v1": {
       "dataset_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
       "label_version": "v2",
-      "contract_sha256": "455fc4ce2b9ba7e8c15e50fca871b2e0b146ae51e6182d109bb2bdb01947716a",
+      "contract_sha256": "6e52364379b3eb94af156d9ecbdb41c46338e8638c70f117bceed542274e997c",
       "n": 90,
       "rewrite_mode": "frozen",
       "summary": {
@@ -129,37 +129,35 @@
         "l3": {
           "answer_accuracy_strict": 0.1774193548387097,
           "strict_n": 62,
-          "answer_accuracy_partial": 0.8467741935483871,
+          "answer_accuracy_partial": 0.8709677419354839,
           "condition_coverage": 0.7361111111111112,
           "condition_n": 36,
           "forbidden_claim_rate": 0.0,
           "forbidden_claim_ids": [],
           "clarify_slot_recall": 0.75,
           "clarify_precision": 0.55,
-          "unsupported_claim_rate": 0.5347222222222222,
-          "unsupported_claims": 77,
-          "substantive_claims": 144,
+          "unsupported_claim_rate": 0.5266666666666666,
+          "unsupported_claims": 79,
+          "substantive_claims": 150,
           "failure_labels": {
             "answer_missing_condition": 11,
-            "answer_wrong_fact": 15,
+            "answer_wrong_fact": 13,
             "citation_unsupported": 45,
             "clarify_missing_slot": 3,
             "clarify_over_asking": 7,
-            "over_refusal": 9,
+            "over_refusal": 7,
             "verification_overclaim": 1
           }
         },
         "l4": {
           "under_refusal_rate": 0.0,
           "under_refusal_ids": [],
-          "over_refusal_rate": 0.12857142857142856,
+          "over_refusal_rate": 0.1,
           "over_refusal_ids": [
             "FRZ-MULTI-11",
             "FRZ-MULTI-14",
-            "FRZ-CONSTRAINT-03",
             "FRZ-CONSTRAINT-13",
             "FRZ-ENTITY-09",
-            "FRZ-CONFLICT-04",
             "FRZ-CLARIFY-01",
             "FRZ-CLARIFY-02",
             "FRZ-CLARIFY-05"
@@ -194,8 +192,8 @@
             "denominator": 57
           },
           "unsupported_claim": {
-            "count": 77,
-            "denominator": 144
+            "count": 79,
+            "denominator": 150
           },
           "under_refusal": {
             "count": 0,
@@ -207,7 +205,7 @@
     "regression-v1": {
       "dataset_sha256": "60a87d5653b590c44f65efffcaf283b43c134be77f69016fd4153da8466f76b6",
       "label_version": "v2-overlay",
-      "contract_sha256": "5ef9e830c31883980c37964bb11b8fa6372cf7cee0f8e86383ed94002b21471b",
+      "contract_sha256": "c280ab988e02e7d0818244299834ceac96ef5a7bd917dd4c35f558f262b61c17",
       "n": 60,
       "rewrite_mode": "identity",
       "summary": {
