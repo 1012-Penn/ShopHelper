@@ -333,6 +333,17 @@ function startStreamText(bubble) {
   };
 }
 
+// ch12:一次用户确认的幂等键(后端要求 [A-Za-z0-9_-]{8,64});双击/超时重试复用同一键
+function newConfirmKey() {
+  let key;
+  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === "function") {
+    key = globalThis.crypto.randomUUID().replace(/-/g, "");
+  } else {
+    key = Date.now().toString(36) + Math.random().toString(36).slice(2, 12);
+  }
+  return key.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
+}
+
 // ch05:转人工/建工单——两个独立选项,用户自选,后端不自动执行
 function addSystemMsg(content) {
   const row = document.createElement("div");
@@ -372,16 +383,26 @@ async function transferHuman(bar) {
 async function createTicket(btn) {
   if (!confirm("确认为您创建工单吗?")) return;
   btn.disabled = true;
+  // ch12:一次用户提交 = 一个稳定幂等键;失败重试沿用,成功即作废(下次点击是新提交)
+  if (!btn.dataset.confirmKey) btn.dataset.confirmKey = newConfirmKey();
   try {
     const resp = await fetch("/api/tickets", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ session_id: state.sessionId, description: lastUserMessage }),
+      body: JSON.stringify({ session_id: state.sessionId, description: lastUserMessage,
+                             confirm_key: btn.dataset.confirmKey }),
     });
     const body = await resp.json();
-    btn.textContent = resp.ok ? "工单 " + body.ticket_no + " 已创建" : "创建失败";
+    if (resp.ok) {
+      btn.dataset.confirmKey = "";
+      btn.textContent = "工单 " + body.ticket_no + " 已创建";
+    } else {
+      btn.textContent = resp.status === 409 ? "提交冲突,请联系客服" : "创建失败,点击重试";
+      btn.disabled = false;  // 保留同键,用户重试不重复建单
+    }
   } catch (e) {
-    btn.textContent = "创建失败";
+    btn.textContent = "创建失败,点击重试";
+    btn.disabled = false;
   }
 }
 
@@ -452,7 +473,8 @@ function renderTicketPreview(bubble, evt) {
       const resp = await fetch("/api/tickets/confirm", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ conversation_id: state.sessionId,
-          ticket_type: evt.ticket_type, description: evt.description }),
+          ticket_type: evt.ticket_type, description: evt.description,
+          confirm_key: evt.confirm_key }),  // ch12:原样回传预览帧的确认键(重试同键)
       });
       const body = await resp.json();
       if (resp.ok) {
@@ -461,9 +483,9 @@ function renderTicketPreview(bubble, evt) {
           "工单 " + body.ticket_no + " 已创建,我们会尽快跟进处理。";
         scrollDown(true);
       } else {
-        status.textContent = "提交失败";
-        card.querySelector(".t-confirm").disabled = false;
-        card.querySelector(".t-cancel").disabled = false;  // 失败后允许改选取消
+        status.textContent = resp.status === 409 ? "提交冲突,请重新发起" : "提交失败";
+        card.querySelector(".t-confirm").disabled = resp.status === 409;
+        card.querySelector(".t-cancel").disabled = false;  // 失败后允许重试/取消
       }
     } catch (e) {
       status.textContent = "提交失败";
@@ -512,24 +534,35 @@ function renderRefundForm(bar, bubble, orderId) {
     '<div class="rf-row"><button class="rf-submit">提交退款申请</button><span class="rf-status"></span></div>';
   const REASONS = ["质量问题", "七天无理由", "尺寸不合适", "发错货", "与描述不符", "不想要了"];
   for (const r of REASONS) form.querySelector(".rf-reason").add(new Option(r, r));
+  // ch12:一次独立提交一个键;同一份内容失败重试沿用同键,内容改动或重开表单视为新提交
+  let attempt = { key: "", payload: "" };
   form.querySelector(".rf-submit").onclick = async (ev) => {
     ev.target.disabled = true;  // 防双击重复建单
     const reason = form.querySelector(".rf-reason").value;
     const note = form.querySelector(".rf-note").value.trim();
+    const description = "订单" + orderId + "申请退款;原因:" + reason + (note ? ";备注:" + note : "");
+    const payload = description + "\u0000售后";
+    if (attempt.payload !== payload) {
+      attempt = { key: newConfirmKey(), payload };  // 新提交(或内容变更):新键
+    }
     const status = form.querySelector(".rf-status");
     try {
       const resp = await fetch("/api/tickets", {
         method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ session_id: state.sessionId, ticket_type: "售后",
-          description: "订单" + orderId + "申请退款;原因:" + reason + (note ? ";备注:" + note : "") }),
+          description, confirm_key: attempt.key }),
       });
       const body = await resp.json();
       if (resp.ok) {
         form.querySelector(".rf-reason").disabled = true;
         form.querySelector(".rf-note").disabled = true;
+        attempt = { key: "", payload: "" };  // 该次提交已结束
         status.textContent = "工单 " + body.ticket_no + " 已创建";
-      } else { ev.target.disabled = false; status.textContent = "提交失败"; }
-    } catch (e) { ev.target.disabled = false; status.textContent = "提交失败"; }
+      } else {
+        ev.target.disabled = false;
+        status.textContent = resp.status === 409 ? "提交冲突,请重新填写" : "提交失败,请重试";
+      }
+    } catch (e) { ev.target.disabled = false; status.textContent = "提交失败,请重试"; }
   };
   bubble.appendChild(form);
   scrollDown();
