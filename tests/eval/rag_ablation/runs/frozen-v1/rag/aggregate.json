@@ -4,7 +4,7 @@
   "split": "frozen-v1",
   "dataset_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
   "dataset_n": 90,
-  "protocol_sha256": "75193c85352d8a240518f8a670a9002c1eaa176257e1e3dfb277b0dec75cdd62",
+  "protocol_sha256": "c469d587a2a82a0bc2121a03810b2af045ef00ac4a313a06d84e127a3b2c55a3",
   "paid_calls_executed": 0,
   "max_cost_usd_per_group": 0.0,
   "reference_group": "baseline",
@@ -249,8 +249,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 90,
-          "p50": 42.748,
-          "p95": 66.569
+          "p50": 32.522,
+          "p95": 51.425
         },
         "calls": {
           "paid_api_calls": 0,
@@ -625,8 +625,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 67,
-          "p50": 54.054,
-          "p95": 76.417
+          "p50": 42.681,
+          "p95": 58.522
         },
         "calls": {
           "paid_api_calls": 0,
@@ -1078,8 +1078,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 67,
-          "p50": 41.016,
-          "p95": 67.925
+          "p50": 37.216,
+          "p95": 59.647
         },
         "calls": {
           "paid_api_calls": 0,
@@ -2253,8 +2253,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 16,
-          "p50": 38.416,
-          "p95": 82.604
+          "p50": 34.118,
+          "p95": 53.077
         },
         "calls": {
           "paid_api_calls": 0,
@@ -2273,8 +2273,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 8,
-          "p50": 42.748,
-          "p95": 77.226
+          "p50": 34.197,
+          "p95": 49.983
         },
         "calls": {
           "paid_api_calls": 0,
@@ -2295,8 +2295,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 14,
-          "p50": 53.179,
-          "p95": 68.493
+          "p50": 45.327,
+          "p95": 56.988
         },
         "calls": {
           "paid_api_calls": 0,
@@ -2315,8 +2315,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 8,
-          "p50": 59.174,
-          "p95": 86.486
+          "p50": 46.406,
+          "p95": 96.897
         },
         "calls": {
           "paid_api_calls": 0,
@@ -2337,8 +2337,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 14,
-          "p50": 48.351,
-          "p95": 78.764
+          "p50": 43.045,
+          "p95": 65.321
         },
         "calls": {
           "paid_api_calls": 0,
@@ -2357,8 +2357,8 @@
         "latency_ms": {
           "method": "nearest_rank",
           "n": 8,
-          "p50": 58.342,
-          "p95": 76.953
+          "p50": 36.435,
+          "p95": 47.75
         },
         "calls": {
           "paid_api_calls": 0,

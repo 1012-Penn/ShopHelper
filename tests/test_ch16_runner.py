@@ -1,10 +1,13 @@
 import json
+import hashlib
 
 import pytest
+import scripts.eval_rag_ablation as ch16
 
 from scripts.ch16_analysis import (
     ContractError,
     build_experiment_contract,
+    check_cross_experiment_locks,
     check_phase_lock,
     protocol_sha256,
     validate_budget_request,
@@ -104,6 +107,28 @@ def test_formal_frozen_run_requires_matching_dev_lock(tmp_path):
         check_phase_lock("frozen-v1", tmp_path / "missing.json", "fixed")
 
 
+def test_dev_allows_refreshing_old_cross_experiment_lock(tmp_path):
+    (tmp_path / "rag.json").write_text(
+        json.dumps({"protocol_sha256": "other"}), encoding="utf-8"
+    )
+
+    check_cross_experiment_locks("dev", tmp_path, "fixed")
+
+
+def test_frozen_run_requires_both_matching_dev_experiment_locks(tmp_path):
+    (tmp_path / "retrieval.json").write_text(
+        json.dumps({"protocol_sha256": "fixed"}), encoding="utf-8"
+    )
+    with pytest.raises(ContractError, match="必须先锁定 retrieval 与 rag 两组 dev 协议"):
+        check_cross_experiment_locks("frozen-v1", tmp_path, "fixed")
+
+    (tmp_path / "rag.json").write_text(
+        json.dumps({"protocol_sha256": "different"}), encoding="utf-8"
+    )
+    with pytest.raises(ContractError, match="跨实验 dev lock"):
+        check_cross_experiment_locks("frozen-v1", tmp_path, "fixed")
+
+
 def test_paid_budget_requires_explicit_allowance_and_global_ledger():
     validate_budget_request(allow_paid=False, max_cost_usd=0.0, ledger=None)
     with pytest.raises(ContractError, match="allow-paid"):
@@ -111,6 +136,14 @@ def test_paid_budget_requires_explicit_allowance_and_global_ledger():
     with pytest.raises(ContractError, match="ledger"):
         validate_budget_request(allow_paid=True, max_cost_usd=0.01, ledger=None)
     validate_budget_request(allow_paid=True, max_cost_usd=0.01, ledger="global-ledger.json")
+
+
+@pytest.mark.parametrize("amount", [float("nan"), float("inf"), float("-inf")])
+def test_paid_budget_rejects_non_finite_amounts(amount):
+    with pytest.raises(ContractError, match="必须是有限数字"):
+        validate_budget_request(
+            allow_paid=True, max_cost_usd=amount, ledger="global-ledger.json"
+        )
 
 
 def test_rerank_cache_only_replays_cache_and_blocks_misses(tmp_path):
@@ -133,3 +166,18 @@ def test_estimates_are_per_group_and_never_authorize_spending():
         "vector", "bm25", "rrf", "rrf_rerank", "baseline", "decompose_once", "controlled_loop"
     }
     assert all(row["max_cost_usd_per_group"] >= 0 for row in estimate["groups"])
+
+
+def test_snapshot_identity_accepts_only_matching_sha256(tmp_path):
+    snapshot = tmp_path / "snapshot.db"
+    snapshot.write_bytes(b"canonical snapshot fixture")
+    expected = hashlib.sha256(snapshot.read_bytes()).hexdigest()
+
+    assert ch16.validate_snapshot_identity(snapshot, expected_sha256=expected) == expected
+    with pytest.raises(ContractError, match="快照 SHA-256 与 CH11 canonical 不一致"):
+        ch16.validate_snapshot_identity(snapshot, expected_sha256="0" * 64)
+
+
+def test_snapshot_identity_rejects_missing_file(tmp_path):
+    with pytest.raises(ContractError, match="评测快照不存在"):
+        ch16.validate_snapshot_identity(tmp_path / "missing.db", expected_sha256="0" * 64)

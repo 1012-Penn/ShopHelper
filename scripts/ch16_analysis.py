@@ -74,6 +74,8 @@ def strict_answer_outcome(case: dict, trace: dict) -> bool | None:
     checks = trace.get("deterministic_checks")
     if expected not in ANSWER_BEHAVIORS:
         return None
+    if trace.get("answer_status") == "unmeasured":
+        return None
     has_gold = bool(case.get("gold_facts")) or bool(
         (checks or {}).get("gold_facts_checked", 0)
     )
@@ -643,8 +645,37 @@ def check_phase_lock(phase: str, lock_path: str | Path, expected_protocol_sha256
         raise ContractError("dev lock 与本次协议不一致，拒绝冻结集对照")
 
 
+def check_cross_experiment_locks(
+    phase: str,
+    lock_root: str | Path,
+    expected_protocol_sha256: str,
+) -> None:
+    """Keep retrieval and RAG on one dev protocol; frozen requires both dev locks."""
+    if phase not in {"dev", "frozen-v1"}:
+        raise ContractError(f"未知阶段: {phase}")
+    # Dev can deliberately refresh locks after a protocol/code change. Frozen is
+    # blocked until both experiments have been rerun and agree on the new hash.
+    if phase == "dev":
+        return
+    root = Path(lock_root)
+    for experiment in ("retrieval", "rag"):
+        path = root / f"{experiment}.json"
+        try:
+            lock = json.loads(path.read_text(encoding="utf-8"))
+        except FileNotFoundError as exc:
+            raise ContractError(
+                "冻结集运行前必须先锁定 retrieval 与 rag 两组 dev 协议"
+            ) from exc
+        except (OSError, json.JSONDecodeError) as exc:
+            raise ContractError(f"跨实验 dev lock 无效:{path}") from exc
+        if lock.get("protocol_sha256") != expected_protocol_sha256:
+            raise ContractError(f"跨实验 dev lock 与本次协议不一致:{path}")
+
+
 def validate_budget_request(*, allow_paid: bool, max_cost_usd: float, ledger) -> None:
     """正预算必须显式启用付费并指定共享台账；默认零预算支持缓存重放。"""
+    if not math.isfinite(max_cost_usd):
+        raise ContractError("max_cost_usd 必须是有限数字")
     if max_cost_usd < 0:
         raise ContractError("max_cost_usd 不能为负")
     if max_cost_usd > 0 and not allow_paid:

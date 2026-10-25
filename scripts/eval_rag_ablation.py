@@ -17,6 +17,7 @@ from types import SimpleNamespace
 from scripts.ch16_analysis import (
     ContractError,
     build_experiment_contract,
+    check_cross_experiment_locks,
     check_phase_lock,
     compare_groups,
     paired_bucket_outcomes,
@@ -43,6 +44,26 @@ RAG_GROUPS = {
     "controlled_loop": "controlled_loop",
 }
 RAG_BUCKETS = ("multi_hop", "policy_conflict")
+
+
+def validate_snapshot_identity(
+    snapshot: Path,
+    *,
+    expected_sha256: str | None = None,
+) -> str:
+    """Require the exact CH11 frozen index snapshot, including explicit local copies."""
+    path = Path(snapshot)
+    if not path.exists() or not (path.is_file() or path.is_dir()):
+        raise ContractError(f"评测快照不存在或类型无效:{path}")
+    from scripts.eval_snapshot import tree_sha256
+
+    actual = tree_sha256(path)
+    expected = expected_sha256 or SNAPSHOT_SHA256
+    if actual != expected:
+        raise ContractError(
+            f"快照 SHA-256 与 CH11 canonical 不一致:{actual} != {expected}"
+        )
+    return actual
 
 
 def estimate_group_costs(split: str) -> dict:
@@ -381,6 +402,7 @@ def _run(args) -> dict:
 
     if args.split not in {"dev", "frozen-v1"}:
         raise ContractError("CH16 只允许 dev 与 frozen-v1")
+    validate_snapshot_identity(args.snapshot)
     validate_budget_request(
         allow_paid=args.allow_paid,
         max_cost_usd=args.max_cost_usd,
@@ -393,6 +415,9 @@ def _run(args) -> dict:
     preflight_protocol = _preflight_protocol(args, cases)
     check_phase_lock(args.split, args.out / "dev-locks" / f"{args.experiment}.json",
                      preflight_protocol)
+    check_cross_experiment_locks(
+        args.split, args.out / "dev-locks", preflight_protocol
+    )
     if args.experiment == "retrieval":
         groups = [(name, strategy, None) for name, strategy in RETRIEVAL_GROUPS.items()]
     else:
