@@ -1,4 +1,6 @@
 # app/prompts.py
+from typing import Literal
+
 from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel
 
@@ -101,6 +103,33 @@ EXPAND_PROMPT = PromptTemplate.from_template(
     "查询里不要出现订单号、金额等个人信息;不要重复相同角度;只输出 queries 字段(字符串数组)。\n"
     "问题:{query}"
 )
+
+# ch12 受控 Agentic 检索:缺口分析器输出契约。充分性字段仅供参考——放行只认证据闸
+# (同一分数闸+同一蕴含判断器),见 docs/superpowers/specs/2026-10-25-ch12-controlled-agentic-rag-design.md。
+class GapReport(BaseModel):
+    sufficient: bool = False
+    action: Literal["answer", "retrieve_more", "clarify", "refuse", "escalate"] = "retrieve_more"
+    missing_aspects: list[str] = []
+    conflicts: list[str] = []
+    sub_queries: list[str] = []
+    clarify_question: str = ""
+    reason: str = ""
+
+
+# 文案不含花括号(PromptTemplate 占位符敏感);子查询要求可直接检索、彼此不重复
+GAP_ANALYZER_PROMPT = PromptTemplate.from_template(
+    "你是电商客服检索的缺口分析器。给定用户问题与当前已合并的编号证据,判断证据还缺什么。\n"
+    "规则:\n"
+    "1. 问题的每个必要事实或约束都能在证据中找到依据才算足够;缺任何一块都算不足,并在 missing_aspects 里逐条列出。\n"
+    "2. 不足且检索有机会补齐时 action=retrieve_more,并给出 2 到 3 条互不重复、可直接检索的子查询,"
+    "分别补齐不同缺口;子查询不要照抄原问题、不要彼此同义、不要包含订单号等个人信息。\n"
+    "3. 问题缺少必要槽位(如商品型号、订单号)且检索无法补齐时 action=clarify,clarify_question 给出只问必要槽位的一句话。\n"
+    "4. 证据相互矛盾(如新旧政策口径不同)且无法从证据判断适用版本时 action=escalate,conflicts 逐条列出矛盾。\n"
+    "5. 问题需要的证据明显超出店铺知识范围、且已有证据完全无关、子查询也无法命中时 action=refuse。\n"
+    "6. 证据已足够回答时 action=answer 并取 sufficient=true;拿不准时选 retrieve_more 并说明缺什么。\n"
+    "【用户问题】{query}\n【当前证据】\n{evidence}"
+)
+
 
 # ch07 会话摘要:只提炼事实与诉求;旧梗概仅作背景,不参与合并(一段一行只追加,压完不回炉)
 SUMMARY_PROMPT = PromptTemplate.from_template(
