@@ -38,6 +38,7 @@ from scripts.eval_prompts import (
     EVAL_JUDGE_PROMPT,
     JsonEvidenceJudge,
     JsonFaithfulnessJudge,
+    JsonGapAnalyzer,
     prompt_sha256,
 )
 from scripts.eval_report import aggregate_traces, write_report
@@ -220,8 +221,11 @@ def _build_context(config, args, cases):
         raise BudgetExceeded("价格表未核实(verified=false),拒绝任何付费调用")
     if config.use_judge and not config.allow_paid:
         raise BudgetExceeded("--judge 需要 --allow-paid")
+    # ch12:--ledger 指向全局台账(跨 worktree 共享余额;flock 只互斥写入,见 ADR-4);
+    # 缺省仍是本仓库 data/ch11_budget.json(CH11 行为不变)
+    ledger = BudgetLedger(Path(args.ledger)) if args.ledger else BudgetLedger()
     cost = CostTracker(
-        pricing, BudgetLedger(), config.max_cost_usd, allow_paid=config.allow_paid
+        pricing, ledger, config.max_cost_usd, allow_paid=config.allow_paid
     )
     response_cache = ResponseCache(cache_dir / "responses.json", "responses")
 
@@ -255,6 +259,21 @@ def _build_context(config, args, cases):
             settings.openai_model,
             prompt_sha256(EVIDENCE_JUDGE_PROMPT.template),
         )
+    # ch12:rag 组装配缺口分析器(与线上同一 ControlledRagLoop 消费;缓存命中不付费,
+    # 未开 --allow-paid 时 cache miss 会在 guard 处抛 BudgetExceeded 安全中止)
+    gap_analyzer = None
+    if (config.mode in {"evidence", "full"} and config.rag_mode != "baseline"
+            and config.allow_paid):
+        from app.prompts import GAP_ANALYZER_PROMPT
+        from scripts.eval_cost import GuardedGapAnalyzer
+
+        gap_analyzer = GuardedGapAnalyzer(
+            JsonGapAnalyzer(make_chat_model(settings).bind(temperature=0)),
+            cost,
+            response_cache,
+            settings.openai_model,
+            prompt_sha256(GAP_ANALYZER_PROMPT.template),
+        )
     service = RetrievalService(
         embedder, vectors, kb, rewriter=rewriter, reranker=reranker,
         candidates=settings.hybrid_candidates,
@@ -283,7 +302,7 @@ def _build_context(config, args, cases):
 
     from datetime import datetime, timezone
     from app.evidence import EVIDENCE_JUDGE_PROMPT
-    from app.prompts import FAITHFULNESS_JUDGE_PROMPT
+    from app.prompts import FAITHFULNESS_JUDGE_PROMPT, GAP_ANALYZER_PROMPT
     from scripts.eval_dataset import load_registry, split_entries
 
     facts_sha = __import__("scripts.corpus_facts", fromlist=["load_factbook"]).load_factbook().sha256()
@@ -374,10 +393,24 @@ def _build_context(config, args, cases):
             "started_at": datetime.now(timezone.utc).isoformat(),
         },
         harness={
-            "version": "ch11-harness-1",
+            "version": "ch11-harness-1" if config.rag_mode == "baseline"
+            else "ch11-harness-1-rag",
             "mode": config.mode,
             "allow_paid": config.allow_paid,
             "use_judge": config.use_judge,
+            "rag_mode": config.rag_mode,
+        },
+        rag={
+            "mode": config.rag_mode,
+            "max_rounds": (1 if config.rag_mode == "decompose_once"
+                           else config.rag_max_rounds),
+            "token_budget": config.rag_token_budget,
+            "time_budget_s": config.rag_time_budget_s,
+            "max_sub_queries": config.rag_max_sub_queries,
+            "analyzer_enabled": gap_analyzer is not None,
+            "analyzer_model": settings.openai_model if gap_analyzer is not None else "",
+            "analyzer_temperature": 0,
+            "analyzer_prompt_sha256": prompt_sha256(GAP_ANALYZER_PROMPT.template),
         },
     )
     contract["_sha"] = contract_sha256(contract)
@@ -393,6 +426,7 @@ def _build_context(config, args, cases):
         judge=judge,
         cache=response_cache,
         cost=cost,
+        gap_analyzer=gap_analyzer,
     )
     return ctx, config, contract
 
@@ -525,6 +559,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--rewrite-cache", type=Path)
     parser.add_argument("--rewrite-cache-mode", choices=("read", "write", "refresh"), default="read")
     parser.add_argument("--seed", type=int, default=20261024)
+    parser.add_argument("--rag-mode", choices=("baseline", "decompose_once", "controlled_loop"),
+                        default="baseline",
+                        help="ch12 检索组别:baseline=CH11 单轮;其余走线上同一受控循环(仅 mode=retrieval/evidence/full 生效)")
+    parser.add_argument("--ledger", type=Path, default=None,
+                        help="ch12 全局预算台账路径(跨 worktree 共享余额);缺省用本仓库 data/ch11_budget.json")
     args = parser.parse_args(argv)
 
     splits = [split.strip() for split in args.split.split(",") if split.strip()]
@@ -548,6 +587,7 @@ def main(argv: list[str] | None = None) -> int:
             allow_paid=args.allow_paid,
             use_judge=args.use_judge,
             seed=args.seed,
+            rag_mode=args.rag_mode,
         )
         ctx, config, contract = _build_context(config, args, cases)
         with acquire_eval_lock():

@@ -49,8 +49,9 @@ def build_contract(
     pricing: dict,
     run: dict,
     harness: dict,
+    rag: dict | None = None,
 ) -> dict:
-    return {
+    contract = {
         "contract_version": CONTRACT_VERSION,
         "dataset": dataset,
         "corpus": corpus,
@@ -63,6 +64,10 @@ def build_contract(
         "run": run,
         "harness": harness,
     }
+    if rag is not None:
+        # ch12:受控 Agentic 组别配置;baseline 组也写入(mode=baseline),三组对比 diff 仅在此块
+        contract["rag"] = rag
+    return contract
 
 
 def _canonical(payload: dict) -> str:

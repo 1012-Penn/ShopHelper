@@ -63,6 +63,38 @@ class JsonFaithfulnessJudge:
             fabricated_claims=[str(item) for item in payload.get("fabricated_claims") or []],
         )
 
+class JsonGapAnalyzer:
+    """ch12 缺口分析器:不依赖 function_calling,适配只支持 JSON 输出的思考模型。"""
+
+    _ACTIONS = {"answer", "retrieve_more", "clarify", "refuse", "escalate"}
+
+    def __init__(self, llm) -> None:
+        from app.prompts import GAP_ANALYZER_PROMPT, GapReport
+
+        self._llm = llm
+        self._prompt = GAP_ANALYZER_PROMPT
+        self._report = GapReport
+
+    def analyze(self, query: str, evidence: str):
+        prompt = self._prompt.format(query=query, evidence=evidence)
+        prompt += ('\n只输出 JSON: {"sufficient": true/false, "action": "answer|retrieve_more'
+                   '|clarify|refuse|escalate", "missing_aspects": [...], "conflicts": [...], '
+                   '"sub_queries": [...], "clarify_question": "...", "reason": "..."}')
+        response = self._llm.invoke(prompt)
+        payload = parse_json_object(str(getattr(response, "content", response)))
+        action = str(payload.get("action") or "")
+        if action not in self._ACTIONS:
+            action = "retrieve_more"
+        return self._report(
+            sufficient=bool(payload.get("sufficient")),
+            action=action,
+            missing_aspects=[str(item) for item in payload.get("missing_aspects") or []],
+            conflicts=[str(item) for item in payload.get("conflicts") or []],
+            sub_queries=[str(item) for item in payload.get("sub_queries") or []],
+            clarify_question=str(payload.get("clarify_question") or ""),
+            reason=str(payload.get("reason") or ""))
+
+
 EVAL_ANSWER_PROMPT = """你是电商客服评测中的回答器。只依据给定编号证据回答。
 期望行为:{behavior}
 - answer:直接给出确定事实,每个事实句末尾标注 [n]。

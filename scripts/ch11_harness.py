@@ -43,6 +43,13 @@ class HarnessConfig:
     model: str = ""
     temperature: float = 0.0
     seed: int = 20261024
+    # ch12:受控 Agentic 检索组别(baseline=CH11 单轮原样;decompose_once/controlled_loop
+    # 走与线上同一 ControlledRagLoop,仅检索段不同,回答层与判分零变化)
+    rag_mode: Literal["baseline", "decompose_once", "controlled_loop"] = "baseline"
+    rag_max_rounds: int = 3
+    rag_token_budget: int = 3000
+    rag_time_budget_s: float = 45.0
+    rag_max_sub_queries: int = 3
 
 
 @dataclass
@@ -55,6 +62,7 @@ class HarnessContext:
     judge: Any = None
     cache: Any = None
     cost: Any = None
+    gap_analyzer: Any = None  # ch12:GuardedGapAnalyzer(rag 模式装配)
 
 
 def _evidence_block(items: list[dict]) -> str:
@@ -170,6 +178,103 @@ def run_retrieval_case(
     }
 
 
+def run_rag_retrieval_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
+    """ch12 decompose_once/controlled_loop 组的检索段:与线上同一 ControlledRagLoop。
+
+    与 run_rag 同一判分口径:L1 指标算在最终合并排序上;gate=循环放行结论;
+    逐题轨迹额外带 rag_steps/rag_stop_reason/rag_rounds 等过程字段。"""
+    from types import SimpleNamespace
+
+    from app.rag_loop import ControlledRagLoop, RagLoopLimits
+    from app.retrieval import EvidenceCalibration
+
+    service = ctx.service
+    judge = getattr(service, "_evidence_judge", None)
+    calibration = getattr(service, "_evidence_calibration", None) or EvidenceCalibration()
+    max_rounds = 1 if config.rag_mode == "decompose_once" else config.rag_max_rounds
+    limits = RagLoopLimits(
+        max_rounds=max_rounds,
+        token_budget=config.rag_token_budget,
+        time_budget_s=config.rag_time_budget_s,
+        max_sub_queries=config.rag_max_sub_queries,
+        final_top_k=10,
+        evidence_top_n=10)
+
+    def _retrieve(query, *, use_rewrite, prepared=None):
+        return service.retrieve(query, strategy=config.strategy,
+                                use_rewrite=use_rewrite, prepared=prepared)
+
+    def _chunk_texts(ids):
+        texts = {}
+        for cid in ids:
+            row = ctx.all_rows.get(cid)
+            if row is not None:
+                texts[cid] = vector_text(row.category, row.questions, row.answer)
+        return texts
+
+    judge_calls_before = int(getattr(judge, "calls", 0))
+    judge_hits_before = int(getattr(judge, "hits", 0))
+    loop = ControlledRagLoop(_retrieve, _chunk_texts, judge, ctx.gap_analyzer,
+                             calibration, limits)
+    rag = loop.run(case["query"], prepared=ctx.prepared.get(case["id"]))
+    evidence_judge_calls = int(getattr(judge, "calls", 0)) - judge_calls_before
+    evidence_judge_cached = int(getattr(judge, "hits", 0)) - judge_hits_before
+
+    ranked = [item.chunk_id for item in rag.items]
+    gold = ctx.gold_by_case.get(case["id"], [])
+    items = _evidence_items(SimpleNamespace(items=rag.items), ctx.all_rows)
+    return {
+        "case_id": case["id"],
+        "split": case.get("split", ""),
+        "bucket": case.get("bucket", ""),
+        "expected_behavior": case.get("expected_behavior", ""),
+        "evidence_state": case.get("evidence_state", ""),
+        "query": case["query"],
+        "retrieved": [
+            {"rank": rank, "chunk_id": item.chunk_id, "score": item.score}
+            for rank, item in enumerate(rag.items, start=1)
+        ],
+        "l1": {
+            "n": 1 if gold else 0,
+            "coverage_rank": coverage_rank(ranked, gold, cap=10) if gold else None,
+            "r3": coverage_rank(ranked, gold, cap=3) if gold else None,
+            "r5": coverage_rank(ranked, gold, cap=5) if gold else None,
+            "r10": coverage_rank(ranked, gold, cap=10) if gold else None,
+            "group_recall": evidence_group_recall(ranked, gold, cap=10) if gold else None,
+            "single_chunk_rank": single_chunk_rank(ranked, case, ctx.all_rows, cap=10) if gold else None,
+            "single1": single_chunk_rank(ranked, case, ctx.all_rows, cap=1) if gold else None,
+            "single3": single_chunk_rank(ranked, case, ctx.all_rows, cap=3) if gold else None,
+            "mrr": mrr_at(ranked, gold, k=10) if gold else None,
+            "evidence_precision": evidence_precision(ranked, set().union(*gold) if gold else set(), cap=10) if gold else None,
+            "hard_negative_hit_rate": (
+                hard_negative_hit_rate(ranked, k=10)
+                if case.get("bucket") in TOOL_BUCKETS else None
+            ),
+        },
+        "gate": {
+            "passed": rag.gate_passed,
+            "low_confidence": not rag.gate_passed,
+            "reason": rag.reason,
+            "evidence_entailment": rag.evidence_entailment,
+            "degraded": rag.degraded,
+        },
+        "evidence_items": items,
+        "evidence_by_n": _evidence_by_n(items),
+        "evidence_judge_calls": evidence_judge_calls,
+        "evidence_judge_cached": evidence_judge_cached,
+        "latency_ms": rag.latency_ms,
+        # ---- ch12 过程字段:每轮查询/子问题/证据ID/判定/停止原因(进逐题轨迹与报告) ----
+        "rag_mode": config.rag_mode,
+        "rag_rounds": rag.rounds,
+        "rag_stop_reason": rag.stop_reason,
+        "rag_steps": rag.steps,
+        "rag_conflicts": rag.conflicts,
+        "rag_clarify_question": rag.clarify_question,
+        "rag_analyzer_calls": rag.analyzer_calls,
+        "rag_loop_judge_calls": rag.judge_calls,
+    }
+
+
 def run_answer_case(
     case: dict,
     trace: dict,
@@ -270,14 +375,17 @@ def run_answer_case(
 
 def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
     cost_before = float(getattr(ctx.cost, "spent_usd", 0.0)) if ctx.cost is not None else 0.0
-    trace = run_retrieval_case(
-        case,
-        ctx.service,
-        ctx.all_rows,
-        ctx.gold_by_case,
-        ctx.prepared,
-        strategy=config.strategy,
-    )
+    if config.rag_mode != "baseline":
+        trace = run_rag_retrieval_case(case, ctx, config)
+    else:
+        trace = run_retrieval_case(
+            case,
+            ctx.service,
+            ctx.all_rows,
+            ctx.gold_by_case,
+            ctx.prepared,
+            strategy=config.strategy,
+        )
     trace["trace_id"] = hashlib.sha256(
         f"{config.contract_sha}\0{case['id']}".encode("utf-8")
     ).hexdigest()[:16]
@@ -290,7 +398,14 @@ def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
     trace["failure_labels"]: list[str] = []
     if config.mode in {"full"}:
         trace = run_answer_case(case, trace, ctx, config)
-        trace["failure_labels"] = trace["deterministic_checks"]["failure_labels"]
+        labels = list(trace["deterministic_checks"]["failure_labels"])
+        # ch12:循环层停止原因补记既有标签位(超时/检索故障),与确定性检查合并去重
+        stop = trace.get("rag_stop_reason") or ""
+        if stop == "time_budget":
+            labels.append("timeout")
+        elif stop == "retrieval_error":
+            labels.append("tool_error")
+        trace["failure_labels"] = list(dict.fromkeys(labels))
         if ctx.cost is not None:
             trace["cost_actual"] = round(
                 float(getattr(ctx.cost, "spent_usd", 0.0)) - cost_before, 6

@@ -220,6 +220,49 @@ class GuardedFaithfulnessJudge:
         return verdict
 
 
+class GuardedGapAnalyzer:
+    """ch12 缺口分析纳入守卫+缓存(同 GuardedEvidenceJudge 模式);缓存命中不进守卫不重复计费。"""
+
+    def __init__(self, inner, cost: "CostTracker", cache, model: str, prompt_sha: str) -> None:
+        self.inner = inner
+        self.cost = cost
+        self.cache = cache
+        self.model = model
+        self.prompt_sha = prompt_sha
+        self.calls = 0
+        self.hits = 0
+
+    def analyze(self, query: str, evidence: str):
+        from app.prompts import GapReport
+
+        key = None
+        if self.cache is not None:
+            key = self.cache.response_key(
+                model=self.model, prompt_sha256=self.prompt_sha,
+                temperature=0.0, query=query + "\0" + evidence, evidence_ids=[],
+            )
+            payload = self.cache.get(key)
+            if payload is not None:
+                self.hits += 1
+                return GapReport(**payload)
+        tokens = _estimate_tokens([query, evidence])
+        self.cost.guard(tokens, self.model)
+        self.calls += 1
+        report = self.inner.analyze(query, evidence)
+        self.cost.add(self.model, tokens, 192, kind="gap_analyzer")
+        if self.cache is not None and key is not None:
+            self.cache.put(key, {
+                "sufficient": bool(report.sufficient),
+                "action": str(report.action),
+                "missing_aspects": list(report.missing_aspects),
+                "conflicts": list(report.conflicts),
+                "sub_queries": list(report.sub_queries),
+                "clarify_question": report.clarify_question,
+                "reason": report.reason,
+            })
+        return report
+
+
 class CostTracker:
     def __init__(
         self,
