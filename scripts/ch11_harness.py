@@ -49,6 +49,7 @@ class HarnessConfig:
     rag_max_rounds: int = 3
     rag_token_budget: int = 3000
     rag_time_budget_s: float = 45.0
+    rag_call_timeout_s: float = 20.0
     rag_max_sub_queries: int = 3
 
 
@@ -196,6 +197,7 @@ def run_rag_retrieval_case(case: dict, ctx: HarnessContext, config: HarnessConfi
         max_rounds=max_rounds,
         token_budget=config.rag_token_budget,
         time_budget_s=config.rag_time_budget_s,
+        call_timeout_s=config.rag_call_timeout_s,
         max_sub_queries=config.rag_max_sub_queries,
         final_top_k=10,
         evidence_top_n=10)
@@ -272,6 +274,9 @@ def run_rag_retrieval_case(case: dict, ctx: HarnessContext, config: HarnessConfi
         "rag_clarify_question": rag.clarify_question,
         "rag_analyzer_calls": rag.analyzer_calls,
         "rag_loop_judge_calls": rag.judge_calls,
+        "rag_tokens_used": rag.tokens_used,
+        "rag_time_budget_s": config.rag_time_budget_s,
+        "rag_call_timeout_s": config.rag_call_timeout_s,
     }
 
 
@@ -401,7 +406,7 @@ def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
         labels = list(trace["deterministic_checks"]["failure_labels"])
         # ch12:循环层停止原因补记既有标签位(超时/检索故障),与确定性检查合并去重
         stop = trace.get("rag_stop_reason") or ""
-        if stop == "time_budget":
+        if stop in {"time_budget", "call_timeout"}:
             labels.append("timeout")
         elif stop == "retrieval_error":
             labels.append("tool_error")

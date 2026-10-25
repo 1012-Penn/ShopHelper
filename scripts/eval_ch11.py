@@ -406,6 +406,7 @@ def _build_context(config, args, cases):
                            else config.rag_max_rounds),
             "token_budget": config.rag_token_budget,
             "time_budget_s": config.rag_time_budget_s,
+            "call_timeout_s": config.rag_call_timeout_s,
             "max_sub_queries": config.rag_max_sub_queries,
             "analyzer_enabled": gap_analyzer is not None,
             "analyzer_model": settings.openai_model if gap_analyzer is not None else "",

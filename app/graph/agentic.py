@@ -39,6 +39,7 @@ def make_agentic_retrieve_node(service, kb, pool, settings, *, max_rounds: int,
         max_rounds=max_rounds,
         token_budget=settings.rag_token_budget,
         time_budget_s=settings.rag_time_budget_s,
+        call_timeout_s=settings.rag_call_timeout_s,
         max_sub_queries=settings.rag_max_sub_queries,
         final_top_k=settings.rerank_top_k,
         evidence_top_n=settings.evidence_entailment_top_n)

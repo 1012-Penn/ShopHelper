@@ -9,13 +9,25 @@
 (同一 EvidenceJudge/prompt/温度);缺口分析器的 sufficient/action=answer 仅供参考,不作为放行依据。
 故障语义 = 按已知证据谨慎收敛(不放宽、宁可拒答),停止原因如实记录;
 BudgetExceeded 一律向上抛(评测预算闸必须能中止运行)。
+
+预算语义(2026-10-25 验收修正,#3):
+- 时间:每次受控调用(检索/蕴含判断/缺口分析)都以 `min(单次上限, 剩余时间)` 为墙钟超时,
+  超时即停止并记 call_timeout/time_budget;因此循环总墙钟不超过 time_budget + 收口开销。
+  但底层 I/O(嵌入/重排/LLM HTTP)无法被线程取消,超时只是「不再等待」——被放弃的调用
+  可能仍在其自身超时(httpx 30s/10s、上游 retry)内完成并产生费用,故**不是硬上限**。
+- token:预算计入循环内 LLM 调用的输入(prompt 模板 + 查询 + 证据)与输出(verdict/report)
+  的 estimate_tokens 估算;检索的嵌入/重排不计 token(按调用计费,见 pricing)。
+  预算是护栏,不是精确账单(字符估算,与 agent_token_budget 同口径)。
 """
 from __future__ import annotations
 
 import json
 import logging
 import time
+from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import Callable
 
 from app.history import estimate_tokens
@@ -33,6 +45,7 @@ STOP_FIRST_PASS = "first_pass_sufficient"
 STOP_SUFFICIENT = "sufficient"
 STOP_ROUNDS = "rounds_exhausted"
 STOP_TIME = "time_budget"
+STOP_CALL_TIMEOUT = "call_timeout"   # 单次调用超过 call_timeout_s(剩余时间仍够)
 STOP_TOKENS = "token_budget"
 STOP_NO_NEW = "no_new_queries"
 STOP_CLARIFY = "clarify_needed"
@@ -41,9 +54,91 @@ STOP_ESCALATE = "escalate_conflict"
 STOP_RETRIEVAL_ERROR = "retrieval_error"
 STOP_ANALYZER_ERROR = "analyzer_error"
 
-# 预算/故障熔断的停止原因:谨慎收敛(不再发起任何 LLM 调用,不放行)
-CONVERGE_STOPS = {STOP_ROUNDS, STOP_TIME, STOP_TOKENS, STOP_NO_NEW,
+# 预算/故障熔断的停止原因:谨慎收敛(不放行)
+CONVERGE_STOPS = {STOP_ROUNDS, STOP_TIME, STOP_CALL_TIMEOUT, STOP_TOKENS, STOP_NO_NEW,
                   STOP_RETRIEVAL_ERROR, STOP_ANALYZER_ERROR}
+
+# 输出预留(与评测侧 GuardedEvidenceJudge/GuardedGapAnalyzer 的保守估算一致)
+JUDGE_OUTPUT_RESERVE = 128
+ANALYZER_OUTPUT_RESERVE = 192
+
+
+class CallTimeout(RuntimeError):
+    """受控调用超出「单次上限/剩余时间」;底层 I/O 可能仍在后台完成(不是硬中止)。"""
+
+
+class _LoopStop(Exception):
+    """预算闸内部信号:携带停止原因,由 run() 收口。"""
+
+    def __init__(self, stop: str, reason: str) -> None:
+        super().__init__(reason)
+        self.stop = stop
+        self.reason = reason
+
+
+@lru_cache(maxsize=1)
+def _prompt_overhead_tokens() -> tuple[int, int]:
+    """两个提示词模板本身的 token 估算:预算必须计入真实输入而不只是证据文本。"""
+    from app.evidence import EVIDENCE_JUDGE_PROMPT
+
+    return (estimate_tokens(str(EVIDENCE_JUDGE_PROMPT.template)),
+            estimate_tokens(str(GAP_ANALYZER_PROMPT.template)))
+
+
+def _call_bounded(fn, timeout: float):
+    """在 timeout 秒内等待 fn;超时抛 CallTimeout。
+
+    线程无法被强制取消:超时只表示「不再等待」,被放弃的底层调用仍可能完成,
+    因此上游墙钟预算是护栏而非硬上限(见模块 docstring)。
+    """
+    if timeout <= 0:
+        raise CallTimeout("剩余时间预算不足,未发起调用")
+    executor = ThreadPoolExecutor(max_workers=1)
+    try:
+        future = executor.submit(fn)
+        return future.result(timeout=timeout)
+    except FutureTimeout as exc:
+        raise CallTimeout(f"受控调用超过 {timeout:.1f}s 未返回") from exc
+    finally:
+        # 不阻塞等待被放弃的线程;其自身 I/O 超时兜底
+        executor.shutdown(wait=False)
+
+
+class _LoopBudget:
+    """循环墙钟与 token 计量:所有受控调用统一经此取超时/记账。"""
+
+    def __init__(self, limits: "RagLoopLimits") -> None:
+        self.limits = limits
+        self.t0 = time.monotonic()
+        self.spent_tokens = 0
+
+    def elapsed_ms(self) -> float:
+        return (time.monotonic() - self.t0) * 1000
+
+    def remaining(self) -> float:
+        return self.limits.time_budget_s - (time.monotonic() - self.t0)
+
+    def call_timeout(self) -> float:
+        remaining = self.remaining()
+        if remaining <= 0:
+            raise _LoopStop(STOP_TIME, f"时间预算耗尽({self.limits.time_budget_s}s)")
+        cap = float(self.limits.call_timeout_s or 0)
+        return min(cap, remaining) if cap > 0 else remaining
+
+    def timeout_stop(self) -> str:
+        """超时归因:剩余时间已耗尽 → time_budget;否则是单次调用上限 → call_timeout。"""
+        return STOP_TIME if self.remaining() <= 0.05 else STOP_CALL_TIMEOUT
+
+    def require_tokens(self, need: int, *, what: str) -> None:
+        need = max(0, int(need))
+        if self.spent_tokens + need > self.limits.token_budget:
+            raise _LoopStop(
+                STOP_TOKENS,
+                f"token 预算不足({what}需 {need},已计 {self.spent_tokens},"
+                f"上限 {self.limits.token_budget})")
+
+    def charge(self, n: int) -> None:
+        self.spent_tokens += max(0, int(n))
 
 
 def normalize_query(query: str) -> str:
@@ -54,8 +149,9 @@ def normalize_query(query: str) -> str:
 @dataclass(frozen=True)
 class RagLoopLimits:
     max_rounds: int = 3          # 最大补检索轮数(不含首轮;decompose_once 传 1)
-    token_budget: int = 3000     # 缺口分析输出侧 token 预算(estimate_tokens 口径)
-    time_budget_s: float = 45.0  # 循环墙钟预算(秒)
+    token_budget: int = 3000     # 循环内 LLM 调用的输入+输出估算 token 预算
+    time_budget_s: float = 45.0  # 循环墙钟预算(秒);单次调用再以剩余时间设超时
+    call_timeout_s: float = 20.0 # 单次受控调用墙钟上限(秒);0=只用剩余时间
     max_sub_queries: int = 3     # 每轮最多子查询数
     final_top_k: int = 10        # 合并后进入证据的条数(= rerank_top_k)
     evidence_top_n: int = 10     # 送蕴含判断器的证据条数(= evidence_entailment_top_n)
@@ -76,7 +172,10 @@ class RagLoopResult:
     evidence_entailment: bool | None = None
     snapshots: list[dict] = field(default_factory=list)  # retrieved_chunks 诊断快照(含低置信轮)
     analyzer_calls: int = 0
+    # 蕴含判断次数:含首轮检索内部那次(以 RetrievalResult.evidence_entailment 非 None 反映;
+    # 该调用在 RetrievalService 内,不计入本循环 token 预算)与循环内每次判断
     judge_calls: int = 0
+    tokens_used: int = 0     # 仅循环内 LLM 调用(判断+分析)计入预算的估算 token
     degraded: bool = False
 
 
@@ -149,10 +248,18 @@ class ControlledRagLoop:
     def _budget_exceeded(exc: BaseException) -> bool:
         return exc.__class__.__name__ == "BudgetExceeded"
 
-    def _retrieve_one(self, query: str, *, use_rewrite: bool, prepared=None):
-        """单次检索;非预算异常吞掉返回 None(该查询按空结果处理,谨慎收敛)。"""
+    def _retrieve_one(self, query: str, *, use_rewrite: bool, prepared,
+                      budget: _LoopBudget):
+        """单次检索:按「最小(单次上限, 剩余时间)」设超时;非预算异常返回 None 谨慎收敛。
+
+        检索的嵌入与重排按调用计费、不计 token 预算(见模块预算语义)。"""
+        timeout = budget.call_timeout()
         try:
-            return self._retrieve(query, use_rewrite=use_rewrite, prepared=prepared)
+            return _call_bounded(
+                lambda: self._retrieve(query, use_rewrite=use_rewrite, prepared=prepared),
+                timeout)
+        except CallTimeout as exc:
+            raise _LoopStop(budget.timeout_stop(), f"检索超时:{exc}") from exc
         except Exception as exc:
             if self._budget_exceeded(exc):
                 raise
@@ -172,21 +279,61 @@ class ControlledRagLoop:
                 for i, item in enumerate((getattr(retrieval_result, "items", None) or [])
                                          [: self._snapshot_top_k])]
 
-    def _judge_merged(self, query: str, merged_top: list[Retrieved], texts: dict[int, str]):
-        """对合并证据重跑蕴含判断(与基线同一判断器/同一 prompt);异常回退分数闸。"""
+    def _judge_budgeted(self, query: str, merged_top: list[Retrieved],
+                        texts: dict[int, str], budget: _LoopBudget):
+        """蕴含判断:先做 token 预检(输入+输出预留),再按剩余时间设超时,事后计入输入+输出。"""
         documents = [texts[item.chunk_id]
                      for item in merged_top[: self._limits.evidence_top_n]
                      if item.chunk_id in texts]
         documents = [doc for doc in documents if doc]
         if self._judge is None or not documents:
             return None
+        judge_overhead, _ = _prompt_overhead_tokens()
+        input_tokens = (judge_overhead + estimate_tokens(query)
+                        + sum(estimate_tokens(doc) for doc in documents))
+        budget.require_tokens(input_tokens + JUDGE_OUTPUT_RESERVE, what="蕴含判断")
+        timeout = budget.call_timeout()
         try:
-            return self._judge.judge(query, documents)
+            verdict = _call_bounded(lambda: self._judge.judge(query, documents), timeout)
+        except CallTimeout as exc:
+            budget.charge(input_tokens)  # 调用已发起,输入侧按估算计入
+            raise _LoopStop(budget.timeout_stop(), f"蕴含判断超时:{exc}") from exc
         except Exception as exc:
+            budget.charge(input_tokens)
             if self._budget_exceeded(exc):
                 raise
             logger.warning("合并证据蕴含判断失败,回退分数闸:%s", exc, exc_info=True)
             return None
+        budget.charge(input_tokens + JUDGE_OUTPUT_RESERVE
+                      + estimate_tokens(getattr(verdict, "reason", "") or ""))
+        return verdict
+
+    def _analyze_budgeted(self, query: str, evidence_text: str, budget: _LoopBudget):
+        """缺口分析:输入(模板+查询+证据)与输出都计入 token 预算,调用受剩余时间约束。"""
+        if self._analyzer is None:
+            raise _LoopStop(STOP_ANALYZER_ERROR, "缺口分析器不可用")
+        _, analyzer_overhead = _prompt_overhead_tokens()
+        input_tokens = (analyzer_overhead + estimate_tokens(query)
+                        + estimate_tokens(evidence_text))
+        budget.require_tokens(input_tokens + ANALYZER_OUTPUT_RESERVE, what="缺口分析")
+        timeout = budget.call_timeout()
+        try:
+            report = _call_bounded(
+                lambda: self._analyzer.analyze(query, evidence_text), timeout)
+        except CallTimeout as exc:
+            budget.charge(input_tokens)
+            raise _LoopStop(budget.timeout_stop(), f"缺口分析超时:{exc}") from exc
+        except Exception as exc:
+            budget.charge(input_tokens)
+            if self._budget_exceeded(exc):
+                raise
+            logger.warning("缺口分析失败,谨慎收敛:%s", exc, exc_info=True)
+            raise _LoopStop(STOP_ANALYZER_ERROR, f"缺口分析服务不可用:{exc}"[:200]) from exc
+        budget.charge(input_tokens + ANALYZER_OUTPUT_RESERVE + estimate_tokens(json.dumps(
+            {k: getattr(report, k) for k in
+             ("sufficient", "action", "missing_aspects", "conflicts", "sub_queries",
+              "clarify_question", "reason")}, ensure_ascii=False, default=str)))
+        return report
 
     def _emit_step(self, step: dict) -> None:
         if self._on_step is None:
@@ -207,11 +354,10 @@ class ControlledRagLoop:
 
     def run(self, query: str, prepared=None) -> RagLoopResult:
         limits = self._limits
-        t0 = time.monotonic()
+        budget = _LoopBudget(limits)
         executed: set[str] = {normalize_query(query)}
         merged: dict[int, float] = {}
         result = RagLoopResult()
-        spent_tokens = 0
         stop = ""
         reason = ""
         last_entailment: bool | None = None
@@ -230,35 +376,40 @@ class ControlledRagLoop:
                     merged[item.chunk_id] = item.score
             return new_ids
 
-        def time_left() -> float:
-            return limits.time_budget_s - (time.monotonic() - t0)
-
         def current_texts() -> dict[int, str]:
             return self._chunk_texts([item.chunk_id for item in merged_top()])
 
         def admit():
             """放行判定 = 分数闸(同一 calibration)+ 蕴含判断器(同一 prompt);
             判断器不可用/失败时回退分数闸(与基线 retrieve 的回退语义一致,未放宽)。"""
-            verdict = self._judge_merged(query, merged_top(), current_texts())
+            verdict = self._judge_budgeted(query, merged_top(), current_texts(), budget)
             confidence = evidence_confidence(merged_top(), self._calibration)
             if verdict is not None:
                 return confidence.passed and bool(verdict.answered), verdict, confidence
             return confidence.passed, None, confidence
 
         # ---- 首轮:原查询,与基线完全同一调用口径 ----
-        round0 = self._retrieve_one(query, use_rewrite=True, prepared=prepared)
-        round0_items = list(round0.items) if round0 is not None else []
-        result.degraded = bool(round0.degraded) if round0 is not None else False
         step0 = _step_record(0, "retrieve", query)
         step0["queries"] = [query]
+        try:
+            round0 = self._retrieve_one(query, use_rewrite=True, prepared=prepared,
+                                        budget=budget)
+        except _LoopStop as sig:
+            step0["latency_ms"] = round(budget.elapsed_ms(), 3)
+            step0["stop_reason"] = sig.stop
+            result.steps.append(step0)
+            self._emit_step(step0)
+            return self._finish(result, budget, sig.stop, sig.reason, [])
+        round0_items = list(round0.items) if round0 is not None else []
+        result.degraded = bool(round0.degraded) if round0 is not None else False
         step0["evidence_ids"] = [item.chunk_id for item in round0_items]
-        step0["latency_ms"] = round((time.monotonic() - t0) * 1000, 3)
+        step0["latency_ms"] = round(budget.elapsed_ms(), 3)
         if round0 is None:
             step0["stop_reason"] = STOP_RETRIEVAL_ERROR
             result.steps.append(step0)
             self._emit_step(step0)
-            return self._finish(result, t0, STOP_RETRIEVAL_ERROR, "首轮检索服务不可用",
-                                merged_top())
+            return self._finish(result, budget, STOP_RETRIEVAL_ERROR,
+                                "首轮检索服务不可用", merged_top())
         for snap in self._snapshots_of(round0):
             result.snapshots.append(snap)
         if round0.low_confidence:
@@ -277,7 +428,7 @@ class ControlledRagLoop:
             step0["judge_answered"] = round0.evidence_entailment
             result.steps.append(step0)
             self._emit_step(step0)
-            return self._finish(result, t0, STOP_FIRST_PASS, "", merged_top(),
+            return self._finish(result, budget, STOP_FIRST_PASS, "", merged_top(),
                                 confidence=getattr(round0, "evidence_confidence", None),
                                 entailment=round0.evidence_entailment, passed=True)
         result.steps.append(step0)
@@ -288,15 +439,13 @@ class ControlledRagLoop:
             result.rounds = r
             round_t0 = time.monotonic()
             step = _step_record(r, "retrieve", query)
-            if time_left() <= 0:
-                stop, reason = STOP_TIME, f"时间预算耗尽({limits.time_budget_s}s)"
-                break
-            if spent_tokens >= limits.token_budget:
-                stop, reason = STOP_TOKENS, f"token 预算耗尽({limits.token_budget})"
-                break
 
-            # 蕴含再判(判的是含前几轮合并的证据)
-            passed, verdict, confidence = admit()
+            # 蕴含再判(判的是含前几轮合并的证据);时间/token 闸在调用内部逐次检查
+            try:
+                passed, verdict, confidence = admit()
+            except _LoopStop as sig:
+                stop, reason = sig.stop, sig.reason
+                break
             if verdict is not None:
                 result.judge_calls += 1
                 last_entailment = bool(verdict.answered)
@@ -307,37 +456,20 @@ class ControlledRagLoop:
                 step["latency_ms"] = round((time.monotonic() - round_t0) * 1000, 3)
                 result.steps.append(step)
                 self._emit_step(step)
-                return self._finish(result, t0, STOP_SUFFICIENT, "", merged_top(),
+                return self._finish(result, budget, STOP_SUFFICIENT, "", merged_top(),
                                     confidence=confidence,
                                     entailment=(verdict.answered if verdict is not None else None),
                                     passed=True)
 
-            # 缺口分析(先查 token/时间预算)
-            if self._analyzer is None:
-                stop, reason = STOP_ANALYZER_ERROR, "缺口分析器不可用"
-                break
+            # 缺口分析(输入+输出计入 token 预算,调用受剩余时间约束)
             texts = current_texts()
-            estimate = (estimate_tokens(query)
-                        + estimate_tokens(self._evidence_text(merged_top(), texts)))
-            if spent_tokens + estimate > limits.token_budget:
-                stop, reason = STOP_TOKENS, f"token 预算耗尽({limits.token_budget})"
-                break
-            if time_left() <= 0:
-                stop, reason = STOP_TIME, f"时间预算耗尽({limits.time_budget_s}s)"
-                break
             try:
-                report = self._analyzer.analyze(query, self._evidence_text(merged_top(), texts))
-            except Exception as exc:
-                if self._budget_exceeded(exc):
-                    raise
-                logger.warning("缺口分析失败,谨慎收敛:%s", exc, exc_info=True)
-                stop, reason = STOP_ANALYZER_ERROR, f"缺口分析服务不可用:{exc}"[:200]
+                report = self._analyze_budgeted(
+                    query, self._evidence_text(merged_top(), texts), budget)
+            except _LoopStop as sig:
+                stop, reason = sig.stop, sig.reason
                 break
             result.analyzer_calls += 1
-            spent_tokens += estimate_tokens(json.dumps(
-                {k: getattr(report, k) for k in
-                 ("sufficient", "action", "missing_aspects", "conflicts", "sub_queries",
-                  "clarify_question", "reason")}, ensure_ascii=False, default=str))
             step["analyzer_action"] = str(report.action)
             step["conflicts"] = [str(c) for c in report.conflicts][:5]
             step["missing_aspects"] = [str(m) for m in report.missing_aspects][:5]
@@ -365,24 +497,33 @@ class ControlledRagLoop:
                 stop, reason = STOP_NO_NEW, "缺口分析未给出新的可执行子查询"
                 break
             round_new_ids = 0
-            for sub in subs:
-                sub_result = self._retrieve_one(sub, use_rewrite=False)
-                step["queries"].append(sub)
-                if sub_result is None:
-                    continue
-                result.degraded = result.degraded or bool(sub_result.degraded)
-                for snap in self._snapshots_of(sub_result):
-                    result.snapshots.append(snap)
-                if sub_result.low_confidence:
+            try:
+                for sub in subs:
+                    sub_result = self._retrieve_one(sub, use_rewrite=False, prepared=None,
+                                                    budget=budget)
+                    step["queries"].append(sub)
+                    if sub_result is None:
+                        continue
+                    result.degraded = result.degraded or bool(sub_result.degraded)
+                    for snap in self._snapshots_of(sub_result):
+                        result.snapshots.append(snap)
+                    if sub_result.low_confidence:
+                        for item in sub_result.items:
+                            result.snapshots.append({"chunk_id": item.chunk_id,
+                                                     "score": item.score,
+                                                     "rerank_score": item.score})
+                        continue
                     for item in sub_result.items:
-                        result.snapshots.append({"chunk_id": item.chunk_id,
-                                                 "score": item.score,
-                                                 "rerank_score": item.score})
-                    continue
-                for item in sub_result.items:
-                    if item.chunk_id not in step["evidence_ids"]:
-                        step["evidence_ids"].append(item.chunk_id)
-                round_new_ids += merge_items(sub_result.items)
+                        if item.chunk_id not in step["evidence_ids"]:
+                            step["evidence_ids"].append(item.chunk_id)
+                    round_new_ids += merge_items(sub_result.items)
+            except _LoopStop as sig:
+                stop, reason = sig.stop, sig.reason
+                step["merged_evidence_ids"] = [item.chunk_id for item in merged_top()]
+                step["latency_ms"] = round((time.monotonic() - round_t0) * 1000, 3)
+                result.steps.append(step)
+                self._emit_step(step)
+                break
             step["merged_evidence_ids"] = [item.chunk_id for item in merged_top()]
             step["latency_ms"] = round((time.monotonic() - round_t0) * 1000, 3)
             result.steps.append(step)
@@ -395,12 +536,15 @@ class ControlledRagLoop:
         if not stop:
             final_t0 = time.monotonic()
             final_step = _step_record(result.rounds, "final", query)
-            if time_left() <= 0:
-                stop, reason = STOP_TIME, f"时间预算耗尽({limits.time_budget_s}s)"
-            elif spent_tokens >= limits.token_budget:
-                stop, reason = STOP_TOKENS, f"token 预算耗尽({limits.token_budget})"
-            else:
+            try:
                 passed, verdict, confidence = admit()
+            except _LoopStop as sig:
+                stop, reason = sig.stop, sig.reason
+                final_step["latency_ms"] = round((time.monotonic() - final_t0) * 1000, 3)
+                result.steps.append(final_step)
+                self._emit_step(final_step)
+                passed = False
+            else:
                 if verdict is not None:
                     result.judge_calls += 1
                     last_entailment = bool(verdict.answered)
@@ -411,7 +555,7 @@ class ControlledRagLoop:
                 self._emit_step(final_step)
                 if passed:
                     return self._finish(
-                        result, t0, STOP_SUFFICIENT, "", merged_top(),
+                        result, budget, STOP_SUFFICIENT, "", merged_top(),
                         confidence=confidence,
                         entailment=(verdict.answered if verdict is not None else None),
                         passed=True)
@@ -421,10 +565,10 @@ class ControlledRagLoop:
         # ---- 终态收口:未放行即谨慎收敛(拒答/澄清/转人工由节点层映射) ----
         result.reason = reason
         result.clarify_question = reason if stop == STOP_CLARIFY else ""
-        return self._finish(result, t0, stop or STOP_ROUNDS, reason, merged_top(),
+        return self._finish(result, budget, stop or STOP_ROUNDS, reason, merged_top(),
                             entailment=last_entailment)
 
-    def _finish(self, result: RagLoopResult, t0: float, stop: str, reason: str,
+    def _finish(self, result: RagLoopResult, budget: _LoopBudget, stop: str, reason: str,
                 items: list[Retrieved], *,
                 confidence: EvidenceConfidence | None = None,
                 entailment: bool | None = None, passed: bool = False) -> RagLoopResult:
@@ -432,13 +576,14 @@ class ControlledRagLoop:
         result.stop_reason = stop
         result.reason = reason
         result.gate_passed = passed
-        result.latency_ms = round((time.monotonic() - t0) * 1000, 3)
+        result.latency_ms = round(budget.elapsed_ms(), 3)
         if confidence is None and items and stop in CONVERGE_STOPS:
             # 收敛路径没有再判蕴含:只补分数闸信号供观测,放行仍为 False
             result.evidence_confidence = evidence_confidence(items, self._calibration)
         else:
             result.evidence_confidence = result.evidence_confidence or confidence
         result.evidence_entailment = entailment
+        result.tokens_used = budget.spent_tokens
         if result.steps:
             result.steps[-1]["stop_reason"] = stop
         return result
