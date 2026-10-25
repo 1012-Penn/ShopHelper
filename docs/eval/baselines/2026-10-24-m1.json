@@ -16,18 +16,21 @@
     "dim": 1024
   },
   "model": "deepseek-flash",
+  "temperature": 0.0,
   "calibration_status": "stale",
   "pricing": {
     "version": "2026-10-25",
     "verified": true,
-    "ledger_total_usd": 0.2993,
+    "ledger_total_usd": 0.4644,
     "limit_usd": 10.0
   },
   "splits": {
     "frozen-v1": {
       "dataset_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
-      "contract_sha256": "62f912b50593cd376f974b5d76b0b1601c29a575e909209ad71db37abdd07bc2",
+      "label_version": "v2",
+      "contract_sha256": "455fc4ce2b9ba7e8c15e50fca871b2e0b146ae51e6182d109bb2bdb01947716a",
       "n": 90,
+      "rewrite_mode": "frozen",
       "summary": {
         "n": 90,
         "l1": {
@@ -113,45 +116,47 @@
         },
         "l2": {
           "gate_false_accept": 0,
-          "gate_false_block": 6,
+          "gate_false_block": 3,
           "false_accept_ids": [],
           "false_block_ids": [
+            "FRZ-MULTI-11",
             "FRZ-MULTI-14",
-            "FRZ-CONSTRAINT-13",
-            "FRZ-ENTITY-09",
-            "FRZ-CLARIFY-01",
-            "FRZ-CLARIFY-02",
-            "FRZ-CLARIFY-05"
+            "FRZ-CONSTRAINT-13"
           ],
-          "conflict_detection_rate": 0.875,
+          "conflict_detection_rate": 1.0,
           "partial_handling_rate": 0.9285714285714286
         },
         "l3": {
-          "answer_accuracy_strict": 0.16923076923076924,
-          "strict_n": 65,
-          "answer_accuracy_partial": 0.8384615384615385,
-          "condition_coverage": 0.8611111111111112,
+          "answer_accuracy_strict": 0.1774193548387097,
+          "strict_n": 62,
+          "answer_accuracy_partial": 0.8467741935483871,
+          "condition_coverage": 0.7361111111111112,
+          "condition_n": 36,
           "forbidden_claim_rate": 0.0,
           "forbidden_claim_ids": [],
-          "clarify_slot_recall": 0.6,
-          "clarify_precision": 0.4666666666666667,
-          "unsupported_claim_rate": 0.4442592592592592,
+          "clarify_slot_recall": 0.75,
+          "clarify_precision": 0.55,
+          "unsupported_claim_rate": 0.5347222222222222,
+          "unsupported_claims": 77,
+          "substantive_claims": 144,
           "failure_labels": {
-            "answer_missing_condition": 16,
+            "answer_missing_condition": 11,
             "answer_wrong_fact": 15,
-            "citation_unsupported": 56,
-            "clarify_missing_slot": 5,
+            "citation_unsupported": 45,
+            "clarify_missing_slot": 3,
             "clarify_over_asking": 7,
-            "over_refusal": 7,
+            "over_refusal": 9,
             "verification_overclaim": 1
           }
         },
         "l4": {
           "under_refusal_rate": 0.0,
           "under_refusal_ids": [],
-          "over_refusal_rate": 0.1,
+          "over_refusal_rate": 0.12857142857142856,
           "over_refusal_ids": [
+            "FRZ-MULTI-11",
             "FRZ-MULTI-14",
+            "FRZ-CONSTRAINT-03",
             "FRZ-CONSTRAINT-13",
             "FRZ-ENTITY-09",
             "FRZ-CONFLICT-04",
@@ -160,19 +165,20 @@
             "FRZ-CLARIFY-05"
           ],
           "correct_refusal_rate": 1.0,
-          "conditional_compliance": 0.5357142857142857,
+          "conditional_compliance": 0.7142857142857143,
           "verification_compliance": 0.75,
           "n": 86
         },
         "l5": {
           "llm_calls": 0,
-          "tokens_in": 105663,
-          "tokens_out": 25998,
-          "cost_estimate": 0.06289649999999998,
+          "tokens_in": 103834,
+          "tokens_out": 27055,
+          "cost_estimate": 0.063618,
           "cost_actual": 0.0,
-          "cached_cases": 68,
-          "latency_p50_ms": 1841.166,
-          "latency_p95_ms": 12731.895
+          "cached_cases": 67,
+          "evidence_judge_cached": 90,
+          "latency_p50_ms": null,
+          "latency_p95_ms": null
         },
         "blocking": {
           "hard_negative_false_accept": {
@@ -185,11 +191,11 @@
           },
           "forbidden_claim": {
             "count": 0,
-            "denominator": 17
+            "denominator": 57
           },
           "unsupported_claim": {
-            "count": 50,
-            "denominator": 90
+            "count": 77,
+            "denominator": 144
           },
           "under_refusal": {
             "count": 0,
@@ -200,8 +206,10 @@
     },
     "regression-v1": {
       "dataset_sha256": "60a87d5653b590c44f65efffcaf283b43c134be77f69016fd4153da8466f76b6",
-      "contract_sha256": "76e18a5a3ba25f4ec94ed9b741835d5859d7cc8785f216569b300ea971ec09af",
+      "label_version": "v2-overlay",
+      "contract_sha256": "5ef9e830c31883980c37964bb11b8fa6372cf7cee0f8e86383ed94002b21471b",
       "n": 60,
+      "rewrite_mode": "identity",
       "summary": {
         "n": 60,
         "l1": {
@@ -287,27 +295,28 @@
         },
         "l2": {
           "gate_false_accept": 0,
-          "gate_false_block": 1,
+          "gate_false_block": 0,
           "false_accept_ids": [],
-          "false_block_ids": [
-            "C04"
-          ],
+          "false_block_ids": [],
           "conflict_detection_rate": null,
-          "partial_handling_rate": 0.0
+          "partial_handling_rate": 0.4
         },
         "l3": {
           "answer_accuracy_strict": null,
           "strict_n": 0,
           "answer_accuracy_partial": null,
-          "condition_coverage": 0.8875,
+          "condition_coverage": 0.4333333333333333,
+          "condition_n": 10,
           "forbidden_claim_rate": 0.0,
           "forbidden_claim_ids": [],
           "clarify_slot_recall": null,
           "clarify_precision": null,
-          "unsupported_claim_rate": 0.3930555555555555,
+          "unsupported_claim_rate": 0.48514851485148514,
+          "unsupported_claims": 49,
+          "substantive_claims": 101,
           "failure_labels": {
-            "answer_missing_condition": 9,
-            "citation_unsupported": 35,
+            "answer_missing_condition": 8,
+            "citation_unsupported": 33,
             "over_refusal": 1
           }
         },
@@ -319,19 +328,20 @@
             "C04"
           ],
           "correct_refusal_rate": 1.0,
-          "conditional_compliance": 0.125,
+          "conditional_compliance": 0.25,
           "verification_compliance": 1.0,
           "n": 60
         },
         "l5": {
-          "llm_calls": 46,
+          "llm_calls": 0,
           "tokens_in": 64880,
-          "tokens_out": 15714,
-          "cost_estimate": 0.03832399999999999,
-          "cost_actual": 0.03832399999999999,
-          "cached_cases": 0,
-          "latency_p50_ms": 3076.135,
-          "latency_p95_ms": 10198.63
+          "tokens_out": 16476,
+          "cost_estimate": 0.039234000000000005,
+          "cost_actual": 0.0,
+          "cached_cases": 46,
+          "evidence_judge_cached": 60,
+          "latency_p50_ms": null,
+          "latency_p95_ms": null
         },
         "blocking": {
           "hard_negative_false_accept": {
@@ -344,11 +354,11 @@
           },
           "forbidden_claim": {
             "count": 0,
-            "denominator": 10
+            "denominator": 44
           },
           "unsupported_claim": {
-            "count": 32,
-            "denominator": 60
+            "count": 49,
+            "denominator": 101
           },
           "under_refusal": {
             "count": 0,

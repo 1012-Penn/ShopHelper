@@ -5,6 +5,7 @@
 """
 from __future__ import annotations
 
+import fcntl
 import json
 import os
 from datetime import datetime, timezone
@@ -63,8 +64,9 @@ class BudgetLedger:
             try:
                 payload = json.loads(self.path.read_text(encoding="utf-8"))
                 self._records = list(payload.get("records") or [])
-            except (OSError, json.JSONDecodeError):
-                self._records = []
+            except (OSError, json.JSONDecodeError) as exc:
+                # 预算台账损坏时 fail closed,不能静默重置为 0。
+                raise BudgetExceeded(f"预算台账损坏,拒绝继续: {self.path}: {exc}") from exc
 
     def total_usd(self) -> float:
         return sum(float(record.get("amount_usd") or 0.0) for record in self._records)
@@ -73,16 +75,149 @@ class BudgetLedger:
         return self.total_limit_usd - self.total_usd()
 
     def record(self, amount_usd: float, note: str = "") -> None:
-        self._records.append({
-            "amount_usd": float(amount_usd),
-            "note": note,
-            "at": datetime.now(timezone.utc).isoformat(),
-        })
+        amount = float(amount_usd)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        tmp = self.path.with_suffix(".json.tmp")
-        payload = {"limit_usd": self.total_limit_usd, "records": self._records}
-        tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-        os.replace(tmp, self.path)
+        lock_path = self.path.with_suffix(self.path.suffix + ".lock")
+        with lock_path.open("a+", encoding="utf-8") as lock:
+            fcntl.flock(lock.fileno(), fcntl.LOCK_EX)
+            try:
+                records: list[dict] = []
+                if self.path.exists():
+                    try:
+                        payload = json.loads(self.path.read_text(encoding="utf-8"))
+                        records = list(payload.get("records") or [])
+                    except (OSError, json.JSONDecodeError) as exc:
+                        raise BudgetExceeded(
+                            f"预算台账损坏,拒绝继续: {self.path}: {exc}"
+                        ) from exc
+                total = sum(float(item.get("amount_usd") or 0.0) for item in records)
+                if total + amount > self.total_limit_usd:
+                    raise BudgetExceeded(
+                        f"累计预算超限:{total + amount:.4f} > {self.total_limit_usd:.4f}"
+                    )
+                records.append({
+                    "amount_usd": amount,
+                    "note": note,
+                    "at": datetime.now(timezone.utc).isoformat(),
+                })
+                tmp = self.path.with_suffix(".json.tmp")
+                payload = {"limit_usd": self.total_limit_usd, "records": records}
+                tmp.write_text(
+                    json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                os.replace(tmp, self.path)
+                self._records = records
+            finally:
+                fcntl.flock(lock.fileno(), fcntl.LOCK_UN)
+
+
+def _estimate_tokens(texts: list[str]) -> int:
+    return max(1, sum(max(1, len(text) // 2) for text in texts))
+
+
+class GuardedEmbedder:
+    """把嵌入调用纳入 allow_paid/verified/台账;缓存命中不会走到这里。"""
+
+    def __init__(self, inner, cost: "CostTracker", model: str) -> None:
+        self.inner = inner
+        self.cost = cost
+        self.model = model
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        tokens = _estimate_tokens(texts)
+        self.cost.guard(tokens, self.model)
+        vectors = self.inner.embed(texts)
+        self.cost.add(self.model, tokens, 0, kind="embedding")
+        return vectors
+
+
+class GuardedReranker:
+    def __init__(self, inner, cost: "CostTracker", model: str) -> None:
+        self.inner = inner
+        self.cost = cost
+        self.model = model
+
+    def rerank(self, query: str, documents: list[str], top_n: int | None = None):
+        tokens = _estimate_tokens([query, *documents])
+        self.cost.guard(tokens, self.model)
+        results = self.inner.rerank(query, documents, top_n=top_n)
+        self.cost.add(self.model, tokens, 0, kind="rerank")
+        return results
+
+
+class GuardedEvidenceJudge:
+    def __init__(self, inner, cost: "CostTracker", cache, model: str, prompt_sha: str) -> None:
+        self.inner = inner
+        self.cost = cost
+        self.cache = cache
+        self.model = model
+        self.prompt_sha = prompt_sha
+        self.calls = 0
+        self.hits = 0
+
+    def judge(self, query: str, documents: list[str]):
+        from app.evidence import EvidenceVerdict
+
+        key = None
+        if self.cache is not None:
+            key = self.cache.response_key(
+                model=self.model, prompt_sha256=self.prompt_sha,
+                temperature=0.0,
+                query=query + "\0" + "\x1f".join(documents),
+                evidence_ids=[],
+            )
+            payload = self.cache.get(key)
+            if payload is not None:
+                self.hits += 1
+                return EvidenceVerdict(**payload)
+        tokens = _estimate_tokens([query, *documents])
+        self.cost.guard(tokens, self.model)
+        self.calls += 1
+        verdict = self.inner.judge(query, documents)
+        self.cost.add(self.model, tokens, 128, kind="evidence_judge")
+        if self.cache is not None and key is not None:
+            self.cache.put(key, {
+                "answered": bool(verdict.answered),
+                "supported_by": list(verdict.supported_by),
+                "reason": verdict.reason,
+            })
+        return verdict
+
+
+class GuardedFaithfulnessJudge:
+    def __init__(self, inner, cost: "CostTracker", cache, model: str, prompt_sha: str) -> None:
+        self.inner = inner
+        self.cost = cost
+        self.cache = cache
+        self.model = model
+        self.prompt_sha = prompt_sha
+        self.calls = 0
+
+    def invoke(self, prompt: str):
+        from app.prompts import FaithfulnessVerdict
+
+        key = None
+        if self.cache is not None:
+            key = self.cache.response_key(
+                model=self.model, prompt_sha256=self.prompt_sha,
+                temperature=0.0, query=prompt, evidence_ids=[],
+            )
+            payload = self.cache.get(key)
+            if payload is not None:
+                return FaithfulnessVerdict(**payload)
+        tokens = _estimate_tokens([prompt])
+        self.cost.guard(tokens, self.model)
+        self.calls += 1
+        verdict = self.inner.invoke(prompt)
+        self.cost.add(self.model, tokens, 128, kind="faithfulness_judge")
+        if self.cache is not None and key is not None:
+            self.cache.put(key, {
+                "fabricated": bool(verdict.fabricated),
+                "reason": verdict.reason,
+                "fabricated_claims": list(verdict.fabricated_claims),
+            })
+        return verdict
 
 
 class CostTracker:

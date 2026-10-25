@@ -90,12 +90,14 @@ def _write_build_manifest(
     manifest: CorpusManifest,
     stats: dict,
     embedding_model: str,
+    build_id: str = "",
 ) -> None:
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
         "corpus_version": manifest.corpus_version,
         "corpus_sha256": stats["corpus_sha256"],
+        "build_id": build_id,
         "embedding_model": embedding_model,
         "docs": stats["docs"],
         "chunks": stats["chunks"],
@@ -125,6 +127,7 @@ def build(
     rebuild_docs: bool = True,
     manifest: CorpusManifest | None = None,
     embedding_model: str = "",
+    embedding_dim: int = 0,
     manifest_out: Path | None = None,
 ) -> dict:
     manifest = manifest or load_manifest()
@@ -151,7 +154,23 @@ def build(
         "corpus_sha256": corpus_sha256(docs_dir, manifest=manifest),
     }
     if manifest_out is not None:
-        _write_build_manifest(manifest_out, manifest, stats, embedding_model)
+        from scripts.eval_snapshot import compute_build_id, is_runtime_chunk
+
+        rows = [
+            row for row in kb.get_chunks(kb.doc_chunk_ids_all())
+            if not is_runtime_chunk(row)
+        ]
+        build_id = compute_build_id(
+            rows,
+            corpus_sha256=stats["corpus_sha256"],
+            embedding_model=embedding_model,
+            dim=embedding_dim,
+            max_chars=max_chars,
+            overlap_chars=overlap_chars,
+        )
+        _write_build_manifest(
+            manifest_out, manifest, stats, embedding_model, build_id
+        )
     return stats
 
 
@@ -197,6 +216,7 @@ def main() -> None:
         rebuild_docs=not args.resume_only,
         manifest=manifest,
         embedding_model=settings.embedding_model,
+        embedding_dim=settings.embedding_dim,
         manifest_out=args.manifest_out,
     )
     print(

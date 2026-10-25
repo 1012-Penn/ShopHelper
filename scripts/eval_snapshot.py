@@ -61,6 +61,21 @@ def _sha_file(path: Path) -> str:
     return _sha_bytes(Path(path).read_bytes())
 
 
+def tree_sha256(path: Path) -> str:
+    """目录树或单文件的稳定 SHA:按相对路径排序后逐文件哈希。"""
+    path = Path(path)
+    if path.is_file():
+        return _sha_file(path)
+    if not path.exists():
+        return ""
+    parts = []
+    for child in sorted(item for item in path.rglob("*") if item.is_file()):
+        if child.name == "LOCK":
+            continue
+        parts.append(f"{child.relative_to(path)}\0{_sha_file(child)}")
+    return _sha_bytes("\n".join(parts).encode("utf-8"))
+
+
 def chunk_set_sha256(rows) -> str:
     pairs = sorted((int(row.id), vector_text(row.category, row.questions, row.answer))
                    for row in rows)
@@ -179,9 +194,15 @@ def copy_snapshot(
         raise SnapshotError(
             "拒绝复制:必须先停止 uvicorn/建库等写入进程,并显式确认 --confirmed-writers-stopped"
         )
-    source_db, dest_db = Path(source_db), Path(dest_db)
+    source_db, dest_db = Path(source_db).resolve(), Path(dest_db).resolve()
     if not source_db.exists():
         raise SnapshotError(f"源 Milvus 文件不存在: {source_db}")
+    if dest_db == source_db:
+        raise SnapshotError("快照目标不能等于源库")
+    if dest_db in source_db.parents:
+        raise SnapshotError(f"快照目标不能是源库的父目录: {dest_db}")
+    if source_db in dest_db.parents:
+        raise SnapshotError(f"快照目标不能位于源库目录内: {dest_db}")
     dest_db.parent.mkdir(parents=True, exist_ok=True)
     if source_db.is_dir():
         # Milvus Lite 3.x 使用目录树(databases/collections/wal);不能按单文件复制。

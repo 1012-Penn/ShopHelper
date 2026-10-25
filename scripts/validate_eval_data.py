@@ -138,7 +138,12 @@ def main(argv: list[str] | None = None) -> int:
     for split in targets:
         try:
             cases = load_split(split)
-            expected = EXPECTED_FROZEN if (args.check_buckets and split == "frozen-v1") else None
+            expected = None
+            if args.check_buckets:
+                if split == "frozen-v1":
+                    expected = EXPECTED_FROZEN
+                else:
+                    expected = (split_entries(registry).get(split) or {}).get("bucket_counts")
             validate_cases(
                 cases,
                 split=split,
@@ -181,6 +186,9 @@ def main(argv: list[str] | None = None) -> int:
             print("[error] frozen-v1 存在未标 frozen 的题", file=sys.stderr)
             return DATA_EXIT_CODE
         manifest = build_frozen_manifest(cases, reviewer=args.confirm_reviewer.strip())
+        if int(manifest["leakage"]["blocking"]) > 0:
+            print("[error] 冻结集存在 blocking 泄漏,拒绝写 manifest", file=sys.stderr)
+            return DATA_EXIT_CODE
         args.manifest_out.parent.mkdir(parents=True, exist_ok=True)
         tmp = args.manifest_out.with_suffix(".json.tmp")
         tmp.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

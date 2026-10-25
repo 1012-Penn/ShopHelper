@@ -113,11 +113,16 @@ def run_retrieval_case(
     strategy: str,
     cap: int = 10,
 ) -> dict:
+    judge = getattr(service, "_evidence_judge", None)
+    judge_calls_before = int(getattr(judge, "calls", 0))
+    judge_hits_before = int(getattr(judge, "hits", 0))
     started = time.perf_counter()
     result = service.retrieve(
         case["query"], strategy=strategy, prepared=prepared.get(case["id"])
     )
     latency_ms = (time.perf_counter() - started) * 1000
+    evidence_judge_calls = int(getattr(judge, "calls", 0)) - judge_calls_before
+    evidence_judge_cached = int(getattr(judge, "hits", 0)) - judge_hits_before
     ranked = [item.chunk_id for item in result.items]
     gold = gold_by_case.get(case["id"], [])
     support = set().union(*gold) if gold else set()
@@ -127,6 +132,7 @@ def run_retrieval_case(
         "split": case.get("split", ""),
         "bucket": case.get("bucket", ""),
         "expected_behavior": case.get("expected_behavior", ""),
+        "evidence_state": case.get("evidence_state", ""),
         "query": case["query"],
         "retrieved": [
             {"rank": rank, "chunk_id": item.chunk_id, "score": item.score}
@@ -158,6 +164,8 @@ def run_retrieval_case(
         },
         "evidence_items": items,
         "evidence_by_n": _evidence_by_n(items),
+        "evidence_judge_calls": evidence_judge_calls,
+        "evidence_judge_cached": evidence_judge_cached,
         "latency_ms": round(latency_ms, 3),
     }
 
@@ -191,7 +199,7 @@ def run_answer_case(
                 model=config.model,
                 prompt_sha256=prompt_sha256(),
                 temperature=config.temperature,
-                query=query,
+                query=f"{expected}\0{query}\0{_evidence_block(items)}",
                 evidence_ids=[item["chunk_id"] for item in items],
             )
             payload = ctx.cache.get(key)
@@ -261,6 +269,7 @@ def run_answer_case(
 
 
 def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
+    cost_before = float(getattr(ctx.cost, "spent_usd", 0.0)) if ctx.cost is not None else 0.0
     trace = run_retrieval_case(
         case,
         ctx.service,
@@ -276,17 +285,20 @@ def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
     trace["as_of_date"] = case.get("as_of_date")
     trace["requires_tools"] = list(case.get("requires_tools") or [])
     trace["forbidden_claims"] = list(case.get("forbidden_claims") or [])
+    trace["required_conditions"] = list(case.get("required_conditions") or [])
+    trace["gate_blocked"] = bool(trace["gate"]["low_confidence"])
     trace["failure_labels"]: list[str] = []
     if config.mode in {"full"}:
-        cost_before = float(getattr(ctx.cost, "spent_usd", 0.0)) if ctx.cost is not None else 0.0
         trace = run_answer_case(case, trace, ctx, config)
         trace["failure_labels"] = trace["deterministic_checks"]["failure_labels"]
         if ctx.cost is not None:
             trace["cost_actual"] = round(
                 float(getattr(ctx.cost, "spent_usd", 0.0)) - cost_before, 6
             )
-            trace["cost_estimate"] = trace.pop(
-                "cost_estimate_cached", trace["cost_actual"]
+            trace["cost_estimate"] = round(
+                trace["cost_actual"]
+                + float(trace.pop("cost_estimate_cached", 0.0) or 0.0),
+                6,
             )
     else:
         trace.pop("evidence_items", None)

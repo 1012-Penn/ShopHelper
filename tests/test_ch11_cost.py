@@ -81,3 +81,10 @@ def test_snapshot_reports_limits(tmp_path):
     assert snapshot["run_limit_usd"] == 2.0
     assert snapshot["ledger_limit_usd"] == 10.0
     assert snapshot["pricing_verified"] is True
+
+
+def test_corrupt_ledger_fails_closed(tmp_path):
+    path = tmp_path / "ledger.json"
+    path.write_text("{not-json", encoding="utf-8")
+    with pytest.raises(BudgetExceeded):
+        BudgetLedger(path)

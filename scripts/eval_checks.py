@@ -114,7 +114,7 @@ def number_covered(answer: str, value, unit: str = "", tolerance: float = 0.0) -
     normalized = normalize_answer(answer)
     if isinstance(value, bool):
         yes = ("支持", "是", "有", "可以", "能", "适用", "参与", "享受", "计入")
-        no = ("不支持", "不是", "没有", "不可以", "不能", "否", "不参与", "不适用", "不享受", "不计入", "不叠加")
+        no = ("不支持", "不是", "没有", "不可以", "不能", "不参与", "不适用", "不享受", "不计入", "不叠加")
         # 先看否定,避免“不支持”因包含“支持”被当成 true。
         if any(term in normalized for term in no):
             return False if value else True
@@ -150,6 +150,10 @@ def condition_coverage(
     normalized = normalize_answer(answer)
     hits = []
     for condition in conditions:
+        required_numbers = _NUM_RE.findall(normalize_answer(condition))
+        if required_numbers and not all(number in normalized for number in required_numbers):
+            hits.append(False)
+            continue
         candidates = [
             condition,
             *DEFAULT_CONDITION_ALIASES.get(condition, ()),
@@ -161,9 +165,25 @@ def condition_coverage(
 
 
 def forbidden_claims_found(answer: str, forbidden: list[str]) -> list[str]:
-    # 禁用断言必须按完整短语匹配;分段匹配会把“不是 104 键”误判成“是 104 键”。
+    # 完整短语匹配 + 否定前缀豁免:避免把“不是所有商品 95 折”当成肯定断言。
     normalized = normalize_answer(answer)
-    return [claim for claim in forbidden if normalize_answer(claim) in normalized]
+    negations = ("不是", "并非", "不可以", "不支持", "不能", "不会", "不属于")
+    found: list[str] = []
+    for claim in forbidden:
+        target = normalize_answer(claim)
+        if not target:
+            continue
+        start = 0
+        while True:
+            index = normalized.find(target, start)
+            if index < 0:
+                break
+            prefix = normalized[max(0, index - 8):index]
+            if not any(neg in prefix for neg in negations):
+                found.append(claim)
+                break
+            start = index + 1
+    return found
 
 
 def _slot_terms(slot: str, aliases: dict[str, list[str]] | None) -> tuple[str, ...]:
@@ -264,32 +284,35 @@ def citation_support_rate(
 
 def classify_behavior(answer: str) -> str:
     normalized = normalize_answer(answer)
-    if REFUSAL_MARKER in answer or any(
-        term in normalized for term in ("无法回答", "抱歉", "转人工", "查不到")
-    ):
-        return "refuse"
     asks = "?" in answer or "？" in answer
     slot_terms = ("请提供", "请问", "哪款", "订单号", "订单编号", "型号", "会员等级")
-    if normalized.startswith(("请提供", "请告知", "麻烦提供", "请问")):
-        return "clarify"
     if asks and any(term in normalized for term in slot_terms):
+        return "clarify"
+    if answer.lstrip().startswith(REFUSAL_MARKER) or normalized.startswith(("无法回答", "抱歉")):
+        return "refuse"
+    if any(term in normalized for term in ("转人工", "查不到")) and not asks:
+        return "refuse"
+    if normalized.startswith(("请提供", "请告知", "麻烦提供", "请问")):
         return "clarify"
     return "answer"
 
 
-def unsupported_claim_rate(answer: str, evidence_by_n: dict[int, str]) -> float:
+def _claim_counts(answer: str, evidence_by_n: dict[int, str]) -> tuple[int, int]:
     if REFUSAL_MARKER in answer or classify_behavior(answer) == "refuse":
-        return 0.0
+        return 0, 0
     citations = parse_citations(answer)
     supported_sentences = {
         sentence for sentence, n in citations
         if n in evidence_by_n and _sentence_supported(sentence, evidence_by_n[n])
     }
     sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(answer) if len(s.strip()) >= 6]
-    if not sentences:
-        return 0.0
     unsupported = [s for s in sentences if s not in supported_sentences]
-    return len(unsupported) / len(sentences)
+    return len(unsupported), len(sentences)
+
+
+def unsupported_claim_rate(answer: str, evidence_by_n: dict[int, str]) -> float:
+    unsupported, total = _claim_counts(answer, evidence_by_n)
+    return 0.0 if total == 0 else unsupported / total
 
 
 def check_case_deterministic(
@@ -309,6 +332,7 @@ def check_case_deterministic(
         answer, case.get("clarifying_slots") or [], case.get("slot_aliases")
     )
     citation = citation_support_rate(answer, evidence_by_n)
+    unsupported_claims, substantive_claims = _claim_counts(answer, evidence_by_n)
     unsupported = unsupported_claim_rate(answer, evidence_by_n)
     behavior = classify_behavior(answer)
     verification_markers = case.get("verification_markers") or []
@@ -328,7 +352,7 @@ def check_case_deterministic(
         failure_labels.append("clarify_missing_slot")
     if expected == "clarify" and slot_precision.score < 1.0:
         failure_labels.append("clarify_over_asking")
-    if citation.score < 1.0 and expected != "refuse":
+    if citation.score < 1.0 and expected in {"answer", "answer_with_conditions"}:
         failure_labels.append("citation_unsupported")
     if expected == "verify_then_answer" and not verification_ok:
         failure_labels.append("verification_overclaim")
@@ -346,6 +370,8 @@ def check_case_deterministic(
         "clarify_precision": asdict(slot_precision),
         "citation_support": asdict(citation),
         "unsupported_claim_rate": unsupported,
+        "unsupported_claims": unsupported_claims,
+        "substantive_claims": substantive_claims,
         "verification_compliant": verification_ok,
         "behavior_pred": behavior,
         "refused": behavior == "refuse",

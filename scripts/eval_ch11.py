@@ -32,6 +32,7 @@ from scripts.eval_dataset import (
     validate_cases,
 )
 from scripts.eval_metrics import resolve_gold_chunks
+from scripts.eval_snapshot import acquire_eval_lock
 from scripts.eval_prompts import (
     EVAL_ANSWER_PROMPT,
     EVAL_JUDGE_PROMPT,
@@ -67,16 +68,18 @@ def _offline(split: str, out: Path, limit: int) -> int:
     from scripts.corpus_facts import load_factbook
     from scripts.corpus_manifest import DOCS_DIR
     from scripts.leakage_scan import scan_split
+    from scripts.eval_dataset import load_registry, split_entries
 
     cases = load_split(split)
     if limit:
         cases = cases[:limit]
+    expected_buckets = (split_entries(load_registry()).get(split) or {}).get("bucket_counts")
     validate_cases(
         cases,
         split=split,
         docs_dir=DOCS_DIR,
         factbook=load_factbook(),
-        bucket_counts=None,
+        bucket_counts=expected_buckets,
     )
     findings = scan_split(split)
     blocking = [item for item in findings if item.severity == "blocking"]
@@ -100,23 +103,27 @@ def _prepare_queries(cases, args, settings, rewriter, split: str):
     from app.retrieval import PreparedQuery
     from scripts.rewrite_cache import RewriteCacheError, load_rewrites
 
+    identity = {case["id"]: PreparedQuery(case["query"], case["query"]) for case in cases}
     if args.no_rewrite or rewriter is None:
-        return {case["id"]: PreparedQuery(case["query"], case["query"]) for case in cases}
+        return identity, "identity"
     cache_path = args.rewrite_cache or (
         ROOT / "tests" / "eval" / "caches" / "rewrite" / f"{split}.json"
     )
     split_path = ROOT / "tests" / "eval" / "splits" / f"{split}.jsonl"
     if not Path(cache_path).exists() or not split_path.exists():
         print(f"[warn] 改写缓存不存在,使用恒等改写: {cache_path}", file=sys.stderr)
-        return {case["id"]: PreparedQuery(case["query"], case["query"]) for case in cases}
+        return identity, "identity"
     try:
+        mode = args.rewrite_cache_mode if (
+            args.rewrite_cache_mode == "read" or args.allow_paid
+        ) else "read"
         rewrites = load_rewrites(
             cases, cache_path, split_path, settings.openai_model, rewriter,
-            mode="read",
+            mode=mode,
         )
     except RewriteCacheError as exc:
         print(f"[warn] 改写缓存不可用,使用恒等改写: {exc}", file=sys.stderr)
-        return {case["id"]: PreparedQuery(case["query"], case["query"]) for case in cases}
+        return identity, "identity"
     from app.retrieval import bm25_query_text
     from app.rewrite import QueryRewrite
 
@@ -127,7 +134,7 @@ def _prepare_queries(cases, args, settings, rewriter, split: str):
         prepared[case["id"]] = PreparedQuery(
             rewritten, bm25_query_text(QueryRewrite(normalized=rewritten, synonyms=qr.synonyms))
         )
-    return prepared
+    return prepared, "frozen"
 
 
 def _build_context(config, args, cases):
@@ -147,9 +154,19 @@ def _build_context(config, args, cases):
         DEFAULT_PRICING_PATH,
         BudgetLedger,
         CostTracker,
+        GuardedEmbedder,
+        GuardedEvidenceJudge,
+        GuardedFaithfulnessJudge,
+        GuardedReranker,
         PricingTable,
     )
-    from scripts.eval_snapshot import compute_build_id, is_runtime_chunk
+    from scripts.eval_snapshot import (
+        SnapshotError,
+        compute_build_id,
+        is_runtime_chunk,
+        tree_sha256,
+        verify_consistency,
+    )
 
     # pymilvus 在导入时会 load_dotenv(),可能把外部 .env 的值带进 os.environ;
     # 以当前工作目录的 .env 为准,避免 worktree 跑出主仓库的旧模型名。
@@ -164,6 +181,20 @@ def _build_context(config, args, cases):
     kb = KnowledgeBaseStore(factory)
     db_path = args.snapshot or settings.milvus_db_path
     vectors = KnowledgeVectorStore(str(db_path), dim=settings.embedding_dim)
+    manifest = load_manifest()
+    corpus = corpus_sha256(DOCS_DIR, manifest)
+    consistency = verify_consistency(
+        kb, vectors,
+        corpus_sha256=corpus,
+        embedding_model=settings.embedding_model,
+        dim=settings.embedding_dim,
+        max_chars=settings.chunk_max_chars,
+        overlap_chars=settings.chunk_overlap_chars,
+    )
+    if not consistency.ok:
+        raise SnapshotError(
+            f"索引/快照一致性校验失败: {json.dumps(consistency.as_dict(), ensure_ascii=False)}"
+        )
     all_rows = {
         row.id: row
         for row in kb.get_chunks(kb.doc_chunk_ids_all())
@@ -175,24 +206,42 @@ def _build_context(config, args, cases):
     }
 
     cache_dir = Path(args.cache_dir or ROOT / "data" / "eval-caches")
+    pricing = PricingTable.load(Path(args.pricing) if args.pricing else DEFAULT_PRICING_PATH)
+    if config.allow_paid and not pricing.verified:
+        raise BudgetExceeded("价格表未核实(verified=false),拒绝任何付费调用")
+    cost = CostTracker(
+        pricing, BudgetLedger(), config.max_cost_usd, allow_paid=config.allow_paid
+    )
+    response_cache = ResponseCache(cache_dir / "responses.json", "responses")
+
+    from app.embedding import make_embedder
+
     embedder = EmbeddingCache(
-        __import__("app.embedding", fromlist=["make_embedder"]).make_embedder(settings),
+        GuardedEmbedder(make_embedder(settings), cost, settings.embedding_model),
         cache_dir / "embedding.json",
         settings.embedding_model,
     )
     reranker = make_reranker(settings)
     if reranker is not None:
-        reranker = RerankCache(reranker, cache_dir / "rerank.json", settings.rerank_model)
+        reranker = RerankCache(
+            GuardedReranker(reranker, cost, settings.rerank_model),
+            cache_dir / "rerank.json",
+            settings.rerank_model,
+        )
     rewriter = make_rewriter(settings) if settings.query_rewrite_enabled else None
-    prepared = _prepare_queries(cases, args, settings, rewriter, config.split)
-
-    pricing = PricingTable.load(Path(args.pricing) if args.pricing else DEFAULT_PRICING_PATH)
-    if config.allow_paid and not pricing.verified:
-        raise BudgetExceeded("价格表未核实(verified=false),拒绝任何付费调用")
+    prepared, rewrite_mode = _prepare_queries(cases, args, settings, rewriter, config.split)
 
     evidence_judge = None
     if config.mode in {"evidence", "full"} and config.allow_paid:
-        evidence_judge = JsonEvidenceJudge(make_chat_model(settings))
+        from app.evidence import EVIDENCE_JUDGE_PROMPT
+
+        evidence_judge = GuardedEvidenceJudge(
+            JsonEvidenceJudge(make_chat_model(settings).bind(temperature=0)),
+            cost,
+            response_cache,
+            settings.openai_model,
+            prompt_sha256(EVIDENCE_JUDGE_PROMPT.template),
+        )
     service = RetrievalService(
         embedder, vectors, kb, rewriter=rewriter, reranker=reranker,
         candidates=settings.hybrid_candidates,
@@ -203,28 +252,45 @@ def _build_context(config, args, cases):
         evidence_top_n=settings.evidence_entailment_top_n,
     )
 
-    cost = CostTracker(
-        pricing, BudgetLedger(), config.max_cost_usd, allow_paid=config.allow_paid
+    chat = (
+        make_chat_model(settings).bind(temperature=config.temperature)
+        if config.mode == "full" else None
     )
-    response_cache = ResponseCache(cache_dir / "responses.json", "responses")
-    chat = make_chat_model(settings) if config.mode == "full" else None
     judge = None
     if config.mode == "full" and config.use_judge:
-        judge = JsonFaithfulnessJudge(make_chat_model(settings))
+        from app.prompts import FAITHFULNESS_JUDGE_PROMPT
 
-    manifest = load_manifest()
+        judge = GuardedFaithfulnessJudge(
+            JsonFaithfulnessJudge(make_chat_model(settings).bind(temperature=0)),
+            cost,
+            response_cache,
+            settings.openai_model,
+            prompt_sha256(FAITHFULNESS_JUDGE_PROMPT.template),
+        )
+
+    from datetime import datetime, timezone
+    from app.evidence import EVIDENCE_JUDGE_PROMPT
+    from app.prompts import FAITHFULNESS_JUDGE_PROMPT
+    from scripts.eval_dataset import load_registry, split_entries
+
     facts_sha = __import__("scripts.corpus_facts", fromlist=["load_factbook"]).load_factbook().sha256()
     split_path = ROOT / "tests" / "eval" / "splits" / f"{config.split}.jsonl"
     file_sha = dataset_sha256(split_path) if split_path.exists() else ""
     rewrite_cache_path = args.rewrite_cache or (
         ROOT / "tests" / "eval" / "caches" / "rewrite" / f"{config.split}.json"
     )
+    registry_entry = split_entries(load_registry()).get(config.split, {})
+    git_dirty = bool(
+        subprocess.check_output(
+            ["git", "status", "--porcelain"], cwd=ROOT, text=True
+        ).strip()
+    )
     contract = build_contract(
         dataset={
             "split": config.split,
             "sha256": split_sha256(cases),
             "file_sha256": file_sha,
-            "label_version": "v2",
+            "label_version": registry_entry.get("label_version", "v2"),
             "n": len(cases),
             "buckets": bucket_counts(cases),
         },
@@ -251,6 +317,8 @@ def _build_context(config, args, cases):
             "embedding_model": settings.embedding_model,
             "dim": settings.embedding_dim,
             "snapshot_path": str(db_path),
+            "snapshot_sha256": tree_sha256(db_path),
+            "consistency": consistency.as_dict(),
         },
         retrieval={
             "strategy": config.strategy,
@@ -263,22 +331,41 @@ def _build_context(config, args, cases):
         rewrite={
             "enabled": rewriter is not None,
             "model": settings.openai_model,
-            "mode": "identity" if args.no_rewrite else "frozen",
+            "mode": rewrite_mode,
             "cache_sha256": _file_sha(Path(rewrite_cache_path)),
         },
         llm={"model": settings.openai_model, "temperature": config.temperature,
              "prompt_sha256": prompt_sha256(EVAL_ANSWER_PROMPT)},
-        judge={"model": settings.openai_model, "temperature": 0,
-               "prompt_sha256": prompt_sha256(EVAL_JUDGE_PROMPT)},
+        judge={
+            "model": settings.openai_model,
+            "temperature": 0,
+            "prompt_sha256": prompt_sha256(FAITHFULNESS_JUDGE_PROMPT.template),
+            "enabled": config.use_judge,
+            "evidence_model": settings.openai_model,
+            "evidence_temperature": 0,
+            "evidence_prompt_sha256": prompt_sha256(EVIDENCE_JUDGE_PROMPT.template),
+            "evidence_enabled": evidence_judge is not None,
+        },
         pricing={
             "version": pricing.version,
             "currency": pricing.currency,
             "verified": pricing.verified,
             "sha256": _file_sha(Path(args.pricing) if args.pricing else DEFAULT_PRICING_PATH),
         },
-        run={"git_commit": _git_commit(), "git_dirty": False, "seed": config.seed,
-             "python": sys.version.split()[0], "host": ""},
-        harness={"version": "ch11-harness-1", "mode": config.mode},
+        run={
+            "git_commit": _git_commit(),
+            "git_dirty": git_dirty,
+            "seed": config.seed,
+            "python": sys.version.split()[0],
+            "host": "",
+            "started_at": datetime.now(timezone.utc).isoformat(),
+        },
+        harness={
+            "version": "ch11-harness-1",
+            "mode": config.mode,
+            "allow_paid": config.allow_paid,
+            "use_judge": config.use_judge,
+        },
     )
     contract["_sha"] = contract_sha256(contract)
     config = HarnessConfig(
@@ -450,7 +537,8 @@ def main(argv: list[str] | None = None) -> int:
             seed=args.seed,
         )
         ctx, config, contract = _build_context(config, args, cases)
-        traces = run_split(cases, ctx, config)
+        with acquire_eval_lock():
+            traces = run_split(cases, ctx, config)
         split_out = args.out / split
         split_out.mkdir(parents=True, exist_ok=True)
         dump_traces(traces, split_out / "traces.jsonl")

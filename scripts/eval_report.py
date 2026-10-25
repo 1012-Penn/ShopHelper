@@ -72,18 +72,30 @@ def _layer_l1(traces: list[dict]) -> dict:
 
 def _layer_l2(traces: list[dict]) -> dict:
     refuse_cases = [t for t in traces if t.get("expected_behavior") == "refuse"]
-    answer_cases = [t for t in traces if t.get("expected_behavior") != "refuse"]
+    # 只有“金标 sufficient、不是澄清题”的题被拦下,才算证据闸误拦。
+    sufficient_answer_cases = [
+        t for t in traces
+        if t.get("expected_behavior") != "refuse"
+        and t.get("evidence_state") == "sufficient"
+        and t.get("bucket") != "clarify"
+    ]
     false_accept = [t for t in refuse_cases if t["gate"]["passed"]]
-    false_block = [t for t in answer_cases if not t["gate"]["passed"]]
-    conflicts = [t for t in traces if t.get("bucket") == "policy_conflict"]
+    false_block = [t for t in sufficient_answer_cases if not t["gate"]["passed"]]
+    judged_conflicts = [
+        t for t in traces
+        if t.get("bucket") == "policy_conflict" and t.get("deterministic_checks") is not None
+    ]
     conflict_ok = [
-        t for t in conflicts
+        t for t in judged_conflicts
         if (t.get("deterministic_checks") or {}).get("gold_fact_accuracy", {}).get("passed")
     ]
     partial = [
         t for t in traces
         if (t.get("deterministic_checks") is not None)
-        and t.get("expected_behavior") in {"verify_then_answer", "clarify"}
+        and (
+            t.get("evidence_state") == "partial"
+            or t.get("expected_behavior") in {"verify_then_answer", "clarify"}
+        )
     ]
     partial_ok = [
         t for t in partial
@@ -95,15 +107,18 @@ def _layer_l2(traces: list[dict]) -> dict:
         "gate_false_block": len(false_block),
         "false_accept_ids": [t["case_id"] for t in false_accept],
         "false_block_ids": [t["case_id"] for t in false_block],
-        "conflict_detection_rate": _rate(len(conflict_ok), len(conflicts)),
-        "partial_handling_rate": _rate(len(partial_ok), len(partial)),
+        "conflict_detection_rate": (
+            _rate(len(conflict_ok), len(judged_conflicts)) if judged_conflicts else None
+        ),
+        "partial_handling_rate": _rate(len(partial_ok), len(partial)) if partial else None,
     }
 
 
 def _layer_l3(traces: list[dict]) -> dict:
     judged = [t for t in traces if t.get("deterministic_checks") is not None]
+    attempted = [t for t in judged if not t.get("gate_blocked")]
     strict = []
-    for trace in judged:
+    for trace in attempted:
         checks = trace["deterministic_checks"]
         if checks.get("gold_facts_checked", 0) == 0:
             continue
@@ -113,20 +128,26 @@ def _layer_l3(traces: list[dict]) -> dict:
             and not checks["forbidden_claims"]
             and checks["citation_support"]["passed"]
         )
-    forbidden_cases = [t for t in judged if (t.get("forbidden_claims") or [])]
-    forbidden_hits = [t for t in forbidden_cases if t["deterministic_checks"]["forbidden_claims"]]
+    condition_cases = [t for t in judged if t.get("required_conditions")]
+    answer_cases = [
+        t for t in attempted if t.get("expected_behavior") in {"answer", "answer_with_conditions"}
+    ]
+    forbidden_hits = [t for t in answer_cases if t["deterministic_checks"]["forbidden_claims"]]
     clarify = [t for t in judged if t.get("expected_behavior") == "clarify"]
+    substantive = sum(t["deterministic_checks"].get("substantive_claims", 0) for t in attempted)
+    unsupported = sum(t["deterministic_checks"].get("unsupported_claims", 0) for t in attempted)
     return {
         "answer_accuracy_strict": _rate(sum(strict), len(strict)),
         "strict_n": len(strict),
         "answer_accuracy_partial": _avg([
             t["deterministic_checks"]["gold_fact_accuracy"]["score"]
-            for t in judged if t["deterministic_checks"].get("gold_facts_checked", 0)
+            for t in attempted if t["deterministic_checks"].get("gold_facts_checked", 0)
         ]),
         "condition_coverage": _avg([
-            t["deterministic_checks"]["condition_coverage"]["score"] for t in judged
+            t["deterministic_checks"]["condition_coverage"]["score"] for t in condition_cases
         ]),
-        "forbidden_claim_rate": _rate(len(forbidden_hits), len(forbidden_cases)),
+        "condition_n": len(condition_cases),
+        "forbidden_claim_rate": _rate(len(forbidden_hits), len(answer_cases)),
         "forbidden_claim_ids": [t["case_id"] for t in forbidden_hits],
         "clarify_slot_recall": _avg([
             t["deterministic_checks"]["clarify_slot_recall"]["score"] for t in clarify
@@ -134,9 +155,9 @@ def _layer_l3(traces: list[dict]) -> dict:
         "clarify_precision": _avg([
             t["deterministic_checks"]["clarify_precision"]["score"] for t in clarify
         ]),
-        "unsupported_claim_rate": _avg([
-            t["deterministic_checks"]["unsupported_claim_rate"] for t in judged
-        ]),
+        "unsupported_claim_rate": _rate(unsupported, substantive),
+        "unsupported_claims": unsupported,
+        "substantive_claims": substantive,
         "failure_labels": {
             label: sum(1 for t in traces for item in (t.get("failure_labels") or []) if item == label)
             for label in sorted({item for t in traces for item in (t.get("failure_labels") or [])})
@@ -177,8 +198,11 @@ def _layer_l4(traces: list[dict]) -> dict:
 
 
 def _layer_l5(traces: list[dict]) -> dict:
+    # 延迟只统计真实调用(缓存命中与纯检索样本不计),避免把离线缓存伪装成线上延迟。
     latencies = sorted(
-        trace["latency_ms"] for trace in traces if trace.get("latency_ms") is not None
+        trace["latency_ms"]
+        for trace in traces
+        if trace.get("latency_ms") is not None and trace.get("llm_calls", 0) > 0
     )
 
     def percentile(ratio):
@@ -187,26 +211,37 @@ def _layer_l5(traces: list[dict]) -> dict:
         return latencies[min(len(latencies) - 1, int(ratio * (len(latencies) - 1)))]
 
     return {
-        "llm_calls": sum(trace.get("llm_calls", 0) for trace in traces),
+        "llm_calls": sum(
+            trace.get("llm_calls", 0) + trace.get("evidence_judge_calls", 0)
+            for trace in traces
+        ),
         "tokens_in": sum(trace.get("tokens_in", 0) for trace in traces),
         "tokens_out": sum(trace.get("tokens_out", 0) for trace in traces),
         "cost_estimate": sum(trace.get("cost_estimate", 0.0) for trace in traces),
         "cost_actual": sum(trace.get("cost_actual", 0.0) for trace in traces),
         "cached_cases": sum(1 for trace in traces if trace.get("cached")),
+        "evidence_judge_cached": sum(
+            trace.get("evidence_judge_cached", 0) for trace in traces
+        ),
         "latency_p50_ms": percentile(0.50),
         "latency_p95_ms": percentile(0.95),
     }
 
 
 def _blocking(traces: list[dict]) -> dict:
+    measured = [t for t in traces if t.get("deterministic_checks") is not None]
     hard = [t for t in traces if t.get("bucket") == "hard_negative"]
     ood = [t for t in traces if t.get("bucket") == "ood"]
-    forbidden = [t for t in traces if t.get("forbidden_claims")]
-    under = [t for t in traces if "under_refusal" in (t.get("failure_labels") or [])]
-    unsupported = [
-        t for t in traces
-        if (t.get("deterministic_checks") or {}).get("unsupported_claim_rate", 0) > 0
+    answer_cases = [
+        t for t in measured
+        if not t.get("gate_blocked")
+        and t.get("expected_behavior") in {"answer", "answer_with_conditions"}
     ]
+    refuse_cases = [t for t in measured if t.get("expected_behavior") == "refuse"]
+    forbidden_hits = [t for t in answer_cases if t["deterministic_checks"]["forbidden_claims"]]
+    under = [t for t in refuse_cases if "under_refusal" in (t.get("failure_labels") or [])]
+    substantive = sum(t["deterministic_checks"].get("substantive_claims", 0) for t in measured)
+    unsupported = sum(t["deterministic_checks"].get("unsupported_claims", 0) for t in measured)
     return {
         "hard_negative_false_accept": {
             "count": sum(1 for t in hard if t["gate"]["passed"]),
@@ -217,16 +252,17 @@ def _blocking(traces: list[dict]) -> dict:
             "denominator": len(ood),
         },
         "forbidden_claim": {
-            "count": len([
-                t for t in forbidden
-                if (t.get("deterministic_checks") or {}).get("forbidden_claims")
-            ]),
-            "denominator": len(forbidden),
+            "count": len(forbidden_hits),
+            "denominator": len(answer_cases),
         },
-        "unsupported_claim": {"count": len(unsupported), "denominator": len(traces)},
-        "under_refusal": {"count": len(under), "denominator": len(
-            [t for t in traces if t.get("expected_behavior") == "refuse"]
-        )},
+        "unsupported_claim": {
+            "count": unsupported if measured else None,
+            "denominator": substantive if measured else None,
+        },
+        "under_refusal": {
+            "count": len(under) if measured else None,
+            "denominator": len(refuse_cases) if measured else None,
+        },
     }
 
 
@@ -298,7 +334,7 @@ def render_report(agg: dict, contract: dict, *, historical_md: str = "") -> str:
         f"- tokens_in/out: {agg['l5']['tokens_in']}/{agg['l5']['tokens_out']}",
         f"- cost_estimate(含缓存等价): ${agg['l5']['cost_estimate']:.4f}",
         f"- cost_actual(本次真实新增): ${agg['l5']['cost_actual']:.4f}",
-        f"- cached_cases: {agg['l5']['cached_cases']}",
+        f"- cached_cases: {agg['l5']['cached_cases']} (证据判断缓存命中 {agg['l5']['evidence_judge_cached']})",
         f"- latency_p50/p95_ms: {agg['l5']['latency_p50_ms']} / {agg['l5']['latency_p95_ms']}",
         "",
         "## 阻断项（不可被召回提升抵消）",

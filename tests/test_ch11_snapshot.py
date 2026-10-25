@@ -131,3 +131,12 @@ def test_runtime_chunks_are_excluded_from_doc_snapshot():
     )
     assert report.ok
     assert report.excluded_runtime_ids == [99]
+
+
+def test_snapshot_rejects_dest_equal_or_inside_source(tmp_path):
+    source = tmp_path / "milvus.db"
+    source.mkdir()
+    (source / "file").write_bytes(b"x")
+    for dest in (source, tmp_path, source / "nested.db"):
+        with pytest.raises(SnapshotError):
+            copy_snapshot(source, dest, confirmed_writers_stopped=True)

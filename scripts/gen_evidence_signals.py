@@ -176,11 +176,20 @@ def main() -> int:
     parser.add_argument("--no-rewrite", action="store_true")
     parser.add_argument("--entailment", action=argparse.BooleanOptionalAction,
                         default=None, help="默认跟随 settings.evidence_entailment_enabled")
+    parser.add_argument("--allow-paid", action="store_true",
+                        help="显式允许付费 LLM 调用;未开启时拒绝校准/蕴含/改写写入")
     args = parser.parse_args()
 
     settings = Settings()
     entailment_enabled = (settings.evidence_entailment_enabled
                           if args.entailment is None else args.entailment)
+    if (
+        args.calibrate
+        or entailment_enabled
+        or args.rewrite_cache_mode in {"write", "refresh"}
+    ) and not args.allow_paid:
+        print("拒绝付费调用:加 --allow-paid", flush=True)
+        return 3
     factory = make_session_factory(make_engine(settings))
     kb = KnowledgeBaseStore(factory)
     vectors = KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim)

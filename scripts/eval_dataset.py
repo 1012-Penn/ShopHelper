@@ -331,6 +331,17 @@ def cross_split_issues(cases_by_split: dict[str, list[dict]]) -> list[str]:
         duplicated = sorted(dev_ids & frozen_ids)
         if duplicated:
             issues.append(f"dev/frozen-v1 id 冲突: {', '.join(duplicated)}")
+        dev_queries = {
+            str(case.get("query", "")).strip()
+            for case in cases_by_split["dev"] if case.get("query")
+        }
+        frozen_queries = {
+            str(case.get("query", "")).strip()
+            for case in cases_by_split["frozen-v1"] if case.get("query")
+        }
+        duplicate_queries = sorted(dev_queries & frozen_queries)
+        if duplicate_queries:
+            issues.append(f"dev/frozen-v1 query 冲突: {', '.join(duplicate_queries)}")
     return issues
 
 
@@ -533,6 +544,10 @@ def validate_cases(
             case.get("gold_facts") or []
         ):
             issues.append(f"{case_id}: 新 split 的 answer* 题缺少 gold_facts")
+        if split in NEW_SPLITS and behavior in ANSWER_BEHAVIORS and not (
+            case.get("required_evidence") or []
+        ):
+            issues.append(f"{case_id}: 新 split 的 answer* 题缺少 required_evidence")
         if behavior != "refuse" and answerable is not True:
             issues.append(f"{case_id}: 非 refuse 题必须 answerable=true")
 

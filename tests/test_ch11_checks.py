@@ -115,3 +115,8 @@ def test_failure_labels_for_forbidden_and_under_refusal():
 def test_bool_negation_does_not_match_positive():
     assert not number_covered("不支持主动降噪。", True)
     assert number_covered("不支持主动降噪。", False)
+
+
+def test_forbidden_claim_with_negation_prefix_is_not_flagged():
+    assert forbidden_claims_found("不是所有商品 95 折", ["所有商品 95 折"]) == []
+    assert forbidden_claims_found("所有商品 95 折", ["所有商品 95 折"]) == ["所有商品 95 折"]

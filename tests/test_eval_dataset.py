@@ -46,6 +46,11 @@ def _case(case_id: str = "T01", **overrides) -> dict:
         "answerable": True,
         "evidence_state": "sufficient",
         "gold_facts": [{"fact_id": "CATALOG-SH-E300-PRICE", "value": 299}],
+        "required_evidence": [{
+            "doc": "退货政策.md",
+            "section": "邮费与运费",
+            "quotes": ["普通订单邮费 8 元,单笔满 99 元包邮。"],
+        }],
     }
     case.update(overrides)
     return case

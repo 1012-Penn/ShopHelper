@@ -92,7 +92,7 @@ def _check_offline_harness() -> tuple[bool, str]:
 
 def _check_snapshot(snapshot: Path | None) -> tuple[bool, str]:
     if snapshot is None:
-        return True, "skip(未提供 --snapshot)"
+        return False, "未提供 --snapshot;快照一致性是必验项(可用 --skip-snapshot 显式跳过)"
     from app.config import Settings
     from app.db import make_engine, make_session_factory
     from app.kb import KnowledgeBaseStore
@@ -110,7 +110,16 @@ def _check_snapshot(snapshot: Path | None) -> tuple[bool, str]:
         embedding_model=settings.embedding_model,
         dim=settings.embedding_dim,
     )
-    return report.ok, json.dumps(report.as_dict(), ensure_ascii=False)
+    build_manifest = ROOT / "data" / "build_manifest.json"
+    build_ok = False
+    if build_manifest.exists():
+        build_ok = (
+            json.loads(build_manifest.read_text(encoding="utf-8")).get("build_id")
+            == report.build_id
+        )
+    ok = report.ok and build_ok
+    detail = json.dumps(report.as_dict(), ensure_ascii=False)
+    return ok, detail + f" build_manifest_match={build_ok}"
 
 
 def _check_tests() -> tuple[bool, str]:
