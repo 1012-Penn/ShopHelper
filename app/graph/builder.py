@@ -28,19 +28,38 @@ logger = logging.getLogger(__name__)
 
 
 def _load_evidence_calibration(settings):
-    """加载 ch04 校准产物;产物不可用时回落到当前 rerank floor。"""
+    """加载 v2 校准产物;非法/过期/旧格式时回落到保守基线。"""
     from app.retrieval import EvidenceCalibration
 
     path = Path(settings.evidence_calibration_path)
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
+        if payload.get("schema_version") == 2:
+            if payload.get("status") != "ok":
+                raise ValueError(f"校准状态不是 ok:{payload.get('status')}")
+            thresholds = payload["thresholds"]
+            return EvidenceCalibration(
+                top1_floor=float(thresholds["top1_floor"]),
+                effective_score_floor=float(thresholds["effective_score_floor"]),
+                min_effective_count=int(thresholds["min_effective_count"]),
+                margin_floor=float(thresholds["margin_floor"]),
+                combined_floor=(0.0 if thresholds.get("combined_diagnostic_only")
+                                else float(thresholds.get("combined_floor", 0.0))),
+                source=str(payload.get("source", "ch04_eval_set+v2")),
+            )
         allowed = {"top1_floor", "effective_score_floor", "min_effective_count",
                    "margin_floor", "combined_floor", "source"}
         return EvidenceCalibration(**{key: value for key, value in payload.items() if key in allowed})
-    except (FileNotFoundError, OSError, ValueError, TypeError) as exc:
-        logger.info("证据置信度校准产物不可用,使用配置基线:%s", exc)
-        return EvidenceCalibration(top1_floor=settings.rerank_score_floor,
-                                   effective_score_floor=settings.rerank_score_floor)
+    except (FileNotFoundError, OSError, ValueError, TypeError, KeyError) as exc:
+        logger.warning("证据置信度校准产物不可用,使用保守基线:%s", exc)
+        return EvidenceCalibration(
+            top1_floor=settings.rerank_score_floor,
+            effective_score_floor=settings.rerank_score_floor,
+            min_effective_count=1,
+            margin_floor=0.0,
+            combined_floor=0.15,
+            source="fallback",
+        )
 
 
 def _sink_adapter(sink) -> object:
@@ -170,6 +189,7 @@ def initial_state(session_id: int, user_message: str, resume=None,
 def make_retrieval_chain(session_factory, settings):
     """生产路径检索链(与 build_tools 生产分支同构):真 embedder/向量库/rewriter/reranker。"""
     from app.embedding import make_embedder
+    from app.evidence import make_evidence_judge
     from app.kb import KnowledgeBaseStore
     from app.rerank import make_reranker
     from app.retrieval import RetrievalService
@@ -187,5 +207,8 @@ def make_retrieval_chain(session_factory, settings):
         final_top_k=settings.rerank_top_k,
         rerank_score_floor=settings.rerank_score_floor,
         evidence_calibration=_load_evidence_calibration(settings),
+        evidence_judge=(make_evidence_judge(settings)
+                        if settings.evidence_entailment_enabled else None),
+        evidence_top_n=settings.evidence_entailment_top_n,
     )
     return service, kb

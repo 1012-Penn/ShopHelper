@@ -1,0 +1,268 @@
+facts:
+- fact_id: POLICY-RETURN-WINDOW-V1
+  entity_type: policy
+  entity_id: v1_returns
+  key: return_window_days
+  value: 7
+  unit: 天
+  effective_from: 2024-01-01
+  effective_to: 2026-05-31
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-V1-WINDOW
+  notes: 签收日期早于 2026-06-01 的订单适用。
+- fact_id: POLICY-V1-APPLIES-WHEN
+  entity_type: policy
+  entity_id: v1_returns
+  key: applies_when
+  value: 签收日期早于 2026-06-01
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-V1-WINDOW
+- fact_id: POLICY-RETURN-WINDOW-V2
+  entity_type: policy
+  entity_id: v2_returns
+  key: return_window_days
+  value: 15
+  unit: 天
+  effective_from: 2026-06-01
+  supersedes:
+  - POLICY-RETURN-WINDOW-V1
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-V2-WINDOW
+  notes: 签收日期为 2026-06-01 或之后的订单适用。
+- fact_id: POLICY-V2-APPLIES-WHEN
+  entity_type: policy
+  entity_id: v2_returns
+  key: applies_when
+  value: 签收日期为 2026-06-01 或之后
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-V2-WINDOW
+- fact_id: POLICY-V2-UNCHANGED-CLAUSES
+  entity_type: policy
+  entity_id: v2_returns
+  key: unchanged_clauses
+  value:
+  - 退款时效
+  - 运费
+  - 不予退货情形
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-V2-WINDOW
+- fact_id: POLICY-V2-SUPERSEDES-V1
+  entity_type: policy
+  entity_id: versioning
+  key: supersedes_v1
+  value: true
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-SUPERSEDES
+- fact_id: POLICY-NO-RETROACTIVE-EXTENSION
+  entity_type: policy
+  entity_id: versioning
+  key: retroactive_extension
+  value: false
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-SUPERSEDES
+- fact_id: POLICY-VERSION-DECISION-BASIS
+  entity_type: policy
+  entity_id: versioning
+  key: decision_basis
+  value: 签收时间
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-DECISION
+- fact_id: POLICY-MISSING-SIGN-TIME-ACTION
+  entity_type: policy
+  entity_id: versioning
+  key: missing_sign_time_action
+  value: 转人工复核
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-DECISION
+- fact_id: POLICY-NO-MIX-VERSIONS
+  entity_type: policy
+  entity_id: versioning
+  key: cross_version_mixing_allowed
+  value: false
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-CONFLICT
+- fact_id: POLICY-CONFLICT-FAVOR-USER
+  entity_type: policy
+  entity_id: versioning
+  key: conflict_resolution
+  value: 对用户更友好的口径
+  source_ref: SRC-POLICY-VERSIONS
+  evidence_ids:
+  - EV-POLICY-CONFLICT
+- fact_id: POLICY-RETURN-CONDITION
+  entity_type: policy
+  entity_id: returns
+  key: return_condition
+  value: 商品必须保持完好,吊牌、包装齐全,不影响二次销售
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-RETURN-CONDITION
+- fact_id: POLICY-REFUND-WORKDAYS
+  entity_type: policy
+  entity_id: refund
+  key: arrival_workdays
+  value: 1-3
+  unit: 工作日
+  conditions:
+  - 微信/支付宝
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-REFUND
+- fact_id: POLICY-REFUND-BANK-MAX-WORKDAYS
+  entity_type: policy
+  entity_id: refund
+  key: bank_max_workdays
+  value: 7
+  unit: 工作日
+  conditions:
+  - 银联卡/银行卡
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-REFUND
+- fact_id: POLICY-NON-RETURNABLE-CATEGORIES
+  entity_type: policy
+  entity_id: returns
+  key: non_returnable_categories
+  value:
+  - 定制类商品
+  - 贴身衣物
+  - 已激活的虚拟商品
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-NON-RETURNABLE
+- fact_id: POLICY-CUSTOM-QUALITY-EXCEPTION
+  entity_type: policy
+  entity_id: custom
+  key: returnable_condition
+  value: 仅在有质量问题时可退
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-NON-RETURNABLE
+- fact_id: POLICY-INTIMATE-OPENED-NONRETURNABLE
+  entity_type: policy
+  entity_id: intimate
+  key: opened_returnable
+  value: false
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-NON-RETURNABLE
+- fact_id: POLICY-FRESH-SAME-DAY-QUALITY-ONLY
+  entity_type: policy
+  entity_id: fresh
+  key: returnable_condition
+  value: 仅限签收当日发起的质量问题的退货
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-NON-RETURNABLE
+- fact_id: POLICY-VIRTUAL-ACTIVATED-NONREFUNDABLE
+  entity_type: policy
+  entity_id: virtual
+  key: activated_refundable
+  value: false
+  source_ref: SRC-MANUAL
+  evidence_ids:
+  - EV-POLICY-VIRTUAL
+- fact_id: POLICY-EXCHANGE-WINDOW-DAYS
+  entity_type: policy
+  entity_id: exchange
+  key: window_days
+  value: 7
+  unit: 天
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-EXCHANGE
+- fact_id: POLICY-EXCHANGE-AFTER-WINDOW
+  entity_type: policy
+  entity_id: exchange
+  key: after_window_action
+  value: 走保修维修
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-EXCHANGE
+- fact_id: POLICY-EXCHANGE-EXCLUSIONS
+  entity_type: policy
+  entity_id: exchange
+  key: exclusions
+  value:
+  - 定制类
+  - 贴身衣物
+  - 已激活虚拟商品
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-EXCHANGE
+- fact_id: POLICY-SHIPPING-ORDINARY-FEE
+  entity_type: policy
+  entity_id: shipping
+  key: ordinary_fee
+  value: 8
+  unit: 元
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-SHIPPING
+- fact_id: POLICY-SHIPPING-QUALITY-PAYER
+  entity_type: policy
+  entity_id: shipping
+  key: quality_return_payer
+  value: 商家
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-SHIPPING
+- fact_id: POLICY-SHIPPING-NONQUALITY-PAYER
+  entity_type: policy
+  entity_id: shipping
+  key: non_quality_return_payer
+  value: 买家
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-SHIPPING
+- fact_id: POLICY-SHIPPING-REMOTE-SURCHARGE
+  entity_type: policy
+  entity_id: shipping
+  key: remote_surcharge
+  value: 5
+  unit: 元
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-SHIPPING
+- fact_id: POLICY-CANCEL-UNSHIPPED-ALLOWED
+  entity_type: policy
+  entity_id: cancellation
+  key: unshipped_cancel_allowed
+  value: true
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-CANCEL
+- fact_id: POLICY-CANCEL-SHIPPED-ALLOWED
+  entity_type: policy
+  entity_id: cancellation
+  key: shipped_direct_cancel_allowed
+  value: false
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-CANCEL
+- fact_id: POLICY-REJECT-NO-REASON-PAYER
+  entity_type: policy
+  entity_id: rejection
+  key: no_reason_payer
+  value: 买家
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-REJECT
+- fact_id: POLICY-REJECT-RESPONSIBLE-PAYER
+  entity_type: policy
+  entity_id: rejection
+  key: responsible_party_payer
+  value: 责任方
+  source_ref: SRC-POLICY-RETURNS
+  evidence_ids:
+  - EV-POLICY-REJECT

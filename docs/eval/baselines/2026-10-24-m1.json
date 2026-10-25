@@ -1,0 +1,369 @@
+{
+  "date": "2026-10-25",
+  "chapter": "ch11",
+  "corpus": {
+    "docs": 8,
+    "chunks": 130,
+    "facts": 242,
+    "evidence_units": 99,
+    "corpus_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+    "facts_sha256": "07ffaa92aad72336443a31b3f7dd26ca381eef8b23a0f86e8f3f0efa44fcbb24"
+  },
+  "index": {
+    "backend": "milvus-lite",
+    "build_id": "ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba",
+    "embedding_model": "BAAI/bge-m3",
+    "dim": 1024
+  },
+  "model": "deepseek-flash",
+  "temperature": 0.0,
+  "calibration_status": "stale",
+  "pricing": {
+    "version": "2026-10-25",
+    "verified": true,
+    "ledger_total_usd": 0.4644,
+    "limit_usd": 10.0
+  },
+  "splits": {
+    "frozen-v1": {
+      "dataset_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
+      "label_version": "v2",
+      "contract_sha256": "6e52364379b3eb94af156d9ecbdb41c46338e8638c70f117bceed542274e997c",
+      "n": 90,
+      "rewrite_mode": "frozen",
+      "summary": {
+        "n": 90,
+        "l1": {
+          "n": 65,
+          "r3": {
+            "hits": 40,
+            "n": 65,
+            "rate": 0.6153846153846154
+          },
+          "r5": {
+            "hits": 49,
+            "n": 65,
+            "rate": 0.7538461538461538
+          },
+          "r10": {
+            "hits": 59,
+            "n": 65,
+            "rate": 0.9076923076923077
+          },
+          "mrr": 0.5115567765567764,
+          "group_recall": 0.9538461538461539,
+          "single1": 0.35384615384615387,
+          "single3": 0.49230769230769234,
+          "evidence_precision": 0.13846153846153836,
+          "hard_negative_hit_rate": 1.0,
+          "by_bucket": {
+            "entity_mismatch": {
+              "n": 9,
+              "r3": 0.8888888888888888,
+              "r5": 1.0,
+              "r10": 1.0,
+              "mrr": 0.7074074074074074,
+              "group_recall": 1.0,
+              "single1": 0.5555555555555556,
+              "single3": 0.8888888888888888,
+              "evidence_precision": 0.09999999999999999
+            },
+            "multi_constraint": {
+              "n": 14,
+              "r3": 0.6428571428571429,
+              "r5": 0.7142857142857143,
+              "r10": 0.8571428571428571,
+              "mrr": 0.39285714285714285,
+              "group_recall": 0.9285714285714286,
+              "single1": 0.14285714285714285,
+              "single3": 0.35714285714285715,
+              "evidence_precision": 0.13571428571428573
+            },
+            "multi_hop": {
+              "n": 16,
+              "r3": 0.1875,
+              "r5": 0.5,
+              "r10": 0.8125,
+              "mrr": 0.17090773809523813,
+              "group_recall": 0.90625,
+              "single1": 0.0,
+              "single3": 0.0625,
+              "evidence_precision": 0.18125000000000005
+            },
+            "policy_conflict": {
+              "n": 8,
+              "r3": 0.25,
+              "r5": 0.5,
+              "r10": 0.875,
+              "mrr": 0.20625,
+              "group_recall": 0.9375,
+              "single1": 0.0,
+              "single3": 0.0,
+              "evidence_precision": 0.18749999999999997
+            },
+            "single_hop": {
+              "n": 18,
+              "r3": 1.0,
+              "r5": 1.0,
+              "r10": 1.0,
+              "mrr": 0.9444444444444444,
+              "group_recall": 1.0,
+              "single1": 0.8888888888888888,
+              "single3": 1.0,
+              "evidence_precision": 0.10000000000000003
+            }
+          }
+        },
+        "l2": {
+          "gate_false_accept": 0,
+          "gate_false_block": 3,
+          "false_accept_ids": [],
+          "false_block_ids": [
+            "FRZ-MULTI-11",
+            "FRZ-MULTI-14",
+            "FRZ-CONSTRAINT-13"
+          ],
+          "conflict_detection_rate": 1.0,
+          "partial_handling_rate": 0.9285714285714286
+        },
+        "l3": {
+          "answer_accuracy_strict": 0.1774193548387097,
+          "strict_n": 62,
+          "answer_accuracy_partial": 0.8709677419354839,
+          "condition_coverage": 0.7361111111111112,
+          "condition_n": 36,
+          "forbidden_claim_rate": 0.0,
+          "forbidden_claim_ids": [],
+          "clarify_slot_recall": 0.75,
+          "clarify_precision": 0.55,
+          "unsupported_claim_rate": 0.5266666666666666,
+          "unsupported_claims": 79,
+          "substantive_claims": 150,
+          "failure_labels": {
+            "answer_missing_condition": 11,
+            "answer_wrong_fact": 13,
+            "citation_unsupported": 45,
+            "clarify_missing_slot": 3,
+            "clarify_over_asking": 7,
+            "over_refusal": 7,
+            "verification_overclaim": 1
+          }
+        },
+        "l4": {
+          "under_refusal_rate": 0.0,
+          "under_refusal_ids": [],
+          "over_refusal_rate": 0.1,
+          "over_refusal_ids": [
+            "FRZ-MULTI-11",
+            "FRZ-MULTI-14",
+            "FRZ-CONSTRAINT-13",
+            "FRZ-ENTITY-09",
+            "FRZ-CLARIFY-01",
+            "FRZ-CLARIFY-02",
+            "FRZ-CLARIFY-05"
+          ],
+          "correct_refusal_rate": 1.0,
+          "conditional_compliance": 0.7142857142857143,
+          "verification_compliance": 0.75,
+          "n": 86
+        },
+        "l5": {
+          "llm_calls": 0,
+          "tokens_in": 103834,
+          "tokens_out": 27055,
+          "cost_estimate": 0.063618,
+          "cost_actual": 0.0,
+          "cached_cases": 67,
+          "evidence_judge_cached": 90,
+          "latency_p50_ms": null,
+          "latency_p95_ms": null
+        },
+        "blocking": {
+          "hard_negative_false_accept": {
+            "count": 0,
+            "denominator": 10
+          },
+          "ood_false_accept": {
+            "count": 0,
+            "denominator": 6
+          },
+          "forbidden_claim": {
+            "count": 0,
+            "denominator": 57
+          },
+          "unsupported_claim": {
+            "count": 79,
+            "denominator": 150
+          },
+          "under_refusal": {
+            "count": 0,
+            "denominator": 16
+          }
+        }
+      }
+    },
+    "regression-v1": {
+      "dataset_sha256": "60a87d5653b590c44f65efffcaf283b43c134be77f69016fd4153da8466f76b6",
+      "label_version": "v2-overlay",
+      "contract_sha256": "c280ab988e02e7d0818244299834ceac96ef5a7bd917dd4c35f558f262b61c17",
+      "n": 60,
+      "rewrite_mode": "identity",
+      "summary": {
+        "n": 60,
+        "l1": {
+          "n": 47,
+          "r3": {
+            "hits": 39,
+            "n": 47,
+            "rate": 0.8297872340425532
+          },
+          "r5": {
+            "hits": 44,
+            "n": 47,
+            "rate": 0.9361702127659575
+          },
+          "r10": {
+            "hits": 44,
+            "n": 47,
+            "rate": 0.9361702127659575
+          },
+          "mrr": 0.6024822695035461,
+          "group_recall": 0.9574468085106383,
+          "single1": 0.3829787234042553,
+          "single3": 0.8085106382978723,
+          "evidence_precision": 0.09999999999999999,
+          "hard_negative_hit_rate": null,
+          "by_bucket": {
+            "A_policy": {
+              "n": 8,
+              "r3": 0.875,
+              "r5": 1.0,
+              "r10": 1.0,
+              "mrr": 0.6708333333333334,
+              "group_recall": 1.0,
+              "single1": 0.5,
+              "single3": 0.875,
+              "evidence_precision": 0.09999999999999999
+            },
+            "B_model": {
+              "n": 8,
+              "r3": 0.75,
+              "r5": 1.0,
+              "r10": 1.0,
+              "mrr": 0.38958333333333334,
+              "group_recall": 1.0,
+              "single1": 0.0,
+              "single3": 0.75,
+              "evidence_precision": 0.09999999999999999
+            },
+            "C_colloquial": {
+              "n": 8,
+              "r3": 0.75,
+              "r5": 0.875,
+              "r10": 0.875,
+              "mrr": 0.6354166666666667,
+              "group_recall": 0.875,
+              "single1": 0.5,
+              "single3": 0.75,
+              "evidence_precision": 0.0875
+            },
+            "E_multi": {
+              "n": 8,
+              "r3": 0.625,
+              "r5": 0.75,
+              "r10": 0.75,
+              "mrr": 0.3645833333333333,
+              "group_recall": 0.875,
+              "single1": 0.125,
+              "single3": 0.5,
+              "evidence_precision": 0.11249999999999999
+            },
+            "F_service": {
+              "n": 15,
+              "r3": 1.0,
+              "r5": 1.0,
+              "r10": 1.0,
+              "mrr": 0.7888888888888889,
+              "group_recall": 1.0,
+              "single1": 0.6,
+              "single3": 1.0,
+              "evidence_precision": 0.10000000000000002
+            }
+          }
+        },
+        "l2": {
+          "gate_false_accept": 0,
+          "gate_false_block": 0,
+          "false_accept_ids": [],
+          "false_block_ids": [],
+          "conflict_detection_rate": null,
+          "partial_handling_rate": 0.4
+        },
+        "l3": {
+          "answer_accuracy_strict": null,
+          "strict_n": 0,
+          "answer_accuracy_partial": null,
+          "condition_coverage": 0.4333333333333333,
+          "condition_n": 10,
+          "forbidden_claim_rate": 0.0,
+          "forbidden_claim_ids": [],
+          "clarify_slot_recall": null,
+          "clarify_precision": null,
+          "unsupported_claim_rate": 0.48514851485148514,
+          "unsupported_claims": 49,
+          "substantive_claims": 101,
+          "failure_labels": {
+            "answer_missing_condition": 8,
+            "citation_unsupported": 33,
+            "over_refusal": 1
+          }
+        },
+        "l4": {
+          "under_refusal_rate": 0.0,
+          "under_refusal_ids": [],
+          "over_refusal_rate": 0.02127659574468085,
+          "over_refusal_ids": [
+            "C04"
+          ],
+          "correct_refusal_rate": 1.0,
+          "conditional_compliance": 0.25,
+          "verification_compliance": 1.0,
+          "n": 60
+        },
+        "l5": {
+          "llm_calls": 0,
+          "tokens_in": 64880,
+          "tokens_out": 16476,
+          "cost_estimate": 0.039234000000000005,
+          "cost_actual": 0.0,
+          "cached_cases": 46,
+          "evidence_judge_cached": 60,
+          "latency_p50_ms": null,
+          "latency_p95_ms": null
+        },
+        "blocking": {
+          "hard_negative_false_accept": {
+            "count": 0,
+            "denominator": 0
+          },
+          "ood_false_accept": {
+            "count": 0,
+            "denominator": 0
+          },
+          "forbidden_claim": {
+            "count": 0,
+            "denominator": 44
+          },
+          "unsupported_claim": {
+            "count": 49,
+            "denominator": 101
+          },
+          "under_refusal": {
+            "count": 0,
+            "denominator": 13
+          }
+        }
+      }
+    }
+  }
+}

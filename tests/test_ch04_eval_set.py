@@ -1,52 +1,71 @@
-"""ch04 评估集数据验证(工作要求 1:数据类任务以标注样例验证替代 TDD)。
+"""ch04 评估集数据验证：47 题、五桶、逐字证据、可映射 chunk。
 
-四桶各 8 题;expect_doc 真实存在;每个 expect_keyword 都能在期望文档原文里找到
-(ground truth 必须真实可命中,防「评估集飘在知识库外」);切分后必有 chunk 能命中关键词。
+判定真值只看 required_evidence（AND 语义）；不再有关键词 ANY 分支。
 """
 import json
+import unicodedata
+from collections import Counter
 from pathlib import Path
 
 from app.chunking import chunk_markdown
+from scripts.corpus_manifest import doc_types
 
 ROOT = Path(__file__).resolve().parent.parent
 CASES = [json.loads(ln) for ln in
          (ROOT / "tests" / "eval" / "ch04_eval_set.jsonl").read_text(encoding="utf-8").splitlines()
          if ln.strip()]
-BUCKETS = {"A_policy", "B_model", "C_colloquial", "E_multi"}
+BUCKETS = {"A_policy": 8, "B_model": 8, "C_colloquial": 8, "E_multi": 8, "F_service": 15}
+# 文档名 → content_type 的唯一真源是 corpus/manifest.yaml
+DOC_TYPES = doc_types()
 
 
-def test_32_cases_four_buckets():
-    assert len(CASES) == 32
-    assert {c["bucket"] for c in CASES} == BUCKETS
-    for b in BUCKETS:
-        assert sum(1 for c in CASES if c["bucket"] == b) == 8
-    assert len({c["id"] for c in CASES}) == 32
+def _norm(text: str) -> str:
+    return " ".join(unicodedata.normalize("NFKC", text).split())
 
 
-def test_expect_docs_exist():
+def _doc_text(doc: str) -> str:
+    return _norm((ROOT / "knowledge" / doc).read_text(encoding="utf-8"))
+
+
+def test_47_cases_five_buckets():
+    assert len(CASES) == 47
+    assert Counter(c["bucket"] for c in CASES) == BUCKETS
+    assert len({c["id"] for c in CASES}) == 47
+    assert len({c["query"] for c in CASES}) == 47
+
+
+def test_all_answerable_and_have_evidence():
     for c in CASES:
-        docs = c["expect_doc"] if isinstance(c["expect_doc"], list) else [c["expect_doc"]]
-        for d in docs:
-            assert (ROOT / "knowledge" / d).exists(), f"{c['id']}: {d} 不存在"
+        assert c["answerable"] is True, c["id"]
+        assert c["required_evidence"], c["id"]
+        assert "expect_keywords" not in c, c["id"]
+        docs = sorted({e["doc"] for e in c["required_evidence"]})
+        assert docs == sorted(c["expect_doc"]), c["id"]
 
 
-def test_keywords_exist_in_expected_docs():
+def test_evidence_docs_and_quotes_exist_verbatim():
     for c in CASES:
-        docs = c["expect_doc"] if isinstance(c["expect_doc"], list) else [c["expect_doc"]]
-        corpus = "".join((ROOT / "knowledge" / d).read_text(encoding="utf-8") for d in docs)
-        for kw in c["expect_keywords"]:
-            assert kw in corpus, f"{c['id']}: 关键词「{kw}」不在期望文档原文里"
+        for e in c["required_evidence"]:
+            doc = e["doc"]
+            assert doc in DOC_TYPES, f"{c['id']}: {doc} 未登记"
+            text = _doc_text(doc)
+            assert e["section"] in text, f"{c['id']}: section「{e['section']}」不在 {doc}"
+            for quote in e["quotes"]:
+                assert _norm(quote) in text, f"{c['id']}: quote「{quote}」不在 {doc}"
 
 
 def test_ground_truth_reachable_by_chunker():
-    """切分后存在这样的 chunk:路径含期望文档且命中任一关键词——保证评估集可被检索命中。"""
+    """每组 evidence 必须能被某个真实 chunk 同时覆盖。"""
     for c in CASES:
-        docs = c["expect_doc"] if isinstance(c["expect_doc"], list) else [c["expect_doc"]]
-        found = False
-        for d in docs:
-            text = (ROOT / "knowledge" / d).read_text(encoding="utf-8")
-            for chunk in chunk_markdown(text, d, "faq"):
-                blob = f"{chunk.questions}\n{chunk.answer}"
-                if any(kw in blob for kw in c["expect_keywords"]):
-                    found = True
-        assert found, f"{c['id']}: 没有任何 chunk 能命中关键词"
+        for e in c["required_evidence"]:
+            doc = e["doc"]
+            chunks = chunk_markdown(
+                (ROOT / "knowledge" / doc).read_text(encoding="utf-8"),
+                doc, DOC_TYPES[doc],
+            )
+            matched = [
+                ch for ch in chunks
+                if e["section"] in ch.section_path
+                and all(_norm(q) in _norm(ch.questions + "\n" + ch.answer) for q in e["quotes"])
+            ]
+            assert matched, f"{c['id']}: 没有 chunk 能覆盖 {doc} / {e['section']} / {e['quotes']}"

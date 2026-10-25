@@ -24,7 +24,7 @@ from app.retrieval import RetrievalService
 from app.rewrite import make_rewriter
 from app.vector_store import KnowledgeVectorStore
 from scripts.eval_faithfulness import run_case
-from scripts.eval_retrieval import chunk_is_relevant, recall_mrr
+from scripts.eval_metrics import coverage_rank, resolve_gold_chunks
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -54,15 +54,17 @@ def main() -> int:
     if args.limit:
         cases = cases[:args.limit]
 
+    all_rows = {r.id: r for r in kb.get_chunks(kb.doc_chunk_ids_all())}
+    gold_by_case = {case["id"]: resolve_gold_chunks(case, all_rows) for case in cases}
     recall3 = recall5 = recall10 = mrr = 0.0
     for case in cases:
         result = service.retrieve(case["query"], strategy="hybrid_rerank")
-        rows = {r.id: r for r in kb.get_chunks([item.chunk_id for item in result.items])}
-        hits, rr = recall_mrr([(item.chunk_id, item.score) for item in result.items], rows, case)
-        recall3 += hits[3]
-        recall5 += hits[5]
-        recall10 += hits[10]
-        mrr += rr
+        ranked = [item.chunk_id for item in result.items]
+        cov = coverage_rank(ranked, gold_by_case[case["id"]], cap=10)
+        recall3 += cov is not None and cov <= 3
+        recall5 += cov is not None and cov <= 5
+        recall10 += cov is not None and cov <= 10
+        mrr += 1.0 / cov if cov is not None and cov <= 10 else 0.0
 
     chat = make_chat_model(settings)
     judge = make_extract_model(settings).with_structured_output(

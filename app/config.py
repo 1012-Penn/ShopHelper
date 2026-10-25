@@ -24,6 +24,8 @@ class Settings(BaseSettings):
     langfuse_tracing_environment: str = "development"
     langfuse_retrieval_top_k: int = 3
     evidence_calibration_path: str = "config/evidence_calibration.json"  # 校准产物入库,scripts/gen_evidence_signals.py 重新生成
+    evidence_entailment_enabled: bool = True   # v2:LLM 判断证据是否真的回答问题;失败回退分数闸
+    evidence_entailment_top_n: int = 10        # 送给判断器的证据条数(多证据题需要跨 chunk)
 
     # ch03:RAG 知识库(BGE-M3 走硅基流动 OpenAI 兼容接口;向量库 Milvus Lite 本地文件)
     embedding_api_base: str = "https://api.siliconflow.cn/v1"

@@ -1,0 +1,222 @@
+facts:
+- fact_id: PROMO-TIER-NORMAL-GROWTH
+  entity_type: promotion
+  entity_id: membership_normal
+  key: growth_threshold
+  value: 0
+  unit: 成长值
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-TIER-TABLE
+- fact_id: PROMO-TIER-SILVER-GROWTH
+  entity_type: promotion
+  entity_id: membership_silver
+  key: growth_threshold
+  value: 1000
+  unit: 成长值
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-TIER-TABLE
+- fact_id: PROMO-TIER-GOLD-GROWTH
+  entity_type: promotion
+  entity_id: membership_gold
+  key: growth_threshold
+  value: 3000
+  unit: 成长值
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-TIER-TABLE
+- fact_id: PROMO-TIER-DIAMOND-GROWTH
+  entity_type: promotion
+  entity_id: membership_diamond
+  key: growth_threshold
+  value: 8000
+  unit: 成长值
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-TIER-TABLE
+- fact_id: PROMO-MEMBER-DISCOUNT
+  entity_type: promotion
+  entity_id: membership
+  key: discount
+  value: 95 折
+  conditions:
+  - 所有会员等级
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-MEMBER-DISCOUNT
+- fact_id: PROMO-DISCOUNT-APPLICABLE-SCOPE
+  entity_type: promotion
+  entity_id: member_discount
+  key: applicable_scope
+  value: 商品目录中标记为「在售」的正价商品
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-DISCOUNT-SCOPE
+- fact_id: PROMO-DISCOUNT-CALCULATION-BASE
+  entity_type: promotion
+  entity_id: member_discount
+  key: calculation_base
+  value: 商品原价
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-DISCOUNT-SCOPE
+- fact_id: PROMO-DISCOUNT-STACKING-ORDER
+  entity_type: promotion
+  entity_id: member_discount
+  key: stacking_order
+  value: 先计算 95 折,再判断满减券门槛
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-DISCOUNT-SCOPE
+- fact_id: PROMO-DISCOUNT-EXCLUSIONS
+  entity_type: promotion
+  entity_id: member_discount
+  key: exclusions
+  value:
+  - 清仓与停产库存商品
+  - 限时秒杀商品
+  - 虚拟商品
+  - 定制类商品
+  - 运费
+  - 加急费
+  - 安装辅材费
+  - 商品页明确标注「不参与会员折扣」的活动商品
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-DISCOUNT-EXCLUSIONS
+- fact_id: PROMO-DISCOUNT-EXCLUSION-PER-LINE
+  entity_type: promotion
+  entity_id: member_discount
+  key: exclusions_per_line
+  value: true
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-DISCOUNT-EXCLUSIONS
+- fact_id: PROMO-STACKING-ALLOWED
+  entity_type: promotion
+  entity_id: stacking
+  key: allowed_combinations
+  value:
+  - 会员 95 折
+  - 店铺满减券
+  - 运费券
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-STACKING
+- fact_id: PROMO-STACKING-THRESHOLD-BASE
+  entity_type: promotion
+  entity_id: stacking
+  key: threshold_base
+  value: 95 折后的商品金额
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-STACKING
+- fact_id: PROMO-MERGE-THRESHOLD-BASE
+  entity_type: promotion
+  entity_id: merge_orders
+  key: threshold_base
+  value: 合并后的商品总额
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-STACKING
+- fact_id: PROMO-SPLIT-ORDERS-RECALCULATE
+  entity_type: promotion
+  entity_id: merge_orders
+  key: split_recalculate
+  value: true
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-STACKING
+- fact_id: PROMO-SECKILL-DISCOUNT-MUTEX
+  entity_type: promotion
+  entity_id: exclusive
+  key: seckill_with_discount_allowed
+  value: false
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-EXCLUSIVE
+- fact_id: PROMO-ITEM-COUPON-PER-ORDER
+  entity_type: promotion
+  entity_id: coupons
+  key: item_coupons_per_order
+  value: 1
+  unit: 张
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-EXCLUSIVE
+- fact_id: PROMO-FREE-SHIPPING-THRESHOLD
+  entity_type: promotion
+  entity_id: free_shipping
+  key: order_threshold
+  value: 99
+  unit: 元
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-SHIPPING
+- fact_id: PROMO-ORDINARY-SHIPPING-FEE
+  entity_type: promotion
+  entity_id: free_shipping
+  key: ordinary_fee
+  value: 8
+  unit: 元
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-SHIPPING
+- fact_id: PROMO-REMOTE-SURCHARGE
+  entity_type: promotion
+  entity_id: remote
+  key: surcharge
+  value: 5
+  unit: 元
+  conditions:
+  - 包邮基础上
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-REMOTE
+- fact_id: PROMO-REMOTE-SURCHARGE-SEPARATE
+  entity_type: promotion
+  entity_id: remote
+  key: separate_from_ordinary_fee
+  value: true
+  conditions:
+  - 未满包邮门槛
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-REMOTE
+- fact_id: PROMO-REMOTE-SURCHARGE-NOT-DISCOUNTED
+  entity_type: promotion
+  entity_id: remote
+  key: participates_in_discount
+  value: false
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-REMOTE
+- fact_id: PROMO-COUPON-ONE-USE
+  entity_type: promotion
+  entity_id: coupons
+  key: uses_per_coupon
+  value: 1
+  unit: 次
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-COUPON
+- fact_id: PROMO-ENTERPRISE-GROUP-BUY-EXCLUDED
+  entity_type: promotion
+  entity_id: coupons
+  key: enterprise_group_buy_participates
+  value: false
+  source_ref: SRC-PROMO
+  evidence_ids:
+  - EV-PROMO-COUPON
+- fact_id: PROMO-EXPEDITE-FEE
+  entity_type: promotion
+  entity_id: expedited_shipping
+  key: fee
+  value: 10
+  unit: 元
+  conditions:
+  - 部分地区
+  source_ref: SRC-FAQ
+  evidence_ids:
+  - EV-PROMO-EXPEDITE

@@ -89,6 +89,34 @@ def test_category_filter_honored(service):
     assert r.filter_fallback is False and all(it.chunk_id == 1 for it in r.items)
 
 
+class _SpyRewriter:
+    def __init__(self):
+        self.calls = 0
+
+    def rewrite(self, query):
+        from app.rewrite import QueryRewrite
+        self.calls += 1
+        return QueryRewrite(normalized="退货的规定是什么", synonyms=["退货"])
+
+
+def test_prepared_query_shared_across_strategies(service):
+    spy = _SpyRewriter()
+    service._rewriter = spy
+    prepared = service.prepare_query("东西坏了想退")
+    for strategy in ("dense", "bm25", "hybrid", "hybrid_rerank"):
+        service.retrieve("东西坏了想退", strategy=strategy, prepared=prepared)
+    assert spy.calls == 1
+
+
+def test_prepare_query_no_rewrite_is_identity(service):
+    spy = _SpyRewriter()
+    service._rewriter = spy
+    prepared = service.prepare_query("东西坏了想退", use_rewrite=False)
+    assert prepared.rewritten == "东西坏了想退"
+    assert prepared.search_text == "东西坏了想退"
+    assert spy.calls == 0
+
+
 def test_unknown_strategy_raises(service):
     with pytest.raises(ValueError):
         service.retrieve("q", strategy="magic")
@@ -120,6 +148,8 @@ def test_rerank_failure_degrades_to_rejected_diagnostic_candidates():
                            reranker=ExplodingReranker())
     r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
     assert r.items and r.low_confidence and r.reason and r.degraded
+    assert "证据闸无法判定" in r.reason
+    assert "候选仅供诊断" in r.reason
 
 
 def test_category_injection_sanitized_and_falls_back(service):
@@ -147,3 +177,62 @@ def test_degraded_flag_on_missing_reranker():
     r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
     assert r.items and r.degraded is True
     assert r.low_confidence is True and r.reason
+    assert "证据闸无法判定" in r.reason
+
+
+class _FakeJudge:
+    def __init__(self, answered, reason="judge"):
+        self.answered = answered
+        self.reason = reason
+        self.calls = []
+
+    def judge(self, query, documents):
+        from app.evidence import EvidenceVerdict
+        self.calls.append((query, list(documents)))
+        return EvidenceVerdict(answered=self.answered, reason=self.reason)
+
+
+class _ExplodingJudge:
+    def judge(self, query, documents):
+        raise RuntimeError("judge down")
+
+
+def _service_with_judge(service, judge):
+    return RetrievalService(
+        service._embedder, service._vectors, service._kb,
+        rewriter=service._rewriter, reranker=service._reranker,
+        evidence_judge=judge,
+    )
+
+
+def test_entailment_false_forces_low_confidence_even_if_score_passes(service):
+    judge = _FakeJudge(False, "只写了蓝牙,没有充电方式")
+    svc = _service_with_judge(service, judge)
+    r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
+
+    assert r.low_confidence is True and r.evidence_entailment is False
+    assert "证据未直接回答问题" in r.reason
+    assert judge.calls and judge.calls[0][0] == "SH-E300 降噪"
+    assert 1 <= len(judge.calls[0][1]) <= 3
+
+
+def test_entailment_true_overrides_low_score(service):
+    judge = _FakeJudge(True, "证据直接回答")
+    svc = _service_with_judge(service, judge)
+    r = svc.retrieve("量子力学", strategy="hybrid_rerank")
+
+    assert r.evidence_entailment is True
+    assert r.low_confidence is False
+
+
+def test_entailment_failure_falls_back_to_score_gate(service):
+    svc = _service_with_judge(service, _ExplodingJudge())
+    r = svc.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
+
+    assert r.evidence_entailment is None
+    assert r.low_confidence is False  # 该题分数闸可通过
+
+
+def test_no_judge_leaves_entailment_none(service):
+    r = service.retrieve("SH-E300 降噪", strategy="hybrid_rerank")
+    assert r.evidence_entailment is None

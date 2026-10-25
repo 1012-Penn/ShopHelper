@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "split": "frozen-v1",
+  "label_version": "v2",
+  "n": 90,
+  "file_sha256": "2f684ba273952a0147b16ae866a22058f81190b16c439d15ad029ad5cb637b44",
+  "canonical_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
+  "buckets": {
+    "single_hop": 18,
+    "multi_hop": 16,
+    "multi_constraint": 14,
+    "entity_mismatch": 10,
+    "policy_conflict": 8,
+    "hard_negative": 10,
+    "clarify": 8,
+    "ood": 6
+  },
+  "behaviors": {
+    "answer": 28,
+    "answer_with_conditions": 32,
+    "verify_then_answer": 4,
+    "clarify": 10,
+    "refuse": 16
+  },
+  "multi_turn": 6,
+  "tool_count": 4,
+  "corpus_version": "corpus-v1",
+  "corpus_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+  "facts_sha256": "07ffaa92aad72336443a31b3f7dd26ca381eef8b23a0f86e8f3f0efa44fcbb24",
+  "design_doc_sha256": "1ce0ad009ab21bd325ac95244c13248ec6436df603c17dff280bd69ea3b5290a",
+  "reviewer": "codex",
+  "frozen_at": "2026-10-24T17:15:55.302905+00:00",
+  "leakage": {
+    "blocking": 0,
+    "warning": 0,
+    "findings": []
+  }
+}

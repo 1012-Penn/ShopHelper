@@ -1,0 +1,463 @@
+facts:
+- fact_id: ORDER-ORD-1001-STATUS
+  entity_type: order
+  entity_id: ORD-1001
+  key: status
+  value: 未支付
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1001-ROW
+- fact_id: ORDER-ORD-1001-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1001
+  key: product_amount
+  value: 248
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1001-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1001-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1001
+  key: member_level
+  value: 普通会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1001-ROW
+- fact_id: ORDER-ORD-1001-REGION
+  entity_type: order
+  entity_id: ORD-1001
+  key: region
+  value: 华东-上海
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1001-ROW
+- fact_id: ORDER-ORD-1001-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1001
+  key: payment_channel
+  value: 微信支付
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1001-PAYMENT
+- fact_id: ORDER-ORD-1002-STATUS
+  entity_type: order
+  entity_id: ORD-1002
+  key: status
+  value: 已支付未发货
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1002-ROW
+- fact_id: ORDER-ORD-1002-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1002
+  key: product_amount
+  value: 328
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1002-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1002-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1002
+  key: member_level
+  value: 银卡会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1002-ROW
+- fact_id: ORDER-ORD-1002-REGION
+  entity_type: order
+  entity_id: ORD-1002
+  key: region
+  value: 华北-北京
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1002-ROW
+- fact_id: ORDER-ORD-1002-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1002
+  key: payment_channel
+  value: 支付宝
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1002-PAYMENT
+- fact_id: ORDER-ORD-1003-STATUS
+  entity_type: order
+  entity_id: ORD-1003
+  key: status
+  value: 已发货
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1003-ROW
+- fact_id: ORDER-ORD-1003-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1003
+  key: product_amount
+  value: 149
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1003-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1003-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1003
+  key: member_level
+  value: 普通会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1003-ROW
+- fact_id: ORDER-ORD-1003-REGION
+  entity_type: order
+  entity_id: ORD-1003
+  key: region
+  value: 华南-广州
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1003-ROW
+- fact_id: ORDER-ORD-1003-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1003
+  key: payment_channel
+  value: 微信支付
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1003-PAYMENT
+- fact_id: ORDER-ORD-1004-STATUS
+  entity_type: order
+  entity_id: ORD-1004
+  key: status
+  value: 已签收
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1004-ROW
+- fact_id: ORDER-ORD-1004-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1004
+  key: product_amount
+  value: 399
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1004-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1004-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1004
+  key: member_level
+  value: 金卡会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1004-ROW
+- fact_id: ORDER-ORD-1004-REGION
+  entity_type: order
+  entity_id: ORD-1004
+  key: region
+  value: 江浙沪-杭州
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1004-ROW
+- fact_id: ORDER-ORD-1004-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1004
+  key: payment_channel
+  value: 银联卡
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1004-PAYMENT
+- fact_id: ORDER-ORD-1005-STATUS
+  entity_type: order
+  entity_id: ORD-1005
+  key: status
+  value: 已取消
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1005-ROW
+- fact_id: ORDER-ORD-1005-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1005
+  key: product_amount
+  value: 99
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1005-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1005-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1005
+  key: member_level
+  value: 普通会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1005-ROW
+- fact_id: ORDER-ORD-1005-REGION
+  entity_type: order
+  entity_id: ORD-1005
+  key: region
+  value: 西南-成都
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1005-ROW
+- fact_id: ORDER-ORD-1005-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1005
+  key: payment_channel
+  value: 支付宝
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1005-PAYMENT
+- fact_id: ORDER-ORD-1006-STATUS
+  entity_type: order
+  entity_id: ORD-1006
+  key: status
+  value: 退货中
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1006-ROW
+- fact_id: ORDER-ORD-1006-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1006
+  key: product_amount
+  value: 299
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1006-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1006-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1006
+  key: member_level
+  value: 银卡会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1006-ROW
+- fact_id: ORDER-ORD-1006-REGION
+  entity_type: order
+  entity_id: ORD-1006
+  key: region
+  value: 华中-武汉
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1006-ROW
+- fact_id: ORDER-ORD-1006-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1006
+  key: payment_channel
+  value: 微信支付
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1006-PAYMENT
+- fact_id: ORDER-ORD-1007-STATUS
+  entity_type: order
+  entity_id: ORD-1007
+  key: status
+  value: 已退款
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1007-ROW
+- fact_id: ORDER-ORD-1007-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1007
+  key: product_amount
+  value: 219
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1007-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1007-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1007
+  key: member_level
+  value: 金卡会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1007-ROW
+- fact_id: ORDER-ORD-1007-REGION
+  entity_type: order
+  entity_id: ORD-1007
+  key: region
+  value: 华北-天津
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1007-ROW
+- fact_id: ORDER-ORD-1007-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1007
+  key: payment_channel
+  value: 支付宝
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1007-PAYMENT
+- fact_id: ORDER-ORD-1008-STATUS
+  entity_type: order
+  entity_id: ORD-1008
+  key: status
+  value: 已签收
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1008-ROW
+- fact_id: ORDER-ORD-1008-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1008
+  key: product_amount
+  value: 129
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1008-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1008-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1008
+  key: member_level
+  value: 普通会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1008-ROW
+- fact_id: ORDER-ORD-1008-REGION
+  entity_type: order
+  entity_id: ORD-1008
+  key: region
+  value: 西北-西安
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1008-ROW
+- fact_id: ORDER-ORD-1008-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1008
+  key: payment_channel
+  value: 微信支付
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1008-PAYMENT
+- fact_id: ORDER-ORD-1009-STATUS
+  entity_type: order
+  entity_id: ORD-1009
+  key: status
+  value: 已发货
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1009-ROW
+- fact_id: ORDER-ORD-1009-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1009
+  key: product_amount
+  value: 678
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1009-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1009-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1009
+  key: member_level
+  value: 钻石会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1009-ROW
+- fact_id: ORDER-ORD-1009-REGION
+  entity_type: order
+  entity_id: ORD-1009
+  key: region
+  value: 珠三角-深圳
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1009-ROW
+- fact_id: ORDER-ORD-1009-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1009
+  key: payment_channel
+  value: 银联卡
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1009-PAYMENT
+- fact_id: ORDER-ORD-1010-STATUS
+  entity_type: order
+  entity_id: ORD-1010
+  key: status
+  value: 已支付未发货
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1010-ROW
+- fact_id: ORDER-ORD-1010-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1010
+  key: product_amount
+  value: 189
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1010-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1010-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1010
+  key: member_level
+  value: 银卡会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1010-ROW
+- fact_id: ORDER-ORD-1010-REGION
+  entity_type: order
+  entity_id: ORD-1010
+  key: region
+  value: 东北-沈阳
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1010-ROW
+- fact_id: ORDER-ORD-1010-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1010
+  key: payment_channel
+  value: 支付宝
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1010-PAYMENT
+- fact_id: ORDER-ORD-1011-STATUS
+  entity_type: order
+  entity_id: ORD-1011
+  key: status
+  value: 已退款
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1011-ROW
+- fact_id: ORDER-ORD-1011-PRODUCT-AMOUNT
+  entity_type: order
+  entity_id: ORD-1011
+  key: product_amount
+  value: 79
+  unit: 元
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1011-ROW
+  notes: 商品金额为商品原价合计,不含折扣、优惠券与运费。
+- fact_id: ORDER-ORD-1011-MEMBER-LEVEL
+  entity_type: order
+  entity_id: ORD-1011
+  key: member_level
+  value: 普通会员
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1011-ROW
+- fact_id: ORDER-ORD-1011-REGION
+  entity_type: order
+  entity_id: ORD-1011
+  key: region
+  value: 云南-昆明
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1011-ROW
+- fact_id: ORDER-ORD-1011-PAYMENT-CHANNEL
+  entity_type: order
+  entity_id: ORD-1011
+  key: payment_channel
+  value: 微信支付
+  source_ref: SRC-ORDERS
+  evidence_ids:
+  - EV-ORDER-ORD-1011-PAYMENT

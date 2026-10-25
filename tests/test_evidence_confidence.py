@@ -1,9 +1,10 @@
 """ch09 正式证据置信度：信号、校准和落池快照。"""
+import pytest
 
 from app.retrieval import (
     EvidenceCalibration,
-    Retrieved,
     RetrievalResult,
+    Retrieved,
     calibrate_evidence_thresholds,
     evidence_confidence,
 )
@@ -59,17 +60,94 @@ def test_single_evidence_uses_top1_as_margin_and_snapshot_keeps_scores():
     }]
 
 
-def test_calibration_prefers_threshold_that_keeps_positive_recall():
+def test_evidence_calibration_rejects_min_effective_count_zero():
+    with pytest.raises(ValueError):
+        EvidenceCalibration(min_effective_count=0)
+
+
+def test_combined_floor_is_diagnostic_only():
+    confidence = evidence_confidence(
+        [Retrieved(1, 0.20)],
+        EvidenceCalibration(top1_floor=0.10, effective_score_floor=0.03,
+                            min_effective_count=1, margin_floor=0.0,
+                            combined_floor=0.0),
+    )
+    assert confidence.passed is True
+
+
+def _samples() -> list[dict]:
+    buckets = ["A_policy", "B_model", "C_colloquial", "E_multi", "F_service"]
+    samples: list[dict] = []
+    for i in range(15):
+        samples.append({
+            "id": f"P{i:02d}", "bucket": buckets[i % 5], "label": 1,
+            "evidence_retrieved": True,
+            "top1_relevance": 0.80 + (i % 5) * 0.03,
+            "top1_top2_margin": 0.20 + (i % 4) * 0.05,
+            "effective_count": 1 + (i % 2),
+        })
+    for i in range(5):
+        samples.append({
+            "id": f"H{i:02d}", "bucket": "H_hard_negative", "label": 0,
+            "evidence_retrieved": False,
+            "top1_relevance": 0.10 + i * 0.05,
+            "top1_top2_margin": i * 0.01,
+            "effective_count": i % 2,
+        })
+    for i in range(5):
+        samples.append({
+            "id": f"J{i:02d}", "bucket": "junk", "label": 0,
+            "evidence_retrieved": False,
+            "top1_relevance": i * 0.01,
+            "top1_top2_margin": 0.0,
+            "effective_count": 0,
+        })
+    return samples
+
+
+def test_calibration_zero_hard_false_and_full_positive_recall():
+    calibration, selection, holdout, split = calibrate_evidence_thresholds(_samples())
+
+    assert selection["status"] == "ok"
+    assert selection["hard_negative_false_accept_ids"] == []
+    assert selection["positive_recall"] == 1.0
+    assert selection["top1_floor"] >= 0.5
+    assert calibration.min_effective_count >= 1
+    assert calibration.combined_floor == 0.0
+    assert holdout["status"] == "ok"
+    assert holdout["hard_negative_false_accept_ids"] == []
+    assert set(split["calibration_ids"]).isdisjoint(split["holdout_ids"])
+    assert split["calibration_ids"] and split["holdout_ids"]
+
+
+def test_calibration_excludes_retrieval_miss_from_fitting():
     samples = [
-        {"top1_relevance": 0.90, "effective_count": 2, "top1_top2_margin": 0.40, "relevant": True},
-        {"top1_relevance": 0.70, "effective_count": 1, "top1_top2_margin": 0.20, "relevant": True},
-        {"top1_relevance": 0.12, "effective_count": 1, "top1_top2_margin": 0.01, "relevant": False},
-        {"top1_relevance": 0.35, "effective_count": 1, "top1_top2_margin": 0.02, "relevant": False},
+        {"id": "P1", "bucket": "A_policy", "label": 1, "evidence_retrieved": True,
+         "top1_relevance": 0.90, "top1_top2_margin": 0.40, "effective_count": 2},
+        {"id": "P2", "bucket": "A_policy", "label": 1, "evidence_retrieved": False,
+         "top1_relevance": 0.00, "top1_top2_margin": 0.00, "effective_count": 0},
+        {"id": "H1", "bucket": "H_hard_negative", "label": 0, "evidence_retrieved": False,
+         "top1_relevance": 0.20, "top1_top2_margin": 0.01, "effective_count": 0},
     ]
+    _, selection, _, _ = calibrate_evidence_thresholds(samples, holdout_ratio=0.0)
 
-    calibration = calibrate_evidence_thresholds(samples, min_recall=1.0)
+    assert selection["retrieval_miss_ids"] == ["P2"]
+    assert selection["positives"] == 1
+    assert selection["positive_recall"] == 1.0
+    assert selection["status"] == "ok"
 
-    assert calibration.top1_floor == 0.70
-    # combined_floor 按同一条合成公式对正样本取下界:min(0.84, 0.57) → 全部正样本放行
-    assert calibration.combined_floor == 0.57
-    assert calibration.source == "ch04_eval_set"
+
+def test_calibration_marks_infeasible_when_hard_negatives_overlap():
+    samples = [
+        {"id": f"P{i}", "bucket": "A_policy", "label": 1, "evidence_retrieved": True,
+         "top1_relevance": 0.10, "top1_top2_margin": 0.0, "effective_count": 1}
+        for i in range(10)
+    ] + [
+        {"id": f"H{i}", "bucket": "H_hard_negative", "label": 0, "evidence_retrieved": False,
+         "top1_relevance": 0.90, "top1_top2_margin": 0.50, "effective_count": 3}
+        for i in range(10)
+    ]
+    _, selection, holdout, _ = calibrate_evidence_thresholds(samples)
+
+    assert selection["status"] == "infeasible"
+    assert holdout["status"] == "infeasible"

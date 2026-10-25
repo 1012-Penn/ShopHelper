@@ -1,0 +1,34 @@
+# ch11 语料 manifest:knowledge/*.md 的注册表与规模契约。
+# content_type 直接传给 app.chunking.chunk_markdown;未登记文档会让 build_kb 报错。
+# 当前登记 8 份文档,默认切分规模为 120–180 chunk(dry-run 校验)。
+corpus_version: corpus-v1
+expected_docs: 8
+expected_chunks_min: 120
+expected_chunks_max: 180
+expected_facts_min: 150
+expected_facts_max: 250
+docs:
+  - file: 退货政策.md
+    content_type: policy
+    role: policy
+  - file: 商品FAQ.md
+    content_type: faq
+    role: faq
+  - file: 售后手册.md
+    content_type: manual
+    role: manual
+  - file: 商品目录.md
+    content_type: manual
+    role: catalog
+  - file: 订单与支付.md
+    content_type: manual
+    role: orders
+  - file: 会员与优惠.md
+    content_type: policy
+    role: promotion
+  - file: 政策版本说明.md
+    content_type: policy
+    role: policy
+  - file: 售后核验指引.md
+    content_type: manual
+    role: manual

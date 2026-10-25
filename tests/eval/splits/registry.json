@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "splits": {
+    "dev": {
+      "kind": "file",
+      "n": 60,
+      "label_version": "v2",
+      "path": "tests/eval/splits/dev.jsonl",
+      "overlay": null,
+      "bucket_counts": {
+        "single_hop": 12,
+        "multi_hop": 11,
+        "multi_constraint": 9,
+        "entity_mismatch": 7,
+        "policy_conflict": 5,
+        "hard_negative": 7,
+        "clarify": 5,
+        "ood": 4
+      }
+    },
+    "frozen-v1": {
+      "kind": "file",
+      "n": 90,
+      "label_version": "v2",
+      "path": "tests/eval/splits/frozen-v1.jsonl",
+      "overlay": null,
+      "bucket_counts": {
+        "single_hop": 18,
+        "multi_hop": 16,
+        "multi_constraint": 14,
+        "entity_mismatch": 10,
+        "policy_conflict": 8,
+        "hard_negative": 10,
+        "clarify": 8,
+        "ood": 6
+      }
+    },
+    "regression-v1": {
+      "kind": "composed",
+      "n": 60,
+      "label_version": "v2-overlay",
+      "cases": [
+        {
+          "path": "tests/eval/ch04_eval_set.jsonl",
+          "overlay": "tests/eval/overlays/regression-v1.labels.json"
+        },
+        {
+          "path": "tests/eval/ch09_junk_set.jsonl",
+          "overlay": null
+        }
+      ]
+    }
+  }
+}

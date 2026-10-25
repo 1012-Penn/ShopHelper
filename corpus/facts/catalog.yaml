@@ -1,0 +1,871 @@
+facts:
+- fact_id: CATALOG-SH-E300-PRICE
+  entity_type: sku
+  entity_id: SH-E300
+  key: price
+  value: 299
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-E300-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-E300
+  key: product_type
+  value: 头戴式无线降噪耳机
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-ENTRY
+- fact_id: CATALOG-SH-E300-ANC
+  entity_type: sku
+  entity_id: SH-E300
+  key: anc
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-ENTRY
+- fact_id: CATALOG-SH-E300-BLUETOOTH-VERSION
+  entity_type: sku
+  entity_id: SH-E300
+  key: bluetooth_version
+  value: '5.3'
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-ENTRY
+- fact_id: CATALOG-SH-E300-BATTERY-HOURS
+  entity_type: sku
+  entity_id: SH-E300
+  key: battery_hours
+  value: 30
+  unit: 小时
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-ENTRY
+- fact_id: CATALOG-SH-E300-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-E300
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-ENTRY
+- fact_id: CATALOG-SH-E300-STATUS
+  entity_type: sku
+  entity_id: SH-E300
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E300-STATUS
+- fact_id: CATALOG-SH-E120-PRICE
+  entity_type: sku
+  entity_id: SH-E120
+  key: price
+  value: 99
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-E120-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-E120
+  key: product_type
+  value: 半入耳无线耳机
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-ENTRY
+- fact_id: CATALOG-SH-E120-ANC
+  entity_type: sku
+  entity_id: SH-E120
+  key: anc
+  value: false
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-ENTRY
+- fact_id: CATALOG-SH-E120-BLUETOOTH-VERSION
+  entity_type: sku
+  entity_id: SH-E120
+  key: bluetooth_version
+  value: '5.0'
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-ENTRY
+- fact_id: CATALOG-SH-E120-BATTERY-HOURS
+  entity_type: sku
+  entity_id: SH-E120
+  key: battery_hours
+  value: 24
+  unit: 小时
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-ENTRY
+- fact_id: CATALOG-SH-E120-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-E120
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-ENTRY
+- fact_id: CATALOG-SH-E120-STATUS
+  entity_type: sku
+  entity_id: SH-E120
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E120-STATUS
+- fact_id: CATALOG-SH-E200-PRICE
+  entity_type: sku
+  entity_id: SH-E200
+  key: price
+  value: 159
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-E200-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-E200
+  key: product_type
+  value: 入耳式无线耳机
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-ENTRY
+- fact_id: CATALOG-SH-E200-ANC
+  entity_type: sku
+  entity_id: SH-E200
+  key: anc
+  value: false
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-ENTRY
+- fact_id: CATALOG-SH-E200-BLUETOOTH-VERSION
+  entity_type: sku
+  entity_id: SH-E200
+  key: bluetooth_version
+  value: '5.2'
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-ENTRY
+- fact_id: CATALOG-SH-E200-BATTERY-HOURS
+  entity_type: sku
+  entity_id: SH-E200
+  key: battery_hours
+  value: 18
+  unit: 小时
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-ENTRY
+- fact_id: CATALOG-SH-E200-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-E200
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-ENTRY
+- fact_id: CATALOG-SH-E200-STATUS
+  entity_type: sku
+  entity_id: SH-E200
+  key: status
+  value: 停产
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-E200-STATUS
+- fact_id: CATALOG-SH-K870-PRICE
+  entity_type: sku
+  entity_id: SH-K870
+  key: price
+  value: 199
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-K870-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-K870
+  key: product_type
+  value: 机械键盘
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-ENTRY
+- fact_id: CATALOG-SH-K870-KEY-COUNT
+  entity_type: sku
+  entity_id: SH-K870
+  key: key_count
+  value: 87
+  unit: 键
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-ENTRY
+- fact_id: CATALOG-SH-K870-SWITCH-TYPE
+  entity_type: sku
+  entity_id: SH-K870
+  key: switch_type
+  value: 青轴
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-ENTRY
+- fact_id: CATALOG-SH-K870-BACKLIGHT
+  entity_type: sku
+  entity_id: SH-K870
+  key: backlight
+  value: 白光背光
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-ENTRY
+- fact_id: CATALOG-SH-K870-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-K870
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-ENTRY
+- fact_id: CATALOG-SH-K870-STATUS
+  entity_type: sku
+  entity_id: SH-K870
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K870-STATUS
+- fact_id: CATALOG-SH-K104-PRICE
+  entity_type: sku
+  entity_id: SH-K104
+  key: price
+  value: 219
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-K104-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-K104
+  key: product_type
+  value: 机械键盘
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-ENTRY
+- fact_id: CATALOG-SH-K104-KEY-COUNT
+  entity_type: sku
+  entity_id: SH-K104
+  key: key_count
+  value: 104
+  unit: 键
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-ENTRY
+- fact_id: CATALOG-SH-K104-SWITCH-TYPE
+  entity_type: sku
+  entity_id: SH-K104
+  key: switch_type
+  value: 红轴
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-ENTRY
+- fact_id: CATALOG-SH-K104-BACKLIGHT
+  entity_type: sku
+  entity_id: SH-K104
+  key: backlight
+  value: RGB 背光
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-ENTRY
+- fact_id: CATALOG-SH-K104-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-K104
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-ENTRY
+- fact_id: CATALOG-SH-K104-STATUS
+  entity_type: sku
+  entity_id: SH-K104
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K104-STATUS
+- fact_id: CATALOG-SH-K68-PRICE
+  entity_type: sku
+  entity_id: SH-K68
+  key: price
+  value: 149
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-K68-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-K68
+  key: product_type
+  value: 机械键盘
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-ENTRY
+- fact_id: CATALOG-SH-K68-KEY-COUNT
+  entity_type: sku
+  entity_id: SH-K68
+  key: key_count
+  value: 68
+  unit: 键
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-ENTRY
+- fact_id: CATALOG-SH-K68-SWITCH-TYPE
+  entity_type: sku
+  entity_id: SH-K68
+  key: switch_type
+  value: 红轴
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-ENTRY
+- fact_id: CATALOG-SH-K68-BACKLIGHT
+  entity_type: sku
+  entity_id: SH-K68
+  key: backlight
+  value: 白光背光
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-ENTRY
+- fact_id: CATALOG-SH-K68-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-K68
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-ENTRY
+- fact_id: CATALOG-SH-K68-STATUS
+  entity_type: sku
+  entity_id: SH-K68
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-K68-STATUS
+- fact_id: CATALOG-SH-B5-PRICE
+  entity_type: sku
+  entity_id: SH-B5
+  key: price
+  value: 129
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-B5-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-B5
+  key: product_type
+  value: 智能手环
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-ENTRY
+- fact_id: CATALOG-SH-B5-BATTERY-DAYS
+  entity_type: sku
+  entity_id: SH-B5
+  key: battery_days
+  value: 14
+  unit: 天
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-ENTRY
+- fact_id: CATALOG-SH-B5-WATERPROOF
+  entity_type: sku
+  entity_id: SH-B5
+  key: waterproof
+  value: 50 米
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-ENTRY
+- fact_id: CATALOG-SH-B5-HEART-RATE-MONITORING
+  entity_type: sku
+  entity_id: SH-B5
+  key: heart_rate_monitoring
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-ENTRY
+- fact_id: CATALOG-SH-B5-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-B5
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-ENTRY
+- fact_id: CATALOG-SH-B5-STATUS
+  entity_type: sku
+  entity_id: SH-B5
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B5-STATUS
+- fact_id: CATALOG-SH-B7-PRICE
+  entity_type: sku
+  entity_id: SH-B7
+  key: price
+  value: 179
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-B7-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-B7
+  key: product_type
+  value: 智能手环
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-ENTRY
+- fact_id: CATALOG-SH-B7-BATTERY-DAYS
+  entity_type: sku
+  entity_id: SH-B7
+  key: battery_days
+  value: 14
+  unit: 天
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-ENTRY
+- fact_id: CATALOG-SH-B7-AMOLED-SCREEN
+  entity_type: sku
+  entity_id: SH-B7
+  key: amoled_screen
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-ENTRY
+- fact_id: CATALOG-SH-B7-BLOOD-OXYGEN-MONITORING
+  entity_type: sku
+  entity_id: SH-B7
+  key: blood_oxygen_monitoring
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-ENTRY
+- fact_id: CATALOG-SH-B7-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-B7
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-ENTRY
+- fact_id: CATALOG-SH-B7-STATUS
+  entity_type: sku
+  entity_id: SH-B7
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-B7-STATUS
+- fact_id: CATALOG-SH-W20-PRICE
+  entity_type: sku
+  entity_id: SH-W20
+  key: price
+  value: 399
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-W20-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-W20
+  key: product_type
+  value: 智能手表
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-ENTRY
+- fact_id: CATALOG-SH-W20-BATTERY-DAYS
+  entity_type: sku
+  entity_id: SH-W20
+  key: battery_days
+  value: 7
+  unit: 天
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-ENTRY
+- fact_id: CATALOG-SH-W20-GPS
+  entity_type: sku
+  entity_id: SH-W20
+  key: gps
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-ENTRY
+- fact_id: CATALOG-SH-W20-NFC
+  entity_type: sku
+  entity_id: SH-W20
+  key: nfc
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-ENTRY
+- fact_id: CATALOG-SH-W20-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-W20
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-ENTRY
+- fact_id: CATALOG-SH-W20-STATUS
+  entity_type: sku
+  entity_id: SH-W20
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W20-STATUS
+- fact_id: CATALOG-SH-W30-PRICE
+  entity_type: sku
+  entity_id: SH-W30
+  key: price
+  value: 599
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-W30-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-W30
+  key: product_type
+  value: 智能手表
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-ENTRY
+- fact_id: CATALOG-SH-W30-BATTERY-DAYS
+  entity_type: sku
+  entity_id: SH-W30
+  key: battery_days
+  value: 5
+  unit: 天
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-ENTRY
+- fact_id: CATALOG-SH-W30-GPS
+  entity_type: sku
+  entity_id: SH-W30
+  key: gps
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-ENTRY
+- fact_id: CATALOG-SH-W30-STANDALONE-CALL
+  entity_type: sku
+  entity_id: SH-W30
+  key: standalone_call
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-ENTRY
+- fact_id: CATALOG-SH-W30-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-W30
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-ENTRY
+- fact_id: CATALOG-SH-W30-STATUS
+  entity_type: sku
+  entity_id: SH-W30
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-W30-STATUS
+- fact_id: CATALOG-SH-M10-PRICE
+  entity_type: sku
+  entity_id: SH-M10
+  key: price
+  value: 69
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-M10-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-M10-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-M10
+  key: product_type
+  value: 无线鼠标
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-M10-ENTRY
+- fact_id: CATALOG-SH-M10-CONNECTION
+  entity_type: sku
+  entity_id: SH-M10
+  key: connection
+  value: 2.4G
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-M10-ENTRY
+- fact_id: CATALOG-SH-M10-SILENT-BUTTONS
+  entity_type: sku
+  entity_id: SH-M10
+  key: silent_buttons
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-M10-ENTRY
+- fact_id: CATALOG-SH-M10-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-M10
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-M10-ENTRY
+- fact_id: CATALOG-SH-M10-STATUS
+  entity_type: sku
+  entity_id: SH-M10
+  key: status
+  value: 清仓
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-M10-STATUS
+- fact_id: CATALOG-SH-P30-PRICE
+  entity_type: sku
+  entity_id: SH-P30
+  key: price
+  value: 109
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-P30-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-P30-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-P30
+  key: product_type
+  value: 移动电源
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-P30-ENTRY
+- fact_id: CATALOG-SH-P30-CAPACITY-MAH
+  entity_type: sku
+  entity_id: SH-P30
+  key: capacity_mah
+  value: 20000
+  unit: mAh
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-P30-ENTRY
+- fact_id: CATALOG-SH-P30-FAST-CHARGE
+  entity_type: sku
+  entity_id: SH-P30
+  key: fast_charge
+  value: 双向快充
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-P30-ENTRY
+- fact_id: CATALOG-SH-P30-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-P30
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-P30-ENTRY
+- fact_id: CATALOG-SH-P30-STATUS
+  entity_type: sku
+  entity_id: SH-P30
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-P30-STATUS
+- fact_id: CATALOG-SH-C60-PRICE
+  entity_type: sku
+  entity_id: SH-C60
+  key: price
+  value: 29
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-C60-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-C60
+  key: product_type
+  value: 编织数据线
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-ENTRY
+- fact_id: CATALOG-SH-C60-INTERFACE
+  entity_type: sku
+  entity_id: SH-C60
+  key: interface
+  value: Type-C
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-ENTRY
+- fact_id: CATALOG-SH-C60-LENGTH-M
+  entity_type: sku
+  entity_id: SH-C60
+  key: length_m
+  value: 1.5
+  unit: 米
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-ENTRY
+- fact_id: CATALOG-SH-C60-MATERIAL
+  entity_type: sku
+  entity_id: SH-C60
+  key: material
+  value: 编织
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-ENTRY
+- fact_id: CATALOG-SH-C60-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-C60
+  key: warranty_months
+  value: 6
+  unit: 月
+  conditions:
+  - 配件类,例外以商品目录为准
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-ENTRY
+- fact_id: CATALOG-SH-C60-STATUS
+  entity_type: sku
+  entity_id: SH-C60
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-C60-STATUS
+- fact_id: CATALOG-SH-S10-PRICE
+  entity_type: sku
+  entity_id: SH-S10
+  key: price
+  value: 189
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-S10-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-S10-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-S10
+  key: product_type
+  value: 蓝牙音箱
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-S10-ENTRY
+- fact_id: CATALOG-SH-S10-WATERPROOF
+  entity_type: sku
+  entity_id: SH-S10
+  key: waterproof
+  value: IPX7
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-S10-ENTRY
+- fact_id: CATALOG-SH-S10-BATTERY-HOURS
+  entity_type: sku
+  entity_id: SH-S10
+  key: battery_hours
+  value: 12
+  unit: 小时
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-S10-ENTRY
+- fact_id: CATALOG-SH-S10-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-S10
+  key: warranty_months
+  value: 12
+  unit: 月
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-S10-ENTRY
+- fact_id: CATALOG-SH-S10-STATUS
+  entity_type: sku
+  entity_id: SH-S10
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-S10-STATUS
+- fact_id: CATALOG-SH-T50-PRICE
+  entity_type: sku
+  entity_id: SH-T50
+  key: price
+  value: 79
+  unit: 元
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-T50-ENTRY
+  notes: 售价为商品原价,不含会员折扣、优惠券与运费。
+- fact_id: CATALOG-SH-T50-PRODUCT-TYPE
+  entity_type: sku
+  entity_id: SH-T50
+  key: product_type
+  value: 桌面支架
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-T50-ENTRY
+- fact_id: CATALOG-SH-T50-MATERIAL
+  entity_type: sku
+  entity_id: SH-T50
+  key: material
+  value: 铝合金
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-T50-ENTRY
+- fact_id: CATALOG-SH-T50-ADJUSTABLE-ANGLE
+  entity_type: sku
+  entity_id: SH-T50
+  key: adjustable_angle
+  value: true
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-T50-ENTRY
+- fact_id: CATALOG-SH-T50-WARRANTY-MONTHS
+  entity_type: sku
+  entity_id: SH-T50
+  key: warranty_months
+  value: 6
+  unit: 月
+  conditions:
+  - 配件类,例外以商品目录为准
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-T50-ENTRY
+- fact_id: CATALOG-SH-T50-STATUS
+  entity_type: sku
+  entity_id: SH-T50
+  key: status
+  value: 在售
+  source_ref: SRC-CATALOG
+  evidence_ids:
+  - EV-CATALOG-SH-T50-STATUS

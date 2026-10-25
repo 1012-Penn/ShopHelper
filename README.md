@@ -218,6 +218,40 @@ ACCEPT_EVAL_LIMIT=8 .venv/bin/python scripts/acceptance_ch09.py --scenario eval 
 
 ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。ch04 评估脚本继续可用(注意 ch05 图内检索与 query_faq 工具同链)。
 
+## ch11 · 评测与语料基线
+
+```bash
+# 1. 校验语料/数据集/泄漏（无需模型）
+.venv/bin/python -m scripts.corpus_lint --check
+.venv/bin/python -m scripts.validate_eval_data --split all --check-evidence --check-facts --check-buckets
+.venv/bin/python -m scripts.leakage_scan --split all
+
+# 2. 离线 harness（不构造 Settings/DB/模型）
+.venv/bin/python -m scripts.eval_ch11 --mode offline --split dev,frozen-v1,regression-v1
+
+# 3. 真机建库 + 停写快照
+.venv/bin/python -m scripts.build_kb --manifest-out data/build_manifest.json
+# 停 uvicorn/其他写进程后：
+.venv/bin/python -m scripts.eval_snapshot --copy \
+  --source data/milvus_knowledge.db --out data/eval-snapshots/<build_id>.db \
+  --confirmed-writers-stopped
+.venv/bin/python -m scripts.eval_snapshot --verify-only --snapshot data/eval-snapshots/<build_id>.db
+
+# 4. 付费模式（默认只读缓存；首次需 --allow-paid 填缓存）
+.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode retrieval --allow-paid --max-cost-usd 2
+.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode evidence --allow-paid --max-cost-usd 2
+.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode full --allow-paid --max-cost-usd 5
+
+# 5. 验收
+.venv/bin/python -m scripts.acceptance_ch11 --snapshot data/eval-snapshots/<build_id>.db
+```
+
+- 报告与逐题 trace 写 `reports/ch11/`（gitignored）；聚合结论在 `docs/eval/ch11-baseline-report.md`，历史数字单独在 `docs/eval/ch11-historical-baseline.md`。
+- `config/pricing.yaml` 未核实（`verified=false`）时 harness 拒绝付费调用；总额台账在 `data/ch11_budget.json`，上限 $10。
+- 评测回答 prompt 是 `scripts/eval_prompts.py` 的独立 prompt，不是线上 system prompt；工具题只记录 fixture，L4 剔除。
+- 新语料使旧 `config/evidence_calibration.json` 过期；本轮 contract 标 `calibration_status=stale`，不覆盖生产配置。
+- 2026-10-25 起官方模型列表已无 `deepseek-chat`，示例与实际 harness 使用 `deepseek-flash`。
+
 ## 已知边界
 
 - 评估 C04「这个东西能便宜点不」四策略均未命中(「便宜」与「95 折」语义/词面都跳距),需知识侧补「优惠」问法别名或改写增强,留后续。
