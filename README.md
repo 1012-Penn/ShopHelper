@@ -270,6 +270,33 @@ ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收�
 - 新语料使旧 `config/evidence_calibration.json` 过期；本轮 contract 标 `calibration_status=stale`，不覆盖生产配置。
 - 2026-10-25 起官方模型列表已无 `deepseek-chat`，示例与实际 harness 使用 `deepseek-flash`。
 
+## ch12 · 受控 Agentic RAG
+
+设计稿 `docs/superpowers/specs/2026-10-25-ch12-controlled-agentic-rag-design.md`（含 ADR-1~5）；聚合结论在 `docs/eval/ch12-agentic-rag-report.md`。
+
+```bash
+# 数据库迁移（新库由 init.sql 建好；存量库 apply 一次：tickets.confirm_key + rag_loop_steps）
+mysql ... < db/ch12-controlled-rag.sql
+
+# 离线验收（无需模型；含冻结不动/默认路由零变化/循环界限/幂等/三组契约/缓存重放/台账零扣减/闸未放宽）
+.venv/bin/python -m scripts.acceptance_ch12
+
+# 三组对比评测（默认只读缓存；decompose_once/controlled_loop 的缺口分析是新 prompt，无历史缓存，
+# 未 --allow-paid 时任何 miss 会在 guard 处安全中止；--ledger 指向全局台账共享余额）
+.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode full --allow-paid \
+  --rag-mode baseline          --out reports/ch12 --snapshot data/eval-snapshots/<build_id>.db \
+  --ledger <全局 data/ch11_budget.json>
+.venv/bin/python -m scripts.eval_ch11 ... --rag-mode decompose_once  ...
+.venv/bin/python -m scripts.eval_ch11 ... --rag-mode controlled_loop ...
+```
+
+- 线上开关 `RETRIEVAL_ROUTE=hybrid_rerank|decompose_once|controlled_loop`（默认 hybrid_rerank，图结构与行为零变化）；新路由在新语料重新校准并验证前**不切默认、不宣称生产可用**（ADR-5）。
+- 受控循环核心在 `app/rag_loop.py`，线上图（`app/graph/agentic.py`）与评测 harness 调**同一实现**；首轮即充分时零额外 LLM 调用，行为与基线一致。
+- 每轮查询/子问题/证据ID/判定/停止原因落 `rag_loop_steps`（**仅可审计**，不支持断点续跑/回放，ADR-1）。
+- 工单确认幂等：`/api/tickets` 与 `/api/tickets/confirm` 支持 `confirm_key`（一次用户确认一键一单；预览帧下发，双击/超时重试返回同一工单，ADR-3）。
+- 台账 `flock` 只保证写入互斥，不保证 guard→调用→add 整段互斥；付费并跑前需整轮互斥或原子预留（ADR-4）。
+- 质量三组对比指标在付费实测前标「未实测」；付费预估见 `docs/eval/ch12-agentic-rag-report.md` §4。
+
 ## 已知边界
 
 - 评估 C04「这个东西能便宜点不」四策略均未命中(「便宜」与「95 折」语义/词面都跳距),需知识侧补「优惠」问法别名或改写增强,留后续。
@@ -285,6 +312,7 @@ ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收�
 - ch09:RoundCapture 回捞缓存为进程内(Map,重启即失),重启后 👎 回捞不到按「尽力回捞」落 NULL;标准化/语义查重内联在落池时执行(LLM 两次调用,已放线程池不阻塞事件循环,但兜底轮会略慢);ch14 起审核/趋势/主题页与对应接口需管理员登录(角色 viewer/operator/admin),终端用户接口仍无认证;飞轮审核通过立即向量化单条,批量重建仍走 `scripts.build_kb`;Langfuse trace 元数据值为短字符串,长 prompt/原文在 observation input/output;评估流水线整跑 32 题 ≈ 数十次 LLM 调用,定时化走外部 cron(`scripts/run_eval.py --triggered-by 定时`)。
 - ch08:MCP Server 为 mock 随机数据,不接真实系统;MCP 工具一律只读(我侧规则,不看 Server 声明);工具调用审计 arguments/result_summary 截断存储,非全量;引擎超时/重试按工具粒度,MCP 网络抖动的重试计入 retry_count;确认载荷未签名(演示系统);Skill 机制不落代码。
 - ch14:后台鉴权为 DB 管理员 + 签名 Cookie;仅账号级失败锁定,无 IP 限流/MFA/SSO;登出只清 Cookie,改密/禁用通过 `session_version` 吊销旧会话;审计为路由层 best-effort,与业务提交非同事务;终端用户 API 仍未鉴权。
+- ch12:受控 Agentic 检索的缺口分析器是新 prompt 无历史缓存,付费实测前三组质量指标均未实测;`rag_loop_steps` 仅可审计,不做断点续跑/回放;新路由未在新语料上重新校准,不切默认(ADR-5);合并证据跨查询 max-score 融合,分数可比性弱于单查询内排序(refund 同语义先例);台账 flock 不覆盖 guard→调用→add 整段(ADR-4),付费并跑前需另做整轮互斥;工单幂等依赖前端为「一次确认」复用同一 confirm_key,无键旧路径不设防。
 
 API 契约细节见
 `docs/superpowers/specs/2026-09-04-ch01-pure-chat-design.md`、
