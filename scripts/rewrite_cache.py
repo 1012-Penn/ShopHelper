@@ -164,13 +164,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--set", required=True, type=Path)
     parser.add_argument("--cache", required=True, type=Path)
     parser.add_argument("--mode", choices=("read", "write", "refresh"), default="read")
-    parser.add_argument("--model", default=os.environ.get("OPENAI_MODEL", "deepseek-chat"))
+    parser.add_argument("--model", default=None)
     parser.add_argument("--allow-paid", action="store_true")
     parser.add_argument("--max-cost-usd", type=float, default=1.0)
     parser.add_argument("--ledger", type=Path, default=Path("data/ch11_budget.json"))
     args = parser.parse_args(argv)
 
     cases = _load_cases(args.set)
+    model = args.model or os.environ.get("OPENAI_MODEL", "deepseek-flash")
     rewriter = None
     if args.mode in {"write", "refresh"}:
         if not args.allow_paid:
@@ -188,13 +189,14 @@ def main(argv: list[str] | None = None) -> int:
         from scripts.eval_cost import BudgetLedger
 
         settings = Settings()
+        model = args.model or settings.openai_model
         rewriter = make_rewriter(settings)
         BudgetLedger(args.ledger).record(estimate, note=f"rewrite:{args.set}")
     load_rewrites(
         cases,
         args.cache,
         args.set,
-        args.model,
+        model,
         rewriter,
         mode=args.mode,
     )

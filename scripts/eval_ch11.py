@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -30,7 +31,13 @@ from scripts.eval_dataset import (
     validate_cases,
 )
 from scripts.eval_metrics import resolve_gold_chunks
-from scripts.eval_prompts import EVAL_ANSWER_PROMPT, EVAL_JUDGE_PROMPT, prompt_sha256
+from scripts.eval_prompts import (
+    EVAL_ANSWER_PROMPT,
+    EVAL_JUDGE_PROMPT,
+    JsonEvidenceJudge,
+    JsonFaithfulnessJudge,
+    prompt_sha256,
+)
 from scripts.eval_report import aggregate_traces, write_report
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -97,13 +104,14 @@ def _prepare_queries(cases, args, settings, rewriter, split: str):
     cache_path = args.rewrite_cache or (
         ROOT / "tests" / "eval" / "caches" / "rewrite" / f"{split}.json"
     )
-    if not Path(cache_path).exists():
+    split_path = ROOT / "tests" / "eval" / "splits" / f"{split}.jsonl"
+    if not Path(cache_path).exists() or not split_path.exists():
         print(f"[warn] 改写缓存不存在,使用恒等改写: {cache_path}", file=sys.stderr)
         return {case["id"]: PreparedQuery(case["query"], case["query"]) for case in cases}
     try:
         rewrites = load_rewrites(
-            cases, cache_path, None, settings.openai_model, rewriter,
-            mode="read", eval_sha256=split_sha256(cases),
+            cases, cache_path, split_path, settings.openai_model, rewriter,
+            mode="read",
         )
     except RewriteCacheError as exc:
         print(f"[warn] 改写缓存不可用,使用恒等改写: {exc}", file=sys.stderr)
@@ -124,11 +132,9 @@ def _prepare_queries(cases, args, settings, rewriter, split: str):
 def _build_context(config, args, cases):
     from app.config import Settings
     from app.db import make_engine, make_session_factory
-    from app.evidence import make_evidence_judge
     from app.graph.builder import _load_evidence_calibration
     from app.kb import KnowledgeBaseStore
-    from app.llm import make_chat_model, make_extract_model
-    from app.prompts import FaithfulnessVerdict
+    from app.llm import make_chat_model
     from app.rerank import make_reranker
     from app.retrieval import RetrievalService
     from app.rewrite import make_rewriter
@@ -142,14 +148,26 @@ def _build_context(config, args, cases):
         CostTracker,
         PricingTable,
     )
-    from scripts.eval_snapshot import compute_build_id
+    from scripts.eval_snapshot import compute_build_id, is_runtime_chunk
 
+    # pymilvus 在导入时会 load_dotenv(),可能把外部 .env 的值带进 os.environ;
+    # 以当前工作目录的 .env 为准,避免 worktree 跑出主仓库的旧模型名。
+    from dotenv import dotenv_values
+
+    local_env = dotenv_values(Path(".env"))
+    for key, value in local_env.items():
+        if value is not None:
+            os.environ[key] = value
     settings = Settings()
     factory = make_session_factory(make_engine(settings))
     kb = KnowledgeBaseStore(factory)
     db_path = args.snapshot or settings.milvus_db_path
     vectors = KnowledgeVectorStore(str(db_path), dim=settings.embedding_dim)
-    all_rows = {row.id: row for row in kb.get_chunks(kb.doc_chunk_ids_all())}
+    all_rows = {
+        row.id: row
+        for row in kb.get_chunks(kb.doc_chunk_ids_all())
+        if not is_runtime_chunk(row)
+    }
     gold_by_case = {
         case["id"]: resolve_gold_chunks(case, all_rows)
         for case in cases if case.get("required_evidence")
@@ -169,7 +187,7 @@ def _build_context(config, args, cases):
 
     evidence_judge = None
     if config.mode in {"evidence", "full"} and config.allow_paid:
-        evidence_judge = make_evidence_judge(settings)
+        evidence_judge = JsonEvidenceJudge(make_chat_model(settings))
     service = RetrievalService(
         embedder, vectors, kb, rewriter=rewriter, reranker=reranker,
         candidates=settings.hybrid_candidates,
@@ -188,9 +206,7 @@ def _build_context(config, args, cases):
     chat = make_chat_model(settings) if config.mode == "full" else None
     judge = None
     if config.mode == "full" and config.use_judge:
-        judge = make_extract_model(settings).with_structured_output(
-            FaithfulnessVerdict, method="function_calling"
-        )
+        judge = JsonFaithfulnessJudge(make_chat_model(settings))
 
     manifest = load_manifest()
     facts_sha = __import__("scripts.corpus_facts", fromlist=["load_factbook"]).load_factbook().sha256()

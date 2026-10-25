@@ -30,9 +30,18 @@ def test_bool_and_list_gold_facts():
 
 
 def test_forbidden_claim_normalization():
-    found = forbidden_claims_found("所有商品都可以打 95 折", ["所有商品 95 折", "可以便宜"])
+    found = forbidden_claims_found("所有商品 95 折，快来买", ["所有商品 95 折", "可以便宜"])
     assert found == ["所有商品 95 折"]
     assert forbidden_claims_found("会员可以享 95 折", ["所有商品 95 折"]) == []
+
+
+def test_negated_forbidden_claim_is_not_flagged():
+    assert forbidden_claims_found(
+        "SH-K68 不是 104 键，而是 68 键", ["SH-K68 是 104 键"]
+    ) == []
+    assert forbidden_claims_found(
+        "SH-P30 的容量为 20000mAh，不是 10000mAh", ["SH-P30 是 10000mAh"]
+    ) == []
 
 
 def test_condition_coverage_with_aliases():

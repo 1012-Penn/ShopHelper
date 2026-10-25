@@ -26,6 +26,9 @@ class SnapshotError(RuntimeError):
     """快照创建/校验失败。"""
 
 
+RUNTIME_SECTION_PREFIXES = ("review_queue:", "mined:")
+
+
 @dataclass(frozen=True)
 class ConsistencyReport:
     ok: bool
@@ -36,12 +39,18 @@ class ConsistencyReport:
     extra_ids: list[int]
     text_mismatch_ids: list[int]
     category_mismatch_ids: list[int]
+    excluded_runtime_ids: list[int]
     build_id: str
     corpus_sha256: str
     chunk_set_sha256: str
 
     def as_dict(self) -> dict:
         return asdict(self)
+
+
+def is_runtime_chunk(row) -> bool:
+    section = str(getattr(row, "section_path", "") or "")
+    return section.startswith(RUNTIME_SECTION_PREFIXES)
 
 
 def _sha_bytes(payload: bytes) -> str:
@@ -89,10 +98,15 @@ def verify_consistency(
     max_chars: int = 500,
     overlap_chars: int = 80,
 ) -> ConsistencyReport:
-    rows = kb.get_chunks(kb.doc_chunk_ids_all())
+    all_rows = kb.get_chunks(kb.doc_chunk_ids_all())
+    rows = [row for row in all_rows if not is_runtime_chunk(row)]
+    excluded = [int(row.id) for row in all_rows if is_runtime_chunk(row)]
     mysql_rows = {int(row.id): row for row in rows}
     milvus_rows = {int(row["id"]): row for row in vectors.all_rows()}
-    pending = len(kb.pending_chunks())
+    pending_rows = [
+        row for row in kb.pending_chunks() if not is_runtime_chunk(row)
+    ]
+    pending = len(pending_rows)
     mysql_ids, milvus_ids = set(mysql_rows), set(milvus_rows)
     missing = sorted(mysql_ids - milvus_ids)
     extra = sorted(milvus_ids - mysql_ids)
@@ -124,6 +138,7 @@ def verify_consistency(
         extra_ids=extra,
         text_mismatch_ids=text_mismatch,
         category_mismatch_ids=category_mismatch,
+        excluded_runtime_ids=excluded,
         build_id=build_id,
         corpus_sha256=corpus_sha256,
         chunk_set_sha256=chunk_set_sha256(rows),
@@ -163,6 +178,21 @@ def copy_snapshot(
     if not source_db.exists():
         raise SnapshotError(f"源 Milvus 文件不存在: {source_db}")
     dest_db.parent.mkdir(parents=True, exist_ok=True)
+    if source_db.is_dir():
+        # Milvus Lite 3.x 使用目录树(databases/collections/wal);不能按单文件复制。
+        if dest_db.exists():
+            shutil.rmtree(dest_db)
+        shutil.copytree(source_db, dest_db, ignore=shutil.ignore_patterns("LOCK"))
+        copied = []
+        for path in sorted(dest_db.rglob("*")):
+            if path.is_file():
+                copied.append({
+                    "file": str(path.relative_to(dest_db)),
+                    "sha256": _sha_file(path),
+                    "bytes": path.stat().st_size,
+                })
+        return {"source": str(source_db), "dest": str(dest_db), "files": copied}
+
     copied = []
     for path in sorted(source_db.parent.glob(source_db.name + "*")):
         if path.resolve() == dest_db.resolve():

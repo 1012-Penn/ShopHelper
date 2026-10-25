@@ -1,0 +1,368 @@
+{
+ "schema_version": 1,
+ "eval_set_sha256": "851fe9a88d40763b67da2dfe28868ad11f81e3b697d811f11a137d1a62ac380f",
+ "model": "deepseek-flash",
+ "created_at": "2026-10-24T16:32:10.330855+00:00",
+ "entries": {
+  "DEV-SINGLE-01": {
+   "query": "SH-E300 多少钱？",
+   "normalized": "SH-E300 多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-02": {
+   "query": "SH-E120 续航多久？",
+   "normalized": "SH-E120 续航多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-03": {
+   "query": "SH-K104 有多少键？",
+   "normalized": "SH-K104 有多少键？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-04": {
+   "query": "SH-C60 数据线质保多久？",
+   "normalized": "SH-C60 数据线质保多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-05": {
+   "query": "SH-W20 支持 GPS 吗？",
+   "normalized": "SH-W20 支持 GPS 吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-06": {
+   "query": "普通订单邮费多少？",
+   "normalized": "普通订单邮费多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-07": {
+   "query": "微信支付退款多久到账？",
+   "normalized": "微信支付退款多久到账？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-08": {
+   "query": "退货申请多久审核？",
+   "normalized": "退货申请多久审核？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-09": {
+   "query": "商品是否有质量问题，以什么为准？",
+   "normalized": "商品是否有质量问题，以什么为准？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-10": {
+   "query": "西藏首重运费多少？",
+   "normalized": "西藏首重运费多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-11": {
+   "query": "ORD-1002 是什么状态？",
+   "normalized": "ORD-1002 是什么状态？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-SINGLE-12": {
+   "query": "ORD-1002 用什么渠道支付？",
+   "normalized": "ORD-1002 用什么渠道支付？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-01": {
+   "query": "ORD-1002 是银卡会员，商品 328 元，会员能打几折？",
+   "normalized": "ORD-1002 是银卡会员，商品 328 元，会员能打几折？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-02": {
+   "query": "SH-E300 售价 299 元，这一单包邮吗？",
+   "normalized": "SH-E300 售价 299 元，这一单包邮吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-03": {
+   "query": "SH-K104 出现质量问题要退货，退货运费谁出？",
+   "normalized": "SH-K104 出现质量问题要退货，退货运费谁出？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-04": {
+   "query": "ORD-1004 签收于 2026-06-05，适用几天无理由退货？",
+   "normalized": "ORD-1004 签收于 2026-06-05，适用几天无理由退货？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-05": {
+   "query": "SH-M10 是清仓商品，会员还能享 95 折吗？",
+   "normalized": "SH-M10 是清仓商品，会员还能享 95 折吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-06": {
+   "query": "ORD-1002 已支付但未发货，可以取消吗？",
+   "normalized": "ORD-1002 已支付但未发货，可以取消吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-07": {
+   "query": "ORD-1003 已经发货了，能直接取消吗？",
+   "normalized": "ORD-1003 已经发货了，能直接取消吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-08": {
+   "query": "退货审核通过后，几天内要把商品寄回？",
+   "normalized": "退货审核通过后，几天内要把商品寄回？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-09": {
+   "query": "过保维修要先报价再修吗？",
+   "normalized": "过保维修要先报价再修吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-10": {
+   "query": "西藏订单满 99 元包邮后，还要补运费吗？",
+   "normalized": "西藏订单满 99 元包邮后，还要补运费吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-MULTI-11": {
+   "query": "金卡会员买 SH-B5，会员折扣适用吗？",
+   "normalized": "金卡会员买 SH-B5，会员折扣适用吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-01": {
+   "query": "SH-E300 签收第 6 天，包装拆了但商品完好，能退吗？",
+   "normalized": "SH-E300 签收第 6 天，包装拆了但商品完好，能退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-02": {
+   "query": "定制键盘用了 10 天，能退吗？",
+   "normalized": "定制键盘用了 10 天，能退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-03": {
+   "query": "生鲜第二天发现质量问题，能退吗？",
+   "normalized": "生鲜第二天发现质量问题，能退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-04": {
+   "query": "已经激活的虚拟商品可以退款吗？",
+   "normalized": "已经激活的虚拟商品可以退款吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-05": {
+   "query": "会员 95 折后 98 元，还能用满 99 减 10 的券吗？",
+   "normalized": "会员 95 折后 98 元，还能用满 99 减 10 的券吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-06": {
+   "query": "加急费 10 元能参与会员 95 折吗？",
+   "normalized": "加急费 10 元能参与会员 95 折吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-07": {
+   "query": "西藏补运的 5 元算进满减门槛吗？",
+   "normalized": "西藏补运的 5 元算进满减门槛吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-08": {
+   "query": "非质量问题退货，商品完好，退回运费谁出？",
+   "normalized": "非质量问题退货，商品完好，退回运费谁出？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONSTRAINT-09": {
+   "query": "无理由拒收，退货运费谁承担？",
+   "normalized": "无理由拒收，退货运费谁承担？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-01": {
+   "query": "SH-E300 是 87 键机械键盘吗？",
+   "normalized": "SH-E300 是 87 键机械键盘吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-02": {
+   "query": "SH-K870 是 104 键吗？",
+   "normalized": "SH-K870 是 104 键吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-03": {
+   "query": "ORD-9999 到哪了？",
+   "normalized": "ORD-9999 到哪了？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-04": {
+   "query": "SH-T50 是整机一年质保吗？",
+   "normalized": "SH-T50 是整机一年质保吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-05": {
+   "query": "SH-B5 支持血氧监测吗？",
+   "normalized": "SH-B5 支持血氧监测吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-06": {
+   "query": "SH-W20 能独立通话吗？",
+   "normalized": "SH-W20 能独立通话吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-ENTITY-07": {
+   "query": "SH-E120 续航是 30 小时吗？",
+   "normalized": "SH-E120 续航是 30 小时吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONFLICT-01": {
+   "query": "2026-05-20 签收的订单，适用 7 天还是 15 天无理由？",
+   "normalized": "2026-05-20 签收的订单，适用 7 天还是 15 天无理由？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONFLICT-02": {
+   "query": "2026-06-05 签收的订单，能享受 15 天无理由吗？",
+   "normalized": "2026-06-05 签收的订单，能享受 15 天无理由吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONFLICT-03": {
+   "query": "2026-05-20 签收的订单，v2 生效后会自动延长到 15 天吗？",
+   "normalized": "2026-05-20 签收的订单，v2 生效后会自动延长到 15 天吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONFLICT-04": {
+   "query": "不知道签收日期，应该按 7 天还是 15 天处理？",
+   "normalized": "不知道签收日期，应该按 7 天还是 15 天处理？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CONFLICT-05": {
+   "query": "ORD-1004 签收于 2026-06-05，退货窗口是多久？",
+   "normalized": "ORD-1004 签收于 2026-06-05，退货窗口是多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-01": {
+   "query": "SH-E300 支持无线充电吗？",
+   "normalized": "SH-E300 支持无线充电吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-02": {
+   "query": "会员生日礼包里面有什么？",
+   "normalized": "会员生日礼包里面有什么？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-03": {
+   "query": "发票抬头能改成公司名吗？",
+   "normalized": "发票抬头能改成公司名吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-04": {
+   "query": "手表怎么安装微信？",
+   "normalized": "手表怎么安装微信？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-05": {
+   "query": "维修屏幕要多少钱？",
+   "normalized": "维修屏幕要多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-06": {
+   "query": "会飞的手机保修多久？",
+   "normalized": "会飞的手机保修多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-HARD-07": {
+   "query": "SH-E300 的防水等级是多少？",
+   "normalized": "SH-E300 的防水等级是多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CLARIFY-01": {
+   "query": "这个多少钱？",
+   "normalized": "这个多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CLARIFY-02": {
+   "query": "我的订单到哪了？",
+   "normalized": "我的订单到哪了？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CLARIFY-03": {
+   "query": "保修多久？",
+   "normalized": "保修多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CLARIFY-04": {
+   "query": "什么时候能到？",
+   "normalized": "什么时候能到？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-CLARIFY-05": {
+   "query": "怎么退？",
+   "normalized": "怎么退？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-OOD-01": {
+   "query": "今天天气怎么样？",
+   "normalized": "今天天气怎么样？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-OOD-02": {
+   "query": "怎么用微波炉煮火锅？",
+   "normalized": "怎么用微波炉煮火锅？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-OOD-03": {
+   "query": "推荐一只股票？",
+   "normalized": "推荐一只股票？",
+   "synonyms": [],
+   "error": null
+  },
+  "DEV-OOD-04": {
+   "query": "帮我写一首诗。",
+   "normalized": "帮我写一首诗。",
+   "synonyms": [],
+   "error": null
+  }
+ }
+}

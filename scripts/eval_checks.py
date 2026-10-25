@@ -128,9 +128,11 @@ def number_covered(answer: str, value, unit: str = "", tolerance: float = 0.0) -
         numbers = [float(match) for match in _NUM_RE.findall(normalized)]
         if not any(abs(number - float(value)) <= float(tolerance) for number in numbers):
             return False
-        if unit and unit not in normalized:
+        unit_norm = normalize_answer(unit)
+        if unit_norm and unit_norm not in normalized:
             unit_aliases = {"元": ("元", "块"), "天": ("天",), "小时": ("小时", "h")}
-            if not any(alias in normalized for alias in unit_aliases.get(unit, (unit,))):
+            aliases = unit_aliases.get(unit_norm, (unit_norm,))
+            if not any(alias in normalized for alias in aliases):
                 return False
         return True
     return _contains(normalized, str(value))
@@ -157,8 +159,9 @@ def condition_coverage(
 
 
 def forbidden_claims_found(answer: str, forbidden: list[str]) -> list[str]:
+    # 禁用断言必须按完整短语匹配;分段匹配会把“不是 104 键”误判成“是 104 键”。
     normalized = normalize_answer(answer)
-    return [claim for claim in forbidden if _contains(normalized, claim)]
+    return [claim for claim in forbidden if normalize_answer(claim) in normalized]
 
 
 def _slot_terms(slot: str, aliases: dict[str, list[str]] | None) -> tuple[str, ...]:

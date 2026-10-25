@@ -200,6 +200,11 @@ def run_answer_case(
                 input_tokens = int(payload.get("input_tokens") or 0)
                 output_tokens = int(payload.get("output_tokens") or 0)
                 cached = True
+                pricing = getattr(ctx.cost, "pricing", None) if ctx.cost is not None else None
+                if pricing is not None:
+                    trace["cost_estimate_cached"] = pricing.cost(
+                        config.model, input_tokens, output_tokens
+                    )
         if not cached:
             if ctx.cost is not None:
                 ctx.cost.guard(estimate_tokens(prompt), config.model)
@@ -273,8 +278,16 @@ def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
     trace["forbidden_claims"] = list(case.get("forbidden_claims") or [])
     trace["failure_labels"]: list[str] = []
     if config.mode in {"full"}:
+        cost_before = float(getattr(ctx.cost, "spent_usd", 0.0)) if ctx.cost is not None else 0.0
         trace = run_answer_case(case, trace, ctx, config)
         trace["failure_labels"] = trace["deterministic_checks"]["failure_labels"]
+        if ctx.cost is not None:
+            trace["cost_actual"] = round(
+                float(getattr(ctx.cost, "spent_usd", 0.0)) - cost_before, 6
+            )
+            trace["cost_estimate"] = trace.pop(
+                "cost_estimate_cached", trace["cost_actual"]
+            )
     else:
         trace.pop("evidence_items", None)
         trace.pop("evidence_by_n", None)
@@ -285,7 +298,8 @@ def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:
         trace["tokens_in"] = trace["tokens_out"] = 0
         trace["cached"] = False
         trace["judge"] = None
-    trace["cost_estimate"] = 0.0
+        trace["cost_estimate"] = 0.0
+        trace["cost_actual"] = 0.0
     return trace
 
 

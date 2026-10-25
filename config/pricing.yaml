@@ -1,15 +1,22 @@
 # ch11 评测价格表:付费调用前必须核对官方价格并把 verified 置 true。
-# 未核实前 harness 拒绝任何付费调用,--max-cost-usd 才有意义。
-version: "2026-10-24"
+# 2026-10-25 核对:
+# - DeepSeek 官方 pricing 页列出 deepseek-flash 与 deepseek-v4-pro;deepseek-chat 已不在售。
+# - 这里用 deepseek-flash 的峰值价(输入 $0.30/M,输出 $1.20/M)做保守估算。
+# - 硅基流动 BAAI/bge-m3 与 bge-reranker-v2-m3 标准版页面标注免费;
+#   为避免把“免费”当成 0,仍按 $0.01/M 的保守占位价计入成本。
+version: "2026-10-25"
 currency: USD
-verified: false
-source_url: ""
-note: "占位价格,未核实;Task 15 跑付费基线前更新 source_url 与单位价格。"
+verified: true
+source_url: "https://api-docs.deepseek.com/quick_start/pricing ; https://siliconflow.cn/pricing"
+note: "deepseek-flash 取峰值价;bge-m3/reranker 标准版免费,按 $0.01/M 保守计。"
 models:
+  deepseek-flash:
+    input_per_million: 0.30
+    output_per_million: 1.20
   deepseek-chat:
-    input_per_million: 0.0
-    output_per_million: 0.0
+    input_per_million: 0.30
+    output_per_million: 1.20
   BAAI/bge-m3:
-    input_per_million: 0.0
+    input_per_million: 0.01
   BAAI/bge-reranker-v2-m3:
-    input_per_million: 0.0
+    input_per_million: 0.01

@@ -342,8 +342,8 @@ FROZEN_CASES = [
      "query": "能开增值税专用发票吗？", "evidence": [], "gold": [],
      "behavior": "refuse", "refusal_reason": "知识库没有增值税专用发票规则"},
     {"id": "FRZ-HARD-10", "bucket": "hard_negative",
-     "query": "SH-W20 的表带可以单独买吗？", "evidence": [], "gold": [],
-     "behavior": "refuse", "refusal_reason": "知识库没有表带配件信息"},
+     "query": "SH-W20 的表带单独买要多少钱？", "evidence": [], "gold": [],
+     "behavior": "refuse", "refusal_reason": "知识库没有表带价格"},
 
     # ---------- clarify 8 ----------
     {"id": "FRZ-CLARIFY-01", "bucket": "clarify", "query": "这个卖多少钱？",

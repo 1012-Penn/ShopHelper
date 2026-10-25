@@ -3,8 +3,8 @@
   "split": "frozen-v1",
   "label_version": "v2",
   "n": 90,
-  "file_sha256": "6b033b6e81c2525750d0104f0774e508bb8ebdad276749721fb450b1bb189f2f",
-  "canonical_sha256": "588d96841ecaa28c76715fe855969d5e943a9f0e22a93a38e7f0f29f1db3f796",
+  "file_sha256": "2f684ba273952a0147b16ae866a22058f81190b16c439d15ad029ad5cb637b44",
+  "canonical_sha256": "f518fe1bd1d7c3c3cd95896a55a06f8160c3f5c82529c1639c8f6e6437fdabf7",
   "buckets": {
     "single_hop": 18,
     "multi_hop": 16,
@@ -29,7 +29,7 @@
   "facts_sha256": "07ffaa92aad72336443a31b3f7dd26ca381eef8b23a0f86e8f3f0efa44fcbb24",
   "design_doc_sha256": "1ce0ad009ab21bd325ac95244c13248ec6436df603c17dff280bd69ea3b5290a",
   "reviewer": "codex",
-  "frozen_at": "2026-10-24T16:12:40.309844+00:00",
+  "frozen_at": "2026-10-24T17:15:55.302905+00:00",
   "leakage": {
     "blocking": 0,
     "warning": 0,

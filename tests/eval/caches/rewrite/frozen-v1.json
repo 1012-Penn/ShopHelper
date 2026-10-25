@@ -1,0 +1,548 @@
+{
+ "schema_version": 1,
+ "eval_set_sha256": "2f684ba273952a0147b16ae866a22058f81190b16c439d15ad029ad5cb637b44",
+ "model": "deepseek-flash",
+ "created_at": "2026-10-24T17:15:56.758022+00:00",
+ "entries": {
+  "FRZ-SINGLE-01": {
+   "query": "SH-E200 卖多少钱？",
+   "normalized": "SH-E200 卖多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-02": {
+   "query": "SH-B7 手环续航几天？",
+   "normalized": "SH-B7 手环续航几天？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-03": {
+   "query": "SH-K68 键盘是多少键的？",
+   "normalized": "SH-K68 键盘是多少键的？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-04": {
+   "query": "SH-P30 移动电源容量多大？",
+   "normalized": "SH-P30 移动电源容量多大？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-05": {
+   "query": "SH-S10 音箱防水等级是多少？",
+   "normalized": "SH-S10 音箱防水等级是多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-06": {
+   "query": "SH-T50 支架是什么材质？",
+   "normalized": "SH-T50 支架是什么材质？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-07": {
+   "query": "SH-W30 手表续航几天？",
+   "normalized": "SH-W30 手表续航几天？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-08": {
+   "query": "SH-B5 手环续航几天？",
+   "normalized": "SH-B5 手环续航几天？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-09": {
+   "query": "SH-E120 支持主动降噪吗？",
+   "normalized": "SH-E120 支持主动降噪吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-10": {
+   "query": "SH-E300 整机续航多少小时？",
+   "normalized": "SH-E300 整机续航多少小时？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-11": {
+   "query": "普通快递的运费是多少钱？",
+   "normalized": "普通快递的运费是多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-12": {
+   "query": "订单满多少钱可以包邮？",
+   "normalized": "订单满多少钱可以包邮？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-13": {
+   "query": "微信退款一般几个工作日到账？",
+   "normalized": "微信退款一般几个工作日到账？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-14": {
+   "query": "银行卡退款最长要等多久？",
+   "normalized": "银行卡退款最长要等多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-15": {
+   "query": "退货申请提交后多久审核？",
+   "normalized": "退货申请提交后多久审核？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-16": {
+   "query": "仓库验货一般要多久？",
+   "normalized": "仓库验货一般要多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-17": {
+   "query": "西藏首重运费是多少？",
+   "normalized": "西藏首重运费是多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-SINGLE-18": {
+   "query": "新疆首重运费是多少？",
+   "normalized": "新疆首重运费是多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-01": {
+   "query": "ORD-1003 是普通会员，商品 149 元，能享会员折扣吗？",
+   "normalized": "ORD-1003 是普通会员，商品 149 元，能享会员折扣吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-02": {
+   "query": "SH-E200 售价 159 元，这一单需要付运费吗？",
+   "normalized": "SH-E200 售价 159 元，这一单需要付运费吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-03": {
+   "query": "SH-M10 是清仓款，会员折扣还能用吗？",
+   "normalized": "SH-M10 是清仓款，会员折扣还能用吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-04": {
+   "query": "ORD-1006 退货中，接下来需要做什么？",
+   "normalized": "ORD-1006 退货中，接下来需要做什么？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-05": {
+   "query": "ORD-1008 在 2026-06-12 签收，无理由退货窗口多久？",
+   "normalized": "ORD-1008 在 2026-06-12 签收，无理由退货窗口多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-06": {
+   "query": "ORD-1009 是钻石会员，678 元商品能打几折？",
+   "normalized": "ORD-1009 是钻石会员，678 元商品能打几折？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-07": {
+   "query": "ORD-1010 还没发货，现在能取消吗？",
+   "normalized": "ORD-1010 还没发货，现在能取消吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-08": {
+   "query": "ORD-1011 已退款，钱退到哪个渠道？",
+   "normalized": "ORD-1011 已退款，钱退到哪个渠道？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-09": {
+   "query": "SH-K68 机械键盘保修多久？",
+   "normalized": "SH-K68 机械键盘保修多久？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-10": {
+   "query": "SH-P30 移动电源加急发货要加多少钱？",
+   "normalized": "SH-P30 移动电源加急发货要加多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-11": {
+   "query": "西藏订单已经满 99 元包邮，还需要补 5 元吗？",
+   "normalized": "西藏订单已经满 99 元包邮，还需要补 5 元吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-12": {
+   "query": "港澳台订单能直接发货吗？运费按哪档算？",
+   "normalized": "港澳台订单能直接发货吗？运费按哪档算？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-13": {
+   "query": "SH-E300 299 元，会员 95 折后还能用满减券吗？",
+   "normalized": "SH-E300 299 元，会员 95 折后还能用满减券吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-14": {
+   "query": "ORD-1004 是金卡会员，399 元手表能享 95 折吗？",
+   "normalized": "ORD-1004 是金卡会员，399 元手表能享 95 折吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-15": {
+   "query": "ORD-1005 已取消，钱会退回来吗？",
+   "normalized": "ORD-1005 已取消，钱会退回来吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-MULTI-16": {
+   "query": "SH-B7 支持血氧监测，会员买它能打 95 折吗？",
+   "normalized": "SH-B7 支持血氧监测，会员买它能打 95 折吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-01": {
+   "query": "SH-E300 签收 12 天，吊牌还在、包装完好，能无理由退吗？",
+   "normalized": "SH-E300 签收 12 天，吊牌还在、包装完好，能无理由退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-02": {
+   "query": "SH-K104 签收 20 天后发现质量问题，还能退吗？",
+   "normalized": "SH-K104 签收 20 天后发现质量问题，还能退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-03": {
+   "query": "定制键盘签收 3 天，没有质量问题，能无理由退吗？",
+   "normalized": "定制键盘签收 3 天，没有质量问题，能无理由退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-04": {
+   "query": "生鲜签收当天发现质量问题，可以退吗？",
+   "normalized": "生鲜签收当天发现质量问题，可以退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-05": {
+   "query": "已经激活的虚拟商品还能退款吗？",
+   "normalized": "已经激活的虚拟商品还能退款吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-06": {
+   "query": "会员 95 折能和限时秒杀叠加吗？",
+   "normalized": "会员 95 折能和限时秒杀叠加吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-07": {
+   "query": "会员 95 折、满减券和运费券可以一起用吗？",
+   "normalized": "会员 95 折、满减券和运费券可以一起用吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-08": {
+   "query": "两笔同地址未发货订单合并支付，包邮门槛按哪个金额算？",
+   "normalized": "两笔同地址未发货订单合并支付，包邮门槛按哪个金额算？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-09": {
+   "query": "合并订单后又拆单，包邮门槛会重新算吗？",
+   "normalized": "合并订单后又拆单，包邮门槛会重新算吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-10": {
+   "query": "加急费和偏远补运能参与会员 95 折吗？",
+   "normalized": "加急费和偏远补运能参与会员 95 折吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-11": {
+   "query": "非质量问题退货，商品完好，寄回运费谁出？",
+   "normalized": "非质量问题退货，商品完好，寄回运费谁出？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-12": {
+   "query": "质量问题退货，审核通过后运费谁承担？",
+   "normalized": "质量问题退货，审核通过后运费谁承担？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-13": {
+   "query": "拒收时责任方不确定，运费怎么处理？",
+   "normalized": "拒收时责任方不确定，运费怎么处理？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONSTRAINT-14": {
+   "query": "保修期内人为进水，维修要先做哪些确认？",
+   "normalized": "保修期内人为进水，维修要先做哪些确认？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-01": {
+   "query": "SH-E200 是头戴式耳机吗？",
+   "normalized": "SH-E200 是头戴式耳机吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-02": {
+   "query": "SH-B7 支持心率监测吗？",
+   "normalized": "SH-B7 支持心率监测吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-03": {
+   "query": "SH-K68 是 104 键吗？",
+   "normalized": "SH-K68 是 104 键吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-04": {
+   "query": "SH-P30 是 10000mAh 吗？",
+   "normalized": "SH-P30 是 10000mAh 吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-05": {
+   "query": "SH-W30 续航是 7 天吗？",
+   "normalized": "SH-W30 续航是 7 天吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-06": {
+   "query": "SH-C60 数据线是 1 米吗？",
+   "normalized": "SH-C60 数据线是 1 米吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-07": {
+   "query": "SH-S10 是 IPX5 防水吗？",
+   "normalized": "SH-S10 是 IPX5 防水吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-08": {
+   "query": "SH-T50 支架是一年质保吗？",
+   "normalized": "SH-T50 支架是一年质保吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-09": {
+   "query": "ORD-8888 退款到哪了？",
+   "normalized": "ORD-8888 退款到哪了？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-ENTITY-10": {
+   "query": "SH-E300 是 99 元吗？",
+   "normalized": "SH-E300 是 99 元吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-01": {
+   "query": "2026-05-31 签收的订单，无理由退货有几天？",
+   "normalized": "2026-05-31 签收的订单，无理由退货有几天？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-02": {
+   "query": "2026-06-01 签收的订单，无理由退货有几天？",
+   "normalized": "2026-06-01 签收的订单，无理由退货有几天？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-03": {
+   "query": "2026-05-15 签收，v2 上线后能补到 15 天吗？",
+   "normalized": "2026-05-15 签收，v2 上线后能补到 15 天吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-04": {
+   "query": "用户说不清签收日期，应该按哪版政策处理？",
+   "normalized": "用户说不清签收日期，应该按哪版政策处理？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-05": {
+   "query": "ORD-1004 在 2026-06-08 签收，无理由窗口是几天？",
+   "normalized": "ORD-1004 在 2026-06-08 签收，无理由窗口是几天？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-06": {
+   "query": "ORD-1008 在 2026-06-12 签收，适用哪版退货窗口？",
+   "normalized": "ORD-1008 在 2026-06-12 签收，适用哪版退货窗口？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-07": {
+   "query": "2026-05-20 签收，第 8 天才申请无理由退货，还能退吗？",
+   "normalized": "2026-05-20 签收，第 8 天才申请无理由退货，还能退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CONFLICT-08": {
+   "query": "2026-06-10 签收，第 12 天申请无理由退货，还在窗口内吗？",
+   "normalized": "2026-06-10 签收，第 12 天申请无理由退货，还在窗口内吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-01": {
+   "query": "SH-E300 能无线充电吗？",
+   "normalized": "SH-E300 能无线充电吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-02": {
+   "query": "生日礼包具体包含哪些东西？",
+   "normalized": "生日礼包具体包含哪些东西？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-03": {
+   "query": "电子发票能改抬头吗？",
+   "normalized": "电子发票能改抬头吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-04": {
+   "query": "SH-W20 怎么装微信？",
+   "normalized": "SH-W20 怎么装微信？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-05": {
+   "query": "换一块 SH-W20 屏幕多少钱？",
+   "normalized": "换一块 SH-W20 屏幕多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-06": {
+   "query": "会飞的手机能保修吗？",
+   "normalized": "会飞的手机能保修吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-07": {
+   "query": "SH-E300 的充电功率是多少瓦？",
+   "normalized": "SH-E300 的充电功率是多少瓦？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-08": {
+   "query": "生日礼包的领取码是什么？",
+   "normalized": "生日礼包的领取码是什么？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-09": {
+   "query": "能开增值税专用发票吗？",
+   "normalized": "能开增值税专用发票吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-HARD-10": {
+   "query": "SH-W20 的表带单独买要多少钱？",
+   "normalized": "SH-W20 的表带单独买要多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-01": {
+   "query": "这个卖多少钱？",
+   "normalized": "这个卖多少钱？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-02": {
+   "query": "我的包裹什么时候发货？",
+   "normalized": "我的包裹什么时候发货？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-03": {
+   "query": "可以退吗？",
+   "normalized": "可以退吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-04": {
+   "query": "会员有什么优惠？",
+   "normalized": "会员有什么优惠？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-05": {
+   "query": "寄到我家运费多少？",
+   "normalized": "寄到我家运费多少？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-06": {
+   "query": "保修流程要走哪些步骤？",
+   "normalized": "保修流程要走哪些步骤？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-07": {
+   "query": "怎么换货？",
+   "normalized": "怎么换货？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-CLARIFY-08": {
+   "query": "这东西坏了怎么办？",
+   "normalized": "这东西坏了怎么办？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-OOD-01": {
+   "query": "明天会下雨吗？",
+   "normalized": "明天会下雨吗？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-OOD-02": {
+   "query": "怎么用空气炸锅做蛋糕？",
+   "normalized": "怎么用空气炸锅做蛋糕？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-OOD-03": {
+   "query": "现在买哪只基金好？",
+   "normalized": "现在买哪只基金好？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-OOD-04": {
+   "query": "帮我写一份检讨书。",
+   "normalized": "帮我写一份检讨书。",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-OOD-05": {
+   "query": "头疼应该吃什么药？",
+   "normalized": "头疼应该吃什么药？",
+   "synonyms": [],
+   "error": null
+  },
+  "FRZ-OOD-06": {
+   "query": "劳动合同纠纷怎么起诉？",
+   "normalized": "劳动合同纠纷怎么起诉？",
+   "synonyms": [],
+   "error": null
+  }
+ }
+}
