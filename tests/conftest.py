@@ -4,6 +4,7 @@ import os
 # setdefault 只在环境缺失时兜底,真实 .env / 显式环境变量不受影响
 os.environ.setdefault("OPENAI_API_KEY", "sk-test")
 os.environ.setdefault("EMBEDDING_API_KEY", "sk-test")
+os.environ.setdefault("ADMIN_SESSION_SECRET", "test-admin-secret")
 
 import pytest
 from httpx import ASGITransport, AsyncClient
@@ -50,11 +51,21 @@ async def make_client():
     clients = []
 
     async def _make(chat_model, extract_model=None, resolver=None, expander=None):
-        app = create_app(Settings(openai_api_key="sk-test", _env_file=None))
+        app = create_app(Settings(
+            openai_api_key="sk-test", _env_file=None,
+            admin_session_secret="test-admin-secret",
+            admin_session_ttl_seconds=3600,
+            admin_cookie_secure=False,
+            admin_password_iterations=2_000,
+        ))
         factory = make_session_factory()
         app.state.session_factory = factory
         app.state.store = ConversationStore(factory)
         app.state.pool = LowConfidencePool(factory)
+        # create_app 里 admin store 指向真实 MySQL factory;测试必须重绑到 SQLite
+        from app.admin_store import AdminAuditStore, AdminStore
+        app.state.admin_store = AdminStore(factory, password_iterations=2_000)
+        app.state.admin_audit_store = AdminAuditStore(factory)
         # store 被替换,摘要服务必须随之重建(M-2):否则它仍持 create_app 时的 MySQL factory
         from app.llm import make_extract_model
         from app.summarizer import SummaryService

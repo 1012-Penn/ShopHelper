@@ -9,7 +9,8 @@ from sqlalchemy.orm import sessionmaker
 from app.flywheel import FlywheelService
 from app.kb import KnowledgeBaseStore
 from app.models import Base, KnowledgeChunk, ReviewQueue
-from tests.helpers import FakeEmbedding, FakeVectorStore, fake_chat
+from tests.helpers import (FakeEmbedding, FakeVectorStore, admin_login, csrf_headers,
+                           fake_chat, seed_admin)
 
 
 def seed_review(factory):
@@ -116,22 +117,32 @@ def test_concurrent_approvals_have_one_knowledge_chunk(tmp_path):
 async def test_approval_api_pending_conflict_and_retry_contract(make_client):
     client, app = await make_client(fake_chat("好的"))
     app.state.flywheel = FlywheelService(app.state.session_factory)
+    seed_admin(app, "operator", "operator-pass-123", "operator")
+    csrf = await admin_login(client, "operator", "operator-pass-123")
+    headers = csrf_headers(csrf)
     rid = seed_review(app.state.session_factory)
     url = f"/api/review-queue/{rid}"
-    assert (await client.post(url + "/retry-index")).status_code == 409
-    assert (await client.post("/api/review-queue/999/retry-index")).status_code == 404
-    first = await client.post(url + "/approve", json={"approved_answer": "核准答案"})
+    assert (await client.post(url + "/retry-index", headers=headers)).status_code == 409
+    assert (await client.post("/api/review-queue/999/retry-index",
+                              headers=headers)).status_code == 404
+    first = await client.post(url + "/approve", json={"approved_answer": "核准答案"},
+                              headers=headers)
     assert first.status_code == 200
     assert first.json()["index_status"] == "pending"
-    repeated = await client.post(url + "/approve", json={"approved_answer": "核准答案"})
+    repeated = await client.post(url + "/approve", json={"approved_answer": "核准答案"},
+                                 headers=headers)
     assert repeated.json() == first.json()
-    conflict = await client.post(url + "/approve", json={"approved_answer": "另一答案"})
+    conflict = await client.post(url + "/approve", json={"approved_answer": "另一答案"},
+                                 headers=headers)
     assert conflict.status_code == 409
-    retried = await client.post(url + "/retry-index")
+    retried = await client.post(url + "/retry-index", headers=headers)
     assert retried.status_code == 200 and retried.json() == first.json()
     app.state.flywheel = FlywheelService(
         app.state.session_factory, kb=KnowledgeBaseStore(app.state.session_factory),
         vectors=FakeVectorStore(), embedder=FakeEmbedding())
-    done = await client.post(url + "/retry-index")
+    done = await client.post(url + "/retry-index", headers=headers)
     assert done.status_code == 200 and done.json()["index_status"] == "done"
     assert done.json()["knowledge_chunk_id"] == first.json()["knowledge_chunk_id"]
+    actions = [row["action"] for row in app.state.admin_audit_store.list_logs()]
+    assert "review.approve" in actions
+    assert "review.retry_index" in actions

@@ -16,11 +16,15 @@ class Element {
 }
 function button(root, text) { return root.children.flatMap(x => [x, ...descendants(x)]).find(x => x.tagName === 'button' && x.textContent.includes(text)); }
 function descendants(root) { return root.children.flatMap(x => [x, ...descendants(x)]); }
-async function page(outcome, status = '待审') {
+class ForbiddenError extends Error {
+  constructor(detail) { super(detail || '权限不足'); this.name = 'ForbiddenError'; this.status = 403; }
+}
+async function page(outcome, status = '待审', writable = true) {
   const elements = Object.fromEntries(['items', 'detail', 'title', 'review-status'].map(id => [id, new Element()]));
   elements['review-status'].value = status;
   const row = { id: 1, normalized_question: '运费问题', ai_suggested_answer: '保守答案', original_questions: [], review_status: status, approved_answer: status === '通过' ? '已核准答案' : '', knowledge_chunk_id: status === '通过' ? 7 : null, index_status: status === '通过' ? 'pending' : null };
   const calls = [];
+  let initCalls = 0;
   const context = {
     document: { getElementById(id) { return elements[id] ||= new Element(); }, createElement(tag) { const el = new Element(tag); Object.defineProperty(el, 'id', {set(id) { elements[id] = el; }}); return el; }, querySelectorAll() { return []; } },
     console,
@@ -30,21 +34,38 @@ async function page(outcome, status = '待审') {
       return { ok: true, status: 200, async json() { return url.includes('/1') ? row : { items: [row] }; } };
     },
   };
+  context.AdminAuth = {
+    ForbiddenError,
+    async init() { initCalls += 1; return { username: 'op', role: writable ? 'operator' : 'viewer', csrf_token: 'csrf-test' }; },
+    canWrite() { return writable; },
+    async requestJSON(url, options = {}) {
+      const headers = { ...(options.headers || {}), 'X-CSRF-Token': 'csrf-test' };
+      const response = await context.fetch(url, { ...options, headers });
+      const body = await response.json();
+      if (!response.ok) {
+        const message = typeof body.detail === 'string' ? body.detail : `请求失败（HTTP ${response.status}）`;
+        throw response.status === 403 ? new ForbiddenError(message) : new Error(message);
+      }
+      return body;
+    },
+  };
   vm.createContext(context);
   const html = fs.readFileSync('static/review-queue.html', 'utf8');
-  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/load\(\)\.catch\(error => \{ items\.textContent = error\.message; \}\);\s*$/, 'globalThis.ready = load();');
+  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1].replace(/initPage\(\);\s*$/, 'globalThis.ready = initPage();');
   vm.runInContext(script, context);
   await context.ready;
   await context.openDetail(1, elements.items.children[0]);
-  return { elements, calls, context };
+  return { elements, calls, context, get initCalls() { return initCalls; } };
 }
 
 test('pending approval is never shown as indexed success', async () => {
-  const { elements } = await page({ code: 200, body: { approved: true, knowledge_chunk_id: 7, index_status: 'pending' } });
+  const { elements, calls } = await page({ code: 200, body: { approved: true, knowledge_chunk_id: 7, index_status: 'pending' } });
   await button(elements.detail, '通过').onclick();
   assert.match(elements.detail.textContent, /待重试/);
   assert.doesNotMatch(elements.detail.textContent, /已通过并写入知识库/);
   assert.ok(button(elements.detail, '重试'));
+  const write = calls.find(x => x.options.method === 'POST');
+  assert.equal(write.options.headers['X-CSRF-Token'], 'csrf-test');
 });
 
 test('failed approval preserves answer and re-enables the button', async () => {
@@ -94,4 +115,12 @@ test('an old form cannot apply its approval to a newly selected review', async (
   assert.equal(elements.title.textContent, '第二个问题');
   assert.equal(context.document.getElementById('answer').value, '第二个答案');
   assert.doesNotMatch(elements.detail.textContent, /已通过并写入知识库/);
+});
+
+test('session initializes once and read-only roles cannot use review write actions', async () => {
+  const { elements, initCalls } = await page({ code: 200, body: {} }, '待审', false);
+  assert.equal(initCalls, 1);
+  assert.ok(button(elements.detail, '通过').disabled);
+  assert.ok(button(elements.detail, '驳回').disabled);
+  assert.match(elements.detail.textContent, /只读/);
 });

@@ -101,21 +101,30 @@ def test_onnx_service_unavailable_without_model(tmp_path):
 
 @pytest.mark.asyncio
 async def test_topics_api_distribution_and_batch(db_session_factory, monkeypatch):
+    from app.admin_store import AdminAuditStore, AdminStore
     from app.main import create_app
     from app.config import Settings
+    from tests.helpers import admin_login, csrf_headers, seed_admin
 
-    app = create_app(Settings(openai_api_key="sk-test", embedding_api_key="sk-test"))
+    app = create_app(Settings(openai_api_key="sk-test", embedding_api_key="sk-test",
+                              admin_session_secret="test-admin-secret",
+                              admin_password_iterations=2_000))
     factory = db_session_factory
+    app.state.admin_store = AdminStore(factory, password_iterations=2_000)
+    app.state.admin_audit_store = AdminAuditStore(factory)
     ids = _seed_pool(factory, ["怎么退货", "快递几天到"])
     app.state.topic_store = TopicStore(factory)
     from app.topic_classifier import StubTopicClassifier
     app.state.topic_classifier = StubTopicClassifier({"怎么退货": ["退换货"], "快递几天到": ["物流"]})
+    seed_admin(app, "op", "operator-pass-123", "operator")
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://t") as client:
+        csrf = await admin_login(client, "op", "operator-pass-123")
         before = (await client.get("/api/topics/distribution")).json()
         assert before["classified"] == 0 and before["unclassified"] == 2
 
-        batched = (await client.post("/api/topics/classify-batch", json={"limit": 10})).json()
+        batched = (await client.post("/api/topics/classify-batch", json={"limit": 10},
+                                     headers=csrf_headers(csrf))).json()
         assert batched["classified"] == 2
 
         after = (await client.get("/api/topics/distribution")).json()
@@ -126,16 +135,25 @@ async def test_topics_api_distribution_and_batch(db_session_factory, monkeypatch
 
 @pytest.mark.asyncio
 async def test_topics_api_returns_503_when_model_missing(db_session_factory):
+    from app.admin_store import AdminAuditStore, AdminStore
     from app.main import create_app
     from app.config import Settings
     from app.topic_classifier import TopicClassifierService
     from app.store import TopicStore
+    from tests.helpers import admin_login, csrf_headers, seed_admin
 
-    app = create_app(Settings(openai_api_key="sk-test", embedding_api_key="sk-test"))
+    app = create_app(Settings(openai_api_key="sk-test", embedding_api_key="sk-test",
+                              admin_session_secret="test-admin-secret",
+                              admin_password_iterations=2_000))
+    app.state.admin_store = AdminStore(db_session_factory, password_iterations=2_000)
+    app.state.admin_audit_store = AdminAuditStore(db_session_factory)
     app.state.topic_store = TopicStore(db_session_factory)
     app.state.topic_classifier = TopicClassifierService(
         Settings(topic_model_dir="models/definitely-absent"))
+    seed_admin(app, "op", "operator-pass-123", "operator")
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://t") as client:
-        response = await client.post("/api/topics/classify-batch", json={"limit": 5})
+        csrf = await admin_login(client, "op", "operator-pass-123")
+        response = await client.post("/api/topics/classify-batch", json={"limit": 5},
+                                     headers=csrf_headers(csrf))
         assert response.status_code == 503

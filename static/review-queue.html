@@ -20,6 +20,7 @@
     button:disabled { opacity: .55; cursor: default; }
     .toolbar { display: flex; gap: 8px; margin-top: 10px; }
     .source { margin-top: 10px; padding: 10px; border-radius: 8px; background: #f6f8fc; white-space: pre-wrap; }
+    .error { color: #d34b4b; }
     @media (max-width: 760px) { main { grid-template-columns: 1fr; } }
   </style>
 </head>
@@ -29,50 +30,63 @@
     <section><h3>问题队列</h3><label>审核状态 <select id="review-status"><option value="待审">待审</option><option value="通过">已通过</option></select></label><div id="items">加载中…</div></section>
     <section><h3 id="title">选择一条问题查看详情</h3><div id="detail" class="muted">人工审核时请对照原话和召回片段。</div></section>
   </main>
+  <script src="/admin/assets/admin.js"></script>
   <script>
     const items = document.getElementById("items"), detail = document.getElementById("detail"), title = document.getElementById("title");
     const statusFilter = document.getElementById("review-status");
     let selected = null, viewVersion = 0;
 
-    async function requestJson(url, options) {
-      const res = await fetch(url, options);
-      let body;
-      try { body = await res.json(); }
-      catch (_) { throw new Error("请求失败，请稍后重试（HTTP " + res.status + "）。"); }
-      if (!res.ok) throw new Error(typeof body.detail === "string" ? body.detail : "请求失败（HTTP " + res.status + "）。");
-      return body;
+    function errorText(err) {
+      return err instanceof AdminAuth.ForbiddenError
+        ? "权限不足：当前账号无此操作权限。"
+        : (err.message || "请求失败");
     }
+
+    function showError(err) {
+      detail.innerHTML = "";
+      const box = document.createElement("div");
+      box.className = "error";
+      box.textContent = errorText(err);
+      detail.appendChild(box);
+    }
+
     async function load() {
       const status = statusFilter.value || "待审";
-      const body = await requestJson("/api/review-queue?status=" + encodeURIComponent(status));
-      if ((statusFilter.value || "待审") !== status) return;
-      items.innerHTML = "";
-      for (const row of body.items || []) {
-        const b = document.createElement("button"); b.className = "item";
-        b.innerHTML = '<span class="count"></span><span class="question"></span><div class="muted"></div>';
-        b.querySelector(".count").textContent = "×" + row.occurrence_count;
-        b.querySelector(".question").textContent = row.normalized_question;
-        b.querySelector(".muted").textContent = row.review_status === "通过"
-          ? (row.index_status === "done" ? "已写入知识库" : "审核已保存，索引待重试")
-          : (row.ai_suggested_answer || "暂无示例答案");
-        b.onclick = () => openDetail(row.id, b); items.appendChild(b);
+      try {
+        const body = await AdminAuth.requestJSON("/api/review-queue?status=" + encodeURIComponent(status));
+        if ((statusFilter.value || "待审") !== status) return;
+        items.innerHTML = "";
+        for (const row of body.items || []) {
+          const b = document.createElement("button"); b.className = "item";
+          b.innerHTML = '<span class="count"></span><span class="question"></span><div class="muted"></div>';
+          b.querySelector(".count").textContent = "×" + row.occurrence_count;
+          b.querySelector(".question").textContent = row.normalized_question;
+          b.querySelector(".muted").textContent = row.review_status === "通过"
+            ? (row.index_status === "done" ? "已写入知识库" : "审核已保存，索引待重试")
+            : (row.ai_suggested_answer || "暂无示例答案");
+          b.onclick = () => openDetail(row.id, b); items.appendChild(b);
+        }
+        if (!body.items?.length) items.textContent = "暂无" + (status === "通过" ? "已通过" : "待审") + "问题";
+      } catch (err) {
+        items.textContent = errorText(err);
       }
-      if (!body.items?.length) items.textContent = "暂无" + (status === "通过" ? "已通过" : "待审") + "问题";
     }
+
     async function openDetail(id, button) {
       const version = ++viewVersion;
       selected = null;
       detail.textContent = "加载中…";
       document.querySelectorAll(".item").forEach((x) => x.classList.remove("active")); button.classList.add("active");
       try {
-        const body = await requestJson("/api/review-queue/" + id);
+        const body = await AdminAuth.requestJSON("/api/review-queue/" + id);
         if (version !== viewVersion) return;
         selected = body;
         renderDetail();
-      } catch (error) {
-        if (version === viewVersion) detail.textContent = error.message;
+      } catch (err) {
+        if (version === viewVersion) showError(err);
       }
     }
+
     function renderDetail() {
       const id = selected.id;
       const version = viewVersion;
@@ -94,7 +108,7 @@
         const controls = [...bar.children];
         controls.forEach(control => { control.disabled = true; });
         try {
-          const result = await requestJson("/api/review-queue/" + id + suffix, {
+          const result = await AdminAuth.requestJSON("/api/review-queue/" + id + suffix, {
             method: "POST", headers: {"Content-Type": "application/json"},
             ...(payload ? {body: JSON.stringify(payload)} : {})
           });
@@ -107,7 +121,7 @@
           try { await load(); }
           catch (_) { items.textContent = "列表刷新失败，请重新选择审核状态刷新。"; }
         } catch (error) {
-          if (version === viewVersion) message.textContent = error.message;
+          if (version === viewVersion) showError(error);
         } finally { controls.forEach(control => { control.disabled = false; }); }
       };
       if (selected.review_status === "通过") {
@@ -123,12 +137,25 @@
         reject.onclick = () => post(reject, "/reject");
         bar.append(approve, reject);
       }
+      if (!AdminAuth.canWrite()) {
+        [...bar.children].forEach(control => { control.disabled = true; });
+        const note = document.createElement("p"); note.className = "muted";
+        note.textContent = "当前账号为只读，无审核权限。";
+        detail.appendChild(note);
+      }
     }
+
     statusFilter.onchange = async () => {
       ++viewVersion; selected = null; title.textContent = "选择一条问题查看详情"; detail.textContent = "人工审核时请对照原话和召回片段。";
-      try { await load(); } catch (error) { items.textContent = error.message; }
+      await load();
     };
-    load().catch(error => { items.textContent = error.message; });
+
+    async function initPage() {
+      const session = await AdminAuth.init();
+      if (!session) return;
+      await load();
+    }
+    initPage();
   </script>
 </body>
 </html>
