@@ -8,13 +8,11 @@ import json
 import logging
 import random
 import time
-from datetime import datetime
 from typing import Literal
 
 from langchain.tools import tool
 from pydantic import BaseModel, Field
 
-from app.models import Ticket
 from app.tools.base import ToolContext, ToolRecord, ToolRegistryV2
 
 logger = logging.getLogger(__name__)
@@ -100,43 +98,19 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
     def create_ticket(conversation_id: int, description: str, ticket_type: str,
                       confirm_key: str | None = None) -> str:
         """创建人工工单转人工处理。问题超出自动客服能力、用户强烈要求人工时使用。"""
-        from sqlalchemy import select
-        from sqlalchemy.exc import IntegrityError
+        from app.tickets import CONFIRM_KEY_CONFLICT, ConfirmKeyConflict, create_ticket_idempotent
 
-        def dedup_payload(ticket):
-            # 幂等命中:返回已建工单号,响应标记 deduplicated,调用方/前端可据此提示
-            return json.dumps({"ticket_no": ticket.ticket_no,
-                               "status": ticket.status or "待处理",
-                               "deduplicated": True}, ensure_ascii=False)
-
-        ticket_no = f"T{datetime.now().strftime('%Y%m%d')}{random.randint(0, 999):03d}"
-        with ctx.session_factory() as session:
-            key = (confirm_key or "").strip() or None
-            if key is not None:
-                existing = session.execute(
-                    select(Ticket).where(Ticket.confirm_key == key)).scalar_one_or_none()
-                if existing is not None:
-                    return dedup_payload(existing)
-            session.add(Ticket(
-                ticket_no=ticket_no,
-                conversation_id=conversation_id,
-                description=description,
-                ticket_type=ticket_type,
-                confirm_key=key,
-            ))
-            try:
-                session.commit()
-            except IntegrityError:
-                # 并发同键:唯一约束兜底,回查返回先建的那张(超时后重试/双击都不重复建单)
-                if key is None:
-                    raise
-                session.rollback()
-                existing = session.execute(
-                    select(Ticket).where(Ticket.confirm_key == key)).scalar_one_or_none()
-                if existing is not None:
-                    return dedup_payload(existing)
-                raise
-        return json.dumps({"ticket_no": ticket_no, "status": "待处理"}, ensure_ascii=False)
+        try:
+            payload = create_ticket_idempotent(
+                ctx.session_factory, conversation_id=conversation_id,
+                description=description, ticket_type=ticket_type, confirm_key=confirm_key)
+        except ConfirmKeyConflict:
+            # 引擎契约:不向上抛异常;路由按 error 码转 409,绝不把旧工单当成功返回
+            return json.dumps({
+                "error": CONFIRM_KEY_CONFLICT,
+                "detail": "同一确认键的会话/描述/工单类型与已建工单不一致;未创建新工单",
+            }, ensure_ascii=False)
+        return json.dumps(payload, ensure_ascii=False)
 
     registry.register(ToolRecord(query_order, source="builtin", access="read", label="订单查询"))
     registry.register(ToolRecord(query_product, source="builtin", access="read", label="商品查询"))

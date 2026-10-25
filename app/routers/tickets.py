@@ -1,11 +1,22 @@
-"""建工单端点:按钮建单(点按钮即用户确认)+ ch08 建工单确认流(预览卡确认/取消)。"""
+"""建工单端点:按钮建单(点按钮即用户确认)+ ch08 建工单确认流(预览卡确认/取消)。
+
+ch12:两端点都支持 confirm_key 幂等;同键但会话/描述/类型不一致 → 409(ADR-3),
+绝不把旧工单当成功返回。
+"""
 import json
 
 from fastapi import APIRouter, HTTPException, Request
 
 from app.schemas import TicketCancelRequest, TicketConfirmRequest, TicketRequest
+from app.tickets import CONFIRM_KEY_CONFLICT
 
 router = APIRouter()
+
+
+def _raise_on_conflict(parsed) -> None:
+    if isinstance(parsed, dict) and parsed.get("error") == CONFIRM_KEY_CONFLICT:
+        raise HTTPException(status_code=409,
+                            detail=parsed.get("detail") or "确认键与已建工单不一致")
 
 
 @router.post("/api/tickets")
@@ -24,6 +35,7 @@ async def create_ticket(body: TicketRequest, request: Request):
         parsed = json.loads(raw)
     except json.JSONDecodeError:
         parsed = None  # 引擎失败收敛为错误字符串,不是 JSON → 与下方同归 502
+    _raise_on_conflict(parsed)
     if not isinstance(parsed, dict) or "ticket_no" not in parsed:
         raise HTTPException(status_code=502, detail="创建工单失败")
     return parsed
@@ -58,6 +70,7 @@ async def confirm_ticket(body: TicketConfirmRequest, request: Request):
         parsed = json.loads(raw)
     except json.JSONDecodeError:
         parsed = None
+    _raise_on_conflict(parsed)
     if body.tool_name == "create_ticket" and (
             not isinstance(parsed, dict) or "ticket_no" not in parsed):
         raise HTTPException(status_code=502, detail="创建工单失败")

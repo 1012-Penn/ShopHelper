@@ -36,7 +36,9 @@ async def client_app(make_client):
 @pytest.mark.asyncio
 async def test_double_click_same_key_returns_same_ticket(client_app):
     client, app = client_app
-    payload = {"description": "售后问题", "ticket_type": "售后", "confirm_key": KEY_A}
+    session_id = await app.state.store.resolve(None)
+    payload = {"session_id": session_id, "description": "售后问题", "ticket_type": "售后",
+               "confirm_key": KEY_A}
     first = await post_ticket(client, payload)
     second = await post_ticket(client, payload)  # 双击的第二下 / 客户端超时重试
     assert first["ticket_no"] == second["ticket_no"]
@@ -89,11 +91,25 @@ async def test_confirm_endpoint_same_key_returns_same_ticket(client_app):
 async def test_first_response_lost_then_replay_same_key(client_app):
     """首请求已建单但响应未达客户端(超时),客户端同键重放:同一工单、不重复建单。"""
     client, app = client_app
-    payload = {"description": "重放", "ticket_type": "售后", "confirm_key": KEY_A}
+    session_id = await app.state.store.resolve(None)
+    payload = {"session_id": session_id, "description": "重放", "ticket_type": "售后",
+               "confirm_key": KEY_A}
     first = await post_ticket(client, payload)
     replay = await post_ticket(client, payload)
     assert first["ticket_no"] == replay["ticket_no"]
     assert replay.get("deduplicated") is True
+    with app.state.session_factory() as session:
+        assert session.query(Ticket).filter_by(confirm_key=KEY_A).count() == 1
+
+
+@pytest.mark.asyncio
+async def test_anonymous_session_retry_is_not_deduped_across_conversations(client_app):
+    """无 session_id 时每次请求都会新建会话:同键不能跨会话复用,宁可 409 也不返回旧工单。"""
+    client, app = client_app
+    payload = {"description": "匿名提交", "ticket_type": "售后", "confirm_key": KEY_A}
+    assert "ticket_no" in await post_ticket(client, payload)
+    resp = await client.post("/api/tickets", json=payload)
+    assert resp.status_code == 409 and "ticket_no" not in resp.json()
     with app.state.session_factory() as session:
         assert session.query(Ticket).filter_by(confirm_key=KEY_A).count() == 1
 
@@ -174,3 +190,95 @@ def test_preview_frame_carries_fresh_confirm_key():
     assert frames[0]["type"] == "ticket_preview"
     assert len(frames[0]["confirm_key"]) == 32
     assert frames[1]["confirm_key"] != frames[0]["confirm_key"]  # 每次确认动作新键
+
+
+# ---------------- 同键一致性(ADR-3 修正):不一致 409,绝不返回旧工单 ----------------
+
+
+async def _two_conversations(app) -> tuple[int, int]:
+    a = await app.state.store.resolve(None)
+    b = await app.state.store.resolve(None)
+    return a, b
+
+
+@pytest.mark.asyncio
+async def test_same_key_cross_conversation_returns_409(client_app):
+    client, app = client_app
+    conv_a, conv_b = await _two_conversations(app)
+    payload_a = {"conversation_id": conv_a, "description": "同一描述",
+                 "ticket_type": "售后", "confirm_key": KEY_A}
+    first = (await client.post("/api/tickets/confirm", json=payload_a)).json()
+    assert "ticket_no" in first
+    payload_b = {**payload_a, "conversation_id": conv_b}
+    resp = await client.post("/api/tickets/confirm", json=payload_b)
+    assert resp.status_code == 409
+    assert "ticket_no" not in resp.json()
+    with app.state.session_factory() as session:
+        rows = session.query(Ticket).filter_by(confirm_key=KEY_A).all()
+        assert len(rows) == 1 and rows[0].conversation_id == conv_a  # 未新建、未串会话
+
+
+@pytest.mark.asyncio
+async def test_same_key_different_description_or_type_returns_409(client_app):
+    client, app = client_app
+    conv, _ = await _two_conversations(app)
+    base = {"conversation_id": conv, "description": "描述一", "ticket_type": "售后",
+            "confirm_key": KEY_A}
+    assert "ticket_no" in (await client.post("/api/tickets/confirm", json=base)).json()
+    for changed in ({"description": "描述二"}, {"ticket_type": "投诉"}):
+        resp = await client.post("/api/tickets/confirm", json={**base, **changed})
+        assert resp.status_code == 409, changed
+        assert "ticket_no" not in resp.json()
+    with app.state.session_factory() as session:
+        assert session.query(Ticket).filter_by(confirm_key=KEY_A).count() == 1
+
+
+@pytest.mark.asyncio
+async def test_button_endpoint_also_enforces_same_key_consistency(client_app):
+    client, app = client_app
+    first = await post_ticket(client, {"description": "按钮建单", "ticket_type": "咨询",
+                                       "confirm_key": KEY_A})
+    assert "ticket_no" in first
+    resp = await client.post("/api/tickets", json={"description": "按钮建单",
+                                                  "ticket_type": "投诉",
+                                                  "confirm_key": KEY_A})
+    assert resp.status_code == 409 and "ticket_no" not in resp.json()
+
+
+def test_integrity_error_requery_applies_same_consistency_rule(tmp_path, monkeypatch):
+    """模拟「预查未命中」的并发交错,强制走 IntegrityError 回查分支:
+    回查后仍须核对会话/描述/类型,不一致 → ConfirmKeyConflict,一致 → 返回同一工单。"""
+    from app import tickets as ticket_service
+    from app.tickets import ConfirmKeyConflict, create_ticket_idempotent
+
+    engine = create_engine(f"sqlite:///{tmp_path / 'race.db'}",
+                           connect_args={"timeout": 30})
+    Base.metadata.create_all(engine, tables=[Ticket.__table__])
+    factory = sessionmaker(bind=engine, expire_on_commit=False)
+    with factory() as session:
+        session.add(Ticket(ticket_no="T20260101010", conversation_id=1,
+                           description="原始", ticket_type="售后", confirm_key=KEY_A))
+        session.commit()
+
+    real_find = ticket_service.find_by_key
+    state = {"first": True}
+
+    def miss_once(session, key):
+        if state["first"]:  # 只让预查未命中,后续回查走真实实现
+            state["first"] = False
+            return None
+        return real_find(session, key)
+
+    monkeypatch.setattr(ticket_service, "find_by_key", miss_once)  # 模块内引用同一名字
+
+    # 不一致:回查命中但参数不同 → 冲突,不得返回旧工单
+    with pytest.raises(ConfirmKeyConflict):
+        create_ticket_idempotent(factory, conversation_id=1, description="被改过",
+                                 ticket_type="售后", confirm_key=KEY_A)
+    # 一致:回查命中且参数相同 → 幂等返回同一工单
+    state["first"] = True
+    payload = create_ticket_idempotent(factory, conversation_id=1, description="原始",
+                                       ticket_type="售后", confirm_key=KEY_A)
+    assert payload["ticket_no"] == "T20260101010" and payload["deduplicated"] is True
+    with factory() as session:
+        assert session.query(Ticket).filter_by(confirm_key=KEY_A).count() == 1
