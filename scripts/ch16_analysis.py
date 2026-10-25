@@ -77,10 +77,12 @@ def strict_answer_outcome(case: dict, trace: dict) -> bool | None:
     has_gold = bool(case.get("gold_facts")) or bool(
         (checks or {}).get("gold_facts_checked", 0)
     )
-    if not has_gold or not isinstance(checks, dict):
+    if not has_gold:
         return None
     if _blocked(trace):
         return False
+    if not isinstance(checks, dict):
+        return None
     return bool(
         checks.get("gold_facts_checked", 0) > 0
         and checks.get("gold_fact_accuracy", {}).get("passed")

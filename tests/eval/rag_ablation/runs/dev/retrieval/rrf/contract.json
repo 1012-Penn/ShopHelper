@@ -19,9 +19,9 @@
       "ood": 4
     }
   },
-  "protocol_sha256": "78bb6f71e3a563bb6681481abf3058ae1a1c217a453f55b135be54f3a85ea9b5",
+  "protocol_sha256": "75193c85352d8a240518f8a670a9002c1eaa176257e1e3dfb277b0dec75cdd62",
   "analysis_code_sha256": {
-    "ch16_analysis.py": "623140e0e76048bee5de04f8c4dd3b67c4577d3a9d7a10a00a2ce3ab1be54ed9",
+    "ch16_analysis.py": "1c22860354ff2aef7209651cab4430038fba12921173a2aac3706ecba298b7e7",
     "eval_rag_ablation.py": "df27b08da0d52e6adc559cdf9e6c7aefcf01eebb0faec2f4daf290c63b586743"
   },
   "group": {
@@ -118,12 +118,12 @@
       "sha256": "d91c994b5ac7355829335108ed4e0404dc1f26f8dd55ecb9a57276cd236d249b"
     },
     "run": {
-      "git_commit": "dde19f3",
+      "git_commit": "b53cc7c",
       "git_dirty": true,
       "seed": 20261024,
       "python": "3.10.12",
       "host": "",
-      "started_at": "2026-10-25T16:04:45.613118+00:00",
+      "started_at": "2026-10-25T16:13:04.681343+00:00",
       "ch16_allow_paid": false,
       "ch16_max_cost_usd": 0.0
     },

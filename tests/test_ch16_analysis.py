@@ -58,6 +58,18 @@ def test_gate_blocked_answerable_case_counts_as_strict_failure():
     assert strict_answer_outcome(case, trace) is False
 
 
+def test_gate_block_is_strict_failure_even_without_answer_checks():
+    case = _case("A1")
+    trace = {
+        "case_id": "A1",
+        "expected_behavior": "answer",
+        "gate_blocked": True,
+        "deterministic_checks": None,
+    }
+
+    assert strict_answer_outcome(case, trace) is False
+
+
 def test_strict_answer_requires_facts_conditions_citations_and_no_refusal():
     case = _case("A1", expected="answer_with_conditions", conditions=("有效条件",))
     trace = _trace("A1", condition=1.0)
