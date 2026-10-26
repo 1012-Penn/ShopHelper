@@ -1,0 +1,12 @@
+{
+  "orders": {
+    "1001": {"order_id": "1001", "product": "无线耳机", "status": "已签收", "amount": 399},
+    "1002": {"order_id": "1002", "product": "机械键盘", "status": "已发货", "amount": 699},
+    "1003": {"order_id": "1003", "product": "手机壳", "status": "待发货", "amount": 59},
+    "1004": {"order_id": "1004", "product": "运动鞋", "status": "已签收", "amount": 529},
+    "1005": {"order_id": "1005", "product": "双肩包", "status": "已发货", "amount": 299},
+    "1006": {"order_id": "1006", "product": "显示器", "status": "已签收", "amount": 1899},
+    "1007": {"order_id": "1007", "product": "平板电脑", "status": "待发货", "amount": 2599},
+    "1008": {"order_id": "1008", "product": "智能手表", "status": "已签收", "amount": 1299}
+  }
+}

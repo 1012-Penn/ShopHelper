@@ -13,6 +13,14 @@ from typing import Any, Literal
 from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langgraph.graph import END, START, StateGraph
 
+from app.action_contracts import (
+    ActionArtifact,
+    ActionContractPolicy,
+    ActionSessionLedger,
+    ActionToolContext,
+    guard_final_reply,
+    infer_action_intent,
+)
 from app.evidence_contracts import (
     EvidenceLedger,
     TaskHandoff,
@@ -35,6 +43,15 @@ class RunLimitError(RuntimeError):
     pass
 
 
+ACTION_CONTRACT_PROMPT = (
+    "动作契约：只能在用户明确要求创建工单且业务描述完整时调用create_ticket。"
+    "ticket_type必须满足工具注册表枚举；退款、退货、维修可明确归为售后，"
+    "无法判断时要求澄清，不得默认猜成售后。conversation_id由运行时注入，"
+    "confirm_key由服务端生成，模型都不得自行提交。"
+    "普通查询、能否取消以及取消动作不是建单请求，不得自行生成预览。"
+)
+
+
 @dataclass
 class _RunContext:
     run_id: str
@@ -45,6 +62,8 @@ class _RunContext:
     agent_histories: dict[str, list[dict[str, Any]]] | None = None
     evidence_ledger: EvidenceLedger | None = None
     tool_cache: ToolResultCache | None = None
+    action_intent: Any = None
+    action_artifacts: list[ActionArtifact] | None = None
 
     def __post_init__(self) -> None:
         if self.agent_histories is None:
@@ -53,6 +72,8 @@ class _RunContext:
             self.evidence_ledger = EvidenceLedger()
         if self.tool_cache is None:
             self.tool_cache = ToolResultCache()
+        if self.action_artifacts is None:
+            self.action_artifacts = []
 
 
 @dataclass(frozen=True)
@@ -91,7 +112,10 @@ class MultiAgentRunner:
                  supervisor_model, engine, limits: MultiAgentLimits | None = None,
                  handoff_mode: Literal["raw", "typed"] = "raw",
                  dynamic_status_ttl_seconds: int = 300,
-                 planner_structured=None) -> None:
+                 planner_structured=None,
+                 action_contracts_enabled: bool = False,
+                 action_ledger: ActionSessionLedger | None = None,
+                 action_policy: ActionContractPolicy | None = None) -> None:
         self.planner_model = planner_model
         self.retrieval_model = retrieval_model
         self.action_model = action_model
@@ -101,6 +125,9 @@ class MultiAgentRunner:
         self.handoff_mode = handoff_mode
         self.dynamic_status_ttl_seconds = max(0, int(dynamic_status_ttl_seconds))
         self.planner_structured = planner_structured
+        self.action_contracts_enabled = bool(action_contracts_enabled)
+        self.action_ledger = action_ledger or ActionSessionLedger()
+        self.action_policy = action_policy or ActionContractPolicy()
         self._runs: dict[str, _RunContext] = {}
 
     def _context(self, run_id: str) -> _RunContext:
@@ -201,6 +228,18 @@ class MultiAgentRunner:
         child_deadline = min(deadline, time.monotonic() + self.limits.child_timeout_seconds)
         role = ROLE_SPECS[agent_name]
         model = self.retrieval_model if agent_name == "retrieval" else self.action_model
+        contract_mode = self.action_contracts_enabled and agent_name == "action"
+        intent = context.action_intent
+        if contract_mode and intent is None:
+            intent = infer_action_intent(
+                task.objective,
+                pending=self.action_ledger.pending(conversation_id),
+            )
+            context.action_intent = intent
+        tool_context = (
+            ActionToolContext.from_registry(self.engine.registry, "create_ticket")
+            if contract_mode else None
+        )
         observed_at = datetime.now(timezone.utc).isoformat()
         task_subjects = subjects_from_text(task.objective)
         handoff = TaskHandoff.role(
@@ -221,6 +260,12 @@ class MultiAgentRunner:
             projected = []
             initial_prompt = self._fact_prompt(task, facts, evidence)
             system_prompt = role.system_prompt
+        if contract_mode:
+            system_prompt += "\n" + ACTION_CONTRACT_PROMPT
+            initial_prompt += (
+                "\nACTION_TOOL_CONTRACT="
+                + _json(tool_context.model_context())
+            )
         messages: list[Any] = [
             SystemMessage(content=system_prompt),
             HumanMessage(content=initial_prompt),
@@ -229,6 +274,9 @@ class MultiAgentRunner:
         task_facts: dict[str, Any] = {}
         evidence_ids: list[str] = []
         preview: dict[str, Any] | None = None
+        preview_artifact: ActionArtifact | None = None
+        action_artifacts: list[ActionArtifact] = []
+        repairs_used = 0
         steps = 0
         start_tokens = context.tokens
         task_claims = []
@@ -246,6 +294,41 @@ class MultiAgentRunner:
                 messages.append(response)
                 calls = list(getattr(response, "tool_calls", None) or [])
                 if not calls:
+                    if contract_mode and intent is not None \
+                            and intent.kind == "ticket_preview" \
+                            and preview_artifact is None:
+                        missing = ActionArtifact(
+                            kind="ticket_preview",
+                            state="failed",
+                            conversation_id=conversation_id,
+                            tool_name="create_ticket",
+                            task_id=task.task_id,
+                            agent_id=f"{agent_name}:{task.task_id}",
+                            error_code="missing_preview",
+                            error="模型声称有预览，但没有生成结构化 create_ticket preview。",
+                        )
+                        if repairs_used < self.action_policy.max_repairs:
+                            repairs_used += 1
+                            feedback = tool_context.missing_preview_feedback()
+                            messages.append(HumanMessage(content=feedback))
+                            self._count_tokens(context, feedback)
+                            continue
+                        action_artifacts.append(missing)
+                        context.action_artifacts.extend([missing])
+                        context.agent_histories[task.task_id] = _serialize_messages(messages)
+                        return AgentOutcome(
+                            task_id=task.task_id, agent=agent_name,
+                            objective=task.objective, status="failed",
+                            facts=task_facts, evidence_ids=evidence_ids,
+                            tool_calls=tool_calls,
+                            messages=_serialize_messages(messages),
+                            write_preview=preview, error=missing.error,
+                            stop_reason="action_contract_missing_preview",
+                            steps=steps, tokens=context.tokens - start_tokens,
+                            evidence_claims=task_claims,
+                            handoff=handoff, handoff_records=handoff_records,
+                            action_artifacts=action_artifacts,
+                        )
                     outcome = AgentOutcome(
                         task_id=task.task_id, agent=agent_name,
                         objective=task.objective, status="success",
@@ -258,6 +341,7 @@ class MultiAgentRunner:
                         evidence_claims=task_claims,
                         handoff=handoff,
                         handoff_records=handoff_records,
+                        action_artifacts=action_artifacts,
                     )
                     context.agent_histories[task.task_id] = outcome.messages
                     return outcome
@@ -276,21 +360,172 @@ class MultiAgentRunner:
                     )
                     if conversation_id is not None and "conversation_id" in properties:
                         args["conversation_id"] = conversation_id
+
+                    argument_decision = None
+                    if contract_mode and name == "create_ticket":
+                        if intent is None or intent.kind != "ticket_preview":
+                            feedback = (
+                                "ACTION_CONTRACT_FEEDBACK: 当前用户没有明确要求创建工单，"
+                                "不得调用写工具。普通查询、取消可行性或取消请求只需回答，"
+                                "不得自动生成预览。"
+                            )
+                            tool_calls.append({"name": name, "arguments": args})
+                            messages.append(ToolMessage(
+                                content=feedback,
+                                tool_call_id=str(call.get("id") or f"{task.task_id}-{index}"),
+                            ))
+                            if repairs_used < self.action_policy.max_repairs:
+                                repairs_used += 1
+                                continue
+                            failed = ActionArtifact(
+                                kind="ticket_preview",
+                                state="failed",
+                                conversation_id=conversation_id,
+                                tool_name=name,
+                                task_id=task.task_id,
+                                agent_id=f"{agent_name}:{task.task_id}",
+                                error_code="unexpected_action",
+                                error="用户未要求写动作，模型仍尝试创建工单。",
+                            )
+                            action_artifacts.append(failed)
+                            context.action_artifacts.extend([failed])
+                            return AgentOutcome(
+                                task_id=task.task_id, agent=agent_name,
+                                objective=task.objective, status="failed",
+                                facts=task_facts, evidence_ids=evidence_ids,
+                                tool_calls=tool_calls,
+                                messages=_serialize_messages(messages),
+                                write_preview=preview,
+                                error=failed.error,
+                                stop_reason="action_contract_unexpected_action",
+                                steps=steps, tokens=context.tokens - start_tokens,
+                                evidence_claims=task_claims, handoff=handoff,
+                                handoff_records=handoff_records,
+                                action_artifacts=action_artifacts,
+                            )
+                        if preview_artifact is not None:
+                            feedback = (
+                                "ACTION_CONTRACT_FEEDBACK: 本轮已经有结构化预览，"
+                                "不得重复调用 create_ticket。请只说明等待确认。"
+                            )
+                            messages.append(ToolMessage(
+                                content=feedback,
+                                tool_call_id=str(call.get("id") or f"{task.task_id}-{index}"),
+                            ))
+                            failed = ActionArtifact(
+                                kind="ticket_preview",
+                                state="failed",
+                                conversation_id=conversation_id,
+                                tool_name=name,
+                                task_id=task.task_id,
+                                agent_id=f"{agent_name}:{task.task_id}",
+                                error_code="duplicate_preview",
+                                error="模型在一次任务中重复请求工单预览。",
+                            )
+                            action_artifacts.append(failed)
+                            context.action_artifacts.extend([failed])
+                            return AgentOutcome(
+                                task_id=task.task_id, agent=agent_name,
+                                objective=task.objective, status="failed",
+                                facts=task_facts, evidence_ids=evidence_ids,
+                                tool_calls=tool_calls,
+                                messages=_serialize_messages(messages),
+                                write_preview=preview,
+                                error=failed.error,
+                                stop_reason="action_contract_duplicate_preview",
+                                steps=steps, tokens=context.tokens - start_tokens,
+                                evidence_claims=task_claims, handoff=handoff,
+                                handoff_records=handoff_records,
+                                action_artifacts=action_artifacts,
+                            )
+                        argument_decision = tool_context.prepare_arguments(
+                            args, conversation_id=conversation_id,
+                            task_id=task.task_id,
+                        )
+                        if not argument_decision.ok:
+                            feedback = tool_context.repair_feedback(argument_decision)
+                            tool_calls.append({"name": name, "arguments": args})
+                            messages.append(ToolMessage(
+                                content=feedback,
+                                tool_call_id=str(call.get("id") or f"{task.task_id}-{index}"),
+                            ))
+                            self._count_tokens(context, feedback)
+                            if repairs_used < self.action_policy.max_repairs:
+                                repairs_used += 1
+                                continue
+                            failed = ActionArtifact(
+                                kind="ticket_preview",
+                                state="failed",
+                                conversation_id=conversation_id,
+                                tool_name=name,
+                                arguments=argument_decision.arguments,
+                                original_arguments=argument_decision.original_arguments,
+                                normalizations=argument_decision.normalizations,
+                                task_id=task.task_id,
+                                agent_id=f"{agent_name}:{task.task_id}",
+                                error_code="clarification_required",
+                                error=argument_decision.feedback,
+                            )
+                            action_artifacts.append(failed)
+                            context.action_artifacts.extend([failed])
+                            return AgentOutcome(
+                                task_id=task.task_id, agent=agent_name,
+                                objective=task.objective, status="failed",
+                                facts=task_facts, evidence_ids=evidence_ids,
+                                tool_calls=tool_calls,
+                                messages=_serialize_messages(messages),
+                                write_preview=preview,
+                                error=failed.error,
+                                stop_reason="action_contract_clarification",
+                                steps=steps, tokens=context.tokens - start_tokens,
+                                evidence_claims=task_claims, handoff=handoff,
+                                handoff_records=handoff_records,
+                                action_artifacts=action_artifacts,
+                            )
+                        args = dict(argument_decision.arguments)
                     tool_calls.append({"name": name, "arguments": args})
 
                     def intercept(record, values, call_name=name):
-                        nonlocal preview
+                        nonlocal preview, preview_artifact
                         preview = {
                             "type": "ticket_preview",
                             "tool_name": getattr(record, "name", call_name),
                             "conversation_id": values.get("conversation_id"),
                             "description": values.get("description", ""),
-                            "ticket_type": values.get("ticket_type", "售后"),
+                            "ticket_type": (
+                                values.get("ticket_type")
+                                if contract_mode
+                                else values.get("ticket_type", "售后")
+                            ),
                             "arguments": dict(values),
                             "confirm_key": uuid.uuid4().hex,
                             "task_id": task.task_id,
                             "agent_id": f"{agent_name}:{task.task_id}",
                         }
+                        if contract_mode:
+                            artifact = ActionArtifact(
+                                kind="ticket_preview",
+                                state="awaiting_confirmation",
+                                conversation_id=values.get("conversation_id"),
+                                tool_name=getattr(record, "name", call_name),
+                                arguments=dict(values),
+                                original_arguments=(
+                                    argument_decision.original_arguments
+                                    if argument_decision is not None else {}
+                                ),
+                                normalizations=(
+                                    argument_decision.normalizations
+                                    if argument_decision is not None else []
+                                ),
+                                confirm_key=preview["confirm_key"],
+                                preview=dict(preview),
+                                task_id=task.task_id,
+                                agent_id=f"{agent_name}:{task.task_id}",
+                            )
+                            artifact_events = self.action_ledger.put_pending(artifact)
+                            preview_artifact = artifact_events[-1]
+                            action_artifacts.extend(artifact_events)
+                            context.action_artifacts.extend(artifact_events)
 
                     remaining = min(context.deadline, child_deadline) - time.monotonic()
                     if remaining <= 0:
@@ -335,6 +570,46 @@ class MultiAgentRunner:
                         result = await execute_tool()
                     self._count_tokens(context, str(result))
                     if str(result).startswith("错误:"):
+                        if contract_mode:
+                            if repairs_used < self.action_policy.max_repairs:
+                                repairs_used += 1
+                                messages.append(ToolMessage(
+                                    content=(
+                                        f"ACTION_CONTRACT_FEEDBACK: {result} "
+                                        f"工具契约={tool_context.model_context()}"
+                                    ),
+                                    tool_call_id=str(
+                                        call.get("id") or f"{task.task_id}-{index}"
+                                    ),
+                                ))
+                                continue
+                            failed = ActionArtifact(
+                                kind="ticket_preview",
+                                state="failed",
+                                conversation_id=conversation_id,
+                                tool_name=name,
+                                arguments=dict(args),
+                                task_id=task.task_id,
+                                agent_id=f"{agent_name}:{task.task_id}",
+                                error_code="invalid_tool_arguments",
+                                error=str(result),
+                            )
+                            action_artifacts.append(failed)
+                            context.action_artifacts.extend([failed])
+                            return AgentOutcome(
+                                task_id=task.task_id, agent=agent_name,
+                                objective=task.objective, status="failed",
+                                facts=task_facts, evidence_ids=evidence_ids,
+                                tool_calls=tool_calls,
+                                messages=_serialize_messages(messages),
+                                write_preview=preview,
+                                error=failed.error,
+                                stop_reason="action_contract_invalid_arguments",
+                                steps=steps, tokens=context.tokens - start_tokens,
+                                evidence_claims=task_claims, handoff=handoff,
+                                handoff_records=handoff_records,
+                                action_artifacts=action_artifacts,
+                            )
                         raise RuntimeError(str(result))
                     messages.append(ToolMessage(
                         content=str(result),
@@ -372,6 +647,7 @@ class MultiAgentRunner:
                     evidence_claims=task_claims,
                     handoff=handoff,
                     handoff_records=handoff_records,
+                    action_artifacts=action_artifacts,
                 )
                 context.agent_histories[task.task_id] = outcome.messages
                 return outcome
@@ -395,6 +671,7 @@ class MultiAgentRunner:
             evidence_claims=task_claims,
             handoff=handoff,
             handoff_records=handoff_records,
+            action_artifacts=action_artifacts,
         )
 
     async def plan(self, *, run_id: str, message: str,
@@ -429,8 +706,27 @@ class MultiAgentRunner:
     async def execute_tasks(self, *, run_id: str, plan: AgentPlan,
                             facts: dict[str, Any], evidence: dict[str, Any],
                             deadline: float,
-                            conversation_id: int | None = None) -> dict[str, Any]:
+                            conversation_id: int | None = None,
+                            user_message: str = "",
+                            conversation_history: list[dict[str, Any]] | None = None) -> dict[str, Any]:
         context = self._context(run_id)
+        if self.action_contracts_enabled and context.action_intent is None:
+            context.action_intent = infer_action_intent(
+                user_message,
+                pending=self.action_ledger.pending(conversation_id),
+            )
+        action_artifacts: list[ActionArtifact] = []
+        if self.action_contracts_enabled and context.action_intent is not None \
+                and context.action_intent.kind == "ticket_cancel":
+            existing = [
+                item for item in (context.action_artifacts or [])
+                if item.kind == "ticket_cancel"
+            ]
+            if existing:
+                action_artifacts.extend(existing)
+            else:
+                action_artifacts.extend(self.action_ledger.cancel(conversation_id))
+                context.action_artifacts.extend(action_artifacts)
         pending = {task.task_id: task for task in plan.tasks if task.task_id not in facts}
         completed = set(facts)
         errors: list[str] = []
@@ -458,6 +754,32 @@ class MultiAgentRunner:
                 })
 
             async def execute_one(task: AgentTask) -> AgentOutcome:
+                if self.action_contracts_enabled and task.agent == "action" \
+                        and context.action_intent is not None \
+                        and context.action_intent.kind != "ticket_preview":
+                    if context.action_intent.kind == "ticket_cancel":
+                        artifacts = [
+                            item for item in action_artifacts
+                            if item.kind == "ticket_cancel"
+                        ]
+                        artifacts = artifacts or self.action_ledger.cancel(conversation_id)
+                    else:
+                        artifact = self.action_ledger.no_action(conversation_id)
+                        artifacts = [artifact]
+                        context.action_artifacts.append(artifact)
+                    artifact = artifacts[-1]
+                    return AgentOutcome(
+                        task_id=task.task_id,
+                        agent="action",
+                        objective=task.objective,
+                        status="success",
+                        facts={
+                            "action_contract": artifact.model_dump(mode="json"),
+                            "draft": artifact.error or "本轮没有写动作。",
+                        },
+                        stop_reason="action_not_required",
+                        action_artifacts=artifacts,
+                    )
                 return await self.run_task(
                     agent_name=task.agent, task=task, facts=dict(facts),
                     evidence=dict(evidence), run_id=run_id, deadline=deadline,
@@ -476,6 +798,7 @@ class MultiAgentRunner:
                 tool_calls.extend(outcome.tool_calls)
                 handoffs.extend(outcome.handoff_records)
                 evidence_claims.extend(outcome.evidence_claims)
+                action_artifacts.extend(outcome.action_artifacts)
                 if outcome.write_preview:
                     previews.append(outcome.write_preview)
                 if outcome.status != "success":
@@ -511,7 +834,7 @@ class MultiAgentRunner:
                 })
             if errors:
                 break
-        return {
+        payload = {
             "facts": facts, "evidence": evidence, "errors": errors,
             "stop_reasons": [item.split(":")[-1] for item in errors],
             "trace": trace, "task_agents": task_agents,
@@ -525,11 +848,33 @@ class MultiAgentRunner:
                 if context.tool_cache is not None else {}
             ),
             "steps": context.steps, "tokens": context.tokens,
+            "needs_replan": (
+                bool(errors)
+                and not any(
+                    item.split(":")[-1].startswith("action_contract_")
+                    for item in errors
+                )
+            ),
         }
+        if self.action_contracts_enabled:
+            payload["action_artifacts"] = list({
+                item.action_id: item.model_dump(mode="json")
+                for item in action_artifacts
+            }.values())
+        return payload
 
     async def finalize(self, *, run_id: str, message: str, plan: AgentPlan,
                        facts: dict[str, Any], evidence: dict[str, Any],
-                       errors: list[str]) -> str:
+                       errors: list[str],
+                       action_artifacts: list[ActionArtifact] | None = None) -> str:
+        context = self._context(run_id)
+        if self.action_contracts_enabled and context.action_intent is not None \
+                and context.action_intent.kind == "ticket_cancel":
+            return guard_final_reply(
+                "",
+                intent=context.action_intent,
+                artifacts=list(action_artifacts or context.action_artifacts or []),
+            )
         if plan.disposition == "clarify":
             return plan.clarification
         if plan.disposition == "refuse":
@@ -537,7 +882,6 @@ class MultiAgentRunner:
         if plan.disposition == "handoff":
             return "已为您转人工客服。" + (plan.reason or "")
 
-        context = self._context(run_id)
         self._claim_step(context)
         if self.handoff_mode == "typed":
             assert context.evidence_ledger is not None
@@ -572,6 +916,13 @@ class MultiAgentRunner:
         )
         text = str(getattr(response, "content", response) or "")
         self._count_tokens(context, text)
+        if self.action_contracts_enabled and context.action_intent is not None:
+            observable = list(action_artifacts or context.action_artifacts or [])
+            text = guard_final_reply(
+                text,
+                intent=context.action_intent,
+                artifacts=observable,
+            )
         return text
 
 
@@ -595,7 +946,7 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
                 disposition="refuse",
                 reason="多Agent规划暂时不可用，请稍后重试或转人工。",
             )
-        return {
+        updates = {
             "plan": plan.model_dump(), "disposition": plan.disposition,
             "clarification": plan.clarification, "replan_count": 0,
             "needs_replan": False, "errors": errors, "started_at": context.started_at,
@@ -606,6 +957,18 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
                 "detail": f"{plan.disposition}:{len(plan.tasks)}",
             }],
         }
+        if runner.action_contracts_enabled:
+            context.action_intent = infer_action_intent(
+                state["user_message"],
+                pending=runner.action_ledger.pending(state.get("conversation_id")),
+            )
+            if context.action_intent.kind == "ticket_cancel":
+                artifacts = runner.action_ledger.cancel(state.get("conversation_id"))
+                context.action_artifacts.extend(artifacts)
+                updates["action_artifacts"] = [
+                    item.model_dump(mode="json") for item in artifacts
+                ]
+        return updates
 
     async def execute_tasks(state: dict) -> dict:
         plan = AgentPlan.model_validate(state["plan"])
@@ -617,9 +980,14 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
             evidence=dict(state.get("evidence") or {}),
             deadline=float(state.get("deadline") or time.monotonic() + runner.limits.max_seconds),
             conversation_id=state.get("conversation_id"),
+            user_message=state.get("user_message", ""),
+            conversation_history=state.get("conversation_history") or [],
         )
-        updates["needs_replan"] = bool(updates["errors"]) and \
-            int(state.get("replan_count", 0)) < runner.limits.max_replans
+        updates["needs_replan"] = (
+            bool(updates["errors"])
+            and int(state.get("replan_count", 0)) < runner.limits.max_replans
+            and bool(updates.get("needs_replan", True))
+        )
         return updates
 
     async def supervisor_replan(state: dict) -> dict:
@@ -653,11 +1021,16 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
         plan = AgentPlan.model_validate(state["plan"])
         errors = list(state.get("errors") or [])
         try:
+            artifacts = [
+                ActionArtifact.model_validate(item)
+                for item in (state.get("action_artifacts") or [])
+            ]
             final = await runner.finalize(
                 run_id=state["run_id"], message=state["user_message"], plan=plan,
                 facts=dict(state.get("facts") or {}),
                 evidence=dict(state.get("evidence") or {}),
                 errors=errors,
+                action_artifacts=artifacts,
             )
         except Exception as exc:  # noqa: BLE001 - finalization failure must return safe text
             errors.append(f"finalize:{type(exc).__name__}:{exc}")
@@ -705,7 +1078,10 @@ def build_multi_agent_runtime(*, engine, model,
                               limits: MultiAgentLimits | None = None,
                               handoff_mode: Literal["raw", "typed"] = "raw",
                               dynamic_status_ttl_seconds: int = 300,
-                              planner_structured=None) -> MultiAgentRunner:
+                              planner_structured=None,
+                              action_contracts_enabled: bool = False,
+                              action_ledger: ActionSessionLedger | None = None,
+                              action_policy: ActionContractPolicy | None = None) -> MultiAgentRunner:
     """Production wiring helper: one approved chat model, four explicit role labels."""
 
     return MultiAgentRunner(
@@ -718,4 +1094,7 @@ def build_multi_agent_runtime(*, engine, model,
         handoff_mode=handoff_mode,
         dynamic_status_ttl_seconds=dynamic_status_ttl_seconds,
         planner_structured=planner_structured,
+        action_contracts_enabled=action_contracts_enabled,
+        action_ledger=action_ledger,
+        action_policy=action_policy,
     )

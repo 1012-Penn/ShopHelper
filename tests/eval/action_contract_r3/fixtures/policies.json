@@ -1,0 +1,36 @@
+{
+  "facts": [
+    {
+      "id": 21001,
+      "question": "订单取消规则",
+      "answer": "待发货订单可以申请取消；已发货或已签收订单不能直接取消，可拒收或按售后规则处理。",
+      "category": "取消政策",
+      "section_path": "action-contract-v1 > 订单取消",
+      "match_any": ["取消", "撤回", "拦截", "扣费"]
+    },
+    {
+      "id": 21002,
+      "question": "退款、维修与投诉类型",
+      "answer": "退款、退货、维修和换货属于售后工单；对服务不满属于投诉；信息咨询属于咨询工单。",
+      "category": "工单类型",
+      "section_path": "action-contract-v1 > 工单类型",
+      "match_any": ["退款", "退货", "维修", "返修", "投诉", "咨询", "工单", "发票"]
+    },
+    {
+      "id": 21003,
+      "question": "退款到账时间",
+      "answer": "审核通过后通常 1 到 3 个工作日退回原支付渠道。",
+      "category": "售后",
+      "section_path": "action-contract-v1 > 退款",
+      "match_any": ["退款", "到账", "原支付渠道"]
+    },
+    {
+      "id": 21004,
+      "question": "退货运费",
+      "answer": "非质量问题通常由买家承担退货运费；质量问题由商家承担。",
+      "category": "售后",
+      "section_path": "action-contract-v1 > 运费",
+      "match_any": ["运费", "退货", "质量问题"]
+    }
+  ]
+}

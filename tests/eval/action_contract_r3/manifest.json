@@ -1,0 +1,13 @@
+{
+  "scenario_sha256": "91aeeff53af1201430731086117675b1febd2895888c8428f99f66e3070448e4",
+  "config_sha256": "de990c0d57f210472780864e3f168ffc56bcc4a19b449677fe7c6e2a77d5f84e",
+  "model": "deepseek-flash",
+  "scoring_version": "action-contract-r3-v1",
+  "split_counts": {
+    "dev": 8,
+    "held-out": 20
+  },
+  "max_retries": 2,
+  "run_cap_usd": 2.0,
+  "freeze_note": "Frozen before any paid model call."
+}

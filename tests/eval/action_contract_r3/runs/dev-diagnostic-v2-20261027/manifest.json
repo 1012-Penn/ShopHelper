@@ -1,0 +1,12 @@
+{
+  "scenario_sha256": "91aeeff53af1201430731086117675b1febd2895888c8428f99f66e3070448e4",
+  "config_sha256": "686cce74ba30e4c782fa7ad04fa1cac4ce1e19d5ea0e0644516aa5dc4809cba0",
+  "model": "deepseek-flash",
+  "scoring_version": "action-contract-r3-v2",
+  "split_counts": {
+    "dev": 8,
+    "held-out": 0
+  },
+  "max_retries": 2,
+  "run_cap_usd": 2.0
+}

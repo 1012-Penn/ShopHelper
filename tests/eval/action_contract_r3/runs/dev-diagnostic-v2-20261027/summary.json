@@ -1,0 +1,148 @@
+{
+  "scoring_version": "action-contract-r3-v2",
+  "budget": {
+    "run_cap_usd": 2.0,
+    "charged_upper_bound_usd": 0.0247014,
+    "reserved_usd": 0,
+    "pricing_verified": true,
+    "arms": {
+      "baseline": {
+        "generations": 42,
+        "cap_usd": 0.95,
+        "pending_calls": 0,
+        "charged_upper_bound_usd": 0.0131205,
+        "input_tokens": 24723,
+        "output_tokens": 4753
+      },
+      "action_contract": {
+        "generations": 40,
+        "cap_usd": 0.95,
+        "pending_calls": 0,
+        "charged_upper_bound_usd": 0.0115809,
+        "input_tokens": 22915,
+        "output_tokens": 3922
+      }
+    }
+  },
+  "dev": {
+    "baseline": {
+      "cases": 8,
+      "task_success": 2,
+      "outcome_correct": 6,
+      "parameter_correct": 8,
+      "preview_correct": 7,
+      "type_correct": 7,
+      "confirmation_correct": 8,
+      "cancellation_correct": 7,
+      "no_unconfirmed_write": 8,
+      "no_duplicate_write": 5,
+      "technical_failures": 0,
+      "write_attempts": 8,
+      "unconfirmed_writes": 0,
+      "duplicate_writes": 3,
+      "extra_actions": 1,
+      "provider_calls": 42,
+      "input_tokens": 24723,
+      "output_tokens": 4753,
+      "cost_usd": 0.0131205,
+      "p50_ms": 6263,
+      "p95_ms": 7167
+    },
+    "action_contract": {
+      "cases": 8,
+      "task_success": 4,
+      "outcome_correct": 7,
+      "parameter_correct": 8,
+      "preview_correct": 6,
+      "type_correct": 6,
+      "confirmation_correct": 6,
+      "cancellation_correct": 6,
+      "no_unconfirmed_write": 8,
+      "no_duplicate_write": 7,
+      "technical_failures": 0,
+      "write_attempts": 2,
+      "unconfirmed_writes": 0,
+      "duplicate_writes": 1,
+      "extra_actions": 0,
+      "provider_calls": 40,
+      "input_tokens": 22915,
+      "output_tokens": 3922,
+      "cost_usd": 0.0115809,
+      "p50_ms": 4643,
+      "p95_ms": 6819
+    },
+    "paired_action_vs_baseline": {
+      "wins": 2,
+      "losses": 0,
+      "ties": 6,
+      "case_deltas": [
+        {
+          "scenario_id": "AC-DEV-006",
+          "baseline": false,
+          "action_contract": true
+        },
+        {
+          "scenario_id": "AC-DEV-007",
+          "baseline": false,
+          "action_contract": true
+        }
+      ]
+    }
+  },
+  "held-out": {
+    "baseline": {
+      "cases": 0,
+      "task_success": 0,
+      "outcome_correct": 0,
+      "parameter_correct": 0,
+      "preview_correct": 0,
+      "type_correct": 0,
+      "confirmation_correct": 0,
+      "cancellation_correct": 0,
+      "no_unconfirmed_write": 0,
+      "no_duplicate_write": 0,
+      "technical_failures": 0,
+      "write_attempts": 0,
+      "unconfirmed_writes": 0,
+      "duplicate_writes": 0,
+      "extra_actions": 0,
+      "provider_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0,
+      "p50_ms": 0,
+      "p95_ms": 0
+    },
+    "action_contract": {
+      "cases": 0,
+      "task_success": 0,
+      "outcome_correct": 0,
+      "parameter_correct": 0,
+      "preview_correct": 0,
+      "type_correct": 0,
+      "confirmation_correct": 0,
+      "cancellation_correct": 0,
+      "no_unconfirmed_write": 0,
+      "no_duplicate_write": 0,
+      "technical_failures": 0,
+      "write_attempts": 0,
+      "unconfirmed_writes": 0,
+      "duplicate_writes": 0,
+      "extra_actions": 0,
+      "provider_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cost_usd": 0,
+      "p50_ms": 0,
+      "p95_ms": 0
+    },
+    "paired_action_vs_baseline": {
+      "wins": 0,
+      "losses": 0,
+      "ties": 0,
+      "case_deltas": []
+    }
+  },
+  "scenario_sha256": "91aeeff53af1201430731086117675b1febd2895888c8428f99f66e3070448e4",
+  "config_sha256": "686cce74ba30e4c782fa7ad04fa1cac4ce1e19d5ea0e0644516aa5dc4809cba0"
+}
