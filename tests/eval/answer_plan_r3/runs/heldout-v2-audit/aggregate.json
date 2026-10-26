@@ -1,0 +1,107 @@
+{
+  "dev": {
+    "free_text": {
+      "success": 0,
+      "n": 0,
+      "strict_success": 0,
+      "facts_passed": 0,
+      "conditions_passed": 0,
+      "review_required": 0,
+      "misrefusal": 0,
+      "behavior_passed": 0,
+      "citation_supported": 0,
+      "citation_unsupported": 0,
+      "citation_uncertain": 0,
+      "correction_attempts": 0,
+      "provider_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_input_tokens": 0,
+      "cost_usd": 0,
+      "p95_latency_ms": 0.0
+    },
+    "answer_plan": {
+      "success": 0,
+      "n": 0,
+      "strict_success": 0,
+      "facts_passed": 0,
+      "conditions_passed": 0,
+      "review_required": 0,
+      "misrefusal": 0,
+      "behavior_passed": 0,
+      "citation_supported": 0,
+      "citation_unsupported": 0,
+      "citation_uncertain": 0,
+      "correction_attempts": 0,
+      "provider_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_input_tokens": 0,
+      "cost_usd": 0,
+      "p95_latency_ms": 0.0
+    }
+  },
+  "heldout": {
+    "free_text": {
+      "success": 18,
+      "n": 20,
+      "strict_success": 18,
+      "facts_passed": 19,
+      "conditions_passed": 19,
+      "review_required": 1,
+      "misrefusal": 0,
+      "behavior_passed": 20,
+      "citation_supported": 17,
+      "citation_unsupported": 0,
+      "citation_uncertain": 1,
+      "correction_attempts": 0,
+      "provider_calls": 20,
+      "input_tokens": 5155,
+      "output_tokens": 3132,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.0053049,
+      "p95_latency_ms": 2274.082
+    },
+    "answer_plan": {
+      "success": 16,
+      "n": 20,
+      "strict_success": 16,
+      "facts_passed": 16,
+      "conditions_passed": 20,
+      "review_required": 1,
+      "misrefusal": 4,
+      "behavior_passed": 16,
+      "citation_supported": 14,
+      "citation_unsupported": 3,
+      "citation_uncertain": 1,
+      "correction_attempts": 7,
+      "provider_calls": 27,
+      "input_tokens": 25219,
+      "output_tokens": 30581,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.0442629,
+      "p95_latency_ms": 22390.696
+    }
+  },
+  "pairwise": {
+    "dev": {
+      "answer_plan_vs_free_text": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
+    },
+    "heldout": {
+      "answer_plan_vs_free_text": {
+        "wins": 2,
+        "losses": 4,
+        "ties": 14
+      }
+    }
+  },
+  "total_cost_usd": 0.0495678,
+  "technical_failures": 0,
+  "rescored": true,
+  "scoring_version": "answer-plan-r3-score-v2-audit",
+  "source_results": "tests/eval/answer_plan_r3/runs/heldout-20261027T024707Z/results.jsonl"
+}

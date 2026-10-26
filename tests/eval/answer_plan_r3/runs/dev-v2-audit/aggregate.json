@@ -1,0 +1,107 @@
+{
+  "dev": {
+    "free_text": {
+      "success": 7,
+      "n": 8,
+      "strict_success": 7,
+      "facts_passed": 8,
+      "conditions_passed": 8,
+      "review_required": 0,
+      "misrefusal": 0,
+      "behavior_passed": 7,
+      "citation_supported": 7,
+      "citation_unsupported": 0,
+      "citation_uncertain": 0,
+      "correction_attempts": 0,
+      "provider_calls": 8,
+      "input_tokens": 2183,
+      "output_tokens": 1485,
+      "cached_input_tokens": 0,
+      "cost_usd": 0.0024369,
+      "p95_latency_ms": 2056.583
+    },
+    "answer_plan": {
+      "success": 8,
+      "n": 8,
+      "strict_success": 8,
+      "facts_passed": 8,
+      "conditions_passed": 8,
+      "review_required": 0,
+      "misrefusal": 0,
+      "behavior_passed": 8,
+      "citation_supported": 7,
+      "citation_unsupported": 0,
+      "citation_uncertain": 0,
+      "correction_attempts": 2,
+      "provider_calls": 10,
+      "input_tokens": 9619,
+      "output_tokens": 12217,
+      "cached_input_tokens": 512,
+      "cost_usd": 0.01739557,
+      "p95_latency_ms": 26612.024
+    }
+  },
+  "heldout": {
+    "free_text": {
+      "success": 0,
+      "n": 0,
+      "strict_success": 0,
+      "facts_passed": 0,
+      "conditions_passed": 0,
+      "review_required": 0,
+      "misrefusal": 0,
+      "behavior_passed": 0,
+      "citation_supported": 0,
+      "citation_unsupported": 0,
+      "citation_uncertain": 0,
+      "correction_attempts": 0,
+      "provider_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_input_tokens": 0,
+      "cost_usd": 0,
+      "p95_latency_ms": 0.0
+    },
+    "answer_plan": {
+      "success": 0,
+      "n": 0,
+      "strict_success": 0,
+      "facts_passed": 0,
+      "conditions_passed": 0,
+      "review_required": 0,
+      "misrefusal": 0,
+      "behavior_passed": 0,
+      "citation_supported": 0,
+      "citation_unsupported": 0,
+      "citation_uncertain": 0,
+      "correction_attempts": 0,
+      "provider_calls": 0,
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "cached_input_tokens": 0,
+      "cost_usd": 0,
+      "p95_latency_ms": 0.0
+    }
+  },
+  "pairwise": {
+    "dev": {
+      "answer_plan_vs_free_text": {
+        "wins": 1,
+        "losses": 0,
+        "ties": 7
+      }
+    },
+    "heldout": {
+      "answer_plan_vs_free_text": {
+        "wins": 0,
+        "losses": 0,
+        "ties": 0
+      }
+    }
+  },
+  "total_cost_usd": 0.01983247,
+  "technical_failures": 0,
+  "rescored": true,
+  "scoring_version": "answer-plan-r3-score-v2-audit",
+  "source_results": "tests/eval/answer_plan_r3/runs/dev-20261027T024340Z/results.jsonl"
+}

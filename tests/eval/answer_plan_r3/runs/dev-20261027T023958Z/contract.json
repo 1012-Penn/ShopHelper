@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "split": "dev",
+  "model": "deepseek-flash",
+  "data_manifest": {
+    "schema_version": 1,
+    "version": "answer-plan-r3-cases-v1",
+    "frozen_at": "2026-10-27T02:40:00+08:00",
+    "frozen_before_paid_run": true,
+    "case_counts": {
+      "dev": 8,
+      "heldout": 20
+    },
+    "files": {
+      "cases-dev.jsonl": "2a78e7f55333ade5fd52f0b0bb020bd832c7f024ae721a5ba5f7768e623cc085",
+      "cases-heldout.jsonl": "85f6416d4d69e77668090b75adeb93b7e554865be53817350a686e941b996350",
+      "evidence.json": "a3fafe0529bf4dc278e0abecfcb6ced48f29981d6f794358b65846a369af9a1a",
+      "config.json": "acc6f66ca8a5131f6ba9adbde2e65041372793bee8d5750003a88c2b1f6edc05"
+    },
+    "config_sha256": "acc6f66ca8a5131f6ba9adbde2e65041372793bee8d5750003a88c2b1f6edc05",
+    "scoring_version": "answer-plan-r3-score-v1",
+    "source_groups": {
+      "dev": [
+        "dev_ap3_catalog_keyboard_k68",
+        "dev_ap3_catalog_band_warranty",
+        "dev_ap3_catalog_stopped_earphone",
+        "dev_ap3_policy_v1_boundary",
+        "dev_ap3_shipping_ordinary_value",
+        "dev_ap3_membership_clearance",
+        "dev_ap3_order_two_amounts",
+        "dev_ap3_clarify_missing_product"
+      ],
+      "heldout": [
+        "heldout_ap3_catalog_earphone_anc",
+        "heldout_ap3_catalog_earphone_runtime",
+        "heldout_ap3_catalog_keyboard_keys",
+        "heldout_ap3_catalog_powerbank_capacity",
+        "heldout_ap3_catalog_speaker_features",
+        "heldout_ap3_catalog_watch_call",
+        "heldout_ap3_order_compare_amount",
+        "heldout_ap3_policy_v2_window",
+        "heldout_ap3_policy_v1_rule",
+        "heldout_ap3_shipping_tibet_first",
+        "heldout_ap3_shipping_remote_supplement",
+        "heldout_ap3_membership_all_levels",
+        "heldout_ap3_membership_clearance_exclusion",
+        "heldout_ap3_return_custom_quality",
+        "heldout_ap3_return_fresh_time",
+        "heldout_ap3_return_virtual_activated",
+        "heldout_ap3_repair_quote_confirm",
+        "heldout_ap3_catalog_stand_warranty",
+        "heldout_ap3_unsupported_gift_contents",
+        "heldout_ap3_clarify_missing_order"
+      ]
+    },
+    "run_policy": {
+      "heldout_runs": 1,
+      "max_new_api_usd": 2.0,
+      "ledger": "runs/answer-plan-r3-paid.sqlite3",
+      "correction_limit": 1,
+      "source_adapter_commit": "59e233f5145298846f8870b74e351ac3db98f5e1"
+    }
+  },
+  "pricing": {
+    "version": "2026-10-26",
+    "verified": true,
+    "path": "tests/eval/rag_ablation/pricing-snapshot-2026-10-26.yaml"
+  },
+  "ledger": {
+    "path": "/root/.codex/worktrees/opt-answer-plan-r3-20261027/ShopHelper/tests/eval/answer_plan_r3/runs/answer-plan-r3-paid.sqlite3",
+    "committed_usd": 0.0,
+    "limit_usd": 2.0
+  },
+  "summary": {
+    "dev": {
+      "free_text": {
+        "success": 7,
+        "n": 8,
+        "strict_success": 7,
+        "facts_passed": 8,
+        "conditions_passed": 8,
+        "review_required": 0,
+        "misrefusal": 0,
+        "correction_attempts": 0,
+        "provider_calls": 8,
+        "cost_usd": 0.0022083,
+        "p95_latency_ms": 1849.597
+      },
+      "answer_plan": {
+        "success": 0,
+        "n": 8,
+        "strict_success": 0,
+        "facts_passed": 5,
+        "conditions_passed": 6,
+        "review_required": 4,
+        "misrefusal": 3,
+        "correction_attempts": 4,
+        "provider_calls": 12,
+        "cost_usd": 0.0292656,
+        "p95_latency_ms": 69525.464
+      }
+    },
+    "heldout": {
+      "free_text": {
+        "success": 0,
+        "n": 0,
+        "strict_success": 0,
+        "facts_passed": 0,
+        "conditions_passed": 0,
+        "review_required": 0,
+        "misrefusal": 0,
+        "correction_attempts": 0,
+        "provider_calls": 0,
+        "cost_usd": 0,
+        "p95_latency_ms": 0.0
+      },
+      "answer_plan": {
+        "success": 0,
+        "n": 0,
+        "strict_success": 0,
+        "facts_passed": 0,
+        "conditions_passed": 0,
+        "review_required": 0,
+        "misrefusal": 0,
+        "correction_attempts": 0,
+        "provider_calls": 0,
+        "cost_usd": 0,
+        "p95_latency_ms": 0.0
+      }
+    },
+    "pairwise": {
+      "dev": {
+        "answer_plan_vs_free_text": {
+          "wins": 0,
+          "losses": 7,
+          "ties": 1
+        }
+      },
+      "heldout": {
+        "answer_plan_vs_free_text": {
+          "wins": 0,
+          "losses": 0,
+          "ties": 0
+        }
+      }
+    },
+    "total_cost_usd": 0.0314739,
+    "technical_failures": 0
+  },
+  "completed_at": "2026-10-26T18:42:00.364743+00:00"
+}

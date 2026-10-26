@@ -1,0 +1,302 @@
+{
+  "schema_version": 1,
+  "snapshot_version": "knowledge-2026-10-27-answer-plan-r3-v1",
+  "source_notice": "Frozen candidate evidence copied from the repository knowledge snapshot for fixed-evidence evaluation only.",
+  "evidence": [
+    {
+      "evidence_id": "EV-D-K68",
+      "text": "SH-K68 68 键机械键盘，红轴，白光背光，售价 149 元，一年质保。当前在售，可参与会员 95 折。",
+      "source_id": "knowledge/商品目录.md#SH-K68",
+      "source_title": "商品目录 > SH-K68",
+      "source_locator": "商品条目 > SH-K68",
+      "entities": ["SH-K68"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-D-B7",
+      "text": "SH-B7 智能手环，售价 179 元，采用 AMOLED 屏，支持血氧监测与心率监测，续航 14 天，一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-B7",
+      "source_title": "商品目录 > SH-B7",
+      "source_locator": "商品条目 > SH-B7",
+      "entities": ["SH-B7"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-D-E200",
+      "text": "SH-E200 入耳式无线耳机，售价 159 元，蓝牙 5.2，续航 18 小时，不支持主动降噪，整机一年质保。已停产，剩余库存按清仓价销售。",
+      "source_id": "knowledge/商品目录.md#SH-E200",
+      "source_title": "商品目录 > SH-E200",
+      "source_locator": "商品条目 > SH-E200",
+      "entities": ["SH-E200"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-D-V1",
+      "text": "签收日期早于 2026-06-01 的订单适用 v1。商品自签收之日起 7 天内，支持七天无理由退货；商品需保持完好。",
+      "source_id": "knowledge/政策版本说明.md#v1",
+      "source_title": "政策版本说明 > v1 版七天无理由",
+      "source_locator": "v1 版七天无理由",
+      "entities": [],
+      "required_conditions": ["签收日期早于 2026-06-01"],
+      "condition_aliases": {
+        "签收日期早于 2026-06-01": [
+          "签收日期在 v1 有效期内（2024-01-01 至 2026-05-31）",
+          "2026-06-01 前签收"
+        ]
+      },
+      "policy_scope": {
+        "version": "v1",
+        "effective_from": "2024-01-01",
+        "effective_to": "2026-05-31"
+      }
+    },
+    {
+      "evidence_id": "EV-D-FREIGHT",
+      "text": "单笔订单商品金额满 99 元包邮；普通非偏远地区未满 99 元收取普通运费 8 元。",
+      "source_id": "knowledge/会员与优惠.md#包邮门槛",
+      "source_title": "会员与优惠 > 包邮门槛",
+      "source_locator": "包邮门槛与合并订单",
+      "entities": [],
+      "required_conditions": ["未满 99 元", "普通非偏远地区"]
+    },
+    {
+      "evidence_id": "EV-D-M10",
+      "text": "SH-M10 当前为清仓状态，不参与会员 95 折；清仓商品按清仓价销售。",
+      "source_id": "knowledge/商品目录.md#SH-M10",
+      "source_title": "商品目录 > SH-M10",
+      "source_locator": "商品条目 > SH-M10",
+      "entities": ["SH-M10"],
+      "required_conditions": ["清仓状态"]
+    },
+    {
+      "evidence_id": "EV-D-ORD1004",
+      "text": "订单 ORD-1004 已签收，商品为 SH-W20 智能手表，商品金额 399 元。",
+      "source_id": "knowledge/订单与支付.md#ORD-1004",
+      "source_title": "订单与支付 > ORD-1004",
+      "source_locator": "订单明细 > ORD-1004",
+      "entities": ["ORD-1004", "SH-W20"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-D-ORD1008",
+      "text": "订单 ORD-1008 已签收，商品为 SH-B5 智能手环，商品金额 129 元。",
+      "source_id": "knowledge/订单与支付.md#ORD-1008",
+      "source_title": "订单与支付 > ORD-1008",
+      "source_locator": "订单明细 > ORD-1008",
+      "entities": ["ORD-1008", "SH-B5"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-E120",
+      "text": "SH-E120 半入耳无线耳机，售价 99 元，蓝牙 5.0，续航 24 小时，不支持主动降噪，整机一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-E120",
+      "source_title": "商品目录 > SH-E120",
+      "source_locator": "商品条目 > SH-E120",
+      "entities": ["SH-E120"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-E200",
+      "text": "SH-E200 入耳式无线耳机，售价 159 元，蓝牙 5.2，续航 18 小时，整机一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-E200",
+      "source_title": "商品目录 > SH-E200",
+      "source_locator": "商品条目 > SH-E200",
+      "entities": ["SH-E200"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-K104",
+      "text": "SH-K104 104 键机械键盘，红轴，RGB 背光，售价 219 元，支持全键无冲，一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-K104",
+      "source_title": "商品目录 > SH-K104",
+      "source_locator": "商品条目 > SH-K104",
+      "entities": ["SH-K104"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-P30",
+      "text": "SH-P30 移动电源，售价 109 元，容量 20000mAh，支持双向快充，一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-P30",
+      "source_title": "商品目录 > SH-P30",
+      "source_locator": "商品条目 > SH-P30",
+      "entities": ["SH-P30"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-S10",
+      "text": "SH-S10 蓝牙音箱，售价 189 元，支持 IPX7 防水，续航 12 小时，一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-S10",
+      "source_title": "商品目录 > SH-S10",
+      "source_locator": "商品条目 > SH-S10",
+      "entities": ["SH-S10"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-W30",
+      "text": "SH-W30 智能手表，售价 599 元，支持独立通话、GPS 定位、NFC 刷卡，续航 5 天，一年质保。",
+      "source_id": "knowledge/商品目录.md#SH-W30",
+      "source_title": "商品目录 > SH-W30",
+      "source_locator": "商品条目 > SH-W30",
+      "entities": ["SH-W30"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-ORD1004",
+      "text": "订单 ORD-1004 已签收，商品为 SH-W20 智能手表，商品金额 399 元。",
+      "source_id": "knowledge/订单与支付.md#ORD-1004",
+      "source_title": "订单与支付 > ORD-1004",
+      "source_locator": "订单明细 > ORD-1004",
+      "entities": ["ORD-1004", "SH-W20"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-ORD1006",
+      "text": "订单 ORD-1006 处于退货中，商品为 SH-E300 头戴式无线降噪耳机，商品金额 299 元。",
+      "source_id": "knowledge/订单与支付.md#ORD-1006",
+      "source_title": "订单与支付 > ORD-1006",
+      "source_locator": "订单明细 > ORD-1006",
+      "entities": ["ORD-1006", "SH-E300"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-V2",
+      "text": "签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内，支持无理由退货；商品需保持完好。",
+      "source_id": "knowledge/政策版本说明.md#v2",
+      "source_title": "政策版本说明 > v2 版十五天无理由",
+      "source_locator": "v2 版十五天无理由",
+      "entities": [],
+      "required_conditions": ["签收日期为 2026-06-01 或之后"],
+      "policy_scope": {
+        "version": "v2",
+        "effective_from": "2026-06-01",
+        "effective_to": null
+      }
+    },
+    {
+      "evidence_id": "EV-H-V1",
+      "text": "签收日期早于 2026-06-01 的订单适用 v1；商品自签收之日起 7 天内，支持七天无理由退货。",
+      "source_id": "knowledge/政策版本说明.md#v1-rule",
+      "source_title": "政策版本说明 > v1 规则",
+      "source_locator": "v1 版七天无理由",
+      "entities": [],
+      "required_conditions": ["签收日期早于 2026-06-01"],
+      "policy_scope": {
+        "version": "v1",
+        "effective_from": "2024-01-01",
+        "effective_to": "2026-05-31"
+      }
+    },
+    {
+      "evidence_id": "EV-H-TIBET",
+      "text": "运费标准表：西藏首重 25 元，续重 9 元/kg，时效 10 天。",
+      "source_id": "knowledge/售后手册.md#shipping-table",
+      "source_title": "售后手册 > 运费标准",
+      "source_locator": "西藏",
+      "entities": [],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-REMOTE",
+      "text": "偏远地区在包邮基础上仍需补收 5 元运费；偏远补运不参与会员折扣与满减。",
+      "source_id": "knowledge/会员与优惠.md#remote",
+      "source_title": "会员与优惠 > 偏远地区补运",
+      "source_locator": "偏远地区补运",
+      "entities": [],
+      "required_conditions": ["偏远地区", "已满足包邮"],
+      "condition_aliases": {
+        "已满足包邮": ["包邮基础上", "在包邮基础上"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-MEMBER95",
+      "text": "所有会员等级均享商品 95 折；95 折适用于商品目录中标记为在售的正价商品。",
+      "source_id": "knowledge/会员与优惠.md#member-levels",
+      "source_title": "会员与优惠 > 会员等级",
+      "source_locator": "会员等级与 95 折适用范围",
+      "entities": [],
+      "required_conditions": ["正价在售商品"],
+      "condition_aliases": {
+        "正价在售商品": ["在售的正价商品", "在售商品且为正价"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-CLEARANCE",
+      "text": "以下情形不享 95 折：清仓与停产库存商品、限时秒杀商品、虚拟商品、定制类商品。",
+      "source_id": "knowledge/会员与优惠.md#exclusions",
+      "source_title": "会员与优惠 > 95 折排除范围",
+      "source_locator": "95 折排除范围",
+      "entities": [],
+      "required_conditions": ["清仓商品"],
+      "condition_aliases": {
+        "清仓商品": ["清仓与停产库存商品", "清仓状态"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-CUSTOM",
+      "text": "定制类商品不支持七天无理由退货，仅在有质量问题时可退。",
+      "source_id": "knowledge/售后手册.md#custom-return",
+      "source_title": "售后手册 > 退货处理细则",
+      "source_locator": "特殊类目差异",
+      "entities": [],
+      "required_conditions": ["商品有质量问题"],
+      "condition_aliases": {
+        "商品有质量问题": ["仅在有质量问题时可退", "仅有质量问题可退"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-FRESH",
+      "text": "生鲜食品仅限签收当日发起的质量问题退货。",
+      "source_id": "knowledge/售后手册.md#fresh-return",
+      "source_title": "售后手册 > 退货处理细则",
+      "source_locator": "特殊类目差异",
+      "entities": [],
+      "required_conditions": ["质量问题", "签收当日"],
+      "condition_aliases": {
+        "质量问题": ["质量问题的退货"],
+        "签收当日": ["签收当天"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-VIRTUAL",
+      "text": "虚拟商品一旦激活不支持退款。",
+      "source_id": "knowledge/售后手册.md#virtual-return",
+      "source_title": "售后手册 > 退货处理细则",
+      "source_locator": "特殊类目差异",
+      "entities": [],
+      "required_conditions": ["商品已激活"],
+      "condition_aliases": {
+        "商品已激活": ["虚拟商品一旦激活", "激活后"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-REPAIR",
+      "text": "过保维修先报价，用户确认后再修。",
+      "source_id": "knowledge/售后手册.md#repair",
+      "source_title": "售后手册 > 维修时长与费用",
+      "source_locator": "维修时长与费用",
+      "entities": [],
+      "required_conditions": ["用户确认后维修"],
+      "condition_aliases": {
+        "用户确认后维修": ["用户确认后再修", "确认后再修"]
+      }
+    },
+    {
+      "evidence_id": "EV-H-T50",
+      "text": "SH-T50 桌面支架，售价 79 元，铝合金材质，角度可调节，半年质保。",
+      "source_id": "knowledge/商品目录.md#SH-T50",
+      "source_title": "商品目录 > SH-T50",
+      "source_locator": "商品条目 > SH-T50",
+      "entities": ["SH-T50"],
+      "required_conditions": []
+    },
+    {
+      "evidence_id": "EV-H-GIFT",
+      "text": "会员生日当月可在会员中心领取生日礼包，领取资格与领取时间以会员中心展示为准。",
+      "source_id": "knowledge/会员与优惠.md#birthday-gift",
+      "source_title": "会员与优惠 > 生日礼包与会员日",
+      "source_locator": "生日礼包与会员日",
+      "entities": [],
+      "required_conditions": []
+    }
+  ]
+}

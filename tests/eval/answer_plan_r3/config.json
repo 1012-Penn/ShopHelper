@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "version": "answer-plan-r3-config-v1",
+  "frozen_at": "2026-10-27T02:40:00+08:00",
+  "model": "deepseek-flash",
+  "model_config": {
+    "temperature": 0.0,
+    "max_output_tokens": 1200,
+    "structured_output_mode": "auto",
+    "retries_per_call": 2,
+    "thinking": "provider default via existing model configuration"
+  },
+  "arms": {
+    "free_text": "same evidence, free-text final answer",
+    "answer_plan": "same evidence, structured plan, deterministic validation, renderer"
+  },
+  "prompt_versions": {
+    "free_text": "answer-plan-r3-free-text-v1",
+    "plan_create": "answer-plan-r3-create-v1",
+    "plan_repair": "answer-plan-r3-repair-v1"
+  },
+  "correction_limit": 1,
+  "scoring_version": "answer-plan-r3-score-v1",
+  "heldout_policy": "one run after code/config/data freeze; retain failures",
+  "provider_pricing_snapshot": "tests/eval/rag_ablation/pricing-snapshot-2026-10-26.yaml"
+}

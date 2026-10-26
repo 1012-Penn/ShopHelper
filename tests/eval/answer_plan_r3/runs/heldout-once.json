@@ -1,0 +1,28 @@
+{
+  "split": "heldout",
+  "config_sha256": "acc6f66ca8a5131f6ba9adbde2e65041372793bee8d5750003a88c2b1f6edc05",
+  "case_ids": [
+    "AP3-HLD-E120-ANC",
+    "AP3-HLD-E200-BATTERY",
+    "AP3-HLD-K104-KEYS",
+    "AP3-HLD-P30-CAPACITY",
+    "AP3-HLD-S10-FEATURES",
+    "AP3-HLD-W30-CALL",
+    "AP3-HLD-CROSS-ORDER",
+    "AP3-HLD-V2-WINDOW",
+    "AP3-HLD-V1-WINDOW",
+    "AP3-HLD-TIBET-FIRST",
+    "AP3-HLD-REMOTE-SUP",
+    "AP3-HLD-MEMBER-95",
+    "AP3-HLD-CLEARANCE-OUT",
+    "AP3-HLD-CUSTOM-RETURN",
+    "AP3-HLD-FRESH-DAY",
+    "AP3-HLD-VIRTUAL-REFUND",
+    "AP3-HLD-REPAIR-OVERCERT",
+    "AP3-HLD-T50-WARRANTY",
+    "AP3-HLD-GIFT-CONTENTS",
+    "AP3-HLD-CLARIFY-ORDER"
+  ],
+  "status": "started",
+  "started_at": "2026-10-26T18:47:05.423925+00:00"
+}
