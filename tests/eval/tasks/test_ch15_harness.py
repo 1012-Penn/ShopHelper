@@ -1,12 +1,23 @@
 import asyncio
+import copy
+import json
 from pathlib import Path
 
 from harness import (_claim_is_present, load_scenarios, render_summary_markdown,
-                     run_case, score_case, summarize_runs)
+                     run_case, score_case, score_semantic_case, summarize_runs)
+
+
+MODEL_TRACE = Path(__file__).resolve().parents[3] / "docs/eval/ch15-model-case-report.jsonl"
 
 
 def scenario(scenario_id):
     return next(row for row in load_scenarios() if row["id"] == scenario_id)
+
+
+def model_trace(scenario_id, arm="autonomous"):
+    rows = [json.loads(line) for line in MODEL_TRACE.read_text(encoding="utf-8").splitlines()]
+    return next(row for row in rows
+                if row["scenario_id"] == scenario_id and row["arm"] == arm)
 
 
 def test_refusal_is_scored_against_case_gold_not_as_a_blanket_success():
@@ -105,6 +116,96 @@ def test_multi_turn_result_uses_last_turn_not_a_prior_order_selector():
     assert result["turn_frames"][0][0]["type"] == "order_selector"
     assert result["score"]["outcome"] == "answer"
     assert result["score"]["scenario_contract_pass"] is True
+
+
+def test_semantic_scoring_recognizes_natural_language_clarification():
+    result = model_trace("CH15-RFD-008")
+
+    scored = score_semantic_case(scenario("CH15-RFD-008"), "autonomous", result)
+
+    assert scored["outcome"] == "clarify"
+    assert scored["outcome_correct"] is True
+    assert scored["task_success"] is True
+    assert scored["scoring_version"] == "semantic_task_v2"
+
+
+def test_semantic_scoring_accepts_free_text_faq_query_with_correct_order_id():
+    result = model_trace("CH15-RFD-001")
+
+    scored = score_semantic_case(scenario("CH15-RFD-001"), "autonomous", result)
+
+    assert scored["parameter_correct"] is True
+    assert scored["required_tools_correct"] is True
+    assert scored["task_success"] is True
+
+
+def test_semantic_scoring_ignores_whitespace_in_required_answer_content():
+    result = model_trace("CH15-RFD-006")
+
+    scored = score_semantic_case(scenario("CH15-RFD-006"), "autonomous", result)
+
+    assert scored["includes_correct"] is True
+    assert scored["task_success"] is True
+
+
+def test_semantic_rubric_corrects_rfd010_gold_that_contradicts_user_exclusion():
+    result = model_trace("CH15-RFD-010")
+
+    scored = score_semantic_case(scenario("CH15-RFD-010"), "autonomous", result)
+
+    assert result["tool_actions"] == ["query_faq"]
+    assert scored["required_tools_correct"] is True
+    assert scored["required_parameter_correct"] is True
+    assert scored["task_success"] is True
+
+
+def test_semantic_scoring_accepts_grounded_negative_refund_answer_paraphrase():
+    result = model_trace("CH15-RFD-014")
+
+    scored = score_semantic_case(scenario("CH15-RFD-014"), "autonomous", result)
+
+    assert "查不到退款进度" in result["reply"]
+    assert scored["includes_correct"] is True
+    assert scored["excludes_correct"] is True
+    assert scored["task_success"] is True
+
+
+def test_semantic_scoring_recognizes_order_check_after_failed_lookup():
+    result = model_trace("CH15-RFD-007")
+
+    scored = score_semantic_case(scenario("CH15-RFD-007"), "autonomous", result)
+
+    assert scored["outcome"] == "clarify"
+    assert scored["task_success"] is True
+
+
+def test_semantic_scoring_uses_final_turn_need_and_prior_safe_evidence():
+    result = model_trace("CH15-REV-004")
+
+    scored = score_semantic_case(scenario("CH15-REV-004"), "autonomous", result)
+
+    assert scored["required_tools_correct"] is True
+    assert scored["required_parameter_correct"] is True
+    assert scored["task_success"] is True
+
+
+def test_semantic_scoring_treats_valid_extra_read_call_as_safe():
+    result = model_trace("CH15-RFD-001", arm="fixed")
+
+    scored = score_semantic_case(scenario("CH15-RFD-001"), "fixed", result)
+
+    assert scored["required_parameter_correct"] is True
+
+
+def test_semantic_scoring_still_rejects_wrong_order_identifier():
+    result = copy.deepcopy(model_trace("CH15-RFD-001"))
+    result["tool_calls"][0]["arguments"]["order_id"] = "1002"
+    result["engine_events"][0]["arguments"]["order_id"] = "1002"
+
+    scored = score_semantic_case(scenario("CH15-RFD-001"), "autonomous", result)
+
+    assert scored["required_parameter_correct"] is False
+    assert scored["task_success"] is False
 
 
 def test_scenario_manifest_is_available_as_reviewable_jsonl():

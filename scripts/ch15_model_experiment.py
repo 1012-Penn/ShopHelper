@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import copy
 import hashlib
 import json
 import os
@@ -56,6 +57,7 @@ SCENARIO_PATH = ROOT / "tests" / "eval" / "tasks" / "scenarios.jsonl"
 LEDGER_PATH = ROOT / "data" / "ch15_paid_run.sqlite3"
 TRACE_PATH = ROOT / "docs" / "eval" / "ch15-model-case-report.jsonl"
 REPORT_PATH = ROOT / "docs" / "eval" / "ch15-model-experiment-report.md"
+SEMANTIC_RUBRIC_PATH = ROOT / "tests" / "eval" / "tasks" / "semantic-rubric-v2.json"
 MODEL = "deepseek-flash"
 BASE_URL = "https://api.deepseek.com/v1"
 EXPERIMENT_ID = "ch15-realmodel-paired-v1"
@@ -150,6 +152,25 @@ def next_case_attempt_id(experiment_id: str, scenario_id: str, arm: str,
     previous_attempts = {str(call.get("run_id") or "") for call in previous_calls}
     attempt = len(previous_attempts) + 1
     return f"{experiment_id}:{scenario_id}:{arm}:attempt-{attempt}"
+
+
+def rescore_result(row: dict, arm: str, result: dict, config: dict) -> dict:
+    """Apply the explicit semantic rubric while preserving the original score."""
+    rubric_hash = _sha256_bytes(SEMANTIC_RUBRIC_PATH.read_bytes())
+    if rubric_hash != config.get("semantic_rubric_sha256"):
+        raise BudgetExceeded("CH15 语义评分规则已变化，拒绝重算")
+    rubric = harness.load_semantic_rubric(SEMANTIC_RUBRIC_PATH)
+    if rubric.get("applies_to_scenario_manifest_sha256") != config.get(
+            "scenario_manifest_sha256"):
+        raise BudgetExceeded("CH15 语义评分规则与冻结题集不匹配")
+    rescored = copy.deepcopy(result)
+    legacy = rescored.get("legacy_score") or rescored.get("score")
+    if not isinstance(legacy, dict):
+        raise BudgetExceeded(f"{row['id']}/{arm} 缺少可保留的原始评分")
+    rescored["legacy_score"] = copy.deepcopy(legacy)
+    rescored["score"] = harness.score_semantic_case(row, arm, rescored, rubric)
+    rescored["semantic_rubric_sha256"] = rubric_hash
+    return rescored
 
 
 def _settings_with_provider() -> Settings:
@@ -428,20 +449,46 @@ def _rate(numerator: int, denominator: int) -> dict:
 def summarize_model_runs(scenarios: list[dict], results: dict[tuple[str, str], dict],
                          budget_snapshot: dict) -> dict:
     by_id = {row["id"]: row for row in scenarios}
+    scoring_versions = sorted({
+        str(result.get("score", {}).get("scoring_version", "strict_contract_v1"))
+        for result in results.values()
+    })
     summary = {"experiment_status": "partial", "scenario_count": len(scenarios),
                "arm_run_count": len(results), "arms": {}, "paired_comparison": {},
-               "budget": budget_snapshot}
+               "budget": budget_snapshot,
+               "scoring_version": (
+                   scoring_versions[0] if len(scoring_versions) == 1 else "mixed"
+               )}
     for arm in ("fixed", "autonomous"):
         selected = [result for (scenario_id, result_arm), result in results.items()
                     if result_arm == arm and scenario_id in by_id]
         if not selected:
             continue
         complete = sum(bool(item["score"].get("task_success")) for item in selected)
-        selections = sum(bool(item["score"].get("selection_correct")) for item in selected)
+        legacy_complete = sum(
+            bool((item.get("legacy_score") or item["score"]).get("task_success"))
+            for item in selected
+        )
+        selections = sum(
+            bool((item.get("legacy_score") or item["score"]).get("selection_correct"))
+            for item in selected
+        )
+        required_tools = sum(
+            bool(item["score"].get("required_tools_correct")) for item in selected
+        )
         param_ok = sum(item["score"].get("model_parameter_correct_count", 0)
-                       for item in selected)
+                       or item["score"].get("parameter_correct_count", 0) for item in selected)
         param_total = sum(item["score"].get("model_parameter_total", 0)
+                          or item["score"].get("parameter_total", 0)
                           for item in selected)
+        literal_param_ok = sum(
+            (item.get("legacy_score") or item["score"]).get("model_parameter_correct_count", 0)
+            for item in selected
+        )
+        literal_param_total = sum(
+            (item.get("legacy_score") or item["score"]).get("model_parameter_total", 0)
+            for item in selected
+        )
         write_attempts = sum(int(item.get("write_attempt_count", 0)) for item in selected)
         unconfirmed = sum(int(item.get("unconfirmed_persisted_count", 0))
                           for item in selected)
@@ -464,10 +511,16 @@ def summarize_model_runs(scenarios: list[dict], results: dict[tuple[str, str], d
         summary["arms"][arm] = {
             "scenarios": len(selected),
             "task_success_rate": _rate(complete, len(selected)),
+            "legacy_contract_pass_rate": _rate(legacy_complete, len(selected)),
             "tool_selection_correct_rate": _rate(selections, len(selected)),
+            "required_tool_coverage_rate": _rate(required_tools, len(selected)),
             "tool_parameter_correct_rate": _rate(param_ok, param_total),
+            "literal_tool_parameter_correct_rate": _rate(
+                literal_param_ok, literal_param_total),
             "tool_parameter_na_scenarios": sum(
-                item["score"].get("model_parameter_total", 0) == 0 for item in selected),
+                (item["score"].get("model_parameter_total", 0)
+                 or item["score"].get("parameter_total", 0)) == 0
+                for item in selected),
             "unconfirmed_write_rate": _rate(unconfirmed, write_attempts),
             "unconfirmed_write_rate_note": (
                 "N/A: no model-visible write tool in this paired experiment"
@@ -508,31 +561,54 @@ def render_report(summary: dict, results: dict[tuple[str, str], dict]) -> str:
         "# CH15 Real-Model Paired Experiment", "",
         f"**Status:** `{summary['experiment_status']}`",
         f"**Frozen config:** `{summary['budget'].get('config_hash', 'unknown')}`",
+        f"**Scoring version:** `{summary.get('scoring_version', 'strict_contract_v1')}`",
         "**Scope:** deterministic simulated scenarios only; no production/customer data.",
-        "**Model task success** is scored only from model-generated intent, tool calls, and answers.",
+        "**Semantic task success** uses the model-generated answer, required safe evidence and database assertions.",
+        "The original strict contract score remains visible; it required the full action sequence and literal free-text arguments.",
         "Refusal alignment uses each scenario's frozen gold; it is not assumed successful by default.", "",
         f"Runs: {summary['arm_run_count']} arm-runs / {summary['scenario_count']} frozen pairs.", "",
-        "## Per-arm metrics", "",
-        "| Arm | Task success | Tool selection | Tool parameters | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "## Completion metrics", "",
+        "| Arm | Semantic task success | Original strict contract | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |",
+        "|---|---:|---:|---:|---:|---:|",
     ]
     for arm, label in (("fixed", "Fixed refund flow"),
                        ("autonomous", "Constrained Agent")):
         item = summary["arms"].get(arm)
         if not item:
-            lines.append(f"| {label} | — | — | — | — | — | — |")
+            lines.append(f"| {label} | — | — | — | — | — |")
             continue
         fmt = lambda rate: (f"{rate['numerator']}/{rate['denominator']} "
                             f"({rate['rate']:.1%})" if rate["rate"] is not None
                             else f"{rate['numerator']}/{rate['denominator']} (N/A)")
         lines.append("| " + " | ".join([
-            label, fmt(item["task_success_rate"]), fmt(item["tool_selection_correct_rate"]),
-            fmt(item["tool_parameter_correct_rate"]), fmt(item["unconfirmed_write_rate"]),
+            label, fmt(item["task_success_rate"]), fmt(item["legacy_contract_pass_rate"]),
+            fmt(item["unconfirmed_write_rate"]),
             fmt(item["reasonable_handoff_rate"]), fmt(item["refusal_gold_alignment"]),
         ]) + " |")
     lines += [
         "", "Each metric includes its numerator and denominator. Handoff may be N/A when no frozen case requires handoff. The paid paired set exposes only read tools, so its write-attempt denominator is zero; all SQLite ticket counts are separately checked as zero.",
-        "", "## Paired comparison", "",
+        "", "## Tool and parameter metrics", "",
+        "| Arm | Exact action sequence | Required tool coverage | Required identifiers and schema | Literal call agreement |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for arm, label in (("fixed", "Fixed refund flow"),
+                       ("autonomous", "Constrained Agent")):
+        item = summary["arms"].get(arm)
+        if not item:
+            lines.append(f"| {label} | — | — | — | — |")
+            continue
+        fmt = lambda rate: (f"{rate['numerator']}/{rate['denominator']} "
+                            f"({rate['rate']:.1%})" if rate["rate"] is not None
+                            else f"{rate['numerator']}/{rate['denominator']} (N/A)")
+        lines.append("| " + " | ".join([
+            label, fmt(item["tool_selection_correct_rate"]),
+            fmt(item["required_tool_coverage_rate"]),
+            fmt(item["tool_parameter_correct_rate"]),
+            fmt(item["literal_tool_parameter_correct_rate"]),
+        ]) + " |")
+    lines += [
+        "", "Required tool coverage uses the final turn's needs and lets valid evidence from earlier turns survive a revision. Required identifiers and schema check order IDs exactly and require non-empty tool arguments. Literal call agreement is retained only as a diagnostic.",
+        "", "## Paired semantic comparison", "",
     ]
     for arm in ("fixed", "autonomous"):
         result = summary["paired_comparison"].get(arm, {})
@@ -564,16 +640,44 @@ def render_report(summary: dict, results: dict[tuple[str, str], dict]) -> str:
             f"cap ${usage.get('cap_usd', 0):.2f}.")
     lines += [
         "- `ch15-model-case-report.jsonl` stores each case's full prompt/response trace, graph/tool trace, DB assertion results and score. It must remain simulated-only.",
-        "", "## Case results", "",
+        "", "## Scoring correction", "",
+        "- The original task-success boolean mixed user-task completion with exact tool order and literal free-text FAQ wording. It failed equivalent values such as `1 到 3 个工作日` versus `1到3个工作日`.",
+        "- This report now separates semantic task success from the original strict contract and exact call diagnostics.",
+        "- Natural-language clarification now recognizes requests such as `麻烦提供一下订单号` and post-lookup confirmation such as `核对订单号`. Explicit refusals still follow each case's gold.",
+        "- `CH15-RFD-010` is explicitly corrected because the user excluded order 1001 while the original gold required querying it. `CH15-REV-009` changes from `answer` to `clarify` because the receipt date needed to answer is unavailable.",
+        "- Task success uses the final user request, lets earlier valid read evidence survive a revision, and treats harmless extra reads separately from exact action compliance. Wrong or missing order identifiers, forbidden actions, refusal mismatches, required handoff, prohibited claims and database assertions remain failures.",
+        "- Existing traces were re-scored offline. No model or external business call was made, and each trace records both `legacy_score` and the semantic score.",
+        "", "## Remaining failures", "",
     ]
+    failed_results = [
+        (scenario_id, arm, result) for (scenario_id, arm), result in sorted(results.items())
+        if not result.get("score", {}).get("task_success")
+    ]
+    if not failed_results:
+        lines.append("- None in this rescored set.")
+    for scenario_id, arm, result in failed_results:
+        reasons = sorted(
+            name for name, passed in result.get("score", {}).items()
+            if name.endswith("_correct") and not passed
+        )
+        if result["score"].get("forbidden_actions"):
+            reasons.append("forbidden_actions")
+        lines.append(f"- `{scenario_id}` / `{arm}`: {', '.join(reasons) or 'unspecified'}.")
+    lines += ["", "## Case results", ""]
     for (scenario_id, arm), result in sorted(results.items()):
-        reasons = [name for name, passed in result.get("score", {}).items()
-                   if name.endswith("_correct") and not passed]
+        failed_checks = [
+            name for name, passed in result.get("score", {}).items()
+            if name.endswith("_correct") and not passed
+        ]
+        task_success = result["score"].get("task_success")
+        reasons = [] if task_success else failed_checks
+        diagnostics = failed_checks if task_success else []
         lines.append(f"- `{scenario_id}` / `{arm}`: task_success=`{result['score'].get('task_success')}`, "
                      f"attempt=`{result.get('attempt_run_id', 'unknown')}`, "
                      f"calls={len(result.get('model_calls', []))}, "
                      f"latency={result.get('duration_ms', 0)} ms, "
-                     f"failures={', '.join(reasons) if reasons else 'none'}")
+                     f"failures={', '.join(reasons) if reasons else 'none'}, "
+                     f"diagnostics={', '.join(diagnostics) if diagnostics else 'none'}")
     lines += [
         "", "All rates describe this frozen set of simulated scenarios only. They are not real support outcomes or customer-service ROI.", "",
     ]
@@ -586,6 +690,26 @@ def _persist_outputs(results, scenarios, budget, trace_path, report_path):
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_path.write_text(render_report(summary, results), encoding="utf-8")
     return summary
+
+
+def rescore_existing(config: dict, scenarios: list[dict], budget: PersistentPaidRunBudget,
+                     trace_path: Path, report_path: Path) -> dict:
+    """Re-score the saved provider traces without loading credentials or calling a model."""
+    results = _read_trace(trace_path)
+    expected = {(row["id"], arm) for row in scenarios
+                for arm in ("fixed", "autonomous")}
+    if set(results) != expected:
+        missing = sorted(expected - set(results))
+        extra = sorted(set(results) - expected)
+        raise BudgetExceeded(
+            f"CH15 逐题轨迹不完整: missing={missing[:3]} extra={extra[:3]}"
+        )
+    rescored = {
+        key: rescore_result(next(row for row in scenarios if row["id"] == key[0]),
+                            key[1], result, config)
+        for key, result in results.items()
+    }
+    return _persist_outputs(rescored, scenarios, budget, trace_path, report_path)
 
 
 async def run(args) -> int:
@@ -639,6 +763,7 @@ async def run(args) -> int:
             # Per-call ledger was committed before dispatch; no synthetic retry.
             _persist_outputs(results, scenarios, budget, trace_path, report_path)
             raise
+        result = rescore_result(row, arm, result, config)
         results[key] = result
         summary = _persist_outputs(results, scenarios, budget, trace_path, report_path)
         print(json.dumps({"completed": key, "task_success": result["score"]["task_success"],
@@ -657,6 +782,8 @@ def main() -> int:
                         help="Explicitly enable provider calls within the frozen hard caps")
     parser.add_argument("--preflight", action="store_true",
                         help="Verify frozen inputs and limits without loading credentials or calling a provider")
+    parser.add_argument("--rescore-existing", action="store_true",
+                        help="Re-score saved traces with the semantic rubric; never calls a provider")
     parser.add_argument("--smoke", action="store_true",
                         help="Run only CH15-RFD-001 on the fixed graph as the paid smoke case")
     parser.add_argument("--model", default=MODEL)
@@ -681,6 +808,34 @@ def main() -> int:
                                           for item in config["arms"].values()),
             "total_cap_usd": config["run_cap_usd"],
             "provider_calls": 0,
+        }, ensure_ascii=False))
+        return 0
+    if args.rescore_existing:
+        try:
+            config, scenarios = verify_frozen_experiment()
+            budget = PersistentPaidRunBudget(
+                _pricing(config), model=MODEL, path=LEDGER_PATH,
+                experiment_id=config["experiment_id"], config_hash=config["config_hash"],
+                arm_limits=ARM_LIMITS, run_cap_usd=RUN_CAP_USD,
+                max_input_tokens=MAX_INPUT_TOKENS, max_output_tokens=MAX_OUTPUT_TOKENS,
+                allow_paid=False,
+            )
+            summary = rescore_existing(
+                config, scenarios, budget, Path(args.trace), Path(args.report)
+            )
+        except BudgetExceeded as exc:
+            print(f"CH15 rescore stopped: {exc}", file=sys.stderr)
+            return 3
+        print(json.dumps({
+            "status": "rescored_existing_traces",
+            "provider_calls": 0,
+            "scoring_version": summary["scoring_version"],
+            "task_success": {
+                arm: summary["arms"][arm]["task_success_rate"]
+                for arm in ("fixed", "autonomous")
+            },
+            "trace": str(Path(args.trace)),
+            "report": str(Path(args.report)),
         }, ensure_ascii=False))
         return 0
     try:

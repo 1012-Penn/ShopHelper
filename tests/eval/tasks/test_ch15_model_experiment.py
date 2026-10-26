@@ -1,12 +1,24 @@
 import json
+import copy
+from pathlib import Path
 
 from scripts.ch15_model_experiment import (
     model_parameter_score,
     model_visible_turns,
     next_case_attempt_id,
     render_report,
+    rescore_result,
     verify_frozen_experiment,
 )
+
+
+MODEL_TRACE = Path(__file__).resolve().parents[3] / "docs/eval/ch15-model-case-report.jsonl"
+
+
+def model_result(scenario_id, arm="autonomous"):
+    rows = [json.loads(line) for line in MODEL_TRACE.read_text(encoding="utf-8").splitlines()]
+    return next(row for row in rows
+                if row["scenario_id"] == scenario_id and row["arm"] == arm)
 
 
 def test_frozen_paid_experiment_has_thirty_pairs_and_forty_two_user_turns():
@@ -79,4 +91,79 @@ def test_model_report_metrics_table_renders_as_a_markdown_table():
 
     report = render_report(summary, {})
 
-    assert "| Arm | Task success | Tool selection | Tool parameters | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |\n|---|" in report
+    assert "| Arm | Semantic task success | Original strict contract | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |\n|---|" in report
+
+
+def test_rescore_preserves_legacy_score_and_applies_semantic_rubric():
+    config, scenarios = verify_frozen_experiment()
+    row = next(row for row in scenarios if row["id"] == "CH15-RFD-001")
+    result = copy.deepcopy(model_result("CH15-RFD-001"))
+
+    rescored = rescore_result(row, "autonomous", result, config)
+
+    assert rescored["legacy_score"]["task_success"] is False
+    assert rescored["score"]["task_success"] is True
+    assert rescored["score"]["scoring_version"] == "semantic_task_v2"
+
+
+def test_report_explains_original_and_corrected_task_success():
+    summary = {
+        "experiment_status": "complete",
+        "scoring_version": "semantic_task_v2",
+        "scenario_count": 1,
+        "arm_run_count": 2,
+        "arms": {},
+        "paired_comparison": {},
+        "budget": {
+            "charged_upper_bound_usd": 0,
+            "usage_cost_at_pinned_peak_rates_usd": 0,
+            "reserved_usd": 0,
+            "stop_reason": None,
+            "arms": {},
+        },
+    }
+
+    report = render_report(summary, {})
+
+    assert "Scoring correction" in report
+    assert "original strict contract" in report
+    assert "semantic task success" in report
+
+
+def test_case_report_separates_nonblocking_diagnostics_from_task_failures():
+    summary = {
+        "experiment_status": "complete",
+        "scoring_version": "semantic_task_v2",
+        "scenario_count": 1,
+        "arm_run_count": 1,
+        "arms": {},
+        "paired_comparison": {},
+        "budget": {
+            "charged_upper_bound_usd": 0,
+            "usage_cost_at_pinned_peak_rates_usd": 0,
+            "reserved_usd": 0,
+            "stop_reason": None,
+            "arms": {},
+        },
+    }
+    result = {
+        "score": {
+            "task_success": True,
+            "required_tools_correct": True,
+            "parameter_correct": True,
+            "refusal_correct": True,
+            "handoff_correct": False,
+            "outcome_correct": True,
+            "includes_correct": True,
+            "excludes_correct": True,
+            "database_correct": True,
+        },
+        "attempt_run_id": "attempt-1",
+        "model_calls": [],
+        "duration_ms": 1,
+    }
+
+    report = render_report(summary, {("CH15-RFD-001", "autonomous"): result})
+
+    assert "failures=none" in report
+    assert "diagnostics=handoff_correct" in report

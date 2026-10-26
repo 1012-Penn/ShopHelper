@@ -120,9 +120,10 @@
     "app/tools/engine.py": "81dfd7569dcc0585ac1e5af6f59a711802d7afb5b84e683fe5c154ce93b9124a",
     "scripts/eval_cost.py": "47dedcd7f0a00124b20923f96e8934662bd919188c071d317173ff31127c4de7",
     "scripts/ch15_paid_guard.py": "88408126c7e108b04216dc2fa7b709916e50d8975b5e4da33b7ff6cbf1fc23c4",
-    "scripts/ch15_model_experiment.py": "8b791b2105aa338321a5d69ccb606164e183e8bc53d8e971dc51840f013a5193",
+    "scripts/ch15_model_experiment.py": "5f84d4f5861e1c700563e95c3ddea253ec0df5c9cfb0f84b9f458c08e1f0c77e",
     "tests/eval/tasks/fixtures/policies.json": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
-    "tests/eval/tasks/harness.py": "3a796d837b8fb20b44704acd7f2fb2b8a04c7711ddd743580ba44957a57fb05b",
+    "tests/eval/tasks/harness.py": "1575edb6435a47200e245a845017a38351e78060e242db9c20761753eea7dfb0",
+    "tests/eval/tasks/semantic-rubric-v2.json": "4919fa9e7ffeb6470efed2c2b52a07a74ab4753462c2bc11510cb341cca50d8d",
     "tests/eval/tasks/scenarios.jsonl": "d019779e42dc6cd4307be16058ca6b47e11b25122db73ff464a8b086ce05491c",
     "pyproject.toml": "2c10efe6c2af19cb063758118a22ddfd5ff334d1ea63ef3ef7c6fadc08d86447"
   },
@@ -137,7 +138,8 @@
     "write_confirmation_implementation": "production ToolEngine; paid arm exposes no write tool"
   },
   "user_turn_count": 42,
-  "config_hash": "sha256:bbec4c7c8cba83f8dc25dbe6235d867d43b1c5e8f93408c0a4c4c3f85dcf50cb",
+  "semantic_rubric_sha256": "4919fa9e7ffeb6470efed2c2b52a07a74ab4753462c2bc11510cb341cca50d8d",
+  "config_hash": "sha256:5acb5125defd5678da54c5f4a874765be128ee0dad0d1096b9402301478d9410",
   "historical_source_sha256": {
     "docs/eval/ch15-design-and-rubric.md": "d1fcacba66362ab5190e48a3c75d0941aeb8aa886fe805c22e279547ccb0282b"
   }

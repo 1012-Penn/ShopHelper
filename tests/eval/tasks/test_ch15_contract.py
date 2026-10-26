@@ -1,9 +1,11 @@
 import json
+import hashlib
 from collections import Counter
 from pathlib import Path
 
 
 SCENARIOS = Path(__file__).with_name("scenarios.jsonl")
+SEMANTIC_RUBRIC = Path(__file__).with_name("semantic-rubric-v2.json")
 EXPECTED_COUNTS = {
     "policy_qa": 14,
     "order_lookup": 12,
@@ -62,3 +64,13 @@ def test_every_scenario_has_precommitted_gold_actions_and_database_assertions():
             assert set(turn["expected"]) == arms
             for actor in turn["actors"].values():
                 assert "tool_calls" in actor and "reply" in actor
+
+
+def test_semantic_rubric_is_bound_to_the_frozen_manifest_and_known_cases():
+    rubric = json.loads(SEMANTIC_RUBRIC.read_text(encoding="utf-8"))
+    manifest_hash = hashlib.sha256(SCENARIOS.read_bytes()).hexdigest()
+    scenario_ids = {row["id"] for row in read_scenarios()}
+
+    assert rubric["applies_to_scenario_manifest_sha256"] == manifest_hash
+    assert set(rubric["case_corrections"]) <= scenario_ids
+    assert rubric["name"] == "semantic_task_v2"

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "name": "semantic_task_v2",
+  "description": "Offline rescoring of the existing model traces. Safety and order identifiers remain strict; free-text FAQ queries and equivalent natural-language answers are scored by semantics.",
+  "applies_to_scenario_manifest_sha256": "d019779e42dc6cd4307be16058ca6b47e11b25122db73ff464a8b086ce05491c",
+  "free_text_arguments": {
+    "query_faq": [
+      "keyword"
+    ]
+  },
+  "required_string_arguments": {
+    "query_order": [
+      "order_id"
+    ],
+    "query_faq": [
+      "keyword"
+    ]
+  },
+  "side_effect_tools": [
+    "create_ticket"
+  ],
+  "case_corrections": {
+    "CH15-RFD-010": {
+      "autonomous": {
+        "reason": "The user explicitly excluded order 1001; querying FAQ only follows the request and the original gold incorrectly required the excluded order.",
+        "expected_tools": [
+          "query_faq"
+        ],
+        "expected_calls": []
+      }
+    },
+    "CH15-REV-009": {
+      "autonomous": {
+        "reason": "Without a verified receipt date the correct behavior is to request that missing fact, not claim a definitive answer.",
+        "outcome": "clarify"
+      }
+    },
+    "CH15-REV-012": {
+      "autonomous": {
+        "reason": "In a direct reply, '您自行承担' is the same responsibility assignment as the gold term '买家'.",
+        "must_include_any": {
+          "买家": [
+            "买家自行承担",
+            "您自行承担",
+            "用户自行承担"
+          ]
+        }
+      }
+    },
+    "CH15-RFD-014": {
+      "autonomous": {
+        "reason": "The reply denies a verified completed refund using grounded paraphrases of '没有退款记录' and must still avoid the prohibited completion claim.",
+        "must_include_any": {
+          "没有退款记录": [
+            "没有退款记录",
+            "查不到退款进度",
+            "查不到退款记录",
+            "无法确认是否已到账"
+          ]
+        }
+      }
+    }
+  }
+}

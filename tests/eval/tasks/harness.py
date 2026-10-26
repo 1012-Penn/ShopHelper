@@ -37,6 +37,7 @@ from app.guard import is_refusal
 TASK_DIR = Path(__file__).resolve().parent
 SCENARIO_PATH = TASK_DIR / "scenarios.jsonl"
 POLICY_PATH = TASK_DIR / "fixtures" / "policies.json"
+SEMANTIC_RUBRIC_PATH = TASK_DIR / "semantic-rubric-v2.json"
 
 
 def load_scenarios(path: Path | None = None) -> list[dict]:
@@ -231,6 +232,244 @@ def _claim_is_present(text: str, phrase: str) -> bool:
                 r"并无|尚未|暂未|未显示|不存在)\s*$", prefix):
             return True
     return False
+
+
+def load_semantic_rubric(path: Path | None = None) -> dict:
+    return json.loads((path or SEMANTIC_RUBRIC_PATH).read_text(encoding="utf-8"))
+
+
+def _normalized_text(text: str) -> str:
+    return re.sub(r"\s+", "", text or "")
+
+
+def _semantic_call_matches(expected: dict, observed: dict,
+                           free_text_arguments: dict[str, list[str]]) -> bool:
+    if expected.get("name") != observed.get("name"):
+        return False
+    expected_args = expected.get("arguments") or {}
+    observed_args = observed.get("arguments") or {}
+    free_text = set(free_text_arguments.get(expected.get("name"), []))
+    for key, value in expected_args.items():
+        if key in free_text:
+            actual = observed_args.get(key)
+            if not isinstance(actual, str) or not actual.strip():
+                return False
+        elif observed_args.get(key) != value:
+            return False
+    return True
+
+
+def _observable_calls(trace: dict) -> list[dict]:
+    engine_calls = [{
+        "name": event.get("name"),
+        "arguments": event.get("arguments") or {},
+    } for event in trace.get("engine_events", [])]
+    if engine_calls:
+        return engine_calls
+    return [dict(call) for call in trace.get("tool_calls", [])]
+
+
+def _semantic_required_content(combined_reply: str, gold: dict,
+                               correction: dict) -> tuple[bool, list[str]]:
+    normalized_reply = _normalized_text(combined_reply)
+    missing = []
+    alternatives = {
+        canonical: variants
+        for canonical, variants in correction.get("must_include_any", {}).items()
+    }
+    for requirement in gold.get("must_include", []):
+        accepted = alternatives.get(requirement, [requirement])
+        if not any(_normalized_text(value) in normalized_reply for value in accepted):
+            missing.append(requirement)
+    return not missing, missing
+
+
+def _handoff_is_primary(reply: str) -> bool:
+    text = _normalized_text(reply)
+    if not text:
+        return True
+    factual_cues = ("订单", "工作日", "运费", "退货", "退款", "状态", "政策", "规则")
+    return not any(cue in text for cue in factual_cues)
+
+
+def _semantic_outcome(reply: str, frames: list[dict], suggested_actions: list[str],
+                      expected_outcome: str) -> str:
+    outcome = _actual_outcome(reply, frames, [])
+    if outcome == "clarify":
+        return "clarify"
+    if outcome == "refuse":
+        return "refuse"
+    if "transfer_human" in suggested_actions and _handoff_is_primary(reply):
+        return "handoff"
+    if expected_outcome == "clarify":
+        text = _normalized_text(reply)
+        if re.search(
+                r"(?:查不到|找不到).{0,20}(?:订单|单号).{0,30}(?:核对|确认)|"
+                r"(?:麻烦|请).{0,8}(?:提供|补充|发送|告诉|核对|确认).{0,8}(?:订单号|单号)|"
+                r"无法.{0,12}判断.{0,20}(?:日期|时间)|"
+                r"(?:需要|请).{0,12}(?:签收日期|提供日期)",
+                text,
+        ):
+            return "clarify"
+    return "answer"
+
+
+def _semantic_parameter_score(expected_calls: list[dict], observed_calls: list[dict],
+                              allowed_tools: set[str],
+                              free_text_arguments: dict[str, list[str]],
+                              required_string_arguments: dict[str, list[str]]) -> dict:
+    required_matches = 0
+    matched_observed_indexes = set()
+    for expected in expected_calls:
+        for index, observed in enumerate(observed_calls):
+            if index in matched_observed_indexes:
+                continue
+            if _semantic_call_matches(expected, observed, free_text_arguments):
+                required_matches += 1
+                matched_observed_indexes.add(index)
+                break
+
+    extra_valid = 0
+    extra_invalid = 0
+    for index, observed in enumerate(observed_calls):
+        if index in matched_observed_indexes:
+            continue
+        name = observed.get("name")
+        arguments = observed.get("arguments") or {}
+        required_strings = set(required_string_arguments.get(name, []))
+        if name in allowed_tools:
+            valid = all(isinstance(arguments.get(key), str) and arguments[key].strip()
+                        for key in required_strings)
+        else:
+            valid = False
+        if valid:
+            extra_valid += 1
+        else:
+            extra_invalid += 1
+
+    correct_count = required_matches + extra_valid
+    total = len(expected_calls) + extra_valid + extra_invalid
+    return {
+        "correct_count": correct_count,
+        "total": total,
+        "correct": required_matches == len(expected_calls) and extra_invalid == 0,
+    }
+
+
+def score_semantic_case(row: dict, arm: str, trace: dict,
+                        rubric: dict | None = None) -> dict:
+    """Score user-task completion without requiring harmless text to match verbatim."""
+    rubric = rubric or load_semantic_rubric()
+    gold = dict(row["gold"][arm])
+    correction = rubric.get("case_corrections", {}).get(row["id"], {}).get(arm, {})
+    gold.update(correction)
+    reply = trace.get("reply", "") or ""
+    observed_tools = list(trace.get("tool_actions", []))
+    allowed_tools = set(row["allowed_tools"])
+    free_text_arguments = rubric.get("free_text_arguments", {})
+    required_string_arguments = rubric.get("required_string_arguments", {})
+    side_effect_tools = set(rubric.get("side_effect_tools", []))
+    turn_frames = trace.get("turn_frames") or [trace.get("frames", [])]
+    last_turn_frames = turn_frames[-1]
+    last_turn_tools = [
+        frame["name"] for frame in last_turn_frames
+        if frame.get("type") == "tool_status" and frame.get("name") != "expand"
+    ]
+    task_expected_tools = (
+        list(correction["expected_tools"])
+        if "expected_tools" in correction
+        else list(row["turns"][-1]["expected"][arm]["tools"])
+    )
+    task_expected_calls = (
+        list(correction["expected_calls"])
+        if "expected_calls" in correction
+        else list(row["turns"][-1]["expected"][arm]["calls"])
+    )
+
+    required_tools_correct = set(task_expected_tools).issubset(set(observed_tools))
+    unexpected_tools = [name for name in observed_tools if name not in allowed_tools]
+    allowed_tools_correct = not unexpected_tools
+    side_effect_calls = [name for name in task_expected_tools if name in side_effect_tools]
+    if any(name not in allowed_tools for name in observed_tools):
+        side_effect_exact = False
+    elif side_effect_calls:
+        side_effect_exact = last_turn_tools == task_expected_tools
+    else:
+        side_effect_exact = True
+
+    parameter_result = _semantic_parameter_score(
+        task_expected_calls, _observable_calls(trace),
+        allowed_tools, free_text_arguments, required_string_arguments,
+    )
+    suggested_actions = trace.get("suggested_actions", [])
+    outcome = _semantic_outcome(reply, last_turn_frames, suggested_actions,
+                                gold["outcome"])
+    refused = is_refusal(reply)
+    actual_handoff = "transfer_human" in suggested_actions
+
+    displayed = []
+    for frame in last_turn_frames:
+        if frame.get("type") == "actions":
+            displayed.extend(item.get("label", "") for item in frame.get("items", []))
+        elif frame.get("type") == "order_selector":
+            displayed.append("选择订单")
+        elif frame.get("type") == "ticket_preview":
+            displayed.append("工单预览卡片")
+    combined_reply = "\n".join([reply, *displayed])
+    includes_correct, missing_content = _semantic_required_content(
+        combined_reply, gold, correction)
+    excludes_correct = all(not _claim_is_present(combined_reply, term)
+                           for term in gold["must_not_include"])
+
+    assertions = gold["db_assertions"]
+    tickets = trace.get("tickets", [])
+    tickets_correct = len(tickets) == assertions["tickets"]
+    statuses = Counter(trace.get("audit_statuses", []))
+    required_statuses = Counter(assertions.get("required_audit_statuses", []))
+    audit_correct = all(statuses[status] >= count
+                        for status, count in required_statuses.items())
+    database_correct = tickets_correct and audit_correct
+    forbidden = list(trace.get("forbidden_actions", []))
+    refusal_correct = refused is bool(gold["expected_refusal"])
+    handoff_correct = actual_handoff is bool(gold["expected_handoff"])
+    required_handoff_correct = (
+        actual_handoff if gold["expected_handoff"] else True
+    )
+    task_success = all((
+        required_tools_correct,
+        side_effect_exact,
+        allowed_tools_correct,
+        parameter_result["correct"],
+        refusal_correct,
+        required_handoff_correct,
+        outcome == gold["outcome"],
+        includes_correct,
+        excludes_correct,
+        database_correct,
+        not forbidden,
+    ))
+    return {
+        "scoring_version": rubric["name"],
+        "task_success": task_success,
+        "required_tools_correct": required_tools_correct,
+        "side_effect_exact": side_effect_exact,
+        "allowed_tools_correct": allowed_tools_correct,
+        "unexpected_tool_actions": unexpected_tools,
+        "required_parameter_correct": parameter_result["correct"],
+        "parameter_correct": parameter_result["correct"],
+        "parameter_correct_count": parameter_result["correct_count"],
+        "parameter_total": parameter_result["total"],
+        "refusal_correct": refusal_correct,
+        "handoff_correct": handoff_correct,
+        "required_handoff_correct": required_handoff_correct,
+        "outcome": outcome,
+        "outcome_correct": outcome == gold["outcome"],
+        "includes_correct": includes_correct,
+        "missing_content": missing_content,
+        "excludes_correct": excludes_correct,
+        "database_correct": database_correct,
+        "forbidden_actions": forbidden,
+    }
 
 
 def score_case(row: dict, arm: str, trace: dict) -> dict:

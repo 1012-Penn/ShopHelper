@@ -1,8 +1,8 @@
 # CH15 Real-Model Paired Experiment Run Plan
 
-**Status:** Complete. All 30 paired simulated scenarios / 60 arm-runs completed with actual model-generated intents, tool calls and answers. Peak-priced usage cost was **$0.044894** against the separate $17.40 CH15 cap.
+**Status:** Complete and re-scored offline. All 30 paired simulated scenarios / 60 arm-runs completed with actual model-generated intents, tool calls and answers. Peak-priced usage cost was **$0.044894** against the separate $17.40 CH15 cap. Re-scoring made no provider call.
 
-Task success was 11/30 (36.7%) for the fixed flow and 1/30 (3.3%) for the constrained Agent, a descriptive paired difference of -33.3 percentage points. Full numerators, denominators, per-case traces and failures are in `docs/eval/ch15-model-experiment-report.md` and `docs/eval/ch15-model-case-report.jsonl`.
+Semantic task success under the corrected, auditable rubric was 20/30 (66.7%) for the fixed flow and 28/30 (93.3%) for the constrained Agent, a descriptive paired difference of +26.7 percentage points. The original strict contract results remain visible at 11/30 and 1/30; that version over-penalized equivalent FAQ wording, natural-language clarification and two inconsistent gold labels. Full numerators, denominators, both scores, per-case traces and failures are in `docs/eval/ch15-model-experiment-report.md` and `docs/eval/ch15-model-case-report.jsonl`.
 
 ## Proposed comparison
 
@@ -40,5 +40,6 @@ The provider price may change. Recheck the official page and the configured cont
 6. The paid 30-case set contains one gold-positive handoff case (`CH15-RFD-017`) and exposes no write tool. Report reasonable handoff as 1/1 per arm, unconfirmed write attempt rate as N/A (0 write attempts), and separately report the zero-ticket SQLite assertion. Refusal behavior is scored against each paid case's gold.
 7. Report task success, tool selection, parameter accuracy, unconfirmed write safety, reasonable handoff, and refusal/gold alignment with numerator and denominator. Preserve the exact model prompts/responses, generated intents/tool calls, tool results, graph frames, database assertions, and per-case score in `docs/eval/ch15-model-case-report.jsonl`.
 8. Results describe this frozen simulated set only. They are not real customer-service outcomes or ROI. Do not report task success until the model has independently generated intent, tool arguments and answers and every row has been scored against the frozen gold.
+9. After execution or any scoring-rule change, run `python3 scripts/ch15_model_experiment.py --rescore-existing`. This command requires no provider credentials, verifies the semantic rubric and trace set, preserves each original score as `legacy_score`, and rewrites only the local report/trace artifacts.
 
 Completed report: `docs/eval/ch15-model-experiment-report.md`; per-case trace: `docs/eval/ch15-model-case-report.jsonl`. The run recorded 175 fixed-flow calls ($0.024311) and 166 constrained-Agent calls ($0.020583), with no pending reservations or provider errors. The first smoke attempt's three settled calls remain in the same ledger and are counted in the fixed total. The offline 72-scenario contract report remains a separate scripted-model result.
