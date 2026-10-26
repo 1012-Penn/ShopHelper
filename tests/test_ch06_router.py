@@ -111,6 +111,12 @@ def test_route_refund_flows_to_prepare_order():
     assert route(_state(intent="售后")) == "prepare_order"
 
 
+def test_refund_route_can_be_selected_for_ch15_comparison():
+    assert route(_state(intent="退款退货"), refund_flow_mode="autonomous") == "agent"
+    assert route(_state(intent="售后"), refund_flow_mode="autonomous") == "agent"
+    assert route(_state(intent="订单"), refund_flow_mode="autonomous") == "agent"
+
+
 def test_route_other_and_unchanged_outlets():
     assert route(_state(intent="其他")) == "agent"
     for intent, expect in [("商品咨询", "retrieve"), ("物流", "agent"), ("订单", "agent"),

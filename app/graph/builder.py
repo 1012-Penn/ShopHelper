@@ -85,7 +85,8 @@ def _with_sink(fn):
 
 def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
                 resolver=None, intent_model=None, escalator=None, expander=None,
-                gap_analyzer=None, rag_steps_store=None):
+                gap_analyzer=None, rag_steps_store=None,
+                refund_flow_mode="fixed"):
     """resolver/expander 缺省时生产路径自建(结构化真模型);测试经 conftest 注入替身。
     intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。
     ch12:retrieval_route ∈ {decompose_once, controlled_loop} 时「商品咨询」改走
@@ -154,7 +155,10 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
             "agentic_retrieve", lambda s: "agent" if s["gate_passed"] else "log",
             {"agent": "agent", "log": "log"})
         route_targets["retrieve"] = "agentic_retrieve"
-    g.add_conditional_edges("intent", route, route_targets)
+    if refund_flow_mode not in {"fixed", "autonomous"}:
+        raise ValueError(f"unsupported refund_flow_mode: {refund_flow_mode}")
+    g.add_conditional_edges(
+        "intent", lambda state: route(state, refund_flow_mode=refund_flow_mode), route_targets)
     g.add_conditional_edges("prepare_order",
                             lambda s: "fetch_order" if s.get("pending_order_id") else "ask_order",
                             {"fetch_order": "fetch_order", "ask_order": "ask_order"})

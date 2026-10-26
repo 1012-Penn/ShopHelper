@@ -130,11 +130,18 @@ def make_intent_node(model, escalator=None, floor: float = 0.6):
     return intent_node
 
 
-def route(state) -> str:
+def route(state, *, refund_flow_mode: str = "fixed") -> str:
+    """Route intents through the production fixed refund flow by default.
+
+    CH15 may explicitly select ``autonomous`` for a controlled comparison where
+    the same real intent model sends refund intents to the existing Agent node.
+    """
+    if refund_flow_mode not in {"fixed", "autonomous"}:
+        raise ValueError(f"unsupported refund_flow_mode: {refund_flow_mode}")
     if state["intent"] in KNOWLEDGE_INTENTS:
         return "retrieve"
     if state["intent"] in REFUND_INTENTS:
-        return "prepare_order"
+        return "prepare_order" if refund_flow_mode == "fixed" else "agent"
     if state["intent"] in BUSINESS_INTENTS:
         return "agent"
     if state["intent"] == "投诉":
