@@ -17,11 +17,11 @@ The scripted scenario contract pass column is not an Agent task success rate. Th
 
 `Parameter accuracy` is N/A where the fixed subgraph performs no ToolEngine call with model-supplied arguments. `Unconfirmed write rate` uses persisted writes without a matching confirmation over all audited write attempts. Refusal alignment compares each result to its case gold.
 
-## Paired scripted contract pass: fixed flow vs constrained Agent path
+## Paired scripted contract pass: actor variants on the default intent router
 
 | Arm | Contract-passing scenarios / paired scenarios | Turns |
 |---|---:|---:|
 | fixed | 29/30 (96.7%) | 42 |
 | autonomous | 28/30 (93.3%) | 42 |
 
-Paired scripted contract pass difference (autonomous minus fixed): -3.3 percentage points. It is not evidence that one approach has a higher Agent task success rate.
+Paired scripted contract pass difference (autonomous minus fixed): -3.3 percentage points. Both offline arms used the production default route and arm-specific prewritten intents/actors; this is not a controlled route ablation or evidence that one approach has a higher Agent task success rate. The real-model runner adds an explicit fixed-vs-autonomous route mode.

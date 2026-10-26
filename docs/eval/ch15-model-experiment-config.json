@@ -1,0 +1,142 @@
+{
+  "arms": {
+    "autonomous": {
+      "cap_usd": 8.2,
+      "formula": "42 turns × (resolve + intent + up to 6 Agent generations)",
+      "max_generations": 336,
+      "route": "refund intents to existing ReAct Agent"
+    },
+    "fixed": {
+      "cap_usd": 9.2,
+      "formula": "42 turns × (resolve + intent + policy expansion + up to 6 Agent generations)",
+      "max_generations": 378,
+      "route": "existing fixed refund flow"
+    }
+  },
+  "base_commit": "dde19f3420b6da00c8e28dd9f503e1de4b6cfde9",
+  "base_url": "https://api.deepseek.com/v1",
+  "categories": {
+    "multi_turn_revision": 12,
+    "refund_guidance": 18
+  },
+  "experiment_id": "ch15-realmodel-paired-v1",
+  "fixtures": {
+    "database": "one isolated in-memory SQLite database per scenario-arm run",
+    "external_services": "disabled",
+    "orders": "app/orders.py ORDER_CATALOG",
+    "policies": "tests/eval/tasks/fixtures/policies.json"
+  },
+  "generation": {
+    "agent_token_budget": 3000,
+    "extract_temperature": 0,
+    "intent_escalation": false,
+    "max_agent_steps": 6,
+    "max_output_tokens": 2000,
+    "model_retries": 0,
+    "provider_timeout_seconds": 45,
+    "temperature": 0,
+    "thinking": "disabled"
+  },
+  "model": "deepseek-flash",
+  "model_visibility": "Only projected turn.message strings, actual generated dialogue/history, frozen system prompts and the fixed read-only tool schemas are model inputs; actor, expected, intents and gold fields are never projected.",
+  "persistent_ledger": "data/ch15_paid_run.sqlite3 (separate CH15 SQLite file; does not read or modify CH11 ledger)",
+  "pricing": {
+    "currency": "USD",
+    "input_cache_assumption": "all input tokens are reserved at cache-miss peak price; usage is reconciled with cache hit/miss detail when returned",
+    "input_per_million": 0.3,
+    "max_call_reserve_usd": 0.0220608,
+    "max_input_tokens": 65536,
+    "max_output_tokens": 2000,
+    "output_per_million": 1.2,
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "verified_on": "2026-10-26",
+    "input_cache_hit_per_million": 0.006
+  },
+  "provider": "DeepSeek official OpenAI-compatible API",
+  "run_cap_usd": 17.4,
+  "scenario_count": 30,
+  "scenario_ids": [
+    "CH15-RFD-001",
+    "CH15-RFD-002",
+    "CH15-RFD-003",
+    "CH15-RFD-004",
+    "CH15-RFD-005",
+    "CH15-RFD-006",
+    "CH15-RFD-007",
+    "CH15-RFD-008",
+    "CH15-RFD-009",
+    "CH15-RFD-010",
+    "CH15-RFD-011",
+    "CH15-RFD-012",
+    "CH15-RFD-013",
+    "CH15-RFD-014",
+    "CH15-RFD-015",
+    "CH15-RFD-016",
+    "CH15-RFD-017",
+    "CH15-RFD-018",
+    "CH15-REV-001",
+    "CH15-REV-002",
+    "CH15-REV-003",
+    "CH15-REV-004",
+    "CH15-REV-005",
+    "CH15-REV-006",
+    "CH15-REV-007",
+    "CH15-REV-008",
+    "CH15-REV-009",
+    "CH15-REV-010",
+    "CH15-REV-011",
+    "CH15-REV-012"
+  ],
+  "scenario_manifest": "tests/eval/tasks/scenarios.jsonl",
+  "scenario_manifest_sha256": "d019779e42dc6cd4307be16058ca6b47e11b25122db73ff464a8b086ce05491c",
+  "schema_version": 1,
+  "smoke_case": {
+    "arm": "fixed",
+    "counted_in_fixed_cap": true,
+    "scenario_id": "CH15-RFD-001"
+  },
+  "source_sha256": {
+    "docs/superpowers/specs/2026-10-25-ch15-ch17-interview-evidence-roadmap.md": "eb47edb868f0d8c4a1477733c271b3cc1fd6d5a4080caf50a9a7832211f80a88",
+    "docs/eval/ch15-design-and-rubric.md": "d1fcacba66362ab5190e48a3c75d0941aeb8aa886fe805c22e279547ccb0282b",
+    "app/config.py": "9a9dcbcc3165e952363ab03d63ce50f5cf8cb32b62eef25f6314c2f0b305ad81",
+    "app/context.py": "8b7586a7900ad0c584897bd0495273ceedb6d566dce3df5197d175a23d1b52cb",
+    "app/guard.py": "4294fdef46ac59a1b86a9760b548e89efae3c541fcf9706d359a68fc3c6d3881",
+    "app/graph/agent.py": "e55ee39ed9f3a62553c5fa2eb7985b379a85c5beeadc9cbe3240afa3e6cce9fe",
+    "app/graph/agentic.py": "9071530bbe3d51f27f5a7d53d1dd011e6b20409368a089b4e9e36ce16e55f57a",
+    "app/graph/builder.py": "bd2fe7c57c7a467f275ae2d52213022c0955b7a2bac6b5b97bad964b02f6c3f1",
+    "app/graph/entry.py": "226ce596a6877902e13eba44307bc268d07296e34877425319d28ff1d37f1cd9",
+    "app/graph/knowledge.py": "2e7fed772e949772fb608e8981f477ac3595fe595503fdde113de87e2d950c73",
+    "app/graph/logging_node.py": "d4e7cb155e55f56ac0f5b2e651ab0d98d39b18196356946a1fa1025ed8a2f78b",
+    "app/graph/refund.py": "23e1f5e03256fe8e895acddbb7ddecd9dca439e60fe05aa66bfc04723659fdda",
+    "app/graph/simple.py": "9e37cc24828e4846ccc81b1256d65c5201087ac7005930a060b6f2b019c38e99",
+    "app/graph/state.py": "a989a652fe0a45418593fcc496db3c0b12f76b47b3ff75686d7c828fe5eedcde",
+    "app/history.py": "057fb89ec20f2709041a2941d7ce90234b1ee0a72d48ce3cbee043ab3ef27864",
+    "app/models.py": "da03a89048d7ae7bbfc301da3495c58b52655e1975c362d49195008db514e2d1",
+    "app/orders.py": "2db8a201f1eb9f9d13ab4ad9b3a1ec2f52ab4f81662bac5975d2ba2d428e5247",
+    "app/prompts.py": "f66c04bc8ceee4b14b247e82bd0ac1cf67aea62170318711f805e22fa94e7ed7",
+    "app/store.py": "2a682d70c43761afdb47b681299d690b1e61aa0f99c85de65e4ceedba67713cf",
+    "app/tools/audit.py": "0bfd752f5e92f5ac2f2dce4ea27ae556a68829f2a5aaa3f2bf838aef5830e354",
+    "app/tools/base.py": "bc9c7134d817492e4f7459bfc6d772de4761139b6a00b758f2efe9d529108bf7",
+    "app/tools/builtin.py": "f85d760f7c65a50d9d9f3ff5f5bc58e987e8553f7f6e62b633a10b75a0a0668e",
+    "app/tools/engine.py": "81dfd7569dcc0585ac1e5af6f59a711802d7afb5b84e683fe5c154ce93b9124a",
+    "scripts/eval_cost.py": "47dedcd7f0a00124b20923f96e8934662bd919188c071d317173ff31127c4de7",
+    "scripts/ch15_paid_guard.py": "05e41984827d449a0704e1bf38d9f9958cf9b6f575e2ce5a3875f33f5aa9b8a1",
+    "scripts/ch15_model_experiment.py": "5d8cf1c413d084ccbf138abcad3bf67be120dee204f552eb5626da8bb01859c5",
+    "tests/eval/tasks/fixtures/policies.json": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
+    "tests/eval/tasks/harness.py": "3a796d837b8fb20b44704acd7f2fb2b8a04c7711ddd743580ba44957a57fb05b",
+    "tests/eval/tasks/scenarios.jsonl": "d019779e42dc6cd4307be16058ca6b47e11b25122db73ff464a8b086ce05491c",
+    "pyproject.toml": "2c10efe6c2af19cb063758118a22ddfd5ff334d1ea63ef3ef7c6fadc08d86447"
+  },
+  "tool_engine": {
+    "access": "read-only",
+    "model_visible_tools": [
+      "query_order",
+      "query_faq"
+    ],
+    "tool_retries": 0,
+    "tool_timeout_seconds": 10,
+    "write_confirmation_implementation": "production ToolEngine; paid arm exposes no write tool"
+  },
+  "user_turn_count": 42,
+  "config_hash": "sha256:54fd2f87399f0b1672715ca14b62af7819d979be5268c5f7bfdbdb5379e3078a"
+}

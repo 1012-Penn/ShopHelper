@@ -1,8 +1,8 @@
 import asyncio
 from pathlib import Path
 
-from harness import (load_scenarios, render_summary_markdown, run_case, score_case,
-                     summarize_runs)
+from harness import (_claim_is_present, load_scenarios, render_summary_markdown,
+                     run_case, score_case, summarize_runs)
 
 
 def scenario(scenario_id):
@@ -28,6 +28,12 @@ def test_refusal_is_scored_against_case_gold_not_as_a_blanket_success():
     assert scored["scenario_contract_pass"] is True
 
 
+def test_explicit_refund_denial_is_not_scored_as_a_false_completion_claim():
+    assert _claim_is_present("订单还没有退款成功。", "退款成功") is False
+    assert _claim_is_present("订单尚未显示退款完成。", "退款完成") is False
+    assert _claim_is_present("订单已退款成功。", "退款成功") is True
+
+
 def test_real_graph_executes_order_tool_and_records_parameter_trace():
     row = scenario("CH15-ORD-001")
 
@@ -40,6 +46,22 @@ def test_real_graph_executes_order_tool_and_records_parameter_trace():
     assert result["graph_trace"]
     assert result["ticket_count"] == 0
     assert result["score"]["scenario_contract_pass"] is True
+
+
+def test_explicit_autonomous_mode_routes_refund_intent_to_agent_node():
+    row = scenario("CH15-RFD-001")
+    row["turns"][0]["intents"]["autonomous"] = "退款退货"
+
+    result = asyncio.run(run_case(row, "autonomous",
+                                  refund_flow_mode="autonomous"))
+
+    assert result["tool_actions"] == ["query_order", "query_faq"]
+    assert result["tool_calls"] == [
+        {"name": "query_order", "arguments": {"order_id": "1001"}},
+        {"name": "query_faq", "arguments": {
+            "keyword": "订单1001适用15天无理由退货吗？"}},
+    ]
+    assert result["reply"] == row["turns"][0]["actors"]["autonomous"]["reply"]
 
 
 def test_duplicate_confirmation_uses_real_endpoint_and_is_idempotent():
