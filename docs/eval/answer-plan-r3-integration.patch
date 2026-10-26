@@ -1,0 +1,73 @@
+diff --git a/app/config.py b/app/config.py
+--- a/app/config.py
++++ b/app/config.py
+@@
+     claim_grounding_max_cost_usd: float = 2.0
+     claim_grounding_reserve_usd: float = 0.005
++
++    # Optional evidence-bound answer plan. Default remains the existing agent.
++    answer_plan_enabled: bool = False
++    answer_plan_ledger_path: str = ""
++    answer_plan_max_cost_usd: float = 2.0
++    answer_plan_pricing_path: str = "config/pricing.yaml"
+diff --git a/app/graph/builder.py b/app/graph/builder.py
+--- a/app/graph/builder.py
++++ b/app/graph/builder.py
+@@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
+                 gap_analyzer=None, rag_steps_store=None,
+-                refund_flow_mode="fixed", answer_verifier=None):
++                refund_flow_mode="fixed", answer_verifier=None,
++                answer_plan_node=None):
+@@
+     g.add_node("agent", _with_sink(make_agent_node(
+         model, engine, settings, pool, answer_verifier=answer_verifier)))
++    if answer_plan_node is not None:
++        g.add_node("answer_plan", _with_sink(answer_plan_node))
+@@
+-        g.add_conditional_edges(
+-            "agentic_retrieve", lambda s: "agent" if s["gate_passed"] else "log",
+-            {"agent": "agent", "log": "log"})
++        passed_target = "answer_plan" if answer_plan_node is not None else "agent"
++        g.add_conditional_edges(
++            "agentic_retrieve", lambda s: passed_target if s["gate_passed"] else "log",
++            {passed_target: passed_target, "log": "log"})
+@@
+-    g.add_conditional_edges(
+-        "gate", lambda s: "fallback" if not s["gate_passed"] else "agent",
+-        {"fallback": "fallback", "agent": "agent"})
++    evidence_target = "answer_plan" if answer_plan_node is not None else "agent"
++    g.add_conditional_edges(
++        "gate", lambda s: "fallback" if not s["gate_passed"] else evidence_target,
++        {"fallback": "fallback", evidence_target: evidence_target})
++    if answer_plan_node is not None:
++        g.add_edge("answer_plan", "log")
+diff --git a/app/main.py b/app/main.py
+--- a/app/main.py
++++ b/app/main.py
+@@
+     if settings.answer_verification_enabled and settings.claim_grounding_enabled:
+@@
+         answer_verifier = AnswerVerifier(
+             app.state.claim_grounding_semantic,
+             max_revisions=settings.answer_verification_max_revisions,
+         )
++    answer_plan_node = None
++    if settings.answer_plan_enabled:
++        from app.answer_plan.runtime import build_optional_answer_plan_runtime
++        from scripts.eval_cost import PricingTable
++
++        pricing = PricingTable.load(Path(settings.answer_plan_pricing_path))
++        if not pricing.verified:
++            raise RuntimeError("ANSWER_PLAN_PRICING_PATH is not verified")
++        app.state.answer_plan = build_optional_answer_plan_runtime(
++            settings,
++            base_model=make_extract_model(settings),
++            pricing=pricing,
++        )
++        answer_plan_node = app.state.answer_plan.make_node()
+     compiled_graph = build_graph(
+@@
+         rag_steps_store=rag_steps_store,
+         answer_verifier=answer_verifier,
++        answer_plan_node=answer_plan_node,
+     )
