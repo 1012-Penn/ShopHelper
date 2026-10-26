@@ -94,4 +94,3 @@
 - [x] Run the CH15 test files, related tool/graph/idempotency regressions, and the full repository pytest suite.
 - [x] Inspect the diff and git status to verify only this worktree changed and CH11/production defaults were untouched; create a final coherent documentation/report commit.
 - [x] Leave the branch/worktree in place; do not push or merge.
-

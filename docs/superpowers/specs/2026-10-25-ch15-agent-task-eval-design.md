@@ -45,4 +45,3 @@
 入口：`python scripts/eval_agent_tasks.py`。默认仅运行本地脚本角色与确定性 fixture，生成含输入、金标、图帧、工具调用/结果、审计行和数据库行的逐臂 JSONL，以及 Markdown 汇总；不创建 provider client，不读取 `.env`，不访问 MCP。每个题/策略臂使用新 SQLite 内存数据库及新图线程，确认写入只作用于测试库。
 
 后续付费方案选定模型和日期后，可串行跑 30 个配对场景（每臂 30 个场景，共 42 个用户轮次），固定组最多 378 次、受限自主组最多 336 次模型生成。2026-10-26 官方峰时价快照为 `deepseek-flash` 输入未命中缓存 $0.30/M token、输出 $1.20/M token；按每次输入 65,536 token、输出 2,000 token、0 次客户端重试估算，硬 token 上限约为固定组 $8.34、自主组 $7.42；另预留 10% 并向上设金额硬停为 $9.20 和 $8.20（合计 $17.40）。`scripts/ch15_paid_guard.py` 在每次调用前预留最大单次成本，并强制显式 opt-in、已核实价格、组/总费用与生成次数、序列化请求大小、关闭重试和意图升级、Agent 最多 6 步。守卫使用 CH15 独立预算，不读写 CH11 $10 台账。它是待付费 runner 集成的守卫模块；当前离线 CLI 不调用它，付费 runner 尚未实现，也没有发出模型调用。执行前仍须复核官方价格和模型配置。来源：[DeepSeek Models & Pricing](https://api-docs.deepseek.com/quick_start/pricing/)。
-
