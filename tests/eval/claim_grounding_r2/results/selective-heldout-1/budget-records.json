@@ -1,0 +1,261 @@
+{
+  "records": [
+    {
+      "actual_usd": 0.00020866800000000002,
+      "created_at": "2026-10-26T17:35:35.373302+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=007872774a8cd01b342d232d2d92f0bcc9e186150b1891748230baee10285e03",
+      "reservation_id": "99cfcdebd4e14edab4dfaf907c14b95b",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:37.052792+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 381,
+        "output_tokens": 110
+      }
+    },
+    {
+      "actual_usd": 0.00040293599999999995,
+      "created_at": "2026-10-26T17:35:37.064012+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=afa9a9762d640e26c2bf0183d32a9fb5f7204a1176483fea4c5cb1edca7600cf",
+      "reservation_id": "4b8c933d1fa449709e491d8573809829",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:39.230907+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 256,
+        "input_tokens": 394,
+        "output_tokens": 300
+      }
+    },
+    {
+      "actual_usd": 0.00034966800000000003,
+      "created_at": "2026-10-26T17:35:39.243471+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=b949de47efe8b1f6d88fa9752cb737e2429e6e181b108f17841caa875f6cb343",
+      "reservation_id": "82b153a2a8b04fe49ddb881723fc41cc",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:40.773588+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 375,
+        "output_tokens": 229
+      }
+    },
+    {
+      "actual_usd": 0.00025336799999999996,
+      "created_at": "2026-10-26T17:35:40.783993+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=d06950fbdee023f0400093609f920081500e16b4901f849b66f1686dd022ea8b",
+      "reservation_id": "ea126e4664f64f4c921c9aaa854f0ef8",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:42.008930+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 382,
+        "output_tokens": 147
+      }
+    },
+    {
+      "actual_usd": 0.000252336,
+      "created_at": "2026-10-26T17:35:42.020413+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=0501d06f95c037cae5f21883887cba1773ac2af1febcf8a48a834317cb9ef50f",
+      "reservation_id": "284fff5f8f42468cb38f45cebdfaf329",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:43.555317+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 256,
+        "input_tokens": 392,
+        "output_tokens": 175
+      }
+    },
+    {
+      "actual_usd": 0.00030676799999999996,
+      "created_at": "2026-10-26T17:35:43.565771+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=89b26ed6e6f1ccab65f0fcf037193836efcbad3f2aa492b1f440d22c684dde6e",
+      "reservation_id": "e47fe72dcfcf4a8ebf372e6468640ba3",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:44.996443+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 364,
+        "output_tokens": 196
+      }
+    },
+    {
+      "actual_usd": 0.000315168,
+      "created_at": "2026-10-26T17:35:45.006698+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=43f96819ad29a5393bbc24672e6dff9de474c061e9e00a2c4e44d207c8c355aa",
+      "reservation_id": "0dd0ab3792cd4eb7a1364c1e9a3d0213",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:46.524389+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 380,
+        "output_tokens": 199
+      }
+    },
+    {
+      "actual_usd": 0.000329868,
+      "created_at": "2026-10-26T17:35:46.534442+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=1fcc453b3e025ffc019cd28c7c1e91efa85514eb02fa197decb08d2ddcaf6468",
+      "reservation_id": "a34af6e3d33642ac941105866dcf3cff",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:47.970660+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 369,
+        "output_tokens": 214
+      }
+    },
+    {
+      "actual_usd": 0.000206568,
+      "created_at": "2026-10-26T17:35:47.981516+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=0759c65a59b1256263312263c14ca934fdb2539d2bcd871ccd65a5a7edd04726",
+      "reservation_id": "29e8c3177e6d4a418fc88c0625a0269b",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:48.932904+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 370,
+        "output_tokens": 111
+      }
+    },
+    {
+      "actual_usd": 0.000245268,
+      "created_at": "2026-10-26T17:35:48.946068+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=968f9ca6c6621e4afbcf34f28146e4288f68c33b5139c896fde0c9fa1d7c6493",
+      "reservation_id": "fa57d57007ec41e88e13f697cd8f30bc",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:50.085914+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 367,
+        "output_tokens": 144
+      }
+    },
+    {
+      "actual_usd": 0.00019366799999999998,
+      "created_at": "2026-10-26T17:35:50.099183+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=c01fc4c8bf92c45a8ee51e539bf5014f6ae5d53eb49640f0ec2c45f1dcf0ea75",
+      "reservation_id": "b660e47dc72941af847db0f2ac5d56db",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:50.931170+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 367,
+        "output_tokens": 101
+      }
+    },
+    {
+      "actual_usd": 0.00021736799999999998,
+      "created_at": "2026-10-26T17:35:50.942746+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=038c81f683d4227c8a6e26bf4a9a3728216b3563c34fe150f43d03cf3674c723",
+      "reservation_id": "12f74ede38084fc0a8def657e838ee23",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:52.143303+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 362,
+        "output_tokens": 122
+      }
+    },
+    {
+      "actual_usd": 0.00042693599999999994,
+      "created_at": "2026-10-26T17:35:52.160978+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=38cc18349712c59d6ac2387b089b0513f67e1a2bd88de268eaadee768e507853",
+      "reservation_id": "cfc5e5ae060d46abb21c5cf5c435ccf3",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:53.717256+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 256,
+        "input_tokens": 474,
+        "output_tokens": 300
+      }
+    },
+    {
+      "actual_usd": 0.00043066799999999994,
+      "created_at": "2026-10-26T17:35:53.731373+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=333f538ced0fdc23973a7f5995042f2c7f79cac6a840c2dde3b44a4eba732fe0",
+      "reservation_id": "bfc3df72f8e54293a4e4a976bafe8818",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:56.103128+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 361,
+        "output_tokens": 300
+      }
+    },
+    {
+      "actual_usd": 0.000271068,
+      "created_at": "2026-10-26T17:35:56.115785+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=4745ea1ef09ed383106ef95a040cb87c3538a3e29874004a549c3e76c5e747af",
+      "reservation_id": "20fd58bb1f3543249eb4d34f48b76968",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:57.158057+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 128,
+        "input_tokens": 381,
+        "output_tokens": 162
+      }
+    },
+    {
+      "actual_usd": 0.000272136,
+      "created_at": "2026-10-26T17:35:57.168782+00:00",
+      "kind": "claim_grounding",
+      "model": "deepseek-flash",
+      "note": "prompt_sha256=6f6a392fb832d14c973bae77950f133fba8d15f1d93a2383e15ccc5b0fbecf44",
+      "reservation_id": "1d40a15b45574357a5906af2c54b3e65",
+      "reserved_usd": 0.005,
+      "settled_at": "2026-10-26T17:35:58.447037+00:00",
+      "state": "settled",
+      "usage": {
+        "cached_input_tokens": 256,
+        "input_tokens": 402,
+        "output_tokens": 189
+      }
+    }
+  ],
+  "total_usd": 0.004682459999999999
+}

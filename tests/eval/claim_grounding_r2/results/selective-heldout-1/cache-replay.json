@@ -1,0 +1,8 @@
+{
+  "hits": 16,
+  "latency_ms": {
+    "p50": 0.26519100356381387,
+    "p95": 0.8460080061922781
+  },
+  "scope": "exact-cache replay of previously eligible claims; not online provider latency"
+}

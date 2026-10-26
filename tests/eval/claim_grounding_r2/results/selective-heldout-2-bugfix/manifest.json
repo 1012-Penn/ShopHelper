@@ -1,0 +1,53 @@
+{
+  "backend": "deepseek-flash",
+  "credentials_persisted": false,
+  "freeze": {
+    "backend": {
+      "local_candidate_documented": "MoritzLaurer/multilingual-MiniLMv2-L6-mnli-xnli",
+      "local_nli_implemented": false,
+      "model": "deepseek-flash",
+      "selected": "structured_api"
+    },
+    "budget": {
+      "hard_limit_usd": 2.0,
+      "ledger": "independent SQLite; atomic reservation and provider-usage settlement"
+    },
+    "categories": {
+      "cross_order": 5,
+      "date_boundary": 6,
+      "missing_condition": 7,
+      "negation": 5,
+      "stale_evidence": 6,
+      "synonym_support": 7,
+      "unit": 8
+    },
+    "data_sha256": {
+      "dev": "a6f66cf2500abfd255eb00642ce91ddc06aeaed903e70ec9793bbea4e88f48a2",
+      "heldout": "70632498218bcab72102dc31d3db0b3cc9d44a0b33c15deba4573bfbe505939e"
+    },
+    "freeze_id": "claim-grounding-r2-20261027",
+    "group_counts": {
+      "dev": 12,
+      "heldout": 32
+    },
+    "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+    "prompt_sha256": "5d4f4506bc0ebd0a4128975258903cc417fe77b7004cb1347eb3bcd5505644bc",
+    "prompt_version": "claim-grounding-api-v1",
+    "schema_version": 1,
+    "scoring_version": "claim-grounding-r2-v1",
+    "selection": "only v3.1 uncertain claims",
+    "sizes": {
+      "dev": 12,
+      "heldout": 32
+    },
+    "stop_rule": {
+      "dev_tuning_allowed": true,
+      "heldout_tuning_after_freeze": false,
+      "infrastructure_retry_must_use_new_run_id": true,
+      "official_heldout_runs": 1,
+      "provider_retries_max": 2
+    }
+  },
+  "mode": "selective",
+  "split": "heldout"
+}

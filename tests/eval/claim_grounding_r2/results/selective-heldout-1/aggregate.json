@@ -1,0 +1,118 @@
+{
+  "accuracy": 0.6875,
+  "budget": {
+    "limit_usd": 2.0,
+    "records": 16,
+    "total_usd": 0.004682459999999999
+  },
+  "calls": {
+    "backend_called": 16,
+    "cache_hits": 0,
+    "call_ratio": 0.5,
+    "hidden_calls": 16,
+    "online_timed_calls": 16
+  },
+  "category_errors": {
+    "date_boundary": 2,
+    "missing_condition": 2,
+    "stale_evidence": 1,
+    "synonym_support": 1,
+    "unit": 4
+  },
+  "confusion": {
+    "supported": {
+      "supported": 2,
+      "uncertain": 1,
+      "unsupported": 5
+    },
+    "uncertain": {
+      "uncertain": 4,
+      "unsupported": 3
+    },
+    "unsupported": {
+      "uncertain": 1,
+      "unsupported": 16
+    }
+  },
+  "contradiction_misses": {
+    "deterministic_conflict_recall": 0.5882352941176471,
+    "gold_unsupported_n": 17,
+    "unsupported_to_supported": 0,
+    "unsupported_to_uncertain": 1
+  },
+  "cost_usd": 0.004682459999999999,
+  "data_sha256": {
+    "dev": "a6f66cf2500abfd255eb00642ce91ddc06aeaed903e70ec9793bbea4e88f48a2",
+    "heldout": "70632498218bcab72102dc31d3db0b3cc9d44a0b33c15deba4573bfbe505939e"
+  },
+  "entity_condition_errors": {
+    "cross_order": 0,
+    "date_boundary": 2,
+    "missing_condition": 2,
+    "negation": 0,
+    "unit": 4
+  },
+  "finished_at": "2026-10-26T17:35:58.457647+00:00",
+  "freeze_id": "claim-grounding-r2-20261027",
+  "latency_ms_online": {
+    "n": 16,
+    "p50": 1427.250457003538,
+    "p95": 2367.4595600023167
+  },
+  "latency_scope": "provider request wall time only for cache-miss calls; not end-to-end chat latency",
+  "macro_f1": 0.5986241400875546,
+  "mode": "selective",
+  "n": 32,
+  "per_label": {
+    "supported": {
+      "f1": 0.4,
+      "gold_n": 8,
+      "precision": 1.0,
+      "predicted_n": 2,
+      "recall": 0.25,
+      "tp": 2
+    },
+    "uncertain": {
+      "f1": 0.6153846153846153,
+      "gold_n": 7,
+      "precision": 0.6666666666666666,
+      "predicted_n": 6,
+      "recall": 0.5714285714285714,
+      "tp": 4
+    },
+    "unsupported": {
+      "f1": 0.7804878048780487,
+      "gold_n": 17,
+      "precision": 0.6666666666666666,
+      "predicted_n": 24,
+      "recall": 0.9411764705882353,
+      "tp": 16
+    }
+  },
+  "scoring_version": "claim-grounding-r2-v1",
+  "split": "heldout",
+  "started_at": "2026-10-26T17:35:35.369913+00:00",
+  "supported": {
+    "correct": 2,
+    "gold_n": 8
+  },
+  "supported_precision": {
+    "denominator": 2,
+    "f1": 0.4,
+    "gold_n": 8,
+    "precision": 1.0,
+    "predicted_n": 2,
+    "recall": 0.25,
+    "tp": 2
+  },
+  "tokens": {
+    "input": 6121,
+    "output": 2999,
+    "total": 9120
+  },
+  "uncertain": {
+    "determinate_coverage": 0.8125,
+    "predicted": 6,
+    "rate": 0.1875
+  }
+}

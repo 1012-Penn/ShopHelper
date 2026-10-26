@@ -1,0 +1,310 @@
+{
+  "hard_guard_only": {
+    "accuracy": 0.5625,
+    "calls": {
+      "backend_called": 0,
+      "cache_hits": 0,
+      "call_ratio": 0.0,
+      "hidden_calls": 0,
+      "online_timed_calls": 0
+    },
+    "category_errors": {
+      "date_boundary": 1,
+      "missing_condition": 1,
+      "negation": 4,
+      "stale_evidence": 1,
+      "synonym_support": 3,
+      "unit": 4
+    },
+    "confusion": {
+      "supported": {
+        "uncertain": 4,
+        "unsupported": 4
+      },
+      "uncertain": {
+        "uncertain": 7
+      },
+      "unsupported": {
+        "uncertain": 6,
+        "unsupported": 11
+      }
+    },
+    "contradiction_misses": {
+      "deterministic_conflict_recall": 0.6470588235294118,
+      "gold_unsupported_n": 17,
+      "unsupported_to_supported": 0,
+      "unsupported_to_uncertain": 6
+    },
+    "cost_usd": 0.0,
+    "entity_condition_errors": {
+      "cross_order": 0,
+      "date_boundary": 1,
+      "missing_condition": 1,
+      "negation": 4,
+      "unit": 4
+    },
+    "latency_ms_online": {
+      "n": 0,
+      "p50": null,
+      "p95": null
+    },
+    "latency_scope": "provider request wall time only for cache-miss calls; not end-to-end chat latency",
+    "macro_f1": 0.6354166666666667,
+    "n": 32,
+    "per_label": {
+      "supported": {
+        "f1": null,
+        "gold_n": 8,
+        "precision": null,
+        "predicted_n": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      "uncertain": {
+        "f1": 0.5833333333333334,
+        "gold_n": 7,
+        "precision": 0.4117647058823529,
+        "predicted_n": 17,
+        "recall": 1.0,
+        "tp": 7
+      },
+      "unsupported": {
+        "f1": 0.6875,
+        "gold_n": 17,
+        "precision": 0.7333333333333333,
+        "predicted_n": 15,
+        "recall": 0.6470588235294118,
+        "tp": 11
+      }
+    },
+    "scoring_version": "claim-grounding-r2-v1",
+    "supported": {
+      "correct": 0,
+      "gold_n": 8
+    },
+    "supported_precision": {
+      "denominator": 0,
+      "f1": null,
+      "gold_n": 8,
+      "precision": null,
+      "predicted_n": 0,
+      "recall": 0.0,
+      "tp": 0
+    },
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0
+    },
+    "uncertain": {
+      "determinate_coverage": 0.46875,
+      "predicted": 17,
+      "rate": 0.53125
+    }
+  },
+  "selective_grounding": {
+    "accuracy": 0.78125,
+    "calls": {
+      "backend_called": 17,
+      "cache_hits": 15,
+      "call_ratio": 0.53125,
+      "hidden_calls": 2,
+      "online_timed_calls": 2
+    },
+    "category_errors": {
+      "missing_condition": 2,
+      "synonym_support": 1,
+      "unit": 4
+    },
+    "confusion": {
+      "supported": {
+        "supported": 3,
+        "uncertain": 1,
+        "unsupported": 4
+      },
+      "uncertain": {
+        "uncertain": 5,
+        "unsupported": 2
+      },
+      "unsupported": {
+        "unsupported": 17
+      }
+    },
+    "contradiction_misses": {
+      "deterministic_conflict_recall": 0.6470588235294118,
+      "gold_unsupported_n": 17,
+      "unsupported_to_supported": 0,
+      "unsupported_to_uncertain": 0
+    },
+    "cost_usd": 0.000751404,
+    "entity_condition_errors": {
+      "cross_order": 0,
+      "date_boundary": 0,
+      "missing_condition": 2,
+      "negation": 0,
+      "unit": 4
+    },
+    "latency_ms_online": {
+      "n": 2,
+      "p50": 1872.8349519951735,
+      "p95": 2963.5682470034226
+    },
+    "latency_scope": "provider request wall time only for cache-miss calls; not end-to-end chat latency",
+    "macro_f1": 0.7215617715617716,
+    "n": 32,
+    "per_label": {
+      "supported": {
+        "f1": 0.5454545454545454,
+        "gold_n": 8,
+        "precision": 1.0,
+        "predicted_n": 3,
+        "recall": 0.375,
+        "tp": 3
+      },
+      "uncertain": {
+        "f1": 0.7692307692307692,
+        "gold_n": 7,
+        "precision": 0.8333333333333334,
+        "predicted_n": 6,
+        "recall": 0.7142857142857143,
+        "tp": 5
+      },
+      "unsupported": {
+        "f1": 0.85,
+        "gold_n": 17,
+        "precision": 0.7391304347826086,
+        "predicted_n": 23,
+        "recall": 1.0,
+        "tp": 17
+      }
+    },
+    "scoring_version": "claim-grounding-r2-v1",
+    "supported": {
+      "correct": 3,
+      "gold_n": 8
+    },
+    "supported_precision": {
+      "denominator": 3,
+      "f1": 0.5454545454545454,
+      "gold_n": 8,
+      "precision": 1.0,
+      "predicted_n": 3,
+      "recall": 0.375,
+      "tp": 3
+    },
+    "tokens": {
+      "input": 6508,
+      "output": 3204,
+      "total": 9712
+    },
+    "uncertain": {
+      "determinate_coverage": 0.8125,
+      "predicted": 6,
+      "rate": 0.1875
+    }
+  },
+  "v3_1_rules": {
+    "accuracy": 0.4375,
+    "calls": {
+      "backend_called": 0,
+      "cache_hits": 0,
+      "call_ratio": 0.0,
+      "hidden_calls": 0,
+      "online_timed_calls": 0
+    },
+    "category_errors": {
+      "cross_order": 1,
+      "date_boundary": 2,
+      "missing_condition": 1,
+      "negation": 4,
+      "stale_evidence": 2,
+      "synonym_support": 3,
+      "unit": 5
+    },
+    "confusion": {
+      "supported": {
+        "uncertain": 4,
+        "unsupported": 4
+      },
+      "uncertain": {
+        "uncertain": 7
+      },
+      "unsupported": {
+        "uncertain": 10,
+        "unsupported": 7
+      }
+    },
+    "contradiction_misses": {
+      "deterministic_conflict_recall": 0.6470588235294118,
+      "gold_unsupported_n": 17,
+      "unsupported_to_supported": 0,
+      "unsupported_to_uncertain": 10
+    },
+    "cost_usd": 0.0,
+    "entity_condition_errors": {
+      "cross_order": 1,
+      "date_boundary": 2,
+      "missing_condition": 1,
+      "negation": 4,
+      "unit": 5
+    },
+    "latency_ms_online": {
+      "n": 0,
+      "p50": null,
+      "p95": null
+    },
+    "latency_scope": "provider request wall time only for cache-miss calls; not end-to-end chat latency",
+    "macro_f1": 0.5,
+    "n": 32,
+    "per_label": {
+      "supported": {
+        "f1": null,
+        "gold_n": 8,
+        "precision": null,
+        "predicted_n": 0,
+        "recall": 0.0,
+        "tp": 0
+      },
+      "uncertain": {
+        "f1": 0.5,
+        "gold_n": 7,
+        "precision": 0.3333333333333333,
+        "predicted_n": 21,
+        "recall": 1.0,
+        "tp": 7
+      },
+      "unsupported": {
+        "f1": 0.5,
+        "gold_n": 17,
+        "precision": 0.6363636363636364,
+        "predicted_n": 11,
+        "recall": 0.4117647058823529,
+        "tp": 7
+      }
+    },
+    "scoring_version": "claim-grounding-r2-v1",
+    "supported": {
+      "correct": 0,
+      "gold_n": 8
+    },
+    "supported_precision": {
+      "denominator": 0,
+      "f1": null,
+      "gold_n": 8,
+      "precision": null,
+      "predicted_n": 0,
+      "recall": 0.0,
+      "tp": 0
+    },
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0
+    },
+    "uncertain": {
+      "determinate_coverage": 0.34375,
+      "predicted": 21,
+      "rate": 0.65625
+    }
+  }
+}
