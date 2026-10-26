@@ -52,6 +52,7 @@ class HarnessConfig:
     rag_time_budget_s: float = 45.0
     rag_call_timeout_s: float = 20.0
     rag_max_sub_queries: int = 3
+    rag_gap_trigger_enabled: bool = False
 
 
 @dataclass
@@ -187,7 +188,11 @@ def run_rag_retrieval_case(case: dict, ctx: HarnessContext, config: HarnessConfi
     逐题轨迹额外带 rag_steps/rag_stop_reason/rag_rounds 等过程字段。"""
     from types import SimpleNamespace
 
-    from app.rag_loop import ControlledRagLoop, RagLoopLimits
+    from app.rag_loop import (
+        ControlledRagLoop,
+        RagLoopLimits,
+        evidence_gap_reason,
+    )
     from app.retrieval import EvidenceCalibration
 
     service = ctx.service
@@ -217,8 +222,12 @@ def run_rag_retrieval_case(case: dict, ctx: HarnessContext, config: HarnessConfi
 
     judge_calls_before = int(getattr(judge, "calls", 0))
     judge_hits_before = int(getattr(judge, "hits", 0))
-    loop = ControlledRagLoop(_retrieve, _chunk_texts, judge, ctx.gap_analyzer,
-                             calibration, limits)
+    loop = ControlledRagLoop(
+        _retrieve, _chunk_texts, judge, ctx.gap_analyzer,
+        calibration, limits,
+        gap_trigger=(evidence_gap_reason
+                     if config.rag_gap_trigger_enabled else None),
+    )
     rag = loop.run(case["query"], prepared=ctx.prepared.get(case["id"]))
     evidence_judge_calls = int(getattr(judge, "calls", 0)) - judge_calls_before
     evidence_judge_cached = int(getattr(judge, "hits", 0)) - judge_hits_before
@@ -278,6 +287,7 @@ def run_rag_retrieval_case(case: dict, ctx: HarnessContext, config: HarnessConfi
         "rag_tokens_used": rag.tokens_used,
         "rag_time_budget_s": config.rag_time_budget_s,
         "rag_call_timeout_s": config.rag_call_timeout_s,
+        "rag_gap_trigger_enabled": config.rag_gap_trigger_enabled,
     }
 
 

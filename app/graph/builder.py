@@ -86,7 +86,7 @@ def _with_sink(fn):
 def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
                 resolver=None, intent_model=None, escalator=None, expander=None,
                 gap_analyzer=None, rag_steps_store=None,
-                refund_flow_mode="fixed"):
+                refund_flow_mode="fixed", answer_verifier=None):
     """resolver/expander 缺省时生产路径自建(结构化真模型);测试经 conftest 注入替身。
     intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。
     ch12:retrieval_route ∈ {decompose_once, controlled_loop} 时「商品咨询」改走
@@ -103,6 +103,14 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
     if expander is None:
         expander = make_extract_model(settings).with_structured_output(
             ExpandedQueries, method="function_calling")
+    if answer_verifier is None and settings.answer_verification_enabled:
+        from app.answer_verifier import AnswerVerdict, AnswerVerifier
+
+        answer_verifier = AnswerVerifier(
+            make_extract_model(settings).with_structured_output(
+                AnswerVerdict, method="function_calling"),
+            max_revisions=settings.answer_verification_max_revisions,
+        )
     if settings.intent_escalation_enabled:
         small = make_extract_model(settings, model=settings.intent_small_model or None)
         _intent = make_intent_node(small, escalator=escalator or make_extract_model(settings),
@@ -123,7 +131,8 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
     g.add_node("retrieve", _with_sink(retrieve_node))
     g.add_node("gate", _with_sink(gate_node))
     g.add_node("fallback", _with_sink(fallback_node))
-    g.add_node("agent", _with_sink(make_agent_node(model, engine, settings, pool)))
+    g.add_node("agent", _with_sink(make_agent_node(
+        model, engine, settings, pool, answer_verifier=answer_verifier)))
     g.add_node("complaint", _with_sink(complaint_node))
     g.add_node("chitchat", _with_sink(chitchat_node))
     g.add_node("prepare_order", _with_sink(prep))

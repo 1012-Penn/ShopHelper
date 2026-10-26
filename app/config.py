@@ -96,6 +96,11 @@ class Settings(BaseSettings):
     rag_time_budget_s: float = 45.0  # 受控循环墙钟预算(秒);不是硬上限:底层 I/O 无法被取消
     rag_call_timeout_s: float = 20.0 # 单次受控调用(检索/判断/分析)墙钟上限;0=只用剩余时间
     rag_max_sub_queries: int = 3     # 每轮最多补检索子查询数
+    rag_gap_trigger_enabled: bool = False  # 首轮结构缺口触发;仅 controlled_loop 生效
+
+    # 最终候选答案复核默认关闭。开启后最终 token 先缓冲,工具状态与引用仍可流式。
+    answer_verification_enabled: bool = False
+    answer_verification_max_revisions: int = 1  # 硬上限固定为 1,配置值仅允许 0/1
 
     # ch14:后台管理员鉴权(DB 管理员表;secret 为空时后台登录 503,不阻断聊天)
     admin_session_secret: str = ""        # 生产必须设置;python -c 'import secrets; print(secrets.token_urlsafe(48))'

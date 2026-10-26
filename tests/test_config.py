@@ -40,6 +40,13 @@ def test_ch04_defaults():
     assert s.rerank_api_key == ""
 
 
+def test_quality_features_are_opt_in_by_default():
+    s = Settings(openai_api_key="sk-test", _env_file=None)
+    assert s.answer_verification_enabled is False
+    assert s.answer_verification_max_revisions == 1
+    assert s.rag_gap_trigger_enabled is False
+
+
 def test_settings_reads_env(monkeypatch):
     monkeypatch.setenv("OPENAI_MODEL", "my-model")
     monkeypatch.setenv("MODEL_CONTEXT_WINDOW", "32000")

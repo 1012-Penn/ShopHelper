@@ -467,7 +467,8 @@ class CostTracker:
             return 0.0
         usage_source = "estimated"
         cache_hit_input_tokens = 0
-        if kind in {"answer", "evidence_judge", "gap_analyzer", "faithfulness_judge"} \
+        if kind in {"answer", "evidence_judge", "gap_analyzer", "faithfulness_judge",
+                    "answer_verifier", "answer_revision"} \
                 and self._latest_provider_usage is not None:
             input_tokens, output_tokens, cache_hit_input_tokens = self._latest_provider_usage
             usage_source = "provider"

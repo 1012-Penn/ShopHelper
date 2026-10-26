@@ -283,3 +283,34 @@ async def test_full_graph_agentic_refusal_short_circuits_to_log(factory):
         "node=agentic_retrieve" in line for line in out["trace"])
     # 拒答收口在 agentic 节点内完成:agent 节点未跑(final_reply 不是模型默认回复)
     assert out["final_reply"] != "默认回答。"
+
+
+@pytest.mark.asyncio
+async def test_builder_injects_answer_verifier_when_enabled(factory):
+    from app.answer_verifier import VerificationResult
+    from app.guard import LowConfidencePool
+    from app.store import ConversationStore
+
+    class PassingVerifier:
+        def verify(self, answer, evidence, *, query=""):
+            return VerificationResult("pass", "ok", [], answer)
+
+        def safe_result(self, checked, *, revision_calls):
+            return checked
+
+    kb = seed_kb(factory)
+    service = StubService({QUERY: HIGH})
+    settings = make_settings(answer_verification_enabled=True)
+    chat = GraphChatModel(intent_reply=json.dumps(
+        {"intent": "商品咨询", "confidence": 0.99}), turns=[("text", "正确回答。")])
+    graph = build_graph(
+        chat, builtin_engine(), settings, ConversationStore(factory),
+        LowConfidencePool(factory), service, kb,
+        resolver=EchoResolver({}), expander=StubExpand({}), intent_model=chat,
+        answer_verifier=PassingVerifier(),
+    )
+    out = await graph.ainvoke(
+        initial_state(1, QUERY), {"configurable": {"thread_id": "verify-1"}}
+    )
+    assert out["final_reply"] == "正确回答。"
+    assert any("answer_verification=pass" in item for item in out["trace"])

@@ -25,6 +25,7 @@ from app.rag_loop import (
     STOP_TIME,
     STOP_TOKENS,
     STOP_RETRIEVAL_ERROR,
+    evidence_gap_reason,
     normalize_query,
 )
 from app.retrieval import EvidenceCalibration, RetrievalResult, Retrieved
@@ -109,6 +110,45 @@ def test_first_pass_sufficient_no_extra_llm_calls():
     assert out.rounds == 0 and analyzer.calls == 0 and judge.calls == 0
     assert len(out.steps) == 1 and out.steps[0]["stop_reason"] == STOP_FIRST_PASS
     assert calls == [(QUERY, True)]  # 首轮照常改写
+
+
+def test_evidence_gap_trigger_requires_structural_missing_fact():
+    query = "ORD-1002 商品 328 元，会员能打几折？"
+    incomplete = (
+        "ORD-1002 订单;商品为 SH-E300 与 SH-C60,商品金额 328 元。"
+        "所有会员等级均享 95 折;95 折仅适用于在售正价商品。"
+    )
+    complete = incomplete + (
+        "\nSH-E300 售价 299 元,在售正价。\nSH-C60 售价 29 元,在售正价。"
+    )
+    assert "商品目录" in evidence_gap_reason(query, incomplete)
+    assert evidence_gap_reason(query, complete) is None
+    assert evidence_gap_reason("SH-K104 多少钱？", "SH-K104 售价 219 元。") is None
+
+
+def test_gap_trigger_enters_loop_without_duplicate_first_judge():
+    retrieve, _ = make_retrieve({
+        QUERY: result([(1, 0.9)], low=False, entailment=True),
+        "会员适用范围": result([(2, 0.8)], low=False, entailment=True),
+    })
+    judge = FakeJudge([True])
+    analyzer = FakeAnalyzer([
+        GapReport(action="retrieve_more", missing_aspects=["商品适用范围"],
+                  sub_queries=["会员适用范围"])
+    ])
+    loop = ControlledRagLoop(
+        retrieve,
+        lambda ids: {i: TEXTS[i] for i in ids if i in TEXTS},
+        judge, analyzer, EvidenceCalibration(), RagLoopLimits(max_rounds=1),
+        gap_trigger=lambda _query, _evidence: "缺少商品适用条件",
+    )
+    out = loop.run(QUERY)
+    assert out.gate_passed is True
+    assert out.stop_reason == STOP_SUFFICIENT
+    assert analyzer.calls == 1
+    assert judge.calls == 1  # 首轮已判过;仅对补检索后的合并证据再判一次
+    assert out.steps[0]["judge_answered"] is True
+    assert out.steps[0]["gap_trigger"] == "缺少商品适用条件"
 
 
 def test_sufficient_after_merge_decompose_once():

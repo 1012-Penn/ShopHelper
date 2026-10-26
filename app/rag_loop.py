@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 import time
 from contextvars import copy_context
 from concurrent.futures import ThreadPoolExecutor
@@ -151,6 +152,58 @@ def normalize_query(query: str) -> str:
     return "".join(str(query or "").split()).lower()
 
 
+def evidence_gap_reason(query: str, evidence: str) -> str | None:
+    """Detect a bounded structural evidence gap without looking at eval gold.
+
+    The first-pass EvidenceJudge already decides normal sufficiency. This
+    trigger is only for cases where the question spans two evidence stages and
+    the retrieved context is missing a fact needed to bind them, such as an
+    order's concrete products plus the catalog's current-price/eligibility data.
+    """
+    query_text = str(query or "")
+    evidence_text = str(evidence or "")
+    query_orders = set(re.findall(r"ORD-\d+", query_text, flags=re.I))
+    evidence_orders = set(re.findall(r"ORD-\d+", evidence_text, flags=re.I))
+    missing_orders = sorted(item.upper() for item in query_orders - evidence_orders)
+    if missing_orders:
+        return f"缺少当前订单记录:{','.join(missing_orders)}"
+
+    discount_requested = any(term in query_text for term in ("折扣", "几折", "95 折", "95折", "会员"))
+    if discount_requested:
+        relevant_skus = {item.upper() for item in re.findall(
+            r"SH-[A-Za-z0-9]+", query_text, flags=re.I
+        )}
+        for order_id in query_orders:
+            pattern = re.compile(
+                rf"{re.escape(order_id)}.*?(?=\n\s*\[\d+\]|\Z)",
+                flags=re.I | re.S,
+            )
+            for match in pattern.finditer(evidence_text):
+                relevant_skus.update(item.upper() for item in re.findall(
+                    r"SH-[A-Za-z0-9]+", match.group(0), flags=re.I
+                ))
+        catalog_skus = set()
+        for block in re.split(r"\n\s*\[\d+\]", evidence_text):
+            if any(term in block for term in ("售价", "原价")):
+                catalog_skus.update(item.upper() for item in re.findall(
+                    r"SH-[A-Za-z0-9]+", block, flags=re.I
+                ))
+        missing_skus = sorted(relevant_skus - catalog_skus)
+        if missing_skus:
+            return f"会员折扣缺少当前商品目录资格:{','.join(missing_skus)}"
+
+    if "签收" in query_text and re.search(r"20\d{2}", query_text):
+        has_version = any(term in evidence_text.lower() for term in ("v1", "v2"))
+        has_window = any(term in evidence_text for term in ("7 天", "7天", "15 天", "15天"))
+        if not (has_version and has_window):
+            return "签收日期问题缺少明确政策版本或窗口"
+
+    if any(term in query_text for term in ("质量问题", "人为损坏")) and "运费" in query_text:
+        if "质量问题" not in evidence_text or "运费" not in evidence_text:
+            return "质量问题与运费责任缺少对齐证据"
+    return None
+
+
 @dataclass(frozen=True)
 class RagLoopLimits:
     max_rounds: int = 3          # 最大补检索轮数(不含首轮;decompose_once 传 1)
@@ -237,7 +290,8 @@ class ControlledRagLoop:
     def __init__(self, retrieve: Callable, chunk_texts: Callable, judge, analyzer,
                  calibration: EvidenceCalibration, limits: RagLoopLimits, *,
                  on_step: Callable[[dict], None] | None = None,
-                 snapshot_top_k: int = 3) -> None:
+                 snapshot_top_k: int = 3,
+                 gap_trigger: Callable[[str, str], str | None] | None = None) -> None:
         self._retrieve = retrieve
         self._chunk_texts = chunk_texts
         self._judge = judge
@@ -246,6 +300,7 @@ class ControlledRagLoop:
         self._limits = limits
         self._on_step = on_step
         self._snapshot_top_k = snapshot_top_k
+        self._gap_trigger = gap_trigger
 
     # ---- 内部工具 ----
 
@@ -366,6 +421,7 @@ class ControlledRagLoop:
         stop = ""
         reason = ""
         last_entailment: bool | None = None
+        reuse_initial_pass = False
 
         def merged_top() -> list[Retrieved]:
             ranked = sorted(merged.items(), key=lambda kv: -kv[1])
@@ -431,11 +487,19 @@ class ControlledRagLoop:
             result.judge_calls += 1
         if not round0.low_confidence:
             step0["judge_answered"] = round0.evidence_entailment
-            result.steps.append(step0)
-            self._emit_step(step0)
-            return self._finish(result, budget, STOP_FIRST_PASS, "", merged_top(),
-                                confidence=getattr(round0, "evidence_confidence", None),
-                                entailment=round0.evidence_entailment, passed=True)
+            trigger_reason = None
+            if self._gap_trigger is not None and merged:
+                trigger_reason = self._gap_trigger(
+                    query, self._evidence_text(merged_top(), current_texts())
+                )
+            step0["gap_trigger"] = trigger_reason or ""
+            if not trigger_reason:
+                result.steps.append(step0)
+                self._emit_step(step0)
+                return self._finish(result, budget, STOP_FIRST_PASS, "", merged_top(),
+                                    confidence=getattr(round0, "evidence_confidence", None),
+                                    entailment=round0.evidence_entailment, passed=True)
+            reuse_initial_pass = round0.evidence_entailment is True
         result.steps.append(step0)
         self._emit_step(step0)
 
@@ -446,16 +510,25 @@ class ControlledRagLoop:
             step = _step_record(r, "retrieve", query)
 
             # 蕴含再判(判的是含前几轮合并的证据);时间/token 闸在调用内部逐次检查
-            try:
-                passed, verdict, confidence = admit()
-            except _LoopStop as sig:
-                stop, reason = sig.stop, sig.reason
-                break
+            reused_initial_judgment = reuse_initial_pass
+            if reused_initial_judgment:
+                passed = True
+                verdict = None
+                confidence = (getattr(round0, "evidence_confidence", None)
+                              or evidence_confidence(merged_top(), self._calibration))
+                reuse_initial_pass = False
+                step["judge_reused"] = True
+            else:
+                try:
+                    passed, verdict, confidence = admit()
+                except _LoopStop as sig:
+                    stop, reason = sig.stop, sig.reason
+                    break
             if verdict is not None:
                 result.judge_calls += 1
                 last_entailment = bool(verdict.answered)
                 step["judge_answered"] = bool(verdict.answered)
-            if passed:
+            if passed and not reused_initial_judgment:
                 result.evidence_confidence = confidence
                 step["merged_evidence_ids"] = [item.chunk_id for item in merged_top()]
                 step["latency_ms"] = round((time.monotonic() - round_t0) * 1000, 3)

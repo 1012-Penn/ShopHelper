@@ -12,9 +12,13 @@ import logging
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 
 from app.context import build_background, truncate_tool_result
-from app.guard import is_refusal
+from app.guard import REFUSAL_MARKER, is_refusal
 from app.history import estimate_tokens
-from app.prompts import SERVICE_PROMPT_TEMPLATE
+from app.prompts import (
+    ANSWER_REVISION_PROMPT,
+    SERVICE_PROMPT_TEMPLATE,
+    build_evidence_block,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -86,7 +90,7 @@ def _write_intercept(writer, state):
     return _intercept
 
 
-def make_agent_node(model, engine, settings, pool):
+def make_agent_node(model, engine, settings, pool, *, answer_verifier=None):
     async def agent_node(state, writer=None, config=None) -> dict:
         lay = state.get("layered") or {}
         registry = engine.registry
@@ -113,6 +117,70 @@ def make_agent_node(model, engine, settings, pool):
         citations: list[dict] = [dict(it) for it in (state.get("evidence") or [])]
         retrieved_chunks: list[dict] = list(state.get("retrieved_chunks") or [])
         emitted: list = []  # 本轮新增消息(AI/Tool),经 add_messages 并入完整历史
+        verify_answers = bool(getattr(settings, "answer_verification_enabled", False))
+        max_revisions = min(
+            1, max(0, int(getattr(settings, "answer_verification_max_revisions", 1)))
+        )
+
+        async def _finalize_answer(candidate: str) -> tuple[str, dict]:
+            if not verify_answers:
+                return candidate, {"enabled": False, "status": "not_run",
+                                   "revision_calls": 0, "issues": []}
+            if answer_verifier is None:
+                safe = (
+                    f"{REFUSAL_MARKER}最终答案复核器不可用,无法确认回答可靠性,"
+                    "请转人工核实。"
+                )
+                return safe, {"enabled": True, "status": "refuse",
+                              "revision_calls": 0, "issues": ["verifier_unavailable"]}
+            try:
+                evidence = [dict(item) for item in citations]
+                checked = await asyncio.to_thread(
+                    answer_verifier.verify, candidate, evidence,
+                    query=state["resolved_message"],
+                )
+                revision_calls = 0
+                final_answer = candidate
+                if checked.status == "fail" and max_revisions:
+                    prompt = ANSWER_REVISION_PROMPT.format(
+                        query=state["resolved_message"],
+                        evidence=build_evidence_block(evidence),
+                        answer=candidate,
+                        issues="\n".join(checked.issues) or checked.reason,
+                    )
+                    response = await model.ainvoke(
+                        [SystemMessage(content=system), HumanMessage(content=prompt)],
+                        config,
+                    )
+                    final_answer = str(getattr(response, "content", response)).strip()
+                    revision_calls = 1
+                    checked = await asyncio.to_thread(
+                        answer_verifier.verify, final_answer, evidence,
+                        query=state["resolved_message"],
+                    )
+                if checked.status == "pass":
+                    return final_answer, {
+                        "enabled": True, "status": "pass",
+                        "revision_calls": revision_calls,
+                        "issues": list(checked.issues or []),
+                    }
+                safe = answer_verifier.safe_result(
+                    checked, revision_calls=revision_calls
+                )
+                return safe.final_answer, {
+                    "enabled": True, "status": safe.status,
+                    "revision_calls": safe.revision_calls,
+                    "issues": list(safe.issues or []),
+                }
+            except Exception as exc:
+                logger.warning("最终答案复核失败,安全收口", exc_info=True)
+                safe = (
+                    f"{REFUSAL_MARKER}最终答案复核失败,无法确认回答可靠性,"
+                    "请转人工核实。"
+                )
+                return safe, {"enabled": True, "status": "refuse",
+                              "revision_calls": 0, "issues": [str(exc)[:160]]}
+
         while steps < settings.max_agent_steps and spent < settings.agent_token_budget:
             steps += 1
             _log_model_ctx(state, steps, messages, system)
@@ -122,20 +190,27 @@ def make_agent_node(model, engine, settings, pool):
             async for chunk in bound.astream(messages, config):
                 if chunk.text:
                     parts.append(chunk.text)
-                    _emit(writer, {"type": "token", "content": chunk.text})
+                    if not verify_answers:
+                        _emit(writer, {"type": "token", "content": chunk.text})
                 call_chunks.extend(getattr(chunk, "tool_call_chunks", None) or [])
             text = "".join(parts)
             spent += estimate_tokens(text)
             tool_calls = _merge_tool_call_chunks(call_chunks)
             if not tool_calls:
-                emitted.append(AIMessage(content=text))
-                actions = ACTIONS_ON_REFUSAL if is_refusal(text) else (
+                verified, verification = await _finalize_answer(text)
+                emitted.append(AIMessage(content=verified))
+                if verify_answers:
+                    _emit(writer, {"type": "token", "content": verified})
+                actions = ACTIONS_ON_REFUSAL if is_refusal(verified) else (
                     ["refund_form"] if state.get("refund_flow")
                     and state.get("intent") == "退款退货" else [])
-                return {"final_reply": text, "agent_steps": steps, "messages": emitted,
+                return {"final_reply": verified, "agent_steps": steps, "messages": emitted,
                         "retrieved_chunks": retrieved_chunks,
                         "suggested_actions": actions,
-                        "trace": [*state["trace"], f"node=agent steps={steps} converged"]}
+                        "trace": [*state["trace"],
+                                  f"node=agent steps={steps} converged "
+                                  f"answer_verification={verification['status']} "
+                                  f"revision_calls={verification['revision_calls']}"]}
             emitted.append(AIMessage(content=text, tool_calls=tool_calls))
             messages.append(AIMessage(content=text, tool_calls=tool_calls))
             for tc in tool_calls:
@@ -170,16 +245,23 @@ def make_agent_node(model, engine, settings, pool):
                 messages.append(ToolMessage(content=result, tool_call_id=tc["id"]))
         # 熔断:回溯最近一条 assistant 文本作收敛答复(工具 JSON 不是给人看的答案);全程无文本则给引导语。
         # cutoff 若来自 emitted 中既有文本则不重复追加(落库/历史只留一份)
-        cutoff = next((m.content for m in reversed(emitted)
-                       if isinstance(m, AIMessage) and m.content), None)
-        if cutoff is None:
-            cutoff = "问题比较复杂,请您稍后再试或换种问法。"
-            emitted.append(AIMessage(content=cutoff))
+        candidate = next((m.content for m in reversed(emitted)
+                          if isinstance(m, AIMessage) and m.content), None)
+        generated_fallback = candidate is None
+        if candidate is None:
+            candidate = "问题比较复杂,请您稍后再试或换种问法。"
+        cutoff, verification = await _finalize_answer(candidate)
+        emitted.append(AIMessage(content=cutoff))
+        if verify_answers or generated_fallback:
             _emit(writer, {"type": "token", "content": cutoff})
+        actions = ACTIONS_ON_REFUSAL if is_refusal(cutoff) else []
         return {"final_reply": cutoff, "agent_steps": steps, "messages": emitted,
                 "retrieved_chunks": retrieved_chunks,
-                "suggested_actions": [],
-                "trace": [*state["trace"], f"node=agent steps={steps} cutoff"]}
+                "suggested_actions": actions,
+                "trace": [*state["trace"],
+                          f"node=agent steps={steps} cutoff "
+                          f"answer_verification={verification['status']} "
+                          f"revision_calls={verification['revision_calls']}"]}
 
     return agent_node
 

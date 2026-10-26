@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from datetime import date
 from dataclasses import asdict, dataclass
 
 from app.guard import REFUSAL_MARKER
@@ -67,6 +68,10 @@ DEFAULT_CONDITION_ALIASES = {
 _NUM_RE = re.compile(r"-?\d+(?:\.\d+)?")
 _CITE_RE = re.compile(r"\[(\d+)\]")
 _SENTENCE_SPLIT_RE = re.compile(r"(?<=[。！？!?；;])")
+_DATE_TEXT = r"\d{4}\s*[-/年]\s*\d{1,2}\s*[-/月]\s*\d{1,2}\s*日?"
+_DATE_RE = re.compile(rf"(?<!\d)({_DATE_TEXT})")
+_CN_DIGITS = {"零": 0, "一": 1, "二": 2, "两": 2, "三": 3, "四": 4,
+              "五": 5, "六": 6, "七": 7, "八": 8, "九": 9}
 
 
 @dataclass(frozen=True)
@@ -75,6 +80,7 @@ class CheckOutcome:
     passed: bool
     score: float = 0.0
     detail: str = ""
+    status: str = ""
 
 
 def normalize_answer(text: str) -> str:
@@ -110,6 +116,87 @@ def _loose_contains(haystack: str, needle: str) -> bool:
     return any(part in haystack for part in parts)
 
 
+def _cn_integer(text: str) -> int | None:
+    if text == "十":
+        return 10
+    if "十" in text:
+        left, _, right = text.partition("十")
+        tens = _CN_DIGITS.get(left, 1) if left else 1
+        ones = _CN_DIGITS.get(right, 0) if right else 0
+        return tens * 10 + ones
+    if len(text) == 1 and text in _CN_DIGITS:
+        return _CN_DIGITS[text]
+    return None
+
+
+def _quantity_values(text: str, unit: str) -> set[float]:
+    normalized = normalize_answer(text)
+    values: set[float] = set()
+    canonical = normalize_answer(unit)
+    if canonical in {"月", "个月"}:
+        if "半年" in normalized:
+            values.update({0.5, 6.0})
+        if "一年" in normalized:
+            values.update({1.0, 12.0})
+        patterns = (
+            (r"(\d+(?:\.\d+)?)\s*个?月", 1),
+            (r"(\d+(?:\.\d+)?)\s*年", 12),
+            (r"([零一二两三四五六七八九十]+)\s*个?月", 1),
+            (r"([零一二两三四五六七八九十]+)\s*年", 12),
+        )
+        for pattern, multiplier in patterns:
+            for match in re.finditer(pattern, normalized):
+                raw = match.group(1)
+                number = float(raw) if re.fullmatch(r"\d+(?:\.\d+)?", raw) else _cn_integer(raw)
+                if number is not None:
+                    values.add(number * multiplier)
+        return values
+    aliases = {
+        "元": r"(?:元|块)",
+        "天": r"(?:天|日)",
+        "小时": r"(?:小时|h)",
+        "工作日": r"(?:工作日|个工作日)",
+        "键": r"键",
+        "米": r"米",
+    }
+    unit_pattern = aliases.get(canonical, re.escape(canonical))
+    for match in re.finditer(rf"(\d+(?:\.\d+)?)\s*{unit_pattern}", normalized):
+        values.add(float(match.group(1)))
+    for match in re.finditer(rf"([零一二两三四五六七八九十]+)\s*{unit_pattern}", normalized):
+        number = _cn_integer(match.group(1))
+        if number is not None:
+            values.add(float(number))
+    return values
+
+
+def _extract_dates(text: str) -> list[date]:
+    dates: list[date] = []
+    for match in _DATE_RE.finditer(normalize_answer(text)):
+        value = match.group(1)
+        parts = re.findall(r"\d+", value)
+        if len(parts) < 3:
+            continue
+        try:
+            dates.append(date(int(parts[0]), int(parts[1]), int(parts[2])))
+        except ValueError:
+            continue
+    return dates
+
+
+def _signed_dates(text: str) -> list[date]:
+    normalized = normalize_answer(text)
+    values: list[date] = []
+    patterns = (
+        rf"签收(?:日期|时间)?\s*(?:为|于)?\s*({_DATE_TEXT})",
+        rf"于\s*({_DATE_TEXT})\s*签收",
+    )
+    for pattern in patterns:
+        for match in re.finditer(pattern, normalized):
+            parsed = _extract_dates(match.group(1))
+            values.extend(parsed)
+    return list(dict.fromkeys(values))
+
+
 def number_covered(answer: str, value, unit: str = "", tolerance: float = 0.0) -> bool:
     normalized = normalize_answer(answer)
     if isinstance(value, bool):
@@ -138,17 +225,38 @@ def number_covered(answer: str, value, unit: str = "", tolerance: float = 0.0) -
             for item in value
         )
     if isinstance(value, (int, float)):
-        numbers = [float(match) for match in _NUM_RE.findall(normalized)]
-        if not any(abs(number - float(value)) <= float(tolerance) for number in numbers):
-            return False
         unit_norm = normalize_answer(unit)
-        if unit_norm and unit_norm not in normalized:
-            unit_aliases = {"元": ("元", "块"), "天": ("天",), "小时": ("小时", "h")}
-            aliases = unit_aliases.get(unit_norm, (unit_norm,))
-            if not any(alias in normalized for alias in aliases):
-                return False
-        return True
+        numbers = (_quantity_values(normalized, unit_norm) if unit_norm else
+                   {float(match) for match in _NUM_RE.findall(normalized)})
+        return any(abs(number - float(value)) <= float(tolerance) for number in numbers)
     return _contains(normalized, str(value))
+
+
+def _condition_matches(answer: str, condition: str) -> bool:
+    normalized_answer = normalize_answer(answer)
+    normalized_condition = normalize_answer(condition)
+    condition_dates = _extract_dates(normalized_condition)
+    answer_dates = _signed_dates(normalized_answer) or _extract_dates(normalized_answer)
+    if condition_dates and answer_dates:
+        boundary = condition_dates[0]
+        if "早于" in normalized_condition or "之前" in normalized_condition:
+            return any(item < boundary for item in answer_dates)
+        if "之后" in normalized_condition:
+            return any(item >= boundary for item in answer_dates)
+        return any(item == boundary for item in answer_dates)
+    window = re.search(r"(\d+)\s*天\s*(?:内|之内)", normalized_condition)
+    if window:
+        limit = int(window.group(1))
+        if re.search(rf"(?:超过|超出|晚于)\s*{limit}\s*天", normalized_answer):
+            return False
+        days = [int(value) for value in re.findall(r"第\s*(\d+)\s*天", normalized_answer)]
+        if days and any(value <= limit for value in days):
+            return any(term in normalized_answer
+                       for term in ("窗口内", "天内", "还能退", "可以退"))
+        if f"{limit}天内" in normalized_answer or f"{limit}天之内" in normalized_answer:
+            return True
+        return False
+    return False
 
 
 def condition_coverage(
@@ -161,6 +269,9 @@ def condition_coverage(
     normalized = normalize_answer(answer)
     hits = []
     for condition in conditions:
+        if _condition_matches(answer, condition):
+            hits.append(True)
+            continue
         required_numbers = _NUM_RE.findall(normalize_answer(condition))
         is_date_condition = bool(re.search(r"\d{4}\s*[-/年]\s*\d{1,2}", condition))
         if (
@@ -235,16 +346,23 @@ def clarifying_precision(
                         len(matched) / len(asked), f"{len(matched)}/{len(asked)}")
 
 
-def gold_fact_accuracy(answer: str, gold_facts: list[dict]) -> CheckOutcome:
+def gold_fact_accuracy(
+    answer: str, gold_facts: list[dict], fact_aliases: dict[str, list[str]] | None = None
+) -> CheckOutcome:
     if not gold_facts:
         return CheckOutcome("gold_fact_accuracy", True, 1.0, "0 gold facts; not scored")
     hits = 0
     for fact in gold_facts:
-        if number_covered(
+        fact_id = str(fact.get("fact_id") or "")
+        aliases = (fact_aliases or {}).get(fact_id, [])
+        if (
+            number_covered(
             answer,
             fact.get("value"),
             str(fact.get("unit") or ""),
             float(fact.get("tolerance") or 0.0),
+            )
+            or any(_contains(normalize_answer(answer), alias) for alias in aliases)
         ):
             hits += 1
     return CheckOutcome(
@@ -255,29 +373,48 @@ def gold_fact_accuracy(answer: str, gold_facts: list[dict]) -> CheckOutcome:
 
 def parse_citations(answer: str) -> list[tuple[str, int]]:
     citations: list[tuple[str, int]] = []
-    for sentence in _SENTENCE_SPLIT_RE.split(answer):
+    owned = re.sub(r"([。！？!?；;])(\s*(?:\[\d+\])+)", r"\2\1", answer)
+    for sentence in _SENTENCE_SPLIT_RE.split(owned):
         for match in _CITE_RE.finditer(sentence):
             citations.append((sentence.strip(), int(match.group(1))))
     return citations
 
 
-def _char_overlap(left: str, right: str, n: int = 4) -> float:
-    left_norm, right_norm = normalize_answer(left), normalize_answer(right)
-    left_grams = {left_norm[i : i + n] for i in range(max(0, len(left_norm) - n + 1))}
-    if not left_grams:
-        return 0.0
-    right_grams = {right_norm[i : i + n] for i in range(max(0, len(right_norm) - n + 1))}
-    return len(left_grams & right_grams) / len(left_grams)
+def _semantic_surface(text: str) -> str:
+    text = normalize_answer(_CITE_RE.sub("", text))
+    replacements = (
+        ("价格为", "售价"), ("售价为", "售价"), ("为", "是"),
+        ("可以", "可"), ("能够", "能"), ("之内", "内"),
+        ("个工作日", "工作日"), ("个月", "月"),
+    )
+    for old, new in replacements:
+        text = text.replace(old, new)
+    return "".join(char for char in text if char not in "，,。.!！?？；;：: ")
 
 
-def _sentence_supported(sentence: str, evidence: str, threshold: float = 0.30) -> bool:
-    """证据要同时满足:数字不冲突,且字符 4-gram 重叠达到阈值。"""
+def _sentence_support_status(sentence: str, evidence: str) -> str:
+    """Tri-state support. Character overlap is not evidence of semantics."""
     clean = _CITE_RE.sub("", sentence)
-    sentence_numbers = set(_NUM_RE.findall(normalize_answer(clean)))
+    numeric_claim = re.sub(
+        r"(?:SH|ORD)-[A-Za-z0-9]+", "", normalize_answer(clean), flags=re.I
+    )
+    sentence_numbers = set(_NUM_RE.findall(numeric_claim))
     evidence_numbers = set(_NUM_RE.findall(normalize_answer(evidence)))
     if not sentence_numbers.issubset(evidence_numbers):
-        return False
-    return _char_overlap(clean, evidence) >= threshold
+        return "unsupported"
+    answer_entities = set(re.findall(r"(?:SH|ORD)-[A-Za-z0-9]+", clean, flags=re.I))
+    evidence_entities = set(re.findall(r"(?:SH|ORD)-[A-Za-z0-9]+", evidence, flags=re.I))
+    if answer_entities and evidence_entities and not answer_entities & evidence_entities:
+        return "unsupported"
+
+    evidence_surface = _semantic_surface(evidence)
+    units = [part for part in re.split(r"[，,；;。！？!?]", clean) if len(part.strip()) >= 2]
+    if units and all(_semantic_surface(part) in evidence_surface for part in units):
+        return "supported"
+    surface = _semantic_surface(clean)
+    if surface and surface in evidence_surface:
+        return "supported"
+    return "uncertain"
 
 
 def citation_support_rate(
@@ -288,14 +425,23 @@ def citation_support_rate(
         if REFUSAL_MARKER in answer or classify_behavior(answer) == "refuse":
             return CheckOutcome("citation_support", True, 1.0, "refusal_without_citation")
         return CheckOutcome("citation_support", False, 0.0, "no_citation")
-    supported = sum(
-        1
+    statuses = [
+        _sentence_support_status(sentence, evidence_by_n[n])
+        if n in evidence_by_n else "unsupported"
         for sentence, n in citations
-        if n in evidence_by_n and _sentence_supported(sentence, evidence_by_n[n], threshold)
-    )
+    ]
+    supported = statuses.count("supported")
     score = supported / len(citations)
-    return CheckOutcome("citation_support", supported == len(citations), score,
-                        f"{supported}/{len(citations)}")
+    if "unsupported" in statuses:
+        status = "unsupported"
+    elif "uncertain" in statuses:
+        status = "uncertain"
+    else:
+        status = "supported"
+    detail = f"{supported}/{len(citations)}"
+    if status == "uncertain":
+        detail += "; uncertain"
+    return CheckOutcome("citation_support", status == "supported", score, detail, status)
 
 
 def classify_behavior(answer: str) -> str:
@@ -343,32 +489,62 @@ def classify_behavior(answer: str) -> str:
     return "answer"
 
 
-def _claim_counts(answer: str, evidence_by_n: dict[int, str]) -> tuple[int, int]:
+def _claim_counts(answer: str, evidence_by_n: dict[int, str]) -> tuple[int, int, int]:
     if REFUSAL_MARKER in answer or classify_behavior(answer) == "refuse":
-        return 0, 0
+        return 0, 0, 0
     citations = parse_citations(answer)
-    supported_sentences = {
-        sentence for sentence, n in citations
-        if n in evidence_by_n and _sentence_supported(sentence, evidence_by_n[n])
-    }
+    support_status: dict[str, str] = {}
+    for sentence, n in citations:
+        status = (_sentence_support_status(sentence, evidence_by_n[n])
+                  if n in evidence_by_n else "unsupported")
+        prior = support_status.get(sentence)
+        if prior == "supported" or status == "supported":
+            support_status[sentence] = "supported"
+        elif prior == "unsupported" or status == "unsupported":
+            support_status[sentence] = "unsupported"
+        else:
+            support_status[sentence] = "uncertain"
     sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(answer) if len(s.strip()) >= 6]
-    unsupported = [s for s in sentences if s not in supported_sentences]
-    return len(unsupported), len(sentences)
+    unsupported = sum(support_status.get(sentence) != "supported" for sentence in sentences)
+    uncertain = sum(support_status.get(sentence) == "uncertain" for sentence in sentences)
+    return unsupported, uncertain, len(sentences)
 
 
 def unsupported_claim_rate(answer: str, evidence_by_n: dict[int, str]) -> float:
-    unsupported, total = _claim_counts(answer, evidence_by_n)
+    unsupported, _, total = _claim_counts(answer, evidence_by_n)
     return 0.0 if total == 0 else unsupported / total
 
 
+def uncertain_claim_rate(answer: str, evidence_by_n: dict[int, str]) -> float:
+    _, uncertain, total = _claim_counts(answer, evidence_by_n)
+    return 0.0 if total == 0 else uncertain / total
+
+
 def check_case_deterministic(
-    case: dict, answer: str, evidence_by_n: dict[int, str]
+    case: dict, answer: str, evidence_by_n: dict[int, str], *,
+    scoring_overlay: dict | None = None,
 ) -> dict:
+    overlay = scoring_overlay or {}
+    case_overlay = (overlay.get("cases") or {}).get(case.get("id"), {})
+    background_fact_ids = set(case_overlay.get("background_gold_fact_ids") or [])
+    background_conditions = set(case_overlay.get("background_conditions") or [])
     expected = case.get("expected_behavior", "answer")
-    gold = case.get("gold_facts") or []
-    gold_outcome = gold_fact_accuracy(answer, gold)
+    all_gold = case.get("gold_facts") or []
+    gold = [
+        fact for fact in all_gold
+        if str(fact.get("fact_id") or "") not in background_fact_ids
+    ]
+    all_conditions = case.get("required_conditions") or []
+    conditions = [item for item in all_conditions if item not in background_conditions]
+    condition_aliases = {
+        **((overlay.get("condition_aliases") or {})),
+        **(case.get("condition_aliases") or {}),
+    }
+    gold_outcome = gold_fact_accuracy(
+        answer, gold, case_overlay.get("fact_aliases") or {}
+    )
     condition_outcome = condition_coverage(
-        answer, case.get("required_conditions") or [], case.get("condition_aliases")
+        answer, conditions, condition_aliases
     )
     forbidden = forbidden_claims_found(answer, case.get("forbidden_claims") or [])
     slot_recall = clarifying_slot_recall(
@@ -378,8 +554,11 @@ def check_case_deterministic(
         answer, case.get("clarifying_slots") or [], case.get("slot_aliases")
     )
     citation = citation_support_rate(answer, evidence_by_n)
-    unsupported_claims, substantive_claims = _claim_counts(answer, evidence_by_n)
+    unsupported_claims, uncertain_claims, substantive_claims = _claim_counts(
+        answer, evidence_by_n
+    )
     unsupported = unsupported_claim_rate(answer, evidence_by_n)
+    uncertain = uncertain_claim_rate(answer, evidence_by_n)
     behavior = classify_behavior(answer)
     verification_markers = case.get("verification_markers") or []
     verification_ok = (
@@ -392,14 +571,16 @@ def check_case_deterministic(
         failure_labels.append("forbidden_claim")
     if gold and gold_outcome.score < 1.0:
         failure_labels.append("answer_wrong_fact")
-    if (case.get("required_conditions") or []) and condition_outcome.score < 1.0:
+    if conditions and condition_outcome.score < 1.0:
         failure_labels.append("answer_missing_condition")
     if expected == "clarify" and slot_recall.score < 1.0:
         failure_labels.append("clarify_missing_slot")
     if expected == "clarify" and slot_precision.score < 1.0:
         failure_labels.append("clarify_over_asking")
-    if citation.score < 1.0 and expected in {"answer", "answer_with_conditions"}:
+    if citation.status == "unsupported" and expected in {"answer", "answer_with_conditions"}:
         failure_labels.append("citation_unsupported")
+    if citation.status == "uncertain" and expected in {"answer", "answer_with_conditions"}:
+        failure_labels.append("citation_uncertain")
     if expected == "verify_then_answer" and not verification_ok:
         failure_labels.append("verification_overclaim")
     if expected != "refuse" and behavior == "refuse":
@@ -409,6 +590,12 @@ def check_case_deterministic(
 
     return {
         "gold_facts_checked": len(gold),
+        "gold_facts_excluded_as_background": sorted(background_fact_ids),
+        "conditions_excluded_as_background": sorted(background_conditions),
+        "scoring_overlay": {
+            "version": str(overlay.get("version") or "rag-quality-v3"),
+            **case_overlay,
+        },
         "gold_fact_accuracy": asdict(gold_outcome),
         "condition_coverage": asdict(condition_outcome),
         "forbidden_claims": forbidden,
@@ -416,7 +603,9 @@ def check_case_deterministic(
         "clarify_precision": asdict(slot_precision),
         "citation_support": asdict(citation),
         "unsupported_claim_rate": unsupported,
+        "uncertain_claim_rate": uncertain,
         "unsupported_claims": unsupported_claims,
+        "uncertain_claims": uncertain_claims,
         "substantive_claims": substantive_claims,
         "verification_compliant": verification_ok,
         "behavior_pred": behavior,

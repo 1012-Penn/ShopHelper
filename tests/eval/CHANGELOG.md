@@ -1,5 +1,14 @@
 # 评测数据变更记录
 
+## 2026-10-27 · RAG 答案评分 v3
+
+- 新增 `tests/eval/overlays/rag-quality-v3.json`，不修改任何旧题、金标、回答或 CH16 聚合。
+- 修正句末标点后的引用归属、半年/月与一年/月等时长归一、规范化日期和窗口天数。
+- 引用支持改为 `supported / unsupported / uncertain`；不再用字符 4-gram 作为语义支持。
+- 逐题记录背景 fact 和等价表达依据，重评产物写入独立的
+  `tests/eval/rag_quality/runs/`。
+- 冻结集只做回顾性回归，不用于选择阈值或触发规则。
+
 ## 2026-10-25 · regression-v1 标签审计（v2-overlay）
 
 - 旧文件 `ch04_eval_set.jsonl`、`ch09_junk_set.jsonl` 一个字节未改；本文件对应的 overlay 是 `tests/eval/overlays/regression-v1.labels.json`。

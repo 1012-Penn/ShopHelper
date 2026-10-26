@@ -2,6 +2,7 @@
 import json
 
 from app.graph.agent import make_agent_node
+from app.answer_verifier import VerificationResult
 from tests.helpers import GraphChatModel, graph_state
 
 
@@ -15,11 +16,11 @@ def _state(**kw):
     return graph_state(**kw)
 
 
-def _settings():
+def _settings(**overrides):
     from app.config import Settings
 
     return Settings(openai_api_key="sk-test", _env_file=None,
-                    max_agent_steps=4, agent_token_budget=2000)
+                    max_agent_steps=4, agent_token_budget=2000, **overrides)
 
 
 class _Registry:
@@ -147,3 +148,95 @@ async def test_unknown_order_gets_no_refund_form():
                      messages=[{"role": "user", "content": "x"}], trace=[])
     await make_log_node(_Store(), _Pool())(st, writer=frames.append)
     assert frames == []  # log 层裁剪:未知订单无 actions 帧
+
+
+async def test_answer_verification_off_preserves_token_streaming_contract():
+    model = GraphChatModel(intent_reply="{}", turns=[("text", "这一|单可以退。")])
+    node = make_agent_node(model, _Registry(), _settings(), pool=None)
+    frames = []
+    out = await node(_state(evidence=_EVIDENCE2, refund_flow=False, intent="商品咨询"),
+                     writer=frames.append)
+    assert [f["content"] for f in frames if f["type"] == "token"] == ["这一", "单可以退。"]
+    assert out["final_reply"] == "这一单可以退。"
+
+
+async def test_answer_verification_buffers_bad_candidate_until_checked():
+    class PassingVerifier:
+        max_revisions = 1
+
+        def verify(self, answer, evidence, *, query=""):
+            return VerificationResult("pass", "ok", [], answer)
+
+    model = GraphChatModel(intent_reply="{}", turns=[("text", "错误|候选。")])
+    node = make_agent_node(
+        model, _Registry(),
+        _settings(answer_verification_enabled=True), pool=None,
+        answer_verifier=PassingVerifier(),
+    )
+    frames = []
+    out = await node(_state(evidence=_EVIDENCE2, refund_flow=False, intent="商品咨询"),
+                     writer=frames.append)
+    assert [f["content"] for f in frames if f["type"] == "token"] == ["错误候选。"]
+    assert out["final_reply"] == "错误候选。"
+    assert any("answer_verification=pass" in item for item in out["trace"])
+
+
+async def test_answer_verification_revises_once_then_releases_verified_text():
+    class RevisingVerifier:
+        max_revisions = 1
+
+        def __init__(self):
+            self.answers = []
+
+        def verify(self, answer, evidence, *, query=""):
+            self.answers.append(answer)
+            if answer == "错误候选。":
+                return VerificationResult("fail", "实体错误", ["订单日期错误"], answer)
+            return VerificationResult("pass", "ok", [], answer)
+
+        def safe_result(self, checked, *, revision_calls):
+            return VerificationResult("refuse", checked.reason, checked.issues, "拒绝", revision_calls)
+
+    verifier = RevisingVerifier()
+    model = GraphChatModel(intent_reply="修订后的正确答案。",
+                           turns=[("text", "错误|候选。")])
+    node = make_agent_node(
+        model, _Registry(),
+        _settings(answer_verification_enabled=True), pool=None,
+        answer_verifier=verifier,
+    )
+    frames = []
+    out = await node(_state(evidence=_EVIDENCE2, refund_flow=False, intent="商品咨询"),
+                     writer=frames.append)
+    assert verifier.answers == ["错误候选。", "修订后的正确答案。"]
+    assert [f["content"] for f in frames if f["type"] == "token"] == ["修订后的正确答案。"]
+    assert out["final_reply"] == "修订后的正确答案。"
+    assert any("revision_calls=1" in item for item in out["trace"])
+
+
+async def test_answer_verification_failure_emits_only_safe_refusal():
+    class FailingVerifier:
+        max_revisions = 1
+
+        def verify(self, answer, evidence, *, query=""):
+            return VerificationResult("fail", "实体错误", ["订单日期错误"], answer)
+
+        def safe_result(self, checked, *, revision_calls):
+            return VerificationResult(
+                "refuse", checked.reason, checked.issues,
+                "【无法回答】最终答案未通过复核，请转人工。", revision_calls,
+            )
+
+    model = GraphChatModel(intent_reply="仍错误。", turns=[("text", "错误|候选。")])
+    node = make_agent_node(
+        model, _Registry(),
+        _settings(answer_verification_enabled=True), pool=None,
+        answer_verifier=FailingVerifier(),
+    )
+    frames = []
+    out = await node(_state(evidence=_EVIDENCE2, refund_flow=False, intent="商品咨询"),
+                     writer=frames.append)
+    tokens = [f["content"] for f in frames if f["type"] == "token"]
+    assert tokens == ["【无法回答】最终答案未通过复核，请转人工。"]
+    assert "错误候选" not in "".join(tokens)
+    assert out["suggested_actions"] == ["transfer_human", "create_ticket"]

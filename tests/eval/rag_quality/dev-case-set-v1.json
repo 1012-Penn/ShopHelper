@@ -1,0 +1,24 @@
+{
+  "version": "dev-case-set-v1",
+  "split": "dev",
+  "frozen_before_new_model_runs": true,
+  "selection_basis": [
+    "entity mismatch and wrong-order receipt-date failures",
+    "policy-version and required-condition failures",
+    "membership/accessory/product-status condition failures",
+    "controlled-loop under-retrieval and over-refusal failures"
+  ],
+  "case_ids": [
+    "DEV-MULTI-01",
+    "DEV-MULTI-04",
+    "DEV-MULTI-05",
+    "DEV-MULTI-10",
+    "DEV-CONSTRAINT-01",
+    "DEV-CONSTRAINT-03",
+    "DEV-CONSTRAINT-05",
+    "DEV-CONSTRAINT-06",
+    "DEV-ENTITY-04",
+    "DEV-CONFLICT-05"
+  ],
+  "note": "Source is the existing dev split only. These cases were selected from previously observed failure styles; the frozen-v1 split is regression-only and was not used to choose trigger rules."
+}

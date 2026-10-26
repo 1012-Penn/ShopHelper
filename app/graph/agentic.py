@@ -15,7 +15,13 @@ from langchain_core.messages import AIMessage
 
 from app.guard import REFUSAL_MARKER
 from app.kb import vector_text
-from app.rag_loop import STOP_CLARIFY, STOP_ESCALATE, ControlledRagLoop, RagLoopLimits
+from app.rag_loop import (
+    STOP_CLARIFY,
+    STOP_ESCALATE,
+    ControlledRagLoop,
+    RagLoopLimits,
+    evidence_gap_reason,
+)
 from app.retrieval import EvidenceCalibration
 
 logger = logging.getLogger(__name__)
@@ -65,8 +71,12 @@ def make_agentic_retrieve_node(service, kb, pool, settings, *, max_rounds: int,
                 steps_store.insert_step(session_id=session_id,
                                         turn_user_msg_id=turn_id, step=step)
 
-        loop = ControlledRagLoop(_retrieve, _chunk_texts, judge, analyzer, calibration,
-                                 limits, on_step=on_step, snapshot_top_k=snapshot_top_k)
+        loop = ControlledRagLoop(
+            _retrieve, _chunk_texts, judge, analyzer, calibration, limits,
+            on_step=on_step, snapshot_top_k=snapshot_top_k,
+            gap_trigger=(evidence_gap_reason
+                         if settings.rag_gap_trigger_enabled else None),
+        )
         rag = await asyncio.to_thread(loop.run, query)
         if steps_store is not None:
             steps_store.finalize_stop(session_id, turn_id, rag.stop_reason)

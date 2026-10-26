@@ -1,0 +1,46 @@
+{
+  "currency": "USD",
+  "hard_limit_usd": 2.0,
+  "enforced_by": "shared tests/eval/rag_quality/experiment-cost-ledger.json with pre-call guard and append-only attempt journals",
+  "runs": [
+    {
+      "run": "verifier-v1",
+      "path": "tests/eval/rag_quality/verified/run-1-dev",
+      "api_attempts": 10,
+      "paid_attempts": 10,
+      "failed_attempts": 0,
+      "cost_usd": 0.0213039,
+      "note": "Semantic verifier was too permissive; preserved as a negative result."
+    },
+    {
+      "run": "verifier-v2",
+      "path": "tests/eval/rag_quality/verified/run-2-dev",
+      "api_attempts": 17,
+      "paid_attempts": 17,
+      "failed_attempts": 0,
+      "cost_usd": 0.05223386,
+      "note": "Live verifier and three bounded revisions after order/entity hardening."
+    },
+    {
+      "run": "controlled-gap-trigger",
+      "path": "tests/eval/rag_quality/gap-trigger/run-1-dev",
+      "api_attempts": 7,
+      "paid_attempts": 3,
+      "failed_attempts": 0,
+      "cost_usd": 0.0013977,
+      "note": "Only DEV-MULTI-01 triggered; token budget stopped the final judge."
+    },
+    {
+      "run": "final-cached-rescore-and-replay",
+      "path": "tests/eval/rag_quality/verified/dev",
+      "api_attempts": 0,
+      "paid_attempts": 0,
+      "failed_attempts": 0,
+      "cost_usd": 0.0,
+      "note": "Exact-response cache replay under the final scoring/verifier version."
+    }
+  ],
+  "total_cost_usd": 0.074935464,
+  "remaining_usd": 1.925064536,
+  "measurement_boundary": "Provider token usage at the verified 2026-10-26 peak prices. This is a token-based estimate, not an invoice."
+}

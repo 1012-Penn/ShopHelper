@@ -1,0 +1,139 @@
+{
+  "answers": {
+    "accuracy_among_determinate": 0.0,
+    "correct": 0,
+    "determinate": 9,
+    "incorrect": 9,
+    "not_applicable": 1,
+    "uncertain": 0,
+    "uncertain_case_ids": [],
+    "unmeasured": 0
+  },
+  "before": {
+    "answers": {
+      "accuracy_among_determinate": 0.0,
+      "correct": 0,
+      "determinate": 9,
+      "incorrect": 9,
+      "not_applicable": 1,
+      "uncertain": 0,
+      "uncertain_case_ids": [],
+      "unmeasured": 0
+    },
+    "citations": {
+      "measurable": 9,
+      "supported": 0,
+      "supported_case_ids": [],
+      "uncertain": 4,
+      "uncertain_case_ids": [
+        "DEV-CONSTRAINT-03",
+        "DEV-CONSTRAINT-06",
+        "DEV-ENTITY-04",
+        "DEV-MULTI-05"
+      ],
+      "unsupported": 5,
+      "unsupported_case_ids": [
+        "DEV-CONFLICT-05",
+        "DEV-CONSTRAINT-01",
+        "DEV-CONSTRAINT-05",
+        "DEV-MULTI-01",
+        "DEV-MULTI-04"
+      ]
+    },
+    "conditions": {
+      "mean": 0.6,
+      "measured": 10,
+      "measured_case_ids": [
+        "DEV-CONFLICT-05",
+        "DEV-CONSTRAINT-01",
+        "DEV-CONSTRAINT-03",
+        "DEV-CONSTRAINT-05",
+        "DEV-CONSTRAINT-06",
+        "DEV-ENTITY-04",
+        "DEV-MULTI-01",
+        "DEV-MULTI-04",
+        "DEV-MULTI-05",
+        "DEV-MULTI-10"
+      ]
+    },
+    "latency_ms": {
+      "n": 10,
+      "p50": 43.801,
+      "p95": 214.36
+    },
+    "n": 10,
+    "retrieval": {
+      "measured": 10,
+      "r3": 2,
+      "r3_rate": 0.2,
+      "r5": 2,
+      "r5_rate": 0.2
+    },
+    "stop_reasons": {
+      "first_pass_sufficient": 9,
+      "token_budget": 1
+    }
+  },
+  "citations": {
+    "measurable": 8,
+    "supported": 0,
+    "supported_case_ids": [],
+    "uncertain": 4,
+    "uncertain_case_ids": [
+      "DEV-CONSTRAINT-03",
+      "DEV-CONSTRAINT-06",
+      "DEV-ENTITY-04",
+      "DEV-MULTI-05"
+    ],
+    "unsupported": 4,
+    "unsupported_case_ids": [
+      "DEV-CONFLICT-05",
+      "DEV-CONSTRAINT-01",
+      "DEV-CONSTRAINT-05",
+      "DEV-MULTI-04"
+    ]
+  },
+  "conditions": {
+    "mean": 0.55,
+    "measured": 10,
+    "measured_case_ids": [
+      "DEV-CONFLICT-05",
+      "DEV-CONSTRAINT-01",
+      "DEV-CONSTRAINT-03",
+      "DEV-CONSTRAINT-05",
+      "DEV-CONSTRAINT-06",
+      "DEV-ENTITY-04",
+      "DEV-MULTI-01",
+      "DEV-MULTI-04",
+      "DEV-MULTI-05",
+      "DEV-MULTI-10"
+    ]
+  },
+  "cost": {
+    "actual_usd": 0.0013977,
+    "api_calls": 7,
+    "ledger_total_usd": 0.07493546,
+    "limit_usd": 2.0,
+    "paid_calls": 3
+  },
+  "latency_ms": {
+    "n": 10,
+    "p50": 17.225,
+    "p95": 39802.511
+  },
+  "n": 10,
+  "retrieval": {
+    "measured": 10,
+    "r3": 2,
+    "r3_rate": 0.2,
+    "r5": 2,
+    "r5_rate": 0.2
+  },
+  "stop_reasons": {
+    "first_pass_sufficient": 8,
+    "token_budget": 2
+  },
+  "triggered_case_ids": [
+    "DEV-MULTI-01"
+  ]
+}

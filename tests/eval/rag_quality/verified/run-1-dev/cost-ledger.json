@@ -1,0 +1,55 @@
+{
+  "limit_usd": 2.0,
+  "records": [
+    {
+      "amount_usd": 0.0048255,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:30:47.594856+00:00"
+    },
+    {
+      "amount_usd": 0.0015263999999999998,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:30:52.539378+00:00"
+    },
+    {
+      "amount_usd": 0.0005958,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:30:54.355912+00:00"
+    },
+    {
+      "amount_usd": 0.0041511,
+      "note": "answer_revision",
+      "at": "2026-10-26T16:31:32.109568+00:00"
+    },
+    {
+      "amount_usd": 0.0023937,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:31:42.700366+00:00"
+    },
+    {
+      "amount_usd": 0.0028518,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:31:56.141772+00:00"
+    },
+    {
+      "amount_usd": 0.0014694,
+      "note": "answer_revision",
+      "at": "2026-10-26T16:32:02.067314+00:00"
+    },
+    {
+      "amount_usd": 0.0006008999999999999,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:32:03.785516+00:00"
+    },
+    {
+      "amount_usd": 0.0007662,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:32:06.001529+00:00"
+    },
+    {
+      "amount_usd": 0.0021231,
+      "note": "answer_verifier",
+      "at": "2026-10-26T16:32:14.256534+00:00"
+    }
+  ]
+}

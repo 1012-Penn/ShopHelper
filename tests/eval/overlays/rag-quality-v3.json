@@ -1,0 +1,168 @@
+{
+  "version": "rag-quality-v3",
+  "date": "2026-10-27",
+  "source_scope": "Post-hoc rescoring of existing simulated CH11/CH16 responses; frozen cases, gold, answers and historical aggregates are read-only.",
+  "revision_basis": [
+    {
+      "id": "citation-ownership",
+      "basis": "CH16 observed citations after terminal punctuation being detached from the claim they annotate."
+    },
+    {
+      "id": "quantity-equivalence",
+      "basis": "Observed deterministic false negatives for half-year/six-month and one-year/twelve-month expressions."
+    },
+    {
+      "id": "date-window",
+      "basis": "Observed policy answers using calculated settlement dates or signed-day counts that deterministic date rules misclassified."
+    },
+    {
+      "id": "tri-state-citation",
+      "basis": "Character 4-gram overlap was not semantic support; unresolved paraphrase is now uncertain rather than supported."
+    }
+  ],
+  "condition_aliases": {
+    "配件类": [
+      "数据线",
+      "编织数据线"
+    ],
+    "部分地区": [
+      "部分地区",
+      "仅部分地区"
+    ]
+  },
+  "cases": {
+    "DEV-MULTI-02": {
+      "background_gold_fact_ids": [
+        "CATALOG-SH-E300-PRICE"
+      ],
+      "basis": "The question already supplies the 299 yuan order amount and asks whether shipping is free; only the threshold is a necessary answer fact."
+    },
+    "DEV-MULTI-03": {
+      "background_gold_fact_ids": [
+        "CATALOG-SH-K104-PRODUCT-TYPE"
+      ],
+      "basis": "The named SKU identifies the product; the question asks who pays return shipping, so repeating its product type is background."
+    },
+    "DEV-MULTI-04": {
+      "background_gold_fact_ids": [
+        "ORDER-ORD-1004-STATUS"
+      ],
+      "basis": "The user states the order was signed and asks for the applicable return window; the window and date rule are the necessary facts."
+    },
+    "DEV-MULTI-08": {
+      "background_gold_fact_ids": [
+        "AFTERSALES-RETURN-REVIEW-HOURS"
+      ],
+      "basis": "The question asks how long after approval to send the item back; the 24-hour review time belongs to the prior stage."
+    },
+    "DEV-MULTI-11": {
+      "background_gold_fact_ids": [
+        "PROMO-TIER-GOLD-GROWTH",
+        "CATALOG-SH-B5-PRICE"
+      ],
+      "basis": "The question asks whether a gold member receives the discount for a named product; growth threshold and price are context, not answer requirements."
+    },
+    "DEV-SINGLE-04": {
+      "basis": "Data cable is an accessory; the answer states the concrete product and a six-month warranty."
+    },
+    "DEV-CONSTRAINT-06": {
+      "background_gold_fact_ids": [
+        "PROMO-EXPEDITE-FEE"
+      ],
+      "basis": "The user supplies the 10 yuan expedited fee and asks whether it participates in the discount; only the participation rule is necessary."
+    },
+    "DEV-CONSTRAINT-07": {
+      "background_gold_fact_ids": [
+        "PROMO-REMOTE-SURCHARGE"
+      ],
+      "basis": "The user supplies the 5 yuan surcharge and asks whether it counts toward a promotion threshold."
+    },
+    "DEV-CONSTRAINT-08": {
+      "background_gold_fact_ids": [
+        "POLICY-RETURN-CONDITION"
+      ],
+      "background_conditions": [
+        "商品完好"
+      ],
+      "basis": "The user states the goods are intact; the answer need only resolve who pays the return shipping."
+    },
+    "DEV-CONFLICT-05": {
+      "background_gold_fact_ids": [
+        "ORDER-ORD-1004-STATUS"
+      ],
+      "basis": "The question asks for the return window for a signed order; repeating the status is not required."
+    },
+    "FRZ-MULTI-04": {
+      "background_gold_fact_ids": [
+        "AFTERSALES-RETURN-SHIP-DAYS"
+      ],
+      "background_conditions": [
+        "审核通过后",
+        "7 天内寄回"
+      ],
+      "fact_aliases": {
+        "ORDER-ORD-1006-STATUS": [
+          "仓库验货中",
+          "退货申请已通过"
+        ]
+      },
+      "basis": "The question asks what happens next for a return already in progress; the observed answer correctly explains warehouse inspection. The send-back deadline belongs to the earlier post-approval stage and is not required by this state."
+    },
+    "FRZ-MULTI-05": {
+      "background_gold_fact_ids": [
+        "ORDER-ORD-1008-STATUS"
+      ],
+      "basis": "The question supplies the receipt date and asks for the policy window; the order status is background."
+    },
+    "FRZ-MULTI-07": {
+      "background_gold_fact_ids": [
+        "ORDER-ORD-1010-STATUS"
+      ],
+      "basis": "The user states the order has not shipped and asks whether cancellation is allowed."
+    },
+    "FRZ-MULTI-08": {
+      "background_gold_fact_ids": [
+        "ORDER-ORD-1011-STATUS"
+      ],
+      "basis": "The user states the order is refunded and asks for the refund channel."
+    },
+    "FRZ-MULTI-10": {
+      "background_gold_fact_ids": [
+        "CATALOG-SH-P30-PRICE"
+      ],
+      "background_conditions": [
+        "商品原价"
+      ],
+      "basis": "The question only asks the expedited-shipping surcharge; the product price is background context and is not a necessary answer fact."
+    },
+    "FRZ-MULTI-15": {
+      "background_gold_fact_ids": [
+        "ORDER-ORD-1005-STATUS"
+      ],
+      "basis": "The user states the order is cancelled and asks whether money returns and when."
+    },
+    "FRZ-CONSTRAINT-11": {
+      "background_gold_fact_ids": [
+        "POLICY-RETURN-CONDITION"
+      ],
+      "background_conditions": [
+        "商品完好"
+      ],
+      "basis": "The user states the goods are intact; the answer need only resolve the non-quality return payer."
+    },
+    "FRZ-CONSTRAINT-12": {
+      "background_gold_fact_ids": [
+        "AFTERSALES-RETURN-SHIP-DAYS"
+      ],
+      "basis": "The question asks who pays return shipping after quality-return approval; the separate seven-day send-back deadline is background."
+    },
+    "FRZ-ENTITY-01": {
+      "fact_aliases": {
+        "CATALOG-SH-E200-PRODUCT-TYPE": [
+          "入耳式耳机"
+        ]
+      },
+      "basis": "The answer omits the contextually redundant word wireless but identifies the correct in-ear form factor."
+    }
+  }
+}

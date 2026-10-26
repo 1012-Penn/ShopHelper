@@ -43,6 +43,30 @@ FAITHFULNESS_JUDGE_PROMPT = PromptTemplate.from_template(
     "【用户问题】{query}\n【编号证据】\n{evidence}\n【答案】{answer}"
 )
 
+# 最终候选答案复核:独立于证据充分性判断,检查答案是否把有效证据正确绑定到
+# 当前问题中的实体、数值和适用条件。
+ANSWER_VERIFIER_PROMPT = PromptTemplate.from_template(
+    "你是电商客服最终答案的独立复核员。不得把“检索证据看起来充分”当作答案正确。\n"
+    "只依据编号证据逐项检查候选答案:\n"
+    "1. 每个事实是否有证据支持,引用编号是否存在;\n"
+    "2. 订单号、商品型号等实体是否与问题一致,严禁把另一订单的签收日、状态或支付渠道套给当前订单;\n"
+    "3. 金额、天数、期限及其单位是否一致;\n"
+    "4. 必要条件、v1/v2 政策版本和签收日期是否匹配。\n"
+    "5. 问题没有提供订单号时,不得从证据中另选一个订单冒充“当前订单”;问题指定了订单号时,答案不得换成其他订单;\n"
+    "6. 证据已经能回答时,候选答案不能无依据地拒答;候选答案仍在回避主要问题时判 fail。\n"
+    "证据明确冲突时判 fail;证据足以确认答案正确时判 pass;证据本身不足或语义无法可靠判断时判 uncertain。\n"
+    "【用户问题】{query}\n【编号证据】\n{evidence}\n【候选答案】{answer}"
+)
+
+ANSWER_REVISION_PROMPT = PromptTemplate.from_template(
+    "请修订电商客服候选答案,最多修订一次。只依据编号证据,逐项修复复核问题。\n"
+    "不得改变当前订单/商品的实体绑定,不得把另一订单的签收日、状态或支付渠道套给当前订单。\n"
+    "引用编号必须存在;若证据不足或冲突无法可靠修复,第一行以" + REFUSAL_MARKER
+    + "开头并建议转人工。直接输出修订后的最终答案,不要解释修订过程。\n"
+    "【用户问题】{query}\n【编号证据】\n{evidence}\n"
+    "【候选答案】{answer}\n【复核问题】{issues}"
+)
+
 
 class FaithfulnessVerdict(BaseModel):
     fabricated: bool
