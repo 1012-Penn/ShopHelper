@@ -118,10 +118,14 @@ def filter_scoped_documents(
             detail = f"requested={scope.subject}; evidence={','.join(sorted(order_ids))}"
 
         version = next(iter(versions)) if len(versions) == 1 else None
-        if not reason and version and scope.policy_version:
-            if version.casefold() != scope.policy_version.casefold():
-                reason = "policy_version_conflict"
-                detail = f"requested={scope.policy_version}; evidence={version}"
+        if (
+            not reason
+            and version
+            and scope.policy_version
+            and version.casefold() != scope.policy_version.casefold()
+        ):
+            reason = "policy_version_conflict"
+            detail = f"requested={scope.policy_version}; evidence={version}"
         if not reason and version and scope.reference_date:
             window = windows.get(version.casefold())
             if window is not None and not window.includes(scope.reference_date):
@@ -277,7 +281,7 @@ def _split_samples(samples: list[dict], holdout_ratio: float,
     for key in sorted(groups):
         items = sorted(groups[key], key=lambda s: hashlib.sha256(
             f"{s['id']}:{seed}".encode()).hexdigest())
-        n_hold = int(round(len(items) * holdout_ratio))
+        n_hold = round(len(items) * holdout_ratio)
         if holdout_ratio <= 0:
             n_hold = 0
         elif len(items) > 1:

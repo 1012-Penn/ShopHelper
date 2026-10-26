@@ -163,11 +163,26 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             app.state.claim_grounding_semantic,
             max_revisions=settings.answer_verification_max_revisions,
         )
+    answer_plan_node = None
+    if settings.answer_plan_enabled:
+        from app.answer_plan.runtime import build_optional_answer_plan_runtime
+        from scripts.eval_cost import PricingTable
+
+        pricing = PricingTable.load(Path(settings.answer_plan_pricing_path))
+        if not pricing.verified:
+            raise RuntimeError("ANSWER_PLAN_PRICING_PATH is not verified")
+        app.state.answer_plan = build_optional_answer_plan_runtime(
+            settings,
+            base_model=make_extract_model(settings),
+            pricing=pricing,
+        )
+        answer_plan_node = app.state.answer_plan.make_node()
     compiled_graph = build_graph(
         app.state.chat_model, app.state.engine, settings,
         app.state.store, app.state.pool, service, kb,
         rag_steps_store=rag_steps_store,
         answer_verifier=answer_verifier,
+        answer_plan_node=answer_plan_node,
     )
     from app.observability import ObservabilityService
     app.state.observability = ObservabilityService(settings, app.state.usage_store)
@@ -199,9 +214,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(admin_router.router)
     # Optional multi-Agent route shares the existing engine/model/session store;
     # `POST /api/chat` remains the default single-Agent path.
+    from app.action_contracts import ActionSessionLedger
     from app.multi_agent.api import create_multi_agent_router
     from app.multi_agent.models import AgentPlan
     from app.multi_agent.runtime import build_multi_agent_runtime
+    app.state.action_ledger = ActionSessionLedger()
     app.state.multi_agent = build_multi_agent_runtime(
         engine=app.state.engine,
         model=app.state.chat_model,
@@ -209,6 +226,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         planner_structured=make_structured_extractor(settings, AgentPlan),
         handoff_mode=settings.multi_agent_handoff_mode,
         dynamic_status_ttl_seconds=settings.multi_agent_dynamic_status_ttl_seconds,
+        action_contracts_enabled=settings.multi_agent_action_contracts_enabled,
+        action_ledger=app.state.action_ledger,
     )
     app.include_router(create_multi_agent_router())
     if settings.adaptive_routing_enabled:

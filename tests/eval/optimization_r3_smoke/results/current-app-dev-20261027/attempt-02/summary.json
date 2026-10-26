@@ -1,0 +1,197 @@
+{
+  "budget": {
+    "calls": 61,
+    "limit_usd": 2.0,
+    "pending_usd": 0,
+    "settled_usd": 0.04280557
+  },
+  "chat": {
+    "answer_plan_nodes": 0,
+    "cases": [
+      {
+        "case_id": "DEV-DIRECT-E300",
+        "failure_labels": [
+          "citation_uncertain"
+        ],
+        "latency_ms": 13084.297,
+        "route_nodes": [
+          "resolve",
+          "intent",
+          "retrieve",
+          "gate",
+          "answer_plan",
+          "log"
+        ],
+        "task_success": false,
+        "technical_failures": []
+      },
+      {
+        "case_id": "DEV-POLICY-V2",
+        "failure_labels": [
+          "citation_unsupported"
+        ],
+        "latency_ms": 37814.953,
+        "route_nodes": [
+          "resolve",
+          "intent",
+          "retrieve",
+          "gate",
+          "answer_plan",
+          "log"
+        ],
+        "task_success": false,
+        "technical_failures": []
+      },
+      {
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "failure_labels": [],
+        "latency_ms": 3461.652,
+        "route_nodes": [
+          "resolve",
+          "intent",
+          "agent",
+          "log"
+        ],
+        "task_success": true,
+        "technical_failures": []
+      },
+      {
+        "case_id": "DEV-CLARIFY-SKU",
+        "failure_labels": [
+          "behavior_answer_expected_clarify"
+        ],
+        "latency_ms": 50964.379,
+        "route_nodes": [
+          "resolve",
+          "intent",
+          "retrieve",
+          "gate",
+          "answer_plan",
+          "log"
+        ],
+        "task_success": false,
+        "technical_failures": []
+      },
+      {
+        "case_id": "R3-CORPUS-ORDER-ORD-1001",
+        "failure_labels": [
+          "behavior_refuse_expected_answer"
+        ],
+        "latency_ms": 4569.136,
+        "route_nodes": [
+          "resolve",
+          "intent",
+          "agent",
+          "log"
+        ],
+        "task_success": false,
+        "technical_failures": []
+      }
+    ],
+    "completed": 5,
+    "p95_latency_ms": 50964.379,
+    "planned": 5,
+    "success": 1,
+    "technical_failures": 0
+  },
+  "contract": {
+    "flags": {
+      "adaptive_routing_enabled": false,
+      "answer_plan_enabled": true,
+      "answer_verification_enabled": false,
+      "claim_grounding_enabled": false,
+      "multi_agent_action_contracts_enabled": true,
+      "multi_agent_handoff_mode": "raw",
+      "rag_gap_trigger_enabled": false
+    },
+    "manifest": "tests/eval/optimization_r3_smoke/manifest.json",
+    "manifest_sha256": "9ac29abe1c637f15694db65e15375bf3764cd4d9954f74d1731d4573166a26ab",
+    "max_new_api_usd": 2.0,
+    "max_provider_calls": 80,
+    "model": "deepseek-flash",
+    "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+    "run_version": "optimization-r3-integration-smoke-v2",
+    "schema_version": 1,
+    "snapshot_expected_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+    "stop_rules": [
+      "refuse to run without --allow-paid",
+      "abort before a provider reservation that would exceed 80 calls",
+      "abort if an infrastructure failure prevents the fixed task from receiving a response",
+      "record all provider retries and never exceed two retries per call",
+      "do not replace a failed run with a second run"
+    ],
+    "structured_output_mode": "auto"
+  },
+  "infrastructure_error": null,
+  "multi_agent": {
+    "cases": [
+      {
+        "action_artifacts": [],
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "confirmation": null,
+        "confirmation_idempotent": false,
+        "confirmation_replay": null,
+        "conversation_id": 10,
+        "final_reply": "【无法回答】多Agent汇总未完成，请稍后重试或转人工。",
+        "http_status": 200,
+        "latency_ms": 37457.866,
+        "message": "请为订单1001创建售后工单，先给我预览，不要直接提交。",
+        "preview_without_write": false,
+        "status": "failed",
+        "technical_failures": [],
+        "text_preview_without_artifact": false,
+        "tickets_after": 0,
+        "tickets_after_preview": 0,
+        "tickets_before": 0,
+        "write_previews": []
+      },
+      {
+        "action_artifacts": [
+          {
+            "action_id": "72b240ff25854b1bb9cb9c1ca4c8eda9",
+            "agent_id": null,
+            "arguments": {},
+            "confirm_key": null,
+            "conversation_id": 11,
+            "created_at": "2026-10-26T19:10:38.154743+00:00",
+            "error": "本轮不是写入动作；未生成工单预览。",
+            "error_code": "no_pending_action",
+            "kind": "none",
+            "normalizations": [],
+            "original_arguments": {},
+            "preview": null,
+            "state": "cancelled",
+            "task_id": null,
+            "ticket_no": null,
+            "tool_name": "",
+            "updated_at": "2026-10-26T19:10:38.154757+00:00",
+            "write_committed": false
+          }
+        ],
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "confirmation": null,
+        "confirmation_idempotent": false,
+        "confirmation_replay": null,
+        "conversation_id": 11,
+        "final_reply": "订单 **1001**（无线耳机，金额 ¥299，状态：已签收）**不能直接取消**。\n\n依据退货政策：未发货可取消；已发货不能直接取消，可拒收或签收后走退货（证据 214）。该订单已签收，因此应按“签收后退货”处理；拒收相关费用规则见证据 215。\n\n已按你的要求：**未创建工单**。",
+        "http_status": 200,
+        "latency_ms": 14471.134,
+        "message": "订单1001能取消吗？不要创建工单。",
+        "preview_without_write": false,
+        "status": "success",
+        "technical_failures": [],
+        "text_preview_without_artifact": false,
+        "tickets_after": 0,
+        "tickets_after_preview": 0,
+        "tickets_before": 0,
+        "write_previews": []
+      }
+    ],
+    "completed": 2,
+    "confirmation_idempotent": 0,
+    "planned": 2,
+    "preview_without_write": 0,
+    "text_preview_without_artifact": 0
+  },
+  "schema_version": 1
+}

@@ -110,10 +110,18 @@ class Settings(BaseSettings):
     adaptive_routing_enabled: bool = False
     multi_agent_handoff_mode: Literal["raw", "typed"] = "raw"
     multi_agent_dynamic_status_ttl_seconds: int = 300
+    multi_agent_action_contracts_enabled: bool = False
     claim_grounding_enabled: bool = False
     claim_grounding_ledger_path: str = ""
     claim_grounding_max_cost_usd: float = 2.0
     claim_grounding_reserve_usd: float = 0.005
+
+    # 第三轮可选：证据绑定答案计划。held-out 未显示净收益，默认保持旧 Agent；
+    # 显式开启时必须提供独立账本，避免无界结构化调用。
+    answer_plan_enabled: bool = False
+    answer_plan_ledger_path: str = ""
+    answer_plan_max_cost_usd: float = 2.0
+    answer_plan_pricing_path: str = "config/pricing.yaml"
 
     # ch14:后台管理员鉴权(DB 管理员表;secret 为空时后台登录 503,不阻断聊天)
     admin_session_secret: str = ""        # 生产必须设置;python -c 'import secrets; print(secrets.token_urlsafe(48))'

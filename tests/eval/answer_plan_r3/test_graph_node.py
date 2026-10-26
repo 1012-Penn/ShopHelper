@@ -10,12 +10,11 @@ class _Pipeline:
         from app.answer_plan import (
             AnswerPlan,
             AnswerPlanResult,
-            PlanClaim,
             EvidenceBinding,
-            EvidenceCandidate,
+            PlanClaim,
         )
-        from app.answer_plan.verification import validate_answer_plan
         from app.answer_plan.renderer import render_with_candidates
+        from app.answer_plan.verification import validate_answer_plan
 
         candidate = candidates[0]
         plan = AnswerPlan(

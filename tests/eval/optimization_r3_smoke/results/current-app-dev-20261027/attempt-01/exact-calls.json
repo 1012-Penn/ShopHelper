@@ -1,0 +1,637 @@
+{
+  "entries": {
+    "026576ca396f70d8ee7b748f2669ff9c90f2bbbdad9a33861e760195a4d217cf": {
+      "content": "{\"intent\": \"商品咨询\", \"confidence\": 0.95}",
+      "output": {
+        "content": "{\"intent\": \"商品咨询\", \"confidence\": 0.95}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "ed94b69d-334b-46b3-9219-36166932b781",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 26,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 9,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 186,
+            "prompt_tokens": 314,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 340
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 314,
+        "output_tokens": 26
+      }
+    },
+    "0f474bf63e77fe7d98f7404b39b12e682104271251fb1c1dd9ce97557f020c4d": {
+      "content": "{\"normalized\":\"2026-06-02 签收的订单，在签收后第 10 天申请无理由退货，适用多少天无理由退货期限？\",\"synonyms\":[\"2026年6月2日签收的订单，签收后第10天申请无理由退货，适用多少天的无理由退货期限？\",\"订单于2026-06-02签收，在签收后第10天申请无理由退货，无理由退货窗口是多少天？\",\"2026-06-02签收后第10天申请无理由退货，该订单适用多少天无理由退货期？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"2026-06-02 签收的订单，在签收后第 10 天申请无理由退货，适用多少天无理由退货期限？\",\"synonyms\":[\"2026年6月2日签收的订单，签收后第10天申请无理由退货，适用多少天的无理由退货期限？\",\"订单于2026-06-02签收，在签收后第10天申请无理由退货，无理由退货窗口是多少天？\",\"2026-06-02签收后第10天申请无理由退货，该订单适用多少天无理由退货期？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "6896070c-52de-4042-944a-1d4f45325d6b",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 570,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 434,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 190,
+            "prompt_tokens": 190,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 760
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 190,
+        "output_tokens": 570
+      }
+    },
+    "10781222ef52cc48c30b4c8ce433f1f0a41b388851d80880a84e465b2fe964b1": {
+      "content": "{\"normalized\":\"SH-E300 的价格是多少？\",\"synonyms\":[\"SH-E300 多少钱？\",\"SH-E300 售价多少？\",\"SH-E300 现在卖多少钱？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"SH-E300 的价格是多少？\",\"synonyms\":[\"SH-E300 多少钱？\",\"SH-E300 售价多少？\",\"SH-E300 现在卖多少钱？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "44454bfa-85fb-450d-a57c-8087fc64e2cc",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 207,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 165,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 166,
+            "prompt_tokens": 166,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 373
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 166,
+        "output_tokens": 207
+      }
+    },
+    "1798106232fbab586723855821a5be301b5fda62e8a4d0cd17c228ebb4003f8e": {
+      "content": "",
+      "output": {
+        "content": "",
+        "finish_reason": null,
+        "tool_calls": [
+          {
+            "args": {
+              "order_id": "1002"
+            },
+            "id": "call_00_vT4IiQLW6nsys57r1nFl4240",
+            "name": "query_order"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "order_id": "1002"
+          },
+          "id": "call_00_vT4IiQLW6nsys57r1nFl4240",
+          "name": "query_order"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 542,
+        "output_tokens": 0
+      }
+    },
+    "1af5a7fba09b7a4159ac5e38e898e4fe89aa6c736a2e719ba840e9159d508aef": {
+      "content": "{\"answered\":true,\"reason\":\"签收日期 2026-06-02 在 2026-06-01 或之后，适用 v2 版十五天无理由退货，因此窗口为签收后 15 天；第 10 天申请仍在窗口内。\",\"supported_by\":[3,5,7]}",
+      "output": {
+        "content": "{\"answered\":true,\"reason\":\"签收日期 2026-06-02 在 2026-06-01 或之后，适用 v2 版十五天无理由退货，因此窗口为签收后 15 天；第 10 天申请仍在窗口内。\",\"supported_by\":[3,5,7]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "b585c005-8636-4a9f-ae41-7e6f1e3a7397",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 500,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 427,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 1095,
+            "prompt_tokens": 1351,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 256,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1851
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 256,
+        "input_tokens": 1351,
+        "output_tokens": 500
+      }
+    },
+    "32aa4ce51b1c49fe3d19d6aac3f9d834e598d6ad021af0f1f7baf41c58678799": {
+      "content": "{\"answered\": true, \"reason\": \"证据明确给出 SH-E300 售价为 299 元，并显示在售。\", \"supported_by\": [1, 2, 3]}",
+      "output": {
+        "content": "{\"answered\": true, \"reason\": \"证据明确给出 SH-E300 售价为 299 元，并显示在售。\", \"supported_by\": [1, 2, 3]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "eea165b7-4f74-440c-a67d-684d91c996b4",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 120,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 77,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 1280,
+            "prompt_cache_miss_tokens": 576,
+            "prompt_tokens": 1856,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 1280,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1976
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 1280,
+        "input_tokens": 1856,
+        "output_tokens": 120
+      }
+    },
+    "4ecc5ca3ceb931a43644bae21c4efd6319b34cdea8e00aacec78a5d64789ea98": {
+      "content": "{\"claims\":[{\"claim_id\":\"c1\",\"text\":\"SH-E300 的售价为 299 元。\",\"subject\":\"SH-E300\",\"value\":\"299\",\"unit\":\"元\",\"dates\":[],\"necessary_conditions\":[],\"policy_version\":\"\",\"evidence\":[{\"evidence_id\":\"167\",\"quote\":\"SH-E300 头戴式无线降噪耳机,售价 299 元\"},{\"evidence_id\":\"160\",\"quote\":\"| SH-E300 | 头戴式无线降噪耳机 | 299 元 | 在售 |\"}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"c1\",\"text\":\"SH-E300 的售价为 299 元。\",\"subject\":\"SH-E300\",\"value\":\"299\",\"unit\":\"元\",\"dates\":[],\"necessary_conditions\":[],\"policy_version\":\"\",\"evidence\":[{\"evidence_id\":\"167\",\"quote\":\"SH-E300 头戴式无线降噪耳机,售价 299 元\"},{\"evidence_id\":\"160\",\"quote\":\"| SH-E300 | 头戴式无线降噪耳机 | 299 元 | 在售 |\"}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "014fa310-3827-4592-8d00-d47719487929",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 1334,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1201,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 3223,
+            "prompt_tokens": 3223,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 4557
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 3223,
+        "output_tokens": 1334
+      }
+    },
+    "53737eecce920801bc40ea480a6a2f366e14ec93954a2c1d51d71e673753d258": {
+      "content": "亲，查到啦：订单 1002 是机械键盘，金额 399 元，状态为“已发货”（下单日期 2026-09-03）。还需要我帮您看别的吗？",
+      "output": {
+        "content": "亲，查到啦：订单 1002 是机械键盘，金额 399 元，状态为“已发货”（下单日期 2026-09-03）。还需要我帮您看别的吗？",
+        "finish_reason": null,
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 717,
+        "output_tokens": 48
+      }
+    },
+    "5cce78809bf0e785f4958db78a95ccaf15047f56d93efe2fc0acca608d87e743": {
+      "content": "{\"intent\": \"售后\", \"confidence\": 0.8}",
+      "output": {
+        "content": "{\"intent\": \"售后\", \"confidence\": 0.8}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "33a0e611-4b44-4761-8856-2ce4188ab674",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 171,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 155,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 182,
+            "prompt_tokens": 310,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 481
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 310,
+        "output_tokens": 171
+      }
+    },
+    "6337d8e03fe981d140c27bbc4662bcd836d733313f866e494c964fb56364ccc7": {
+      "content": "{\"resolved\":\"帮我查订单 1002 买了什么、金额是多少。\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"帮我查订单 1002 买了什么、金额是多少。\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "137b7129-cbf4-4324-b589-357af438e644",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 113,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 90,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 185,
+            "prompt_tokens": 313,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 426
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 313,
+        "output_tokens": 113
+      }
+    },
+    "82d1cbed321e366162170fffa50ec02e793e2bfb00eba49c2936fb07558cf249": {
+      "content": "{\"intent\": \"订单\", \"confidence\": 0.97}",
+      "output": {
+        "content": "{\"intent\": \"订单\", \"confidence\": 0.97}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "751457f5-9273-4005-a394-0565eb208567",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 41,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 25,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 191,
+            "prompt_tokens": 319,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 360
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 319,
+        "output_tokens": 41
+      }
+    },
+    "84a99424ceb106944a2133ad1d003d97722f3e5f61c1fcd48861c627a60bc68d": {
+      "content": "{\"claims\":[{\"claim_id\":\"claim_1\",\"text\":\"该订单于 2026-06-02 签收，签收日期为 2026-06-01 或之后，适用 v2 版；无理由退货窗口为签收之日起 15 天内，您在签收后第 10 天申请，仍在 15 天窗口内；商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"subject\":\"无理由退货窗口\",\"value\":\"15\",\"unit\":\"天\",\"dates\":[\"2026-06-02\",\"2026-06-01\"],\"policy_version\":\"v2\",\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\",\"商品需保持完好,吊牌、包装齐全,不影响二次销售\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\"}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"claim_1\",\"text\":\"该订单于 2026-06-02 签收，签收日期为 2026-06-01 或之后，适用 v2 版；无理由退货窗口为签收之日起 15 天内，您在签收后第 10 天申请，仍在 15 天窗口内；商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"subject\":\"无理由退货窗口\",\"value\":\"15\",\"unit\":\"天\",\"dates\":[\"2026-06-02\",\"2026-06-01\"],\"policy_version\":\"v2\",\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\",\"商品需保持完好,吊牌、包装齐全,不影响二次销售\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\"}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "16ce34f6-25b3-44b2-9e63-6e533e7ccc83",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 3138,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2888,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2404,
+            "prompt_tokens": 2404,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 5542
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2404,
+        "output_tokens": 3138
+      }
+    },
+    "b8d99c15b4f7cb7232958a0e17da28f4981a5c4d503642e1d636236ee74a62ae": {
+      "content": "{\"resolved\":\"SH-E300 现在卖多少钱？\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"SH-E300 现在卖多少钱？\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "7a9bd42b-f671-44e5-bcee-1865449616be",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 88,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 70,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 180,
+            "prompt_tokens": 308,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 396
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 308,
+        "output_tokens": 88
+      }
+    },
+    "c21b74127960a9f1de16dd8f9407315cfc1800adc32b772fd48950142a39c01d": {
+      "content": "{\"resolved\":\"这个保修多久？\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"这个保修多久？\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "fc0b7835-03ac-4105-971e-01f9fa337a0d",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 175,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 161,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 176,
+            "prompt_tokens": 304,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 479
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 304,
+        "output_tokens": 175
+      }
+    },
+    "c7d1da2afd381f4e2f63b012b974c5f589a6476a238f6a4baf1784224740babe": {
+      "content": "{\"resolved\":\"订单在 2026-06-02 签收，我在签收后第 10 天申请无理由退货，适用多少天窗口？\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"订单在 2026-06-02 签收，我在签收后第 10 天申请无理由退货，适用多少天窗口？\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "11b3a96c-9543-470a-9e9e-ba335c6d662a",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 149,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 107,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 204,
+            "prompt_tokens": 332,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 481
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 332,
+        "output_tokens": 149
+      }
+    },
+    "f19826ae341a0bea2b68294b04470a40067c7c6d7a7d4d900bbd29d90320e6df": {
+      "content": "{\"intent\": \"退款退货\", \"confidence\": 0.85}",
+      "output": {
+        "content": "{\"intent\": \"退款退货\", \"confidence\": 0.85}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "276ca066-8202-4241-97e0-4e42087a8ebb",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 34,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 17,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 210,
+            "prompt_tokens": 338,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 372
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 338,
+        "output_tokens": 34
+      }
+    }
+  },
+  "schema_version": 1
+}

@@ -485,7 +485,12 @@ class MultiAgentRunner:
                         args = dict(argument_decision.arguments)
                     tool_calls.append({"name": name, "arguments": args})
 
-                    def intercept(record, values, call_name=name):
+                    def intercept(
+                        record,
+                        values,
+                        call_name=name,
+                        decision=argument_decision,
+                    ):
                         nonlocal preview, preview_artifact
                         preview = {
                             "type": "ticket_preview",
@@ -510,12 +515,12 @@ class MultiAgentRunner:
                                 tool_name=getattr(record, "name", call_name),
                                 arguments=dict(values),
                                 original_arguments=(
-                                    argument_decision.original_arguments
-                                    if argument_decision is not None else {}
+                                    decision.original_arguments
+                                    if decision is not None else {}
                                 ),
                                 normalizations=(
-                                    argument_decision.normalizations
-                                    if argument_decision is not None else []
+                                    decision.normalizations
+                                    if decision is not None else []
                                 ),
                                 confirm_key=preview["confirm_key"],
                                 preview=dict(preview),

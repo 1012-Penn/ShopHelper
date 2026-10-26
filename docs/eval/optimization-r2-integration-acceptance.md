@@ -171,7 +171,8 @@ RAG_GAP_TRIGGER_ENABLED=false
 - 定向集成回归：`219 passed`。
 - 集成全量：`1011 passed, 2 skipped, 1 xfailed`，退出码 0。
 - 既有可靠性 fault acceptance：通过；32/32 隔离 SQLite run，0 模型调用。
-- Ruff：本轮修改的代码/测试均通过。
+- Ruff：原“本轮修改的代码/测试均通过”声明已撤回。后续复跑无法复现全仓通过；
+  第三轮验收报告记录了当前实际结果，不以测试通过替代 lint 证据。
 - `git diff --check`：通过。
 - 源会话费用合计 `$0.344887`；本轮集成新增 API 费用 `$0.018044`（含结构化 smoke），
   全程使用独立账本，未复用其他会话 pending。

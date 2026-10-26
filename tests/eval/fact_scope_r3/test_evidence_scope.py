@@ -16,7 +16,6 @@ from app.retrieval import (
 )
 from tests.helpers import FakeEmbedding, FakeVectorStore
 
-
 WINDOWS = (
     PolicyWindow("v1", date(2024, 1, 1), date(2026, 5, 31)),
     PolicyWindow("v2", date(2026, 6, 1), None),

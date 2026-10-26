@@ -1,0 +1,20 @@
+{
+  "action_artifacts": [],
+  "case_id": "R3-PREVIEW-CONFIRM",
+  "confirmation": null,
+  "confirmation_idempotent": false,
+  "confirmation_replay": null,
+  "conversation_id": 10,
+  "final_reply": "【无法回答】多Agent汇总未完成，请稍后重试或转人工。",
+  "http_status": 200,
+  "latency_ms": 37457.866,
+  "message": "请为订单1001创建售后工单，先给我预览，不要直接提交。",
+  "preview_without_write": false,
+  "status": "failed",
+  "technical_failures": [],
+  "text_preview_without_artifact": false,
+  "tickets_after": 0,
+  "tickets_after_preview": 0,
+  "tickets_before": 0,
+  "write_previews": []
+}

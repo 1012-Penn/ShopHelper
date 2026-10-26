@@ -85,7 +85,8 @@ def _with_sink(fn):
 def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
                 resolver=None, intent_model=None, escalator=None, expander=None,
                 gap_analyzer=None, rag_steps_store=None,
-                refund_flow_mode="fixed", answer_verifier=None):
+                refund_flow_mode="fixed", answer_verifier=None,
+                answer_plan_node=None):
     """resolver/expander 缺省时生产路径自建(结构化真模型);测试经 conftest 注入替身。
     intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。
     ch12:retrieval_route ∈ {decompose_once, controlled_loop} 时「商品咨询」改走
@@ -129,6 +130,8 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
     g.add_node("fallback", _with_sink(fallback_node))
     g.add_node("agent", _with_sink(make_agent_node(
         model, engine, settings, pool, answer_verifier=answer_verifier)))
+    if answer_plan_node is not None:
+        g.add_node("answer_plan", _with_sink(answer_plan_node))
     g.add_node("complaint", _with_sink(complaint_node))
     g.add_node("chitchat", _with_sink(chitchat_node))
     g.add_node("prepare_order", _with_sink(prep))
@@ -156,9 +159,10 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
             analyzer=gap_analyzer or make_gap_analyzer(settings),
             steps_store=rag_steps_store)))
         # 受控循环充分→agent(沿用既有证据消费);不充分→节点内已收口,直达 log
+        passed_target = "answer_plan" if answer_plan_node is not None else "agent"
         g.add_conditional_edges(
-            "agentic_retrieve", lambda s: "agent" if s["gate_passed"] else "log",
-            {"agent": "agent", "log": "log"})
+            "agentic_retrieve", lambda s: passed_target if s["gate_passed"] else "log",
+            {passed_target: passed_target, "log": "log"})
         route_targets["retrieve"] = "agentic_retrieve"
     if refund_flow_mode not in {"fixed", "autonomous"}:
         raise ValueError(f"unsupported refund_flow_mode: {refund_flow_mode}")
@@ -173,8 +177,12 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
         "policy_retrieve", lambda s: "fallback" if s["low_confidence"] else "agent",
         {"fallback": "fallback", "agent": "agent"})
     g.add_edge("retrieve", "gate")
-    g.add_conditional_edges("gate", lambda s: "fallback" if not s["gate_passed"] else "agent",
-                            {"fallback": "fallback", "agent": "agent"})
+    evidence_target = "answer_plan" if answer_plan_node is not None else "agent"
+    g.add_conditional_edges(
+        "gate", lambda s: "fallback" if not s["gate_passed"] else evidence_target,
+        {"fallback": "fallback", evidence_target: evidence_target})
+    if answer_plan_node is not None:
+        g.add_edge("answer_plan", "log")
     for n in ("fallback", "agent", "complaint", "chitchat", "ask_order"):
         g.add_edge(n, "log")
     g.add_edge("log", END)

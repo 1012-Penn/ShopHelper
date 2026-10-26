@@ -1,0 +1,41 @@
+{
+  "action_artifacts": [
+    {
+      "action_id": "72b240ff25854b1bb9cb9c1ca4c8eda9",
+      "agent_id": null,
+      "arguments": {},
+      "confirm_key": null,
+      "conversation_id": 11,
+      "created_at": "2026-10-26T19:10:38.154743+00:00",
+      "error": "本轮不是写入动作；未生成工单预览。",
+      "error_code": "no_pending_action",
+      "kind": "none",
+      "normalizations": [],
+      "original_arguments": {},
+      "preview": null,
+      "state": "cancelled",
+      "task_id": null,
+      "ticket_no": null,
+      "tool_name": "",
+      "updated_at": "2026-10-26T19:10:38.154757+00:00",
+      "write_committed": false
+    }
+  ],
+  "case_id": "R3-CANCEL-FEASIBILITY",
+  "confirmation": null,
+  "confirmation_idempotent": false,
+  "confirmation_replay": null,
+  "conversation_id": 11,
+  "final_reply": "订单 **1001**（无线耳机，金额 ¥299，状态：已签收）**不能直接取消**。\n\n依据退货政策：未发货可取消；已发货不能直接取消，可拒收或签收后走退货（证据 214）。该订单已签收，因此应按“签收后退货”处理；拒收相关费用规则见证据 215。\n\n已按你的要求：**未创建工单**。",
+  "http_status": 200,
+  "latency_ms": 14471.134,
+  "message": "订单1001能取消吗？不要创建工单。",
+  "preview_without_write": false,
+  "status": "success",
+  "technical_failures": [],
+  "text_preview_without_artifact": false,
+  "tickets_after": 0,
+  "tickets_after_preview": 0,
+  "tickets_before": 0,
+  "write_previews": []
+}

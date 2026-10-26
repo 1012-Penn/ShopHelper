@@ -15,7 +15,11 @@ from scripts.answer_plan_r3.budget import (
     AnswerPlanBudgetLedger,
     BudgetedModel,
 )
-from scripts.answer_plan_r3.data import load_evidence, load_frozen_dataset, model_projection
+from scripts.answer_plan_r3.data import (
+    load_evidence,
+    load_frozen_dataset,
+    model_projection,
+)
 from scripts.answer_plan_r3.scoring import score_case
 from scripts.eval_cost import PricingTable
 
@@ -310,7 +314,9 @@ def run(
         max_corrections=1,
     )
 
-    run_dir = output_root / f"{split}-{datetime.now().strftime('%Y%m%dT%H%M%SZ')}"
+    run_dir = output_root / (
+        f"{split}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
+    )
     run_dir.mkdir(parents=True, exist_ok=False)
     result_path = run_dir / "results.jsonl"
     rows: list[dict] = []
@@ -359,7 +365,7 @@ def run(
                             for number, item in plan_result.rendered.citations.items()
                         }
                         correction_attempts = plan_result.correction_attempts
-                except BaseException as exc:
+                except Exception as exc:  # noqa: BLE001 - failures remain in results
                     error = f"{type(exc).__name__}: {exc}"[:500]
                 latency = (time.perf_counter() - started) * 1000
                 calls = budgeted.calls[calls_before:]

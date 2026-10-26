@@ -67,9 +67,12 @@ def _fact_value_matches_v2(fact: dict, text: str) -> bool:
 
 def _fact_passes_v2(fact: dict, answer: str) -> bool:
     text = _without_citations(answer)
-    if fact.get("require_entity") and fact.get("entity"):
-        if _norm(fact["entity"]) not in _norm(text):
-            return False
+    if (
+        fact.get("require_entity")
+        and fact.get("entity")
+        and _norm(fact["entity"]) not in _norm(text)
+    ):
+        return False
     return _fact_value_matches_v2(fact, text)
 
 
@@ -78,9 +81,7 @@ def _fact_mentioned_v2(fact: dict, sentence: str) -> bool:
     terms = _predicate_terms(fact.get("predicate") or "")
     if terms and all(term in norm for term in terms):
         return True
-    if any(_norm(item) in norm for item in _accepted_phrases(fact)):
-        return True
-    return False
+    return any(_norm(item) in norm for item in _accepted_phrases(fact))
 
 
 def _condition_aliases(case: dict, evidence: dict, condition: str) -> list[str]:

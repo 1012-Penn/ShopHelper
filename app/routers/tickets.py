@@ -63,6 +63,30 @@ async def confirm_ticket(body: TicketConfirmRequest, request: Request):
             raise HTTPException(status_code=422, detail="缺少问题描述")
     else:
         args = body.arguments
+    ledger = getattr(request.app.state, "action_ledger", None)
+    known_action = (
+        ledger.latest_for_confirm_key(body.confirm_key)
+        if ledger is not None and body.confirm_key else None
+    )
+    if known_action is not None:
+        if (
+            known_action.conversation_id != body.conversation_id
+            or known_action.tool_name != body.tool_name
+            or known_action.state in {"cancelled", "failed"}
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="确认键不属于当前会话，或对应预览已取消/失败",
+            )
+        expected = known_action.arguments or {}
+        if body.tool_name == "create_ticket" and (
+            expected.get("description") != body.description
+            or expected.get("ticket_type") != body.ticket_type
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail="确认参数与已登记预览不一致",
+            )
     raw = await engine.execute(body.tool_name,
                                json.dumps(args, ensure_ascii=False),
                                conversation_id=body.conversation_id, confirmed=True)
@@ -74,6 +98,18 @@ async def confirm_ticket(body: TicketConfirmRequest, request: Request):
     if body.tool_name == "create_ticket" and (
             not isinstance(parsed, dict) or "ticket_no" not in parsed):
         raise HTTPException(status_code=502, detail="创建工单失败")
+    if (
+        ledger is not None
+        and body.tool_name == "create_ticket"
+        and body.confirm_key
+    ):
+        pending = ledger.pending(body.conversation_id)
+        if pending is not None and pending.confirm_key == body.confirm_key:
+            ledger.mark_confirmed(
+                conversation_id=body.conversation_id,
+                confirm_key=body.confirm_key,
+                ticket=parsed,
+            )
     return parsed if isinstance(parsed, dict) else {"result": raw}
 
 
@@ -86,4 +122,10 @@ async def cancel_ticket(body: TicketCancelRequest, request: Request):
     audit.log(tool_name="create_ticket", tool_source="builtin",
               conversation_id=body.conversation_id, status="权限拒绝",
               error_message=body.reason or "用户取消确认")
-    return {"ok": True}
+    if not request.app.state.settings.multi_agent_action_contracts_enabled:
+        return {"ok": True}
+    ledger = getattr(request.app.state, "action_ledger", None)
+    if ledger is None:
+        return {"ok": True}
+    artifact = ledger.cancel(body.conversation_id)[-1]
+    return {"ok": True, "action_artifact": artifact.model_dump(mode="json")}

@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import re
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import Any
 
 import jsonschema
 
@@ -14,7 +15,6 @@ from app.action_contracts.models import (
     ActionIntent,
     NormalizationRecord,
 )
-
 
 _AFTER_SALES_TYPES = {
     "售后", "退款", "退货", "维修", "返修", "换货", "退款处理", "维修处理",
@@ -90,7 +90,7 @@ class ActionToolContext:
     enum_values: dict[str, frozenset[str]]
 
     @classmethod
-    def from_registry(cls, registry, name: str) -> "ActionToolContext":
+    def from_registry(cls, registry, name: str) -> ActionToolContext:
         record = registry.get(name)
         if record is None:
             raise ValueError(f"tool is not registered: {name}")
@@ -279,19 +279,21 @@ def guard_final_reply(
             "未能生成结构化工单预览。请补充或确认明确的业务问题描述和工单类型"
             "（售后、投诉、咨询）；当前没有创建或提交任何工单。"
         )
-    if intent.kind == "ticket_preview" and awaiting and not confirmed:
-        if re.search(r"(?:已经创建|已创建|创建成功|提交成功|已经提交)", text):
-            return "工单预览已生成，尚未创建或提交，等待你在确认卡片上明确确认。"
-    if intent.kind == "ticket_cancel":
-        if not awaiting:
-            return "已取消待确认的动作；当前没有待确认工单，也没有提交任何写入。"
+    if (
+        intent.kind == "ticket_preview"
+        and awaiting
+        and not confirmed
+        and re.search(r"(?:已经创建|已创建|创建成功|提交成功|已经提交)", text)
+    ):
+        return "工单预览已生成，尚未创建或提交，等待你在确认卡片上明确确认。"
+    if intent.kind == "ticket_cancel" and not awaiting:
+        return "已取消待确认的动作；当前没有待确认工单，也没有提交任何写入。"
     if intent.kind == "ticket_confirm" and not confirmed:
         return "尚未提交工单。请使用预览卡片的明确确认操作；模型文本不能代替客户端确认。"
-    if intent.kind == "none" and not confirmed:
-        if re.search(
+    if intent.kind == "none" and not confirmed and re.search(
             r"(?:已经创建|已创建|创建成功|提交成功|预览已生成|预览已经生成|"
             r"预览草稿已生成)",
             text,
-        ):
-            return "当前请求没有生成可确认的工单预览，也未创建或提交任何工单。"
+    ):
+        return "当前请求没有生成可确认的工单预览，也未创建或提交任何工单。"
     return text

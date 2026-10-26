@@ -1,0 +1,10 @@
+{
+  "case_ids": [
+    "DEV-DIRECT-E300",
+    "DEV-POLICY-V2",
+    "DEV-ORDER-1002-TOOL",
+    "DEV-CLARIFY-SKU"
+  ],
+  "completed": 4,
+  "total": 5
+}

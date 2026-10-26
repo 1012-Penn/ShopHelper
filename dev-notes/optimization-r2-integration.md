@@ -91,7 +91,7 @@ E2E 默认路径逐题收到 `Thinking mode does not support this tool_choice`�
 - 定向集成：`219 passed`；
 - reliability acceptance：通过，32/32 隔离 SQLite run，0 模型调用；
 - 全量：`1011 passed, 2 skipped, 1 xfailed`；
-- Ruff 修改文件：通过；
+- Ruff：原“修改文件通过”声明已撤回，第三轮验收改用可复现的逐范围结果；
 - `git diff --check`：通过。
 
 ## 预算

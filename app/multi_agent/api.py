@@ -31,6 +31,7 @@ class MultiAgentChatResponse(BaseModel):
     stop_reasons: list[str]
     trace: list[dict]
     write_previews: list[dict]
+    action_artifacts: list[dict] | None = None
     steps: int
     tokens: int
 
@@ -44,7 +45,11 @@ def create_multi_agent_router(runtime: MultiAgentRunner | None = None) -> APIRou
 
     router = APIRouter()
 
-    @router.post("/api/multi-agent/chat", response_model=MultiAgentChatResponse)
+    @router.post(
+        "/api/multi-agent/chat",
+        response_model=MultiAgentChatResponse,
+        response_model_exclude_defaults=True,
+    )
     async def chat(payload: MultiAgentChatRequest, request: Request) -> dict:
         if not payload.message.strip():
             raise HTTPException(status_code=422, detail="message must not be blank")
@@ -104,6 +109,7 @@ def create_multi_agent_router(runtime: MultiAgentRunner | None = None) -> APIRou
             "stop_reasons": state.get("stop_reasons", []),
             "trace": state.get("trace", []),
             "write_previews": state.get("write_previews", []),
+            "action_artifacts": state.get("action_artifacts"),
             "steps": int(state.get("steps", 0)),
             "tokens": int(state.get("tokens", 0)),
         }

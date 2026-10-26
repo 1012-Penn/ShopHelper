@@ -100,8 +100,8 @@ def test_list_orders_defaults_to_legacy_and_explicit_namespaces_are_stable():
 
 
 def test_query_order_tool_preserves_legacy_and_accepts_corpus_id():
-    from tests.conftest import make_session_factory
     from app.tools.builtin import build_default_registry
+    from tests.conftest import make_session_factory
 
     registry = build_default_registry(
         make_session_factory(), embedder=object(), vectors=object()
@@ -131,7 +131,7 @@ def test_query_faq_passes_order_derived_policy_scope_to_retrieval():
                 reason="empty",
                 filter_fallback=False,
                 degraded=False,
-                snapshot=lambda: [],
+                snapshot=list,
                 scope_status=scope_value,
                 scope_excluded=[],
                 scope_unknown_ids=[],

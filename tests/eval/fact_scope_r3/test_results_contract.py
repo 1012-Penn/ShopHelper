@@ -3,7 +3,6 @@ from pathlib import Path
 
 from tests.eval.fact_scope_r3.harness import ARMS, load_frozen_manifest, summarize
 
-
 RUNS = Path(__file__).resolve().parent / "runs"
 
 

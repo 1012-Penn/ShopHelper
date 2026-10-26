@@ -109,11 +109,10 @@ def _behavior_passes(expected: str, observed: str, answer: str, case: dict) -> b
         norm = _norm(answer)
         if "sku" in slots and not any(term in norm for term in ("型号", "sku", "商品")):
             return False
-        if "order_id" in slots and not any(
-            term in norm for term in ("订单号", "订单", "哪一笔")
-        ):
-            return False
-        return True
+        return not (
+            "order_id" in slots
+            and not any(term in norm for term in ("订单号", "订单", "哪一笔"))
+        )
     if expected == "refuse":
         return observed == "refuse"
     return observed == "answer"
@@ -246,11 +245,7 @@ def _citation_status(case: dict, answer: str, evidence: list[dict], mapping: dic
     all_conditions = set(case.get("conditions") or [])
     if all_fact_ids - covered_facts or all_conditions - covered_conditions:
         uncertain = True
-    if invalid:
-        status = "unsupported"
-    elif unsupported:
-        status = "unsupported"
-    elif not any_citation:
+    if invalid or unsupported or not any_citation:
         status = "unsupported"
     elif uncertain:
         status = "uncertain"

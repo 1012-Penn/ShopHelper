@@ -26,6 +26,16 @@ class ActionSessionLedger:
             item = self._pending.get(conversation_id)
             return item.model_copy(deep=True) if item is not None else None
 
+    def latest_for_confirm_key(self, confirm_key: str) -> ActionArtifact | None:
+        """Return the newest observable artifact for a server-issued key."""
+        if not confirm_key:
+            return None
+        with self._lock:
+            for item in reversed(self._events):
+                if item.confirm_key == confirm_key:
+                    return item.model_copy(deep=True)
+        return None
+
     def put_pending(self, artifact: ActionArtifact) -> list[ActionArtifact]:
         """A revised preview supersedes, but never confirms, the prior preview."""
         with self._lock:

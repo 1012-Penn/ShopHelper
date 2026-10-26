@@ -39,7 +39,6 @@ from app.tools.engine import ToolEngine
 from scripts.ch15_paid_guard import _extract_usage, _json_safe, _utc_now
 from scripts.eval_cost import BudgetExceeded, PricingTable
 
-
 HERE = Path(__file__).resolve().parent
 SCENARIO_PATH = HERE / "scenarios.jsonl"
 POLICY_PATH = HERE / "fixtures" / "policies.json"
@@ -751,7 +750,6 @@ async def run_case(scenario: dict, *, arm: str, model: ChatOpenAI,
     technical_errors: list[str] = []
     unconfirmed_before_confirm = 0
     confirmed_rows_before = 0
-    duplicate_confirmation_attempts = 0
     run_turn = 0
     for item in scenario["workflow"]:
         if item["type"] == "user":
@@ -775,7 +773,7 @@ async def run_case(scenario: dict, *, arm: str, model: ChatOpenAI,
                         "trace": [],
                         "role_histories": {},
                     })
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - scenario failures are evidence
                 state = {
                     "status": "failed", "final_reply": "",
                     "errors": [f"harness:{type(exc).__name__}:{exc}"],
@@ -1019,8 +1017,10 @@ def write_report(summary: dict) -> None:
         paired = summary[split]["paired_action_vs_baseline"]
         lines += [
             "",
-            f"{split} 配对（action_contract 对 baseline）："
-            f"`{paired['wins']}胜/{paired['losses']}负/{paired['ties']}平`。",
+            (
+                f"{split} 配对（action_contract 对 baseline）："
+                f"`{paired['wins']}胜/{paired['losses']}负/{paired['ties']}平`。"
+            ),
         ]
     lines += [
         "",

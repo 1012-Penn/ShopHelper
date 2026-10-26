@@ -9,6 +9,8 @@ from __future__ import annotations
 import asyncio
 import re
 
+from langchain_core.messages import AIMessage
+
 from app.answer_plan.models import EvidenceCandidate
 from app.answer_plan.pipeline import AnswerPlanPipeline
 
@@ -104,6 +106,7 @@ def make_answer_plan_node(pipeline: AnswerPlanPipeline):
         _emit(writer, {"type": "token", "content": result.rendered.text})
         return {
             "final_reply": result.rendered.text,
+            "messages": [AIMessage(content=result.rendered.text)],
             "answer_plan": {
                 "status": result.validation.status,
                 "disposition": result.plan.disposition,
@@ -113,9 +116,11 @@ def make_answer_plan_node(pipeline: AnswerPlanPipeline):
             },
             "trace": [
                 *(state.get("trace") or []),
-                f"node=answer_plan status={result.validation.status} "
-                f"corrections={result.correction_attempts} "
-                f"calls={result.planner_calls}",
+                (
+                    f"node=answer_plan status={result.validation.status} "
+                    f"corrections={result.correction_attempts} "
+                    f"calls={result.planner_calls}"
+                ),
             ],
         }
 

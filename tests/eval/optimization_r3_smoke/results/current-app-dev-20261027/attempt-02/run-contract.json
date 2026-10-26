@@ -1,0 +1,28 @@
+{
+  "flags": {
+    "adaptive_routing_enabled": false,
+    "answer_plan_enabled": true,
+    "answer_verification_enabled": false,
+    "claim_grounding_enabled": false,
+    "multi_agent_action_contracts_enabled": true,
+    "multi_agent_handoff_mode": "raw",
+    "rag_gap_trigger_enabled": false
+  },
+  "manifest": "tests/eval/optimization_r3_smoke/manifest.json",
+  "manifest_sha256": "9ac29abe1c637f15694db65e15375bf3764cd4d9954f74d1731d4573166a26ab",
+  "max_new_api_usd": 2.0,
+  "max_provider_calls": 80,
+  "model": "deepseek-flash",
+  "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+  "run_version": "optimization-r3-integration-smoke-v2",
+  "schema_version": 1,
+  "snapshot_expected_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+  "stop_rules": [
+    "refuse to run without --allow-paid",
+    "abort before a provider reservation that would exceed 80 calls",
+    "abort if an infrastructure failure prevents the fixed task from receiving a response",
+    "record all provider retries and never exceed two retries per call",
+    "do not replace a failed run with a second run"
+  ],
+  "structured_output_mode": "auto"
+}

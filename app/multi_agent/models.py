@@ -9,7 +9,6 @@ from pydantic import BaseModel, Field, model_validator
 from app.action_contracts.models import ActionArtifact
 from app.evidence_contracts import EvidenceClaim, TaskHandoff
 
-
 AgentName = Literal["retrieval", "action"]
 Disposition = Literal["execute", "clarify", "refuse", "handoff"]
 
@@ -30,7 +29,7 @@ class AgentPlan(BaseModel):
     reason: str = Field(default="", max_length=500)
 
     @model_validator(mode="after")
-    def validate_dependencies(self) -> "AgentPlan":
+    def validate_dependencies(self) -> AgentPlan:
         if len(self.tasks) > 3:
             raise ValueError("a plan may contain at most 3 tasks")
         if self.disposition != "execute" and self.tasks:

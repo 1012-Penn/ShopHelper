@@ -1,0 +1,1333 @@
+{
+  "limit_usd": 2.0,
+  "pending": {},
+  "records": [
+    {
+      "actual_usd": 0.000174768,
+      "attempt_id": "a07ed661a0c146c999ab98a616f4c6e7",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007197,
+      "reserved_at": "2026-10-26T19:07:59.901303+00:00",
+      "settled_at": "2026-10-26T19:08:00.940914+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 308,
+        "output_tokens": 100
+      }
+    },
+    {
+      "actual_usd": 8.536799999999999e-05,
+      "attempt_id": "6603681e81e4426492f65453442caceb",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007421999999999999,
+      "reserved_at": "2026-10-26T19:08:00.946662+00:00",
+      "settled_at": "2026-10-26T19:08:01.691145+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 314,
+        "output_tokens": 24
+      }
+    },
+    {
+      "actual_usd": 0.0004002,
+      "attempt_id": "2528349c39794d8bb672f2e321adb116",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006651,
+      "reserved_at": "2026-10-26T19:08:01.696367+00:00",
+      "settled_at": "2026-10-26T19:08:03.729845+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 166,
+        "output_tokens": 292
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "24e289909ad54d58b36967b7bd365f1f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:08:03.736237+00:00",
+      "settled_at": "2026-10-26T19:08:03.991052+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 10,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "6154cfeeeff941469ba0e8bcf84aa4e1",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:08:05.501543+00:00",
+      "settled_at": "2026-10-26T19:08:06.275671+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4837,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.000256848,
+      "attempt_id": "d05683de13ad492e9edbaa8bd1be6d1c",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011175,
+      "reserved_at": "2026-10-26T19:08:06.280425+00:00",
+      "settled_at": "2026-10-26T19:08:07.616622+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 1408,
+        "input_tokens": 1740,
+        "output_tokens": 124
+      }
+    },
+    {
+      "actual_usd": 0.0018311999999999998,
+      "attempt_id": "a1188b2997164658aa1f0e85fd6dc786",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0014751,
+      "reserved_at": "2026-10-26T19:08:07.653302+00:00",
+      "settled_at": "2026-10-26T19:08:12.586772+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 3020,
+        "output_tokens": 771
+      }
+    },
+    {
+      "actual_usd": 0.00023836799999999998,
+      "attempt_id": "ee3baa1ad45a4e2eab05729288a1c227",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007268999999999999,
+      "reserved_at": "2026-10-26T19:08:12.715613+00:00",
+      "settled_at": "2026-10-26T19:08:14.237605+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 332,
+        "output_tokens": 147
+      }
+    },
+    {
+      "actual_usd": 0.00012256799999999998,
+      "attempt_id": "9343650c347a42e2bf259ce84430d0cf",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007494,
+      "reserved_at": "2026-10-26T19:08:14.246978+00:00",
+      "settled_at": "2026-10-26T19:08:15.133873+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 338,
+        "output_tokens": 49
+      }
+    },
+    {
+      "actual_usd": 0.0006209999999999999,
+      "attempt_id": "54d841df88f745be987b494116283de8",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006723,
+      "reserved_at": "2026-10-26T19:08:15.140062+00:00",
+      "settled_at": "2026-10-26T19:08:17.774545+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 190,
+        "output_tokens": 470
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "4f49724ace5c4208b571d1dfa1e7647d",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:08:17.776818+00:00",
+      "settled_at": "2026-10-26T19:08:18.036664+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 37,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "9e05ca96aa04491fb7583f83005fb5f5",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:08:18.065329+00:00",
+      "settled_at": "2026-10-26T19:08:18.776752+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4980,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0008716679999999999,
+      "attempt_id": "d909b280d44a4380af34d6f79c883932",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010517999999999999,
+      "reserved_at": "2026-10-26T19:08:18.778824+00:00",
+      "settled_at": "2026-10-26T19:08:21.500812+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1351,
+        "output_tokens": 420
+      }
+    },
+    {
+      "actual_usd": 0.0049644,
+      "attempt_id": "666ce79bd4c6497fbb3e3934fb91fb43",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0013662,
+      "reserved_at": "2026-10-26T19:08:21.532767+00:00",
+      "settled_at": "2026-10-26T19:08:37.907165+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2404,
+        "output_tokens": 3536
+      }
+    },
+    {
+      "actual_usd": 0.0043092,
+      "attempt_id": "0db7323d6d6c426caa383e5d5fd19561",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0015018,
+      "reserved_at": "2026-10-26T19:08:37.928897+00:00",
+      "settled_at": "2026-10-26T19:08:50.400997+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2924,
+        "output_tokens": 2860
+      }
+    },
+    {
+      "actual_usd": 0.00016906799999999997,
+      "attempt_id": "16afd952fc474224999930302e20c236",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007224,
+      "reserved_at": "2026-10-26T19:08:50.539075+00:00",
+      "settled_at": "2026-10-26T19:08:51.373850+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 313,
+        "output_tokens": 94
+      }
+    },
+    {
+      "actual_usd": 9.4068e-05,
+      "attempt_id": "a07b8249b5724e44b7d5f843086ca87f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007449,
+      "reserved_at": "2026-10-26T19:08:51.380768+00:00",
+      "settled_at": "2026-10-26T19:08:52.206634+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 319,
+        "output_tokens": 30
+      }
+    },
+    {
+      "actual_usd": 0.00016259999999999997,
+      "attempt_id": "860bba64fdf04bad88db777177b1d3a8",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011139,
+      "reserved_at": "2026-10-26T19:08:52.226882+00:00",
+      "settled_at": "2026-10-26T19:08:52.999823+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 542,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.00025949999999999997,
+      "attempt_id": "7b0e9622589c432cac434b6223252dc4",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011664,
+      "reserved_at": "2026-10-26T19:08:53.046585+00:00",
+      "settled_at": "2026-10-26T19:08:53.767717+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 717,
+        "output_tokens": 37
+      }
+    },
+    {
+      "actual_usd": 0.000153168,
+      "attempt_id": "8a27e1b41b4240ccb3e74a6e4bb5bd1f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007191,
+      "reserved_at": "2026-10-26T19:08:53.997983+00:00",
+      "settled_at": "2026-10-26T19:08:55.129623+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 304,
+        "output_tokens": 83
+      }
+    },
+    {
+      "actual_usd": 0.00028696799999999997,
+      "attempt_id": "61acb48ff24d4b62a5498793ca5b5790",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007416,
+      "reserved_at": "2026-10-26T19:08:55.138659+00:00",
+      "settled_at": "2026-10-26T19:08:56.735244+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 310,
+        "output_tokens": 193
+      }
+    },
+    {
+      "actual_usd": 0.0005718,
+      "attempt_id": "5196f8c7e99547f995fbc99e389ae3ce",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006644999999999999,
+      "reserved_at": "2026-10-26T19:08:56.745520+00:00",
+      "settled_at": "2026-10-26T19:08:59.539814+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 162,
+        "output_tokens": 436
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "c67fbf591d32428b847000e57ec8ae70",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:08:59.545610+00:00",
+      "settled_at": "2026-10-26T19:08:59.805028+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 9,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "39f33eb2a69545c09831ec2bc0476f32",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:08:59.854988+00:00",
+      "settled_at": "2026-10-26T19:09:00.530149+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4465,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.000920136,
+      "attempt_id": "9c5be936b04b44a4935ce59e460858dc",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010971,
+      "reserved_at": "2026-10-26T19:09:00.533460+00:00",
+      "settled_at": "2026-10-26T19:09:03.631515+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 256,
+        "input_tokens": 1462,
+        "output_tokens": 464
+      }
+    },
+    {
+      "actual_usd": 0.006420599999999999,
+      "attempt_id": "59ec82fd04554082b9e2458dcec7d243",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.001416,
+      "reserved_at": "2026-10-26T19:09:03.661591+00:00",
+      "settled_at": "2026-10-26T19:09:26.302694+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2558,
+        "output_tokens": 4711
+      }
+    },
+    {
+      "actual_usd": 0.0047211,
+      "attempt_id": "e6790ca1a85c44c5a8aae0406cccb74c",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0014984999999999998,
+      "reserved_at": "2026-10-26T19:09:26.325818+00:00",
+      "settled_at": "2026-10-26T19:09:44.836955+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2881,
+        "output_tokens": 3214
+      }
+    },
+    {
+      "actual_usd": 0.00023219999999999998,
+      "attempt_id": "3e0e6112e9694854b9731a9eb1ffc7a7",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CORPUS-ORDER-ORD-1001",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007241999999999999,
+      "reserved_at": "2026-10-26T19:09:44.968698+00:00",
+      "settled_at": "2026-10-26T19:09:45.805768+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 318,
+        "output_tokens": 114
+      }
+    },
+    {
+      "actual_usd": 9.196799999999998e-05,
+      "attempt_id": "c81acd9b50a4448a8c41d35841b83633",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CORPUS-ORDER-ORD-1001",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007467,
+      "reserved_at": "2026-10-26T19:09:45.813913+00:00",
+      "settled_at": "2026-10-26T19:09:46.998871+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 324,
+        "output_tokens": 27
+      }
+    },
+    {
+      "actual_usd": 0.00016439999999999998,
+      "attempt_id": "0aeb269d5e814f46b27257bfdff77d0f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CORPUS-ORDER-ORD-1001",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011156999999999999,
+      "reserved_at": "2026-10-26T19:09:47.013407+00:00",
+      "settled_at": "2026-10-26T19:09:48.093166+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 548,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0003057,
+      "attempt_id": "3b2d82bb33674659a63c524f5fd66eec",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CORPUS-ORDER-ORD-1001",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011835,
+      "reserved_at": "2026-10-26T19:09:48.393525+00:00",
+      "settled_at": "2026-10-26T19:09:49.266468+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 775,
+        "output_tokens": 61
+      }
+    },
+    {
+      "actual_usd": 0.0005028,
+      "attempt_id": "c6861c163a3e4ea485892688313861da",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0008060999999999999,
+      "reserved_at": "2026-10-26T19:09:49.551997+00:00",
+      "settled_at": "2026-10-26T19:09:51.718690+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 544,
+        "output_tokens": 283
+      }
+    },
+    {
+      "actual_usd": 0.0005181,
+      "attempt_id": "b73d7f3624e5437c94a707ce99328063",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0009066,
+      "reserved_at": "2026-10-26T19:09:51.728920+00:00",
+      "settled_at": "2026-10-26T19:09:53.185226+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 767,
+        "output_tokens": 240
+      }
+    },
+    {
+      "actual_usd": 0.00032309999999999994,
+      "attempt_id": "3a292831415946b48a108acb95ef33b9",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006669,
+      "reserved_at": "2026-10-26T19:09:53.210252+00:00",
+      "settled_at": "2026-10-26T19:09:54.663354+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 169,
+        "output_tokens": 227
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "aea13b2c7aef483f8af20c5ff89b1f01",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:09:54.667768+00:00",
+      "settled_at": "2026-10-26T19:09:54.900008+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 15,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "d9ff7538111d4784a13c72ee3a8d95c9",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:09:54.925032+00:00",
+      "settled_at": "2026-10-26T19:09:55.531544+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4262,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0017458679999999998,
+      "attempt_id": "3c59800cfab9408da43c96c12d8a0f5e",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010961999999999999,
+      "reserved_at": "2026-10-26T19:09:55.534815+00:00",
+      "settled_at": "2026-10-26T19:10:02.599595+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1233,
+        "output_tokens": 1178
+      }
+    },
+    {
+      "actual_usd": 0.000698676,
+      "attempt_id": "86f9838c7242433cac7c36f009d8abcd",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0013871999999999999,
+      "reserved_at": "2026-10-26T19:10:02.616594+00:00",
+      "settled_at": "2026-10-26T19:10:04.343684+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 896,
+        "input_tokens": 2419,
+        "output_tokens": 197
+      }
+    },
+    {
+      "actual_usd": 0.0014043,
+      "attempt_id": "7302a84d93ce4f6096180a80e51c0cdb",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006696,
+      "reserved_at": "2026-10-26T19:10:04.358959+00:00",
+      "settled_at": "2026-10-26T19:10:10.335459+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 177,
+        "output_tokens": 1126
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "1a91b7988ed14251bac71af7af4d05c5",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:10.341092+00:00",
+      "settled_at": "2026-10-26T19:10:10.595770+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 26,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "31b7655ed30041d4a1987a3f796dcd4b",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:10.618554+00:00",
+      "settled_at": "2026-10-26T19:10:11.330056+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4756,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.000735468,
+      "attempt_id": "2dd49de8ea0d42ae881bc424f48ff481",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010712999999999999,
+      "reserved_at": "2026-10-26T19:10:11.333725+00:00",
+      "settled_at": "2026-10-26T19:10:14.138956+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1173,
+        "output_tokens": 351
+      }
+    },
+    {
+      "actual_usd": 0.0010160999999999998,
+      "attempt_id": "5aed3d37811a4fc0ac2b18f30334103e",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0008097,
+      "reserved_at": "2026-10-26T19:10:11.736773+00:00",
+      "settled_at": "2026-10-26T19:10:16.163663+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 559,
+        "output_tokens": 707
+      }
+    },
+    {
+      "actual_usd": 0.000190272,
+      "attempt_id": "bcdf44cfce6946bf8da5776e8fedf703",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0009042,
+      "reserved_at": "2026-10-26T19:10:16.179470+00:00",
+      "settled_at": "2026-10-26T19:10:17.006533+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 512,
+        "input_tokens": 768,
+        "output_tokens": 92
+      }
+    },
+    {
+      "actual_usd": 0.000414972,
+      "attempt_id": "c6fd06969cf94db0bb939ef1e3311825",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0009084,
+      "reserved_at": "2026-10-26T19:10:16.175666+00:00",
+      "settled_at": "2026-10-26T19:10:18.286744+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 512,
+        "input_tokens": 773,
+        "output_tokens": 278
+      }
+    },
+    {
+      "actual_usd": 0.0005807999999999999,
+      "attempt_id": "d73041a386fa4092af035ac1a3f6a5dc",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006675,
+      "reserved_at": "2026-10-26T19:10:17.023345+00:00",
+      "settled_at": "2026-10-26T19:10:19.802561+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 172,
+        "output_tokens": 441
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "40bb100314674cf28f534ddf471e6685",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:19.810378+00:00",
+      "settled_at": "2026-10-26T19:10:20.056027+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 27,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0005325,
+      "attempt_id": "8855527f8e72477da2560a4290657885",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006663,
+      "reserved_at": "2026-10-26T19:10:18.314732+00:00",
+      "settled_at": "2026-10-26T19:10:20.690758+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 167,
+        "output_tokens": 402
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "cf305241d4a5438b995fbada40e30381",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:20.078703+00:00",
+      "settled_at": "2026-10-26T19:10:20.778694+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 5009,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "f65f99cf64594ec79071b89194b9ca69",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:20.697419+00:00",
+      "settled_at": "2026-10-26T19:10:20.842377+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 18,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "2898c630a2ce4c82bed501ff9babaa6a",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:20.867627+00:00",
+      "settled_at": "2026-10-26T19:10:21.418559+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4334,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.000667068,
+      "attempt_id": "9e3228e65bf041fd80fbe8d2fd156281",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011321999999999999,
+      "reserved_at": "2026-10-26T19:10:20.783223+00:00",
+      "settled_at": "2026-10-26T19:10:22.518328+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1305,
+        "output_tokens": 261
+      }
+    },
+    {
+      "actual_usd": 0.001280568,
+      "attempt_id": "28c3ee9b80cd4e5ba522e1518a021cdc",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-PREVIEW-CONFIRM",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010329,
+      "reserved_at": "2026-10-26T19:10:21.422921+00:00",
+      "settled_at": "2026-10-26T19:10:26.932222+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1098,
+        "output_tokens": 824
+      }
+    },
+    {
+      "actual_usd": 0.000633,
+      "attempt_id": "66e84366fd524d398a260f7d0705a8c7",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0008031,
+      "reserved_at": "2026-10-26T19:10:26.973538+00:00",
+      "settled_at": "2026-10-26T19:10:29.577978+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 538,
+        "output_tokens": 393
+      }
+    },
+    {
+      "actual_usd": 0.000282372,
+      "attempt_id": "0b3706df00814c41951e11821946cd61",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0009078,
+      "reserved_at": "2026-10-26T19:10:29.590703+00:00",
+      "settled_at": "2026-10-26T19:10:30.779842+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 512,
+        "input_tokens": 771,
+        "output_tokens": 168
+      }
+    },
+    {
+      "actual_usd": 0.0003237,
+      "attempt_id": "3cd3e2efeabf4abc87508a0a63fb1470",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006657,
+      "reserved_at": "2026-10-26T19:10:30.809458+00:00",
+      "settled_at": "2026-10-26T19:10:32.980425+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 167,
+        "output_tokens": 228
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "f40271b8be214dae81ec7890ee2f9654",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:32.987384+00:00",
+      "settled_at": "2026-10-26T19:10:33.204769+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 13,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "8427c2ecf0894919b71a02a182672e61",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:10:33.229389+00:00",
+      "settled_at": "2026-10-26T19:10:33.778839+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 3508,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.000797268,
+      "attempt_id": "4298e61f64964a83b1e26d425656f58e",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0009912,
+      "reserved_at": "2026-10-26T19:10:33.782964+00:00",
+      "settled_at": "2026-10-26T19:10:36.656716+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1015,
+        "output_tokens": 442
+      }
+    },
+    {
+      "actual_usd": 0.000633876,
+      "attempt_id": "6ba7f9ef27224126beb5134a1451549d",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0012929999999999999,
+      "reserved_at": "2026-10-26T19:10:36.676952+00:00",
+      "settled_at": "2026-10-26T19:10:38.147654+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 896,
+        "input_tokens": 2299,
+        "output_tokens": 173
+      }
+    },
+    {
+      "actual_usd": 0.0010959,
+      "attempt_id": "310678217e0742ffb27c02dd9a51c4df",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "R3-CANCEL-FEASIBILITY",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev_smoke",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010845,
+      "reserved_at": "2026-10-26T19:10:38.160541+00:00",
+      "settled_at": "2026-10-26T19:10:41.417212+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 1725,
+        "output_tokens": 482
+      }
+    }
+  ],
+  "schema_version": 1
+}

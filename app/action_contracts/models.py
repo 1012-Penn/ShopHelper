@@ -12,7 +12,6 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field
 
-
 ActionIntentKind = Literal["none", "ticket_preview", "ticket_confirm", "ticket_cancel"]
 ActionArtifactState = Literal[
     "preview", "awaiting_confirmation", "confirmed", "cancelled", "failed",

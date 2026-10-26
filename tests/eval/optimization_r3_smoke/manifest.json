@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "run_version": "optimization-r3-integration-smoke-v2",
+  "frozen_at": "2026-10-27T03:08:00+08:00",
+  "frozen_before_paid_run": true,
+  "model": "deepseek-flash",
+  "max_new_api_usd": 2.0,
+  "max_provider_calls": 80,
+  "max_wall_seconds": 600,
+  "max_retries_per_call": 2,
+  "split": "dev_smoke",
+  "chat_case_ids": [
+    "DEV-DIRECT-E300",
+    "DEV-POLICY-V2",
+    "DEV-ORDER-1002-TOOL",
+    "DEV-CLARIFY-SKU"
+  ],
+  "chat_cases": [
+    {
+      "id": "R3-CORPUS-ORDER-ORD-1001",
+      "split": "dev_smoke",
+      "source_group": "r3_corpus_order_namespace",
+      "turns": [
+        {
+          "role": "user",
+          "content": "订单 ORD-1001 的金额和状态是什么？不要猜测商品名称。"
+        }
+      ],
+      "expected_behavior": "answer",
+      "facts": [
+        {
+          "fact_id": "R3-ORD-1001-AMOUNT",
+          "entity": "ORD-1001",
+          "predicate": "金额",
+          "value": 248,
+          "unit": "元",
+          "require_entity": true
+        },
+        {
+          "fact_id": "R3-ORD-1001-STATUS",
+          "entity": "ORD-1001",
+          "predicate": "状态",
+          "value": "未支付",
+          "accepted_phrases": ["未支付"],
+          "require_entity": true
+        }
+      ],
+      "conditions": [],
+      "forbidden_claims": ["已签收", "299 元", "无线耳机"],
+      "required_evidence_terms": [],
+      "requires_citation": false,
+      "expected_tools": [
+        {
+          "name": "query_order",
+          "args_contains": {"order_id": "ORD-1001"}
+        }
+      ],
+      "required_nodes": ["agent"]
+    }
+  ],
+  "multi_agent_cases": [
+    {
+      "id": "R3-PREVIEW-CONFIRM",
+      "message": "请为订单1001创建售后工单，先给我预览，不要直接提交。",
+      "confirm_preview": true
+    },
+    {
+      "id": "R3-CANCEL-FEASIBILITY",
+      "message": "订单1001能取消吗？不要创建工单。",
+      "confirm_preview": false
+    }
+  ],
+  "config": {
+    "answer_plan_enabled": true,
+    "multi_agent_action_contracts_enabled": true,
+    "multi_agent_handoff_mode": "raw",
+    "adaptive_routing_enabled": false,
+    "answer_verification_enabled": false,
+    "claim_grounding_enabled": false,
+    "rag_gap_trigger_enabled": false
+  },
+  "stop_rules": [
+    "refuse to run without --allow-paid",
+    "abort before a provider reservation that would exceed 80 calls",
+    "abort if an infrastructure failure prevents the fixed task from receiving a response",
+    "record all provider retries and never exceed two retries per call",
+    "do not replace a failed run with a second run"
+  ]
+}

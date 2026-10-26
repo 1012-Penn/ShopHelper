@@ -1,0 +1,99 @@
+{
+  "chat_case_ids": [
+    "DEV-DIRECT-E300",
+    "DEV-POLICY-V2",
+    "DEV-ORDER-1002-TOOL",
+    "DEV-CLARIFY-SKU"
+  ],
+  "chat_cases": [
+    {
+      "conditions": [],
+      "expected_behavior": "answer",
+      "expected_tools": [
+        {
+          "args_contains": {
+            "order_id": "ORD-1001"
+          },
+          "name": "query_order"
+        }
+      ],
+      "facts": [
+        {
+          "entity": "ORD-1001",
+          "fact_id": "R3-ORD-1001-AMOUNT",
+          "predicate": "金额",
+          "require_entity": true,
+          "unit": "元",
+          "value": 248
+        },
+        {
+          "accepted_phrases": [
+            "未支付"
+          ],
+          "entity": "ORD-1001",
+          "fact_id": "R3-ORD-1001-STATUS",
+          "predicate": "状态",
+          "require_entity": true,
+          "value": "未支付"
+        }
+      ],
+      "forbidden_claims": [
+        "已签收",
+        "299 元",
+        "无线耳机"
+      ],
+      "id": "R3-CORPUS-ORDER-ORD-1001",
+      "required_evidence_terms": [],
+      "required_nodes": [
+        "agent"
+      ],
+      "requires_citation": false,
+      "source_group": "r3_corpus_order_namespace",
+      "split": "dev_smoke",
+      "turns": [
+        {
+          "content": "订单 ORD-1001 的金额和状态是什么？不要猜测商品名称。",
+          "role": "user"
+        }
+      ]
+    }
+  ],
+  "config": {
+    "adaptive_routing_enabled": false,
+    "answer_plan_enabled": true,
+    "answer_verification_enabled": false,
+    "claim_grounding_enabled": false,
+    "multi_agent_action_contracts_enabled": true,
+    "multi_agent_handoff_mode": "raw",
+    "rag_gap_trigger_enabled": false
+  },
+  "frozen_at": "2026-10-27T03:08:00+08:00",
+  "frozen_before_paid_run": true,
+  "max_new_api_usd": 2.0,
+  "max_provider_calls": 80,
+  "max_retries_per_call": 2,
+  "max_wall_seconds": 600,
+  "model": "deepseek-flash",
+  "multi_agent_cases": [
+    {
+      "confirm_preview": true,
+      "id": "R3-PREVIEW-CONFIRM",
+      "message": "请为订单1001创建售后工单，先给我预览，不要直接提交。"
+    },
+    {
+      "confirm_preview": false,
+      "id": "R3-CANCEL-FEASIBILITY",
+      "message": "订单1001能取消吗？不要创建工单。"
+    }
+  ],
+  "run_version": "optimization-r3-integration-smoke-v2",
+  "schema_version": 1,
+  "split": "dev_smoke",
+  "stop_rules": [
+    "refuse to run without --allow-paid",
+    "abort before a provider reservation that would exceed 80 calls",
+    "abort if an infrastructure failure prevents the fixed task from receiving a response",
+    "record all provider retries and never exceed two retries per call",
+    "do not replace a failed run with a second run"
+  ]
+}

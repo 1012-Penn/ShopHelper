@@ -13,7 +13,6 @@ from scripts.answer_plan_r3.data import (
     model_projection,
 )
 
-
 ROOT = Path(__file__).resolve().parents[3]
 DATA = ROOT / "tests" / "eval" / "answer_plan_r3"
 

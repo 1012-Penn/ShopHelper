@@ -1,0 +1,443 @@
+{
+  "limit_usd": 2.0,
+  "pending": {},
+  "records": [
+    {
+      "actual_usd": 0.00016036799999999998,
+      "attempt_id": "00920fa8c25b4254948642fdd04c4e1c",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007197,
+      "reserved_at": "2026-10-26T19:06:39.176468+00:00",
+      "settled_at": "2026-10-26T19:06:40.262660+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 308,
+        "output_tokens": 88
+      }
+    },
+    {
+      "actual_usd": 8.776799999999999e-05,
+      "attempt_id": "9934bd0370524d15ab5690b686fa55eb",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007421999999999999,
+      "reserved_at": "2026-10-26T19:06:40.272110+00:00",
+      "settled_at": "2026-10-26T19:06:40.687047+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 314,
+        "output_tokens": 26
+      }
+    },
+    {
+      "actual_usd": 0.0002982,
+      "attempt_id": "493b1ffad4ad4888ad594cf0bc41e054",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006651,
+      "reserved_at": "2026-10-26T19:06:40.693020+00:00",
+      "settled_at": "2026-10-26T19:06:42.216833+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 166,
+        "output_tokens": 207
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "8a0fd3f90efb498ca5746554dde1ff5e",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:06:42.218516+00:00",
+      "settled_at": "2026-10-26T19:06:42.481305+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 9,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "277061471693415f9aec544ac4b50fc1",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:06:43.695015+00:00",
+      "settled_at": "2026-10-26T19:06:44.408760+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 4899,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.00032448000000000004,
+      "attempt_id": "08a65a2adda349c8aa5a269befc9e2a5",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011502,
+      "reserved_at": "2026-10-26T19:06:44.413709+00:00",
+      "settled_at": "2026-10-26T19:06:45.495576+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 1280,
+        "input_tokens": 1856,
+        "output_tokens": 120
+      }
+    },
+    {
+      "actual_usd": 0.0025677,
+      "attempt_id": "15fa323470d24a4a87ffc38c3e99cca8",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-DIRECT-E300",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0015252,
+      "reserved_at": "2026-10-26T19:06:45.527991+00:00",
+      "settled_at": "2026-10-26T19:06:53.344926+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 3223,
+        "output_tokens": 1334
+      }
+    },
+    {
+      "actual_usd": 0.00024076799999999998,
+      "attempt_id": "13c04aed452d4aae89ebc3390dd7280c",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007268999999999999,
+      "reserved_at": "2026-10-26T19:06:53.481743+00:00",
+      "settled_at": "2026-10-26T19:06:54.722984+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 332,
+        "output_tokens": 149
+      }
+    },
+    {
+      "actual_usd": 0.000104568,
+      "attempt_id": "fd0ebedf78894310ad43830e7fffe465",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007494,
+      "reserved_at": "2026-10-26T19:06:54.732072+00:00",
+      "settled_at": "2026-10-26T19:06:55.368062+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 338,
+        "output_tokens": 34
+      }
+    },
+    {
+      "actual_usd": 0.0007409999999999999,
+      "attempt_id": "351a9e24723046c78d903fccaa558f1f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0006723,
+      "reserved_at": "2026-10-26T19:06:55.382567+00:00",
+      "settled_at": "2026-10-26T19:06:58.655236+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 190,
+        "output_tokens": 570
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "2f91d345e025407bab35b347d7575f2b",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "embedding",
+        "model": "BAAI/bge-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:06:58.657614+00:00",
+      "settled_at": "2026-10-26T19:06:58.896310+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 37,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0,
+      "attempt_id": "21938c6c5e364a14953d9842aba4d497",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "rerank",
+        "model": "BAAI/bge-reranker-v2-m3",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0,
+      "reserved_at": "2026-10-26T19:06:58.930025+00:00",
+      "settled_at": "2026-10-26T19:06:59.628103+00:00",
+      "status": "succeeded",
+      "usage": {
+        "input_tokens": 5267,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.000930036,
+      "attempt_id": "ff8ed1f37c22456badac3956c4e15e5f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "evidence_judge",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0010517999999999999,
+      "reserved_at": "2026-10-26T19:06:59.637724+00:00",
+      "settled_at": "2026-10-26T19:07:02.833037+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 256,
+        "input_tokens": 1351,
+        "output_tokens": 500
+      }
+    },
+    {
+      "actual_usd": 0.0044868,
+      "attempt_id": "ea54cbed656246e1828ac026edac5af0",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-POLICY-V2",
+        "kind": "llm",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0013662,
+      "reserved_at": "2026-10-26T19:07:02.863817+00:00",
+      "settled_at": "2026-10-26T19:07:19.143787+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2404,
+        "output_tokens": 3138
+      }
+    },
+    {
+      "actual_usd": 0.000191868,
+      "attempt_id": "c7e8d335cc344063852677a2fabbd0ee",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007224,
+      "reserved_at": "2026-10-26T19:07:19.281639+00:00",
+      "settled_at": "2026-10-26T19:07:20.308167+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 313,
+        "output_tokens": 113
+      }
+    },
+    {
+      "actual_usd": 0.00010726799999999999,
+      "attempt_id": "72970078105a47049464da2755ea3e3f",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007449,
+      "reserved_at": "2026-10-26T19:07:20.315661+00:00",
+      "settled_at": "2026-10-26T19:07:21.116067+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 319,
+        "output_tokens": 41
+      }
+    },
+    {
+      "actual_usd": 0.00016259999999999997,
+      "attempt_id": "2c4d595ee57a46a087547b6169ac715c",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011139,
+      "reserved_at": "2026-10-26T19:07:21.142460+00:00",
+      "settled_at": "2026-10-26T19:07:22.231224+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 542,
+        "output_tokens": 0
+      }
+    },
+    {
+      "actual_usd": 0.0002727,
+      "attempt_id": "7313cd6de0014d7887c41ce48bccb5ac",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-ORDER-1002-TOOL",
+        "kind": "answer",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0011664,
+      "reserved_at": "2026-10-26T19:07:22.287636+00:00",
+      "settled_at": "2026-10-26T19:07:23.312253+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 717,
+        "output_tokens": 48
+      }
+    },
+    {
+      "actual_usd": 0.000263568,
+      "attempt_id": "200e54034bc94ba4ba2725dea790ec68",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "resolve",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007191,
+      "reserved_at": "2026-10-26T19:07:23.582124+00:00",
+      "settled_at": "2026-10-26T19:07:25.246102+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 304,
+        "output_tokens": 175
+      }
+    },
+    {
+      "actual_usd": 0.000260568,
+      "attempt_id": "6a9f036770034d46a7d13632187723f9",
+      "context": {
+        "arm": "r3-integration-smoke",
+        "case_id": "DEV-CLARIFY-SKU",
+        "kind": "intent",
+        "model": "deepseek-flash",
+        "split": "dev",
+        "turn": 0
+      },
+      "error": null,
+      "estimated_usd": 0.0007416,
+      "reserved_at": "2026-10-26T19:07:25.252926+00:00",
+      "settled_at": "2026-10-26T19:07:26.817508+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 310,
+        "output_tokens": 171
+      }
+    }
+  ],
+  "schema_version": 1
+}

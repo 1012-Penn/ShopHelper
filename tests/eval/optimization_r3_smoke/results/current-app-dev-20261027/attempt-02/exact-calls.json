@@ -1,0 +1,1959 @@
+{
+  "entries": {
+    "0258102b2938ad992ff289a8bf6650f29609263ff4efff8e08cff4b72fb12586": {
+      "content": "{\"resolved\":\"这个保修多久？\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"这个保修多久？\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "7219a12a-3d85-4d93-b714-3bb25ab8e01d",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 83,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 69,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 176,
+            "prompt_tokens": 304,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 387
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 304,
+        "output_tokens": 83
+      }
+    },
+    "056a0409a4ca1858ee96c1db0cb553932224e59efc45d167f42bd2e283b400ed": {
+      "content": "{\"normalized\":\"SH-E300 当前售价是多少？\",\"synonyms\":[\"SH-E300 现在卖多少钱？\",\"SH-E300 目前价格是多少？\",\"SH-E300 售价多少？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"SH-E300 当前售价是多少？\",\"synonyms\":[\"SH-E300 现在卖多少钱？\",\"SH-E300 目前价格是多少？\",\"SH-E300 售价多少？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "4818573b-7e29-4849-ab4f-3eb7e46e386f",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 292,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 247,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 166,
+            "prompt_tokens": 166,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 458
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 166,
+        "output_tokens": 292
+      }
+    },
+    "09dcddb822c62c4307818e68579bdef855f359f4067c0b7ecdaa9ce2e730dddd": {
+      "content": "{\"resolved\":\"SH-E300 现在卖多少钱？\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"SH-E300 现在卖多少钱？\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "37692f01-4387-4520-a5e8-1498df06bb95",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 100,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 82,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 180,
+            "prompt_tokens": 308,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 408
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 308,
+        "output_tokens": 100
+      }
+    },
+    "0f58cacc1e2b640026811a468975c5d0e82b886f90244a0309cad44530f39dcd": {
+      "content": "",
+      "output": {
+        "content": "",
+        "response_metadata": {
+          "finish_reason": "tool_calls",
+          "id": "a92c43d1-e85e-4149-91ce-f85b53644c53",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 197,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 141,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 896,
+            "prompt_cache_miss_tokens": 1523,
+            "prompt_tokens": 2419,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 896,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 2616
+          }
+        },
+        "tool_calls": [
+          {
+            "args": {
+              "keyword": "创建售后工单需要填写哪些字段 工单必填项 工单类型"
+            },
+            "id": "call_00_LiEr2hIXjBjVolmNV4xo4338",
+            "name": "query_faq",
+            "type": "tool_call"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "keyword": "创建售后工单需要填写哪些字段 工单必填项 工单类型"
+          },
+          "id": "call_00_LiEr2hIXjBjVolmNV4xo4338",
+          "name": "query_faq",
+          "type": "tool_call"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 896,
+        "input_tokens": 2419,
+        "output_tokens": 197
+      }
+    },
+    "1905c70649105425b11ffec6702f0ed58662f90977042affbd3b375c6027138c": {
+      "content": "{\"intent\": \"商品咨询\", \"confidence\": 0.7}",
+      "output": {
+        "content": "{\"intent\": \"商品咨询\", \"confidence\": 0.7}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "1c369174-a5cb-4cb8-8629-31a62d97dab9",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 193,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 176,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 182,
+            "prompt_tokens": 310,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 503
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 310,
+        "output_tokens": 193
+      }
+    },
+    "1f936ea18507696e2ab87673aef684ae40291ac9aed06774747bf341b025b772": {
+      "content": "{\"answered\": false, \"reason\": \"证据仅零散提到在工单中记录差异场景或处理过程，并列出售后凭证要求和检测流程，但没有明确说明售后工单的创建流程，也没有明确列出工单必填字段要求。\", \"supported_by\": []}",
+      "output": {
+        "content": "{\"answered\": false, \"reason\": \"证据仅零散提到在工单中记录差异场景或处理过程，并列出售后凭证要求和检测流程，但没有明确说明售后工单的创建流程，也没有明确列出工单必填字段要求。\", \"supported_by\": []}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "baf8bafc-3a6e-482b-86f4-9fe606ddeaa5",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 1178,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1117,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 1105,
+            "prompt_tokens": 1233,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 2411
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1233,
+        "output_tokens": 1178
+      }
+    },
+    "210936996ec86f2c301ae761259ebcbb4c669add769ffff1b28d39028f30f05a": {
+      "content": "",
+      "output": {
+        "content": "",
+        "finish_reason": null,
+        "tool_calls": [
+          {
+            "args": {
+              "order_id": "1002"
+            },
+            "id": "call_00_vspDAEAuBYxaQ0vTTfjR6912",
+            "name": "query_order"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "order_id": "1002"
+          },
+          "id": "call_00_vspDAEAuBYxaQ0vTTfjR6912",
+          "name": "query_order"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 542,
+        "output_tokens": 0
+      }
+    },
+    "2c4244a6501c2417e6f40b8a1ed0b83cab07b247295315512a320f9cdb646813": {
+      "content": "{\"disposition\":\"execute\",\"reason\":\"用户要求为订单1001创建售后工单，且明确只需预览、不直接提交。需先检索订单与售后规则，再基于检索结果生成预览草稿，不执行提交写操作。\",\"tasks\":[{\"task_id\":\"retrieve_order\",\"agent\":\"retrieval\",\"objective\":\"查询订单1001的详情及状态，并检索售后工单创建所需的FAQ、规则和字段要求，为后续预览草稿提供事实依据。\",\"depends_on\":[]},{\"task_id\":\"draft_preview\",\"agent\":\"action\",\"objective\":\"基于订单1001的检索结果和售后规则，生成售后工单创建预览，包含可填字段、处理建议及待确认信息；仅输出预览草稿，不提交、不执行任何写操作。\",\"depends_on\":[\"retrieve_order\"]}]}",
+      "output": {
+        "content": "{\"disposition\":\"execute\",\"reason\":\"用户要求为订单1001创建售后工单，且明确只需预览、不直接提交。需先检索订单与售后规则，再基于检索结果生成预览草稿，不执行提交写操作。\",\"tasks\":[{\"task_id\":\"retrieve_order\",\"agent\":\"retrieval\",\"objective\":\"查询订单1001的详情及状态，并检索售后工单创建所需的FAQ、规则和字段要求，为后续预览草稿提供事实依据。\",\"depends_on\":[]},{\"task_id\":\"draft_preview\",\"agent\":\"action\",\"objective\":\"基于订单1001的检索结果和售后规则，生成售后工单创建预览，包含可填字段、处理建议及待确认信息；仅输出预览草稿，不提交、不执行任何写操作。\",\"depends_on\":[\"retrieve_order\"]}]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "280b1c7f-4a3c-4f73-8a58-cb9db8438fbc",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 283,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 102,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 544,
+            "prompt_tokens": 544,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 827
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 544,
+        "output_tokens": 283
+      }
+    },
+    "32d35d4e2f238873856baed77360abe6ed7b159aac57c7e28d7d2056e3458cd8": {
+      "content": "{\"normalized\":\"订单取消退款拦截政策是什么\",\"synonyms\":[\"订单取消退款拦截规则\",\"取消订单退款拦截政策\",\"订单取消退款拦截规定\"]}",
+      "output": {
+        "content": "{\"normalized\":\"订单取消退款拦截政策是什么\",\"synonyms\":[\"订单取消退款拦截规则\",\"取消订单退款拦截政策\",\"订单取消退款拦截规定\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "4a87bc96-a642-464c-bdcb-4efa102f8961",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 228,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 193,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 167,
+            "prompt_tokens": 167,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 395
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 167,
+        "output_tokens": 228
+      }
+    },
+    "36db1c2ace40d6c9ead3fc029d3033a6bf797abc5dcb9e3c9b4de02e6eabb39d": {
+      "content": "{\"claims\":[{\"claim_id\":\"claim_1\",\"text\":\"签收日期为 2026-06-01 或之后的订单适用 v2 版无理由退货政策。\",\"subject\":\"订单\",\"value\":\"v2\",\"unit\":\"\",\"dates\":[\"2026-06-01\"],\"policy_version\":\"v2\",\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。\",\"start\":null,\"end\":null}]},{\"claim_id\":\"claim_2\",\"text\":\"v2 版商品自签收之日起 15 天内支持无理由退货；商品需保持完好，吊牌、包装齐全，不影响二次销售。\",\"subject\":\"v2 版无理由退货窗口\",\"value\":\"15\",\"unit\":\"天\",\"dates\":[],\"policy_version\":\"v2\",\"necessary_conditions\":[\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":null,\"end\":null}]},{\"claim_id\":\"claim_3\",\"text\":\"该订单于 2026-06-02 签收，属于 2026-06-01 或之后签收，因此适用 v2 版 15 天无理由退货窗口；签收后第 10 天申请仍在窗口内。\",\"subject\":\"2026-06-02 签收订单\",\"value\":\"15\",\"unit\":\"天\",\"dates\":[\"2026-06-02\",\"2026-06-01\"],\"policy_version\":\"v2\",\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\",\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":null,\"end\":null}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"claim_1\",\"text\":\"签收日期为 2026-06-01 或之后的订单适用 v2 版无理由退货政策。\",\"subject\":\"订单\",\"value\":\"v2\",\"unit\":\"\",\"dates\":[\"2026-06-01\"],\"policy_version\":\"v2\",\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。\",\"start\":null,\"end\":null}]},{\"claim_id\":\"claim_2\",\"text\":\"v2 版商品自签收之日起 15 天内支持无理由退货；商品需保持完好，吊牌、包装齐全，不影响二次销售。\",\"subject\":\"v2 版无理由退货窗口\",\"value\":\"15\",\"unit\":\"天\",\"dates\":[],\"policy_version\":\"v2\",\"necessary_conditions\":[\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":null,\"end\":null}]},{\"claim_id\":\"claim_3\",\"text\":\"该订单于 2026-06-02 签收，属于 2026-06-01 或之后签收，因此适用 v2 版 15 天无理由退货窗口；签收后第 10 天申请仍在窗口内。\",\"subject\":\"2026-06-02 签收订单\",\"value\":\"15\",\"unit\":\"天\",\"dates\":[\"2026-06-02\",\"2026-06-01\"],\"policy_version\":\"v2\",\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\",\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"evidence\":[{\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":null,\"end\":null}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "ca87e077-3873-4682-92ff-fc6ec00b0074",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 3536,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 3031,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2404,
+            "prompt_tokens": 2404,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 5940
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2404,
+        "output_tokens": 3536
+      }
+    },
+    "39eab53a2d93f0a15165544b11302ba19751481d46a8ae389652e6728b7341cc": {
+      "content": "{\"answered\": true, \"reason\": \"证据明确给出退货政策、退货资格条件及退货期限：商品需保持完好、吊牌包装齐全；一般支持七天无理由退货，并说明签收日期早于2026-06-01适用v1七天、2026-06-01及之后适用v2十五天，同时列出不予退货情形。\", \"supported_by\": [1, 2, 5, 7, 8, 9]}",
+      "output": {
+        "content": "{\"answered\": true, \"reason\": \"证据明确给出退货政策、退货资格条件及退货期限：商品需保持完好、吊牌包装齐全；一般支持七天无理由退货，并说明签收日期早于2026-06-01适用v1七天、2026-06-01及之后适用v2十五天，同时列出不予退货情形。\", \"supported_by\": [1, 2, 5, 7, 8, 9]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "cfe7acb8-462b-40b8-8e60-94dd6acd71be",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 824,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 723,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 970,
+            "prompt_tokens": 1098,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1922
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1098,
+        "output_tokens": 824
+      }
+    },
+    "4046ad0f23e4d865e9fbc84f4aa17e33a210bbaf31f2dfac0c647e54e3ddecdb": {
+      "content": "查询结果：订单 1001（legacy_demo 演示订单，无线耳机，299.0 元）状态为「已签收」，创建日 2026-08-30。\n\n政策证据（FAQ）：\n- 订单取消：未发货可取消、原路退回；已发货不能直接取消，可拒收或签收后走退货。\n- 拒收：无理由拒收费用由买家承担；发错货或运输损坏由责任方承担，拒收后原路退回。\n\n结论：该订单已签收，因此不适用「未发货可取消」的取消路径；拦截政策未在知识库证据中给出（FAQ 标注 low_confidence），可走的是签收后退货流程。以上仅为读取到的信息，未创建任何工单或写操作。",
+      "output": {
+        "content": "查询结果：订单 1001（legacy_demo 演示订单，无线耳机，299.0 元）状态为「已签收」，创建日 2026-08-30。\n\n政策证据（FAQ）：\n- 订单取消：未发货可取消、原路退回；已发货不能直接取消，可拒收或签收后走退货。\n- 拒收：无理由拒收费用由买家承担；发错货或运输损坏由责任方承担，拒收后原路退回。\n\n结论：该订单已签收，因此不适用「未发货可取消」的取消路径；拦截政策未在知识库证据中给出（FAQ 标注 low_confidence），可走的是签收后退货流程。以上仅为读取到的信息，未创建任何工单或写操作。",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "00dc9167-8895-4a06-bfda-c67cf4d41c6f",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 173,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 0,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 896,
+            "prompt_cache_miss_tokens": 1403,
+            "prompt_tokens": 2299,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 896,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 2472
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 896,
+        "input_tokens": 2299,
+        "output_tokens": 173
+      }
+    },
+    "40529222bd93b41b40656ea5f1808106aefe6e67f12d52d6d315131239c83fd0": {
+      "content": "{\"claims\":[{\"claim_id\":\"claim_1\",\"dates\":[\"2026-06-01\"],\"evidence\":[{\"end\":40,\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。\",\"start\":11}],\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\"],\"policy_version\":\"v2\",\"subject\":\"订单\",\"text\":\"签收日期为 2026-06-01 或之后的订单适用 v2。\",\"unit\":\"\",\"value\":\"v2\"},{\"claim_id\":\"claim_2\",\"dates\":[],\"evidence\":[{\"end\":87,\"evidence_id\":\"185\",\"quote\":\"商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":40}],\"necessary_conditions\":[\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"policy_version\":\"v2\",\"subject\":\"v2 版无理由退货窗口\",\"text\":\"v2 版商品自签收之日起 15 天内支持无理由退货；商品需保持完好，吊牌、包装齐全，不影响二次销售。\",\"unit\":\"天\",\"value\":\"15\"},{\"claim_id\":\"claim_3\",\"dates\":[\"2026-06-02\",\"2026-06-01\"],\"evidence\":[{\"end\":87,\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":11}],\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\",\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"policy_version\":\"v2\",\"subject\":\"2026-06-02 签收订单\",\"text\":\"该订单于 2026-06-02 签收，属于 2026-06-01 或之后签收，因此适用 v2 版 15 天无理由退货窗口；签收后第 10 天申请仍在窗口内。\",\"unit\":\"天\",\"value\":\"15\"}],\"clarifying_question\":\"\",\"disposition\":\"answer\",\"limitations\":[]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"claim_1\",\"dates\":[\"2026-06-01\"],\"evidence\":[{\"end\":40,\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。\",\"start\":11}],\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\"],\"policy_version\":\"v2\",\"subject\":\"订单\",\"text\":\"签收日期为 2026-06-01 或之后的订单适用 v2。\",\"unit\":\"\",\"value\":\"v2\"},{\"claim_id\":\"claim_2\",\"dates\":[],\"evidence\":[{\"end\":87,\"evidence_id\":\"185\",\"quote\":\"商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":40}],\"necessary_conditions\":[\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"policy_version\":\"v2\",\"subject\":\"v2 版无理由退货窗口\",\"text\":\"v2 版商品自签收之日起 15 天内支持无理由退货；商品需保持完好，吊牌、包装齐全，不影响二次销售。\",\"unit\":\"天\",\"value\":\"15\"},{\"claim_id\":\"claim_3\",\"dates\":[\"2026-06-02\",\"2026-06-01\"],\"evidence\":[{\"end\":87,\"evidence_id\":\"185\",\"quote\":\"签收日期为 2026-06-01 或之后的订单适用 v2。商品自签收之日起 15 天内,支持无理由退货;商品需保持完好,吊牌、包装齐全,不影响二次销售。\",\"start\":11}],\"necessary_conditions\":[\"签收日期为 2026-06-01 或之后\",\"商品需保持完好，吊牌、包装齐全，不影响二次销售\"],\"policy_version\":\"v2\",\"subject\":\"2026-06-02 签收订单\",\"text\":\"该订单于 2026-06-02 签收，属于 2026-06-01 或之后签收，因此适用 v2 版 15 天无理由退货窗口；签收后第 10 天申请仍在窗口内。\",\"unit\":\"天\",\"value\":\"15\"}],\"clarifying_question\":\"\",\"disposition\":\"answer\",\"limitations\":[]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "e20d7df8-f418-471d-9b15-bb3cf2dc11b9",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 2860,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2359,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2924,
+            "prompt_tokens": 2924,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 5784
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2924,
+        "output_tokens": 2860
+      }
+    },
+    "46e0636b1e721cb61c7dd95da0049238b120ad4c64a865763f9127dbacb30658": {
+      "content": "",
+      "output": {
+        "content": "",
+        "finish_reason": null,
+        "tool_calls": [
+          {
+            "args": {
+              "order_id": "ORD-1001"
+            },
+            "id": "call_00_mfRXJQNFB39kLPp02WgC5668",
+            "name": "query_order"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "order_id": "ORD-1001"
+          },
+          "id": "call_00_mfRXJQNFB39kLPp02WgC5668",
+          "name": "query_order"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 548,
+        "output_tokens": 0
+      }
+    },
+    "49dbae374ff85291fa262ef62d80aa9ee083f4cb0338a3f977b5a725ff865d02": {
+      "content": "{\"tasks\":[{\"task_id\":\"retrieve_order_1001\",\"agent\":\"retrieval\",\"objective\":\"重新查询订单1001的详情、状态、售后资格及相关事实，处理上次子任务超时，返回可用于售后工单预览的订单信息。\"},{\"task_id\":\"retrieve_after_sales_faq\",\"agent\":\"retrieval\",\"objective\":\"检索售后工单创建规则、必填字段与预览/提交边界，确保仅生成预览而不提交。\"},{\"task_id\":\"draft_after_sales_ticket\",\"agent\":\"action\",\"objective\":\"基于订单1001检索事实和售后FAQ，生成售后工单创建预览草稿，明确待用户确认后提交，不执行提交写操作。\",\"depends_on\":[\"retrieve_order_1001\",\"retrieve_after_sales_faq\"]}],\"disposition\":\"execute\",\"reason\":\"用户明确要求为订单1001创建售后工单并仅预览不提交；需先重试订单检索获取事实，再检索售后规则，最后形成预览草稿。\",\"clarification\":\"\"}",
+      "output": {
+        "content": "{\"tasks\":[{\"task_id\":\"retrieve_order_1001\",\"agent\":\"retrieval\",\"objective\":\"重新查询订单1001的详情、状态、售后资格及相关事实，处理上次子任务超时，返回可用于售后工单预览的订单信息。\"},{\"task_id\":\"retrieve_after_sales_faq\",\"agent\":\"retrieval\",\"objective\":\"检索售后工单创建规则、必填字段与预览/提交边界，确保仅生成预览而不提交。\"},{\"task_id\":\"draft_after_sales_ticket\",\"agent\":\"action\",\"objective\":\"基于订单1001检索事实和售后FAQ，生成售后工单创建预览草稿，明确待用户确认后提交，不执行提交写操作。\",\"depends_on\":[\"retrieve_order_1001\",\"retrieve_after_sales_faq\"]}],\"disposition\":\"execute\",\"reason\":\"用户明确要求为订单1001创建售后工单并仅预览不提交；需先重试订单检索获取事实，再检索售后规则，最后形成预览草稿。\",\"clarification\":\"\"}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "1f2a2895-9960-49aa-9285-6917e6f33459",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 707,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 483,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 559,
+            "prompt_tokens": 559,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1266
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 559,
+        "output_tokens": 707
+      }
+    },
+    "502986e6d4603f8263631bf82d6a8664b9140435ff2ff0ed6c6354353c541911": {
+      "content": "{\"normalized\":\"售后工单创建规则中，必填字段以及预览、提交要求是什么？\",\"synonyms\":[\"售后工单创建规则的必填字段及预览、提交要求是什么？\",\"售后工单创建时必填字段有哪些，预览和提交有什么要求？\",\"售后工单创建规则、必填字段、预览、提交分别是什么要求？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"售后工单创建规则中，必填字段以及预览、提交要求是什么？\",\"synonyms\":[\"售后工单创建规则的必填字段及预览、提交要求是什么？\",\"售后工单创建时必填字段有哪些，预览和提交有什么要求？\",\"售后工单创建规则、必填字段、预览、提交分别是什么要求？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "7b986d20-d8e1-4efc-b41a-8335ae674a6c",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 441,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 362,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 172,
+            "prompt_tokens": 172,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 613
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 172,
+        "output_tokens": 441
+      }
+    },
+    "539dc73692bbdc8dd5aec276605acb6a3603e3a07885ecca9652f128312cfd20": {
+      "content": "{\"answered\":true,\"reason\":\"证据明确写明整机保修 1 年，自签收之日起算；虽有个别配件例外，但问题未指定具体商品，通用保修期限已直接回答。\",\"supported_by\":[1,4,5]}",
+      "output": {
+        "content": "{\"answered\":true,\"reason\":\"证据明确写明整机保修 1 年，自签收之日起算；虽有个别配件例外，但问题未指定具体商品，通用保修期限已直接回答。\",\"supported_by\":[1,4,5]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "9514c715-813f-40bb-a5e5-f40bd3d55a18",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 464,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 409,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 256,
+            "prompt_cache_miss_tokens": 1206,
+            "prompt_tokens": 1462,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 256,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1926
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 256,
+        "input_tokens": 1462,
+        "output_tokens": 464
+      }
+    },
+    "5b2e3dad0bf760f0074bbea5c9720c32b6994d888f70e4e43163d2076a981a69": {
+      "content": "{\"normalized\":\"订单在2026-06-02签收，我在签收后第10天申请无理由退货，适用多少天无理由退货窗口？\",\"synonyms\":[\"2026-06-02签收的订单，签收后第10天申请无理由退货，适用多少天无理由退货窗口？\",\"签收日为2026-06-02，签收后第10天申请无理由退货，无理由退货适用多少天窗口？\",\"订单于2026-06-02签收，签收后第10天申请无理由退货，适用几天的无理由退货窗口？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"订单在2026-06-02签收，我在签收后第10天申请无理由退货，适用多少天无理由退货窗口？\",\"synonyms\":[\"2026-06-02签收的订单，签收后第10天申请无理由退货，适用多少天无理由退货窗口？\",\"签收日为2026-06-02，签收后第10天申请无理由退货，无理由退货适用多少天窗口？\",\"订单于2026-06-02签收，签收后第10天申请无理由退货，适用几天的无理由退货窗口？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "e80f8215-d3cc-4e28-aad5-66ead0d5a9cd",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 470,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 336,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 190,
+            "prompt_tokens": 190,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 660
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 190,
+        "output_tokens": 470
+      }
+    },
+    "5d8c9d327924d15bc7101534e639d27dfbe309ace243e009f1afc7dd9ffbdb77": {
+      "content": "{\"intent\": \"订单\", \"confidence\": 0.95}",
+      "output": {
+        "content": "{\"intent\": \"订单\", \"confidence\": 0.95}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "84a5a729-1157-4bc4-963c-f0bcadb9f7d7",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 30,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 14,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 191,
+            "prompt_tokens": 319,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 349
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 319,
+        "output_tokens": 30
+      }
+    },
+    "5e12695beb4e345d184a25c1b5760d7e15544b2a1681162784070559e4f1f45c": {
+      "content": "{\"claims\":[{\"claim_id\":\"c1\",\"text\":\"质保期自签收之日起算：整机默认保修 1 年；配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年；其余型号整机 1 年，配件例外以本目录为准。\",\"subject\":\"整机及配件类 SH-C60、SH-T50\",\"value\":\"整机默认 1 年；SH-C60 与 SH-T50 半年；其余型号整机 1 年\",\"unit\":\"年\",\"dates\":[],\"policy_version\":\"\",\"necessary_conditions\":[\"质保期自签收之日起算\",\"配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年\",\"其余型号整机 1 年\",\"配件例外以本目录为准\"],\"evidence\":[{\"evidence_id\":\"159\",\"quote\":\"质保期自签收之日起算:整机默认 1 年;配件类 SH-C60 与 SH-T50 为产品特定例外,质保半年,其余型号整机 1 年,配件例外以本目录为准。\",\"start\":null,\"end\":null}]}],\"disposition\":\"clarify\",\"clarifying_question\":\"请提供具体商品型号（例如 SH-C60、SH-T50 或其他型号），以便确认该商品的保修期。\",\"limitations\":[\"用户未提供具体商品型号，无法判定是否属于 SH-C60/SH-T50 配件例外。\"]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"c1\",\"text\":\"质保期自签收之日起算：整机默认保修 1 年；配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年；其余型号整机 1 年，配件例外以本目录为准。\",\"subject\":\"整机及配件类 SH-C60、SH-T50\",\"value\":\"整机默认 1 年；SH-C60 与 SH-T50 半年；其余型号整机 1 年\",\"unit\":\"年\",\"dates\":[],\"policy_version\":\"\",\"necessary_conditions\":[\"质保期自签收之日起算\",\"配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年\",\"其余型号整机 1 年\",\"配件例外以本目录为准\"],\"evidence\":[{\"evidence_id\":\"159\",\"quote\":\"质保期自签收之日起算:整机默认 1 年;配件类 SH-C60 与 SH-T50 为产品特定例外,质保半年,其余型号整机 1 年,配件例外以本目录为准。\",\"start\":null,\"end\":null}]}],\"disposition\":\"clarify\",\"clarifying_question\":\"请提供具体商品型号（例如 SH-C60、SH-T50 或其他型号），以便确认该商品的保修期。\",\"limitations\":[\"用户未提供具体商品型号，无法判定是否属于 SH-C60/SH-T50 配件例外。\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "d630bcbd-7afc-45db-9eb4-a7fa40618eb5",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 4711,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 4396,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2558,
+            "prompt_tokens": 2558,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 7269
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2558,
+        "output_tokens": 4711
+      }
+    },
+    "61559de26c279eb4b07e7c93b69baa11b9510619c8aefc49e2a7bb2d4c23b174": {
+      "content": "{\"intent\": \"订单\", \"confidence\": 0.95}",
+      "output": {
+        "content": "{\"intent\": \"订单\", \"confidence\": 0.95}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "d6299f71-05be-43a5-923b-2f54f08c9419",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 27,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 11,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 196,
+            "prompt_tokens": 324,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 351
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 324,
+        "output_tokens": 27
+      }
+    },
+    "6201b56cec585eab2f30c570e043a462f5970370f6cadf1328beb1dfeb25f4cc": {
+      "content": "",
+      "output": {
+        "content": "",
+        "response_metadata": {
+          "finish_reason": "tool_calls",
+          "id": "fcc47b58-85ca-42f0-a9ed-50e208d5fb09",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 168,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 74,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 512,
+            "prompt_cache_miss_tokens": 259,
+            "prompt_tokens": 771,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 512,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 939
+          }
+        },
+        "tool_calls": [
+          {
+            "args": {
+              "order_id": "1001"
+            },
+            "id": "call_00_aaHPtPH6Xvjzk1YUpVZE2108",
+            "name": "query_order",
+            "type": "tool_call"
+          },
+          {
+            "args": {
+              "keyword": "订单取消 退款 拦截 政策",
+              "order_id": "1001"
+            },
+            "id": "call_01_R188ovtFnKlRZ6IR1S2L8415",
+            "name": "query_faq",
+            "type": "tool_call"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "order_id": "1001"
+          },
+          "id": "call_00_aaHPtPH6Xvjzk1YUpVZE2108",
+          "name": "query_order",
+          "type": "tool_call"
+        },
+        {
+          "args": {
+            "keyword": "订单取消 退款 拦截 政策",
+            "order_id": "1001"
+          },
+          "id": "call_01_R188ovtFnKlRZ6IR1S2L8415",
+          "name": "query_faq",
+          "type": "tool_call"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 512,
+        "input_tokens": 771,
+        "output_tokens": 168
+      }
+    },
+    "687a5b335b55122121bd96475978685c9fd977e7ce9cf06a1bf11c684bab0286": {
+      "content": "{\"normalized\":\"退货政策、售后资格和退货期限是什么？\",\"synonyms\":[\"退货政策、售后资格及退货期限是什么？\",\"退货政策、售后资格和退货期限有哪些规定？\",\"关于退货政策、售后资格和退货期限的说明\"]}",
+      "output": {
+        "content": "{\"normalized\":\"退货政策、售后资格和退货期限是什么？\",\"synonyms\":[\"退货政策、售后资格及退货期限是什么？\",\"退货政策、售后资格和退货期限有哪些规定？\",\"关于退货政策、售后资格和退货期限的说明\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "37a84267-4e39-4e83-a4ea-fb3884aaf382",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 402,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 346,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 167,
+            "prompt_tokens": 167,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 569
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 167,
+        "output_tokens": 402
+      }
+    },
+    "6bc3764b37bc7e2db8bcf2f94738d3ccc6b51404817668ee79a63affbe024dbf": {
+      "content": "{\"resolved\":\"订单 ORD-1001 的金额和状态是什么？不要猜测商品名称。\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"订单 ORD-1001 的金额和状态是什么？不要猜测商品名称。\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "5074d26e-0abd-4929-afc9-135bfd556def",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 114,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 86,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 318,
+            "prompt_tokens": 318,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 432
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 318,
+        "output_tokens": 114
+      }
+    },
+    "6c9ee79bfd3d32e1b156664ff13490097f531d65624ac700b64d315b9967043b": {
+      "content": "{\"intent\": \"退款退货\", \"confidence\": 0.93}",
+      "output": {
+        "content": "{\"intent\": \"退款退货\", \"confidence\": 0.93}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "3b5c4d9f-3399-4f16-90d0-60297b3507d8",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 49,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 32,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 210,
+            "prompt_tokens": 338,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 387
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 338,
+        "output_tokens": 49
+      }
+    },
+    "6d3b849166a1e2c5e7fb1a623a48f6c2e876573cc55ee3ca325594e42a20082f": {
+      "content": "{\"answered\": false, \"reason\": \"证据只提到在工单中记录差异场景、处理过程与依据、适用版本等，未明确说明创建售后工单需要填写哪些字段、必填项有哪些，也未说明工单类型。\", \"supported_by\": []}",
+      "output": {
+        "content": "{\"answered\": false, \"reason\": \"证据只提到在工单中记录差异场景、处理过程与依据、适用版本等，未明确说明创建售后工单需要填写哪些字段、必填项有哪些，也未说明工单类型。\", \"supported_by\": []}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "4360091d-c68b-4b33-b896-7fd680d0d506",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 351,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 291,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 1045,
+            "prompt_tokens": 1173,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1524
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1173,
+        "output_tokens": 351
+      }
+    },
+    "7f7b6b7fcee962d5ad3fbdecbd442332243420ec31a1961afe7534fec22a1ec0": {
+      "content": "您的订单 ORD-1001 金额为 248 元，当前状态是「未支付」；该订单暂时没有商品信息记录，因此我无法确认商品名称，建议您转人工客服核实。",
+      "output": {
+        "content": "您的订单 ORD-1001 金额为 248 元，当前状态是「未支付」；该订单暂时没有商品信息记录，因此我无法确认商品名称，建议您转人工客服核实。",
+        "finish_reason": null,
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 775,
+        "output_tokens": 61
+      }
+    },
+    "80b5191a73b4e30d56aefe8f2c2cd254d4f0960482ba0ae437f39f13276a5e44": {
+      "content": "",
+      "output": {
+        "content": "",
+        "response_metadata": {
+          "finish_reason": "tool_calls",
+          "id": "da5be131-6d2d-424d-9944-9b50a2e8dd33",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 278,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 184,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 512,
+            "prompt_cache_miss_tokens": 261,
+            "prompt_tokens": 773,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 512,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1051
+          }
+        },
+        "tool_calls": [
+          {
+            "args": {
+              "order_id": "1001"
+            },
+            "id": "call_00_8dEWoQcBtkbmMjyga3ph9776",
+            "name": "query_order",
+            "type": "tool_call"
+          },
+          {
+            "args": {
+              "keyword": "退货政策 售后资格 退货期限",
+              "order_id": "1001"
+            },
+            "id": "call_01_slKzbTjrKMlWeyQdsp1A6226",
+            "name": "query_faq",
+            "type": "tool_call"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "order_id": "1001"
+          },
+          "id": "call_00_8dEWoQcBtkbmMjyga3ph9776",
+          "name": "query_order",
+          "type": "tool_call"
+        },
+        {
+          "args": {
+            "keyword": "退货政策 售后资格 退货期限",
+            "order_id": "1001"
+          },
+          "id": "call_01_slKzbTjrKMlWeyQdsp1A6226",
+          "name": "query_faq",
+          "type": "tool_call"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 512,
+        "input_tokens": 773,
+        "output_tokens": 278
+      }
+    },
+    "8b79dcb83d69339906a90f35e1e7a73f03f7240c7c26b2e6ac1e9bb7d9749843": {
+      "content": "{\"claims\":[{\"claim_id\":\"c1\",\"dates\":[],\"evidence\":[{\"evidence_id\":\"159\",\"quote\":\"质保期自签收之日起算:整机默认 1 年;配件类 SH-C60 与 SH-T50 为产品特定例外,质保半年,其余型号整机 1 年,配件例外以本目录为准。\"}],\"necessary_conditions\":[\"质保期自签收之日起算\",\"整机默认保修 1 年\",\"配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年\",\"其余型号整机 1 年\",\"配件例外以商品目录为准\"],\"policy_version\":\"\",\"subject\":\"整机、配件类 SH-C60 与 SH-T50、其余型号\",\"text\":\"质保期自签收之日起算：整机默认保修 1 年；配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年；其余型号整机 1 年，配件例外以商品目录为准。\",\"unit\":\"\",\"value\":\"1 年\"}],\"clarifying_question\":\"请提供具体商品型号（例如 SH-C60、SH-T50 或其他型号），以便确认该商品的保修期。\",\"disposition\":\"clarify\",\"limitations\":[\"用户未提供具体商品型号，无法判定是否属于 SH-C60/SH-T50 配件例外。\"]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"c1\",\"dates\":[],\"evidence\":[{\"evidence_id\":\"159\",\"quote\":\"质保期自签收之日起算:整机默认 1 年;配件类 SH-C60 与 SH-T50 为产品特定例外,质保半年,其余型号整机 1 年,配件例外以本目录为准。\"}],\"necessary_conditions\":[\"质保期自签收之日起算\",\"整机默认保修 1 年\",\"配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年\",\"其余型号整机 1 年\",\"配件例外以商品目录为准\"],\"policy_version\":\"\",\"subject\":\"整机、配件类 SH-C60 与 SH-T50、其余型号\",\"text\":\"质保期自签收之日起算：整机默认保修 1 年；配件类 SH-C60 与 SH-T50 为产品特定例外，质保半年；其余型号整机 1 年，配件例外以商品目录为准。\",\"unit\":\"\",\"value\":\"1 年\"}],\"clarifying_question\":\"请提供具体商品型号（例如 SH-C60、SH-T50 或其他型号），以便确认该商品的保修期。\",\"disposition\":\"clarify\",\"limitations\":[\"用户未提供具体商品型号，无法判定是否属于 SH-C60/SH-T50 配件例外。\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "815c5b89-c04c-4885-9e50-1826646dbd9f",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 3214,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 2919,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 2881,
+            "prompt_tokens": 2881,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 6095
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 2881,
+        "output_tokens": 3214
+      }
+    },
+    "905b460307565c22e076b229bc6e6209fb6d49d7dfbfe708f9bcd011ff1b0492": {
+      "content": "{\"normalized\":\"创建售后工单需要填写哪些字段、工单必填项及工单类型？\",\"synonyms\":[\"创建售后工单需要填写哪些字段和必填项，工单类型是什么？\",\"售后工单创建时需要填写哪些字段、必填项及工单类型？\",\"创建售后工单需要填写哪些字段、必填项和工单类型？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"创建售后工单需要填写哪些字段、工单必填项及工单类型？\",\"synonyms\":[\"创建售后工单需要填写哪些字段和必填项，工单类型是什么？\",\"售后工单创建时需要填写哪些字段、必填项及工单类型？\",\"创建售后工单需要填写哪些字段、必填项和工单类型？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "269e3d49-f96b-463f-95ff-39483f67e082",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 1126,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 1041,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 177,
+            "prompt_tokens": 177,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1303
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 177,
+        "output_tokens": 1126
+      }
+    },
+    "9671fbdb446e65de22283e1d32dfa80d32d768d8da49f788b37d3ae0c9efb97d": {
+      "content": "{\"intent\": \"商品咨询\", \"confidence\": 0.95}",
+      "output": {
+        "content": "{\"intent\": \"商品咨询\", \"confidence\": 0.95}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "299f5b0c-a713-449a-bfa3-21161b81437d",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 24,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 7,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 186,
+            "prompt_tokens": 314,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 338
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 314,
+        "output_tokens": 24
+      }
+    },
+    "9bafd2bd6766d868eff3767657b69c4f6f655f11cbc1e39ccfd1d5ce417daefe": {
+      "content": "",
+      "output": {
+        "content": "",
+        "response_metadata": {
+          "finish_reason": "tool_calls",
+          "id": "8fe4779e-dd91-41d4-8baf-3630aff01c34",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 240,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 144,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 767,
+            "prompt_tokens": 767,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1007
+          }
+        },
+        "tool_calls": [
+          {
+            "args": {
+              "order_id": "1001"
+            },
+            "id": "call_00_4bVg5sReaUeomBQRmj4P9977",
+            "name": "query_order",
+            "type": "tool_call"
+          },
+          {
+            "args": {
+              "keyword": "售后工单创建流程与必填字段要求",
+              "order_id": "1001"
+            },
+            "id": "call_01_hXyZ6A2bc21yVKPJBaaG2820",
+            "name": "query_faq",
+            "type": "tool_call"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "order_id": "1001"
+          },
+          "id": "call_00_4bVg5sReaUeomBQRmj4P9977",
+          "name": "query_order",
+          "type": "tool_call"
+        },
+        {
+          "args": {
+            "keyword": "售后工单创建流程与必填字段要求",
+            "order_id": "1001"
+          },
+          "id": "call_01_hXyZ6A2bc21yVKPJBaaG2820",
+          "name": "query_faq",
+          "type": "tool_call"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 767,
+        "output_tokens": 240
+      }
+    },
+    "a0fc136c8863700c92e34d6a55ebe52d34cb1ece04dbc9764e9ed60196a3dbdd": {
+      "content": "{\"answered\": true, \"reason\": \"证据明确写明 SH-E300 的售价为 299 元。\", \"supported_by\": [1, 2, 3, 4]}",
+      "output": {
+        "content": "{\"answered\": true, \"reason\": \"证据明确写明 SH-E300 的售价为 299 元。\", \"supported_by\": [1, 2, 3, 4]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "8307aaec-5fbc-4911-baf8-cc3c92ef191e",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 124,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 82,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 1408,
+            "prompt_cache_miss_tokens": 332,
+            "prompt_tokens": 1740,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 1408,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1864
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 1408,
+        "input_tokens": 1740,
+        "output_tokens": 124
+      }
+    },
+    "a8231a462edf42c8715cdeb32f1e07fd40a7ea043b31863d34e5b95827fb820c": {
+      "content": "{\"resolved\":\"帮我查订单 1002 买了什么、金额是多少。\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"帮我查订单 1002 买了什么、金额是多少。\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "c9e4e845-8e01-4882-8dff-6906dde11a84",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 94,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 71,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 185,
+            "prompt_tokens": 313,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 407
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 313,
+        "output_tokens": 94
+      }
+    },
+    "b7ad4bca72ce4dddde5d5121109da82d8d993aded7006c9c806d85a3937a7476": {
+      "content": "订单 **1001**（无线耳机，金额 ¥299，状态：已签收）**不能直接取消**。\n\n依据退货政策：未发货可取消；已发货不能直接取消，可拒收或签收后走退货（证据 214）。该订单已签收，因此应按“签收后退货”处理；拒收相关费用规则见证据 215。\n\n已按你的要求：**未创建工单**。",
+      "output": {
+        "content": "订单 **1001**（无线耳机，金额 ¥299，状态：已签收）**不能直接取消**。\n\n依据退货政策：未发货可取消；已发货不能直接取消，可拒收或签收后走退货（证据 214）。该订单已签收，因此应按“签收后退货”处理；拒收相关费用规则见证据 215。\n\n已按你的要求：**未创建工单**。",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "e95288cd-a094-4850-b031-a096b5674692",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 482,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 389,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 1725,
+            "prompt_tokens": 1725,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 2207
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 1725,
+        "output_tokens": 482
+      }
+    },
+    "bec49c20f213bd958bcfc7fc1dcfa363fca53a4df8eccaae6fd49b5ffefac5d9": {
+      "content": "{\"answered\":false,\"reason\":\"证据说明未发货可取消、已发货可拒收或签收后退货，以及退款按原路返回；但未明确提及订单“拦截”政策，缺少该约束依据。\",\"supported_by\":[2,4,10]}",
+      "output": {
+        "content": "{\"answered\":false,\"reason\":\"证据说明未发货可取消、已发货可拒收或签收后退货，以及退款按原路返回；但未明确提及订单“拦截”政策，缺少该约束依据。\",\"supported_by\":[2,4,10]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "2488c927-6798-431c-8f84-6ad045ea6846",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 442,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 384,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 887,
+            "prompt_tokens": 1015,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1457
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1015,
+        "output_tokens": 442
+      }
+    },
+    "c58b23fe8ed7b16e6accbd1ab75113429b90e945940e16f3e6b73736a2bcc0c5": {
+      "content": "{\"normalized\":\"这个保修期是多久？\",\"synonyms\":[\"这个保修多长时间？\",\"这个保修期多长？\",\"这个能保修多久？\"]}",
+      "output": {
+        "content": "{\"normalized\":\"这个保修期是多久？\",\"synonyms\":[\"这个保修多长时间？\",\"这个保修期多长？\",\"这个能保修多久？\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "a036a550-9e86-4765-ae63-008309b4d480",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 436,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 401,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 162,
+            "prompt_tokens": 162,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 598
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 162,
+        "output_tokens": 436
+      }
+    },
+    "c7223aae8451121a2242c847fe1f55a6fb43eb698a775e97b1560806ce8e2585": {
+      "content": "{\"resolved\":\"订单在 2026-06-02 签收，我在签收后第 10 天申请无理由退货，适用多少天窗口？\",\"changed\":false}",
+      "output": {
+        "content": "{\"resolved\":\"订单在 2026-06-02 签收，我在签收后第 10 天申请无理由退货，适用多少天窗口？\",\"changed\":false}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "30be63eb-c529-49be-8095-892dfe687df5",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 147,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 105,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 204,
+            "prompt_tokens": 332,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 479
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 332,
+        "output_tokens": 147
+      }
+    },
+    "cd727e7e8ffaddc933528e19ab4e9c9abcdb90ac386646992ed01a3be608f33c": {
+      "content": "{\"answered\":true,\"reason\":\"证据明确：签收日期为 2026-06-01 或之后的订单适用 v2，无理由退货窗口为签收之日起 15 天。该订单 2026-06-02 签收，适用 v2 的 15 天窗口。\",\"supported_by\":[1,2,6,8]}",
+      "output": {
+        "content": "{\"answered\":true,\"reason\":\"证据明确：签收日期为 2026-06-01 或之后的订单适用 v2，无理由退货窗口为签收之日起 15 天。该订单 2026-06-02 签收，适用 v2 的 15 天窗口。\",\"supported_by\":[1,2,6,8]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "3655cd5c-c3f8-4b88-b869-4994545278a5",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 420,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 341,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 1223,
+            "prompt_tokens": 1351,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1771
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1351,
+        "output_tokens": 420
+      }
+    },
+    "cf954b84cb8d88ac579447ffeda39cd0eb65c0a9aba42d2a8ccd9bc03ca9416d": {
+      "content": "亲，查到订单 1002 是「机械键盘」，金额 399 元，状态为已发货，下单时间是 2026-09-03。",
+      "output": {
+        "content": "亲，查到订单 1002 是「机械键盘」，金额 399 元，状态为已发货，下单时间是 2026-09-03。",
+        "finish_reason": null,
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 717,
+        "output_tokens": 37
+      }
+    },
+    "d259799969aeb9abfe459605943a1e3071b1abb9d5a35c7e330456eaddecb2aa": {
+      "content": "{\"answered\": false, \"reason\": \"证据未提及售后工单创建规则、必填字段、预览或提交相关内容，仅有零散要求在工单中记录差异场景、适用版本或处理过程，无法回答工单创建的具体规则。\", \"supported_by\": []}",
+      "output": {
+        "content": "{\"answered\": false, \"reason\": \"证据未提及售后工单创建规则、必填字段、预览或提交相关内容，仅有零散要求在工单中记录差异场景、适用版本或处理过程，无法回答工单创建的具体规则。\", \"supported_by\": []}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "cfa4edc8-dc97-43db-8c59-7961c8c3d4bb",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 261,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 201,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 128,
+            "prompt_cache_miss_tokens": 1177,
+            "prompt_tokens": 1305,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 128,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 1566
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 128,
+        "input_tokens": 1305,
+        "output_tokens": 261
+      }
+    },
+    "e9fe100263a4ee768eddc2da582b98e51e27bc11e129ee6566987de762e9495d": {
+      "content": "{\"normalized\":\"售后工单创建流程及必填字段要求\",\"synonyms\":[\"售后工单的创建流程和必填字段要求\",\"创建售后工单的流程与必填字段要求\",\"售后工单创建步骤及必填项要求\"]}",
+      "output": {
+        "content": "{\"normalized\":\"售后工单创建流程及必填字段要求\",\"synonyms\":[\"售后工单的创建流程和必填字段要求\",\"创建售后工单的流程与必填字段要求\",\"售后工单创建步骤及必填项要求\"]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "9a9fd571-6fed-4780-874e-29222b3446e6",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 227,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 171,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 169,
+            "prompt_tokens": 169,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 396
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 169,
+        "output_tokens": 227
+      }
+    },
+    "f1f9ad0b73f2cfa8bb38d56bc079f1711091e45ec3d1b46d626660c931981086": {
+      "content": "{\"disposition\":\"execute\",\"reason\":\"用户提供了明确订单号，询问能否取消，并明确禁止创建工单。需要先检索订单状态和取消规则，再基于检索事实生成处理草稿，且不发起工单写操作。\",\"clarification\":\"\",\"tasks\":[{\"task_id\":\"order_cancel_check\",\"agent\":\"retrieval\",\"objective\":\"查询订单1001的当前状态、是否可取消、退款/拦截条件及相关取消政策FAQ；只读取信息，不创建任何工单或写操作。\",\"depends_on\":[]},{\"task_id\":\"cancel_reply_draft\",\"agent\":\"action\",\"objective\":\"基于订单1001的检索事实，形成给用户的取消可行性答复与后续操作指引草稿；严格遵守“不创建工单”，不发起任何工单写操作。\",\"depends_on\":[\"order_cancel_check\"]}]}",
+      "output": {
+        "content": "{\"disposition\":\"execute\",\"reason\":\"用户提供了明确订单号，询问能否取消，并明确禁止创建工单。需要先检索订单状态和取消规则，再基于检索事实生成处理草稿，且不发起工单写操作。\",\"clarification\":\"\",\"tasks\":[{\"task_id\":\"order_cancel_check\",\"agent\":\"retrieval\",\"objective\":\"查询订单1001的当前状态、是否可取消、退款/拦截条件及相关取消政策FAQ；只读取信息，不创建任何工单或写操作。\",\"depends_on\":[]},{\"task_id\":\"cancel_reply_draft\",\"agent\":\"action\",\"objective\":\"基于订单1001的检索事实，形成给用户的取消可行性答复与后续操作指引草稿；严格遵守“不创建工单”，不发起任何工单写操作。\",\"depends_on\":[\"order_cancel_check\"]}]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "1318e35a-545e-42fb-90b1-020cfd3bc643",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 393,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 212,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 538,
+            "prompt_tokens": 538,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 931
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 538,
+        "output_tokens": 393
+      }
+    },
+    "f82ec8071ee3e23382df100638d30262b08e8f8da982999dd072029f387807d6": {
+      "content": "{\"claims\":[{\"claim_id\":\"c1\",\"subject\":\"SH-E300\",\"text\":\"SH-E300 头戴式无线降噪耳机售价 299 元，状态为在售。\",\"value\":\"299\",\"unit\":\"元\",\"dates\":[],\"policy_version\":\"\",\"necessary_conditions\":[],\"evidence\":[{\"evidence_id\":\"160\",\"quote\":\"| SH-E300 | 头戴式无线降噪耳机 | 299 元 | 在售 |\",\"start\":null,\"end\":null}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+      "output": {
+        "content": "{\"claims\":[{\"claim_id\":\"c1\",\"subject\":\"SH-E300\",\"text\":\"SH-E300 头戴式无线降噪耳机售价 299 元，状态为在售。\",\"value\":\"299\",\"unit\":\"元\",\"dates\":[],\"policy_version\":\"\",\"necessary_conditions\":[],\"evidence\":[{\"evidence_id\":\"160\",\"quote\":\"| SH-E300 | 头戴式无线降噪耳机 | 299 元 | 在售 |\",\"start\":null,\"end\":null}]}],\"disposition\":\"answer\",\"clarifying_question\":\"\",\"limitations\":[]}",
+        "response_metadata": {
+          "finish_reason": "stop",
+          "id": "980281da-24cc-45ac-b156-aa92975bb76d",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 771,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 647,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 3020,
+            "prompt_tokens": 3020,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 0,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 3791
+          }
+        },
+        "tool_calls": []
+      },
+      "tool_calls": [],
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 3020,
+        "output_tokens": 771
+      }
+    },
+    "fa53321c639510a77c3ac34f1e01ab750c7b5cc22e054e9dd4812b29e38c4cb7": {
+      "content": "",
+      "output": {
+        "content": "",
+        "response_metadata": {
+          "finish_reason": "tool_calls",
+          "id": "eeac990f-a656-4d21-bfb9-0f5b4575751d",
+          "logprobs": null,
+          "model_name": "deepseek-flash",
+          "model_provider": "openai",
+          "system_fingerprint": "e72d3c7f663d3e1383b00b3884cb4501",
+          "token_usage": {
+            "completion_tokens": 92,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 41,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_cache_hit_tokens": 512,
+            "prompt_cache_miss_tokens": 256,
+            "prompt_tokens": 768,
+            "prompt_tokens_details": {
+              "audio_tokens": null,
+              "cache_write_tokens": null,
+              "cached_tokens": 512,
+              "image_tokens": null,
+              "text_tokens": null
+            },
+            "total_tokens": 860
+          }
+        },
+        "tool_calls": [
+          {
+            "args": {
+              "keyword": "售后工单创建规则 必填字段 预览 提交"
+            },
+            "id": "call_00_gJPAALo6gwraU7HsqZaO4111",
+            "name": "query_faq",
+            "type": "tool_call"
+          }
+        ]
+      },
+      "tool_calls": [
+        {
+          "args": {
+            "keyword": "售后工单创建规则 必填字段 预览 提交"
+          },
+          "id": "call_00_gJPAALo6gwraU7HsqZaO4111",
+          "name": "query_faq",
+          "type": "tool_call"
+        }
+      ],
+      "usage": {
+        "cache_hit_input_tokens": 512,
+        "input_tokens": 768,
+        "output_tokens": 92
+      }
+    }
+  },
+  "schema_version": 1
+}
