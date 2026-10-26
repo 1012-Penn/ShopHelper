@@ -97,7 +97,6 @@
   },
   "source_sha256": {
     "docs/superpowers/specs/2026-10-25-ch15-ch17-interview-evidence-roadmap.md": "eb47edb868f0d8c4a1477733c271b3cc1fd6d5a4080caf50a9a7832211f80a88",
-    "docs/eval/ch15-design-and-rubric.md": "d1fcacba66362ab5190e48a3c75d0941aeb8aa886fe805c22e279547ccb0282b",
     "app/config.py": "9a9dcbcc3165e952363ab03d63ce50f5cf8cb32b62eef25f6314c2f0b305ad81",
     "app/context.py": "8b7586a7900ad0c584897bd0495273ceedb6d566dce3df5197d175a23d1b52cb",
     "app/guard.py": "4294fdef46ac59a1b86a9760b548e89efae3c541fcf9706d359a68fc3c6d3881",
@@ -120,8 +119,8 @@
     "app/tools/builtin.py": "f85d760f7c65a50d9d9f3ff5f5bc58e987e8553f7f6e62b633a10b75a0a0668e",
     "app/tools/engine.py": "81dfd7569dcc0585ac1e5af6f59a711802d7afb5b84e683fe5c154ce93b9124a",
     "scripts/eval_cost.py": "47dedcd7f0a00124b20923f96e8934662bd919188c071d317173ff31127c4de7",
-    "scripts/ch15_paid_guard.py": "05e41984827d449a0704e1bf38d9f9958cf9b6f575e2ce5a3875f33f5aa9b8a1",
-    "scripts/ch15_model_experiment.py": "5d8cf1c413d084ccbf138abcad3bf67be120dee204f552eb5626da8bb01859c5",
+    "scripts/ch15_paid_guard.py": "88408126c7e108b04216dc2fa7b709916e50d8975b5e4da33b7ff6cbf1fc23c4",
+    "scripts/ch15_model_experiment.py": "8b791b2105aa338321a5d69ccb606164e183e8bc53d8e971dc51840f013a5193",
     "tests/eval/tasks/fixtures/policies.json": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
     "tests/eval/tasks/harness.py": "3a796d837b8fb20b44704acd7f2fb2b8a04c7711ddd743580ba44957a57fb05b",
     "tests/eval/tasks/scenarios.jsonl": "d019779e42dc6cd4307be16058ca6b47e11b25122db73ff464a8b086ce05491c",
@@ -138,5 +137,8 @@
     "write_confirmation_implementation": "production ToolEngine; paid arm exposes no write tool"
   },
   "user_turn_count": 42,
-  "config_hash": "sha256:54fd2f87399f0b1672715ca14b62af7819d979be5268c5f7bfdbdb5379e3078a"
+  "config_hash": "sha256:bbec4c7c8cba83f8dc25dbe6235d867d43b1c5e8f93408c0a4c4c3f85dcf50cb",
+  "historical_source_sha256": {
+    "docs/eval/ch15-design-and-rubric.md": "d1fcacba66362ab5190e48a3c75d0941aeb8aa886fe805c22e279547ccb0282b"
+  }
 }

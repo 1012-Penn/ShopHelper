@@ -144,6 +144,14 @@ def model_parameter_score(expected_calls: list[dict], observed_calls: list[dict]
     }
 
 
+def next_case_attempt_id(experiment_id: str, scenario_id: str, arm: str,
+                        previous_calls: list[dict]) -> str:
+    """Name a replay distinctly while keeping every prior call in the ledger."""
+    previous_attempts = {str(call.get("run_id") or "") for call in previous_calls}
+    attempt = len(previous_attempts) + 1
+    return f"{experiment_id}:{scenario_id}:{arm}:attempt-{attempt}"
+
+
 def _settings_with_provider() -> Settings:
     try:
         settings = Settings(_env_file=ROOT / ".env")
@@ -349,6 +357,7 @@ async def run_model_case(row: dict, arm: str, settings: Settings,
 
         trace = {
             "scenario_id": row["id"], "arm": arm, "category": row["category"],
+            "attempt_run_id": run_id,
             "reply": replies[-1] if replies else "", "replies": replies,
             "turn_frames": turn_frames, "frames": all_frames,
             "tool_actions": tool_actions, "tool_calls": tool_calls,
@@ -498,12 +507,13 @@ def render_report(summary: dict, results: dict[tuple[str, str], dict]) -> str:
     lines = [
         "# CH15 Real-Model Paired Experiment", "",
         f"**Status:** `{summary['experiment_status']}`",
+        f"**Frozen config:** `{summary['budget'].get('config_hash', 'unknown')}`",
         "**Scope:** deterministic simulated scenarios only; no production/customer data.",
         "**Model task success** is scored only from model-generated intent, tool calls, and answers.",
         "Refusal alignment uses each scenario's frozen gold; it is not assumed successful by default.", "",
         f"Runs: {summary['arm_run_count']} arm-runs / {summary['scenario_count']} frozen pairs.", "",
         "## Per-arm metrics", "",
-        "| Arm | Task success | Tool selection | Tool parameters | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |", "",
+        "| Arm | Task success | Tool selection | Tool parameters | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |",
         "|---|---:|---:|---:|---:|---:|---:|",
     ]
     for arm, label in (("fixed", "Fixed refund flow"),
@@ -560,6 +570,7 @@ def render_report(summary: dict, results: dict[tuple[str, str], dict]) -> str:
         reasons = [name for name, passed in result.get("score", {}).items()
                    if name.endswith("_correct") and not passed]
         lines.append(f"- `{scenario_id}` / `{arm}`: task_success=`{result['score'].get('task_success')}`, "
+                     f"attempt=`{result.get('attempt_run_id', 'unknown')}`, "
                      f"calls={len(result.get('model_calls', []))}, "
                      f"latency={result.get('duration_ms', 0)} ms, "
                      f"failures={', '.join(reasons) if reasons else 'none'}")
@@ -616,12 +627,14 @@ async def run(args) -> int:
         if key in results:
             continue
         existing_calls = budget.calls_for_case(row["id"], arm)
-        if existing_calls:
+        if any(call.get("status") == "pending" for call in existing_calls):
             raise BudgetExceeded(
-                f"{row['id']}/{arm} 已有 provider 调用但缺少完整逐题结果；为防重复计费停止")
+                f"{row['id']}/{arm} 存在未结算 provider 调用，拒绝重放")
+        attempt_id = next_case_attempt_id(
+            config["experiment_id"], row["id"], arm, existing_calls)
         try:
             result = await run_model_case(row, arm, settings, budget,
-                                          run_id=config["experiment_id"])
+                                          run_id=attempt_id)
         except BaseException:
             # Per-call ledger was committed before dispatch; no synthetic retry.
             _persist_outputs(results, scenarios, budget, trace_path, report_path)

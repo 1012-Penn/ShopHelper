@@ -3,6 +3,8 @@ import json
 from scripts.ch15_model_experiment import (
     model_parameter_score,
     model_visible_turns,
+    next_case_attempt_id,
+    render_report,
     verify_frozen_experiment,
 )
 
@@ -46,3 +48,35 @@ def test_model_parameter_denominator_counts_missing_and_extra_calls():
     assert good == {"correct_count": 1, "total": 1, "correct": True}
     assert missing == {"correct_count": 0, "total": 1, "correct": False}
     assert extra == {"correct_count": 0, "total": 1, "correct": False}
+
+
+def test_incomplete_case_replay_gets_a_new_attempt_id_without_dropping_calls():
+    prior = [
+        {"run_id": "ch15-realmodel-paired-v1"},
+        {"run_id": "ch15-realmodel-paired-v1"},
+        {"run_id": "ch15-realmodel-paired-v1"},
+    ]
+    assert next_case_attempt_id(
+        "ch15-realmodel-paired-v1", "CH15-RFD-001", "fixed", prior
+    ) == "ch15-realmodel-paired-v1:CH15-RFD-001:fixed:attempt-2"
+
+
+def test_model_report_metrics_table_renders_as_a_markdown_table():
+    summary = {
+        "experiment_status": "partial",
+        "scenario_count": 0,
+        "arm_run_count": 0,
+        "arms": {},
+        "paired_comparison": {},
+        "budget": {
+            "charged_upper_bound_usd": 0,
+            "usage_cost_at_pinned_peak_rates_usd": 0,
+            "reserved_usd": 0,
+            "stop_reason": None,
+            "arms": {},
+        },
+    }
+
+    report = render_report(summary, {})
+
+    assert "| Arm | Task success | Tool selection | Tool parameters | Unconfirmed writes | Reasonable handoff | Refusal gold alignment |\n|---|" in report

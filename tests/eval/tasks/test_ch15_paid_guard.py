@@ -93,6 +93,23 @@ def test_paid_guard_counts_bound_tool_description_and_schema_in_request_envelope
     assert provider.calls == 0
 
 
+def test_paid_guard_serializes_langchain_structured_tool_before_model_schema():
+    import asyncio
+    from langchain.tools import tool
+
+    @tool
+    def query_order(order_id: str) -> str:
+        """Query one simulated order by its identifier."""
+        return order_id
+
+    provider = _ProviderFake()
+    model = GuardedChatModel(provider, _budget(), "fixed", "agent")
+    bound = model.bind_tools([query_order])
+
+    assert asyncio.run(bound.ainvoke("order 1001")) == {"content": "ok"}
+    assert provider.calls == 1
+
+
 def test_paid_guard_blocks_generation_after_arm_limit_even_through_bound_stream():
     import asyncio
 

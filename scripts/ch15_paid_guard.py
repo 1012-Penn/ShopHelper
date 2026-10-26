@@ -451,10 +451,10 @@ def _json_safe(value: Any) -> Any:
         return {str(key): _json_safe(item) for key, item in value.items()}
     if isinstance(value, (list, tuple)):
         return [_json_safe(item) for item in value]
-    schema_builder = getattr(value, "model_json_schema", None)
-    if callable(schema_builder):
-        return _json_safe(schema_builder())
     if hasattr(value, "args_schema"):
+        # LangChain StructuredTool is itself a Pydantic model with callable
+        # fields, so its model_json_schema is not provider input. Serialize the
+        # exposed tool contract (name/description/argument schema) instead.
         schema = getattr(value, "args_schema", None)
         schema_builder = getattr(schema, "model_json_schema", None)
         if callable(schema_builder):
@@ -464,6 +464,9 @@ def _json_safe(value: Any) -> Any:
             "description": getattr(value, "description", ""),
             "args_schema": _json_safe(schema),
         }
+    schema_builder = getattr(value, "model_json_schema", None)
+    if callable(schema_builder):
+        return _json_safe(schema_builder())
     model_dump = getattr(value, "model_dump", None)
     if callable(model_dump):
         return _json_safe(model_dump())
