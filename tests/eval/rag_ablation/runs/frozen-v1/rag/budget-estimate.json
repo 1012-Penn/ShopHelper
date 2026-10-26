@@ -1,6 +1,6 @@
 {
   "currency": "USD",
-  "paid_calls_executed": 0,
+  "paid_calls_executed": 73,
   "groups": [
     {
       "experiment": "rag",

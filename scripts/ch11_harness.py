@@ -325,7 +325,7 @@ def run_answer_case(
                     )
         if not cached:
             if ctx.cost is not None:
-                ctx.cost.guard(estimate_tokens(prompt), config.model)
+                ctx.cost.guard(estimate_tokens(prompt), config.model, kind="answer")
             started = time.perf_counter()
             response = ctx.chat.invoke(prompt)
             latency_ms = (time.perf_counter() - started) * 1000

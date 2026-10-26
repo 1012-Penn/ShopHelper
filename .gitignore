@@ -25,3 +25,6 @@ logs/
 
 # ch10:模型训练产物(checkpoint/ONNX 不进 git,重建命令见 README)
 models/
+
+# ch16:逐次在线调用日志和费用账本保留在本地；汇总对账文件提交
+tests/eval/rag_ablation/runs/live-*

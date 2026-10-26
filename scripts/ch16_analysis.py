@@ -21,6 +21,14 @@ EXPERIMENT_GROUPS = {
     "retrieval": ("dense", "bm25", "hybrid", "hybrid_rerank"),
     "rag": ("baseline", "decompose_once", "controlled_loop"),
 }
+PROTOCOL_CODE_PATHS = (
+    "scripts/ch16_analysis.py", "scripts/eval_rag_ablation.py",
+    "scripts/eval_cost.py", "scripts/eval_ch11.py", "scripts/ch11_harness.py",
+    "scripts/eval_cache.py", "scripts/eval_prompts.py", "scripts/eval_checks.py",
+    "scripts/eval_metrics.py", "scripts/eval_contract.py", "scripts/eval_snapshot.py",
+    "app/config.py", "app/llm.py", "app/embedding.py", "app/rerank.py",
+    "app/retrieval.py", "app/rag_loop.py", "app/evidence.py", "app/prompts.py",
+)
 
 
 class ContractError(ValueError):
@@ -192,6 +200,21 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
     answer_by_id, strict_ids, condition_ids, non_refusal_ids = _answer_population(
         traces, cases_by_id
     )
+    evidence_group_recall_metrics = {}
+    for k in (3, 5):
+        values = [
+            float((retrieval_by_id.get(case_id, {}).get("l1") or {})
+                  [f"evidence_group_recall_at_{k}"])
+            for case_id in retrieval_ids
+            if (retrieval_by_id.get(case_id, {}).get("l1") or {}).get(
+                f"evidence_group_recall_at_{k}") is not None
+        ]
+        evidence_group_recall_metrics[f"at_{k}"] = {
+            "mean": sum(values) / len(values) if values else None,
+            "measured": len(values),
+            "eligible": len(retrieval_ids),
+            "unmeasured": len(retrieval_ids) - len(values),
+        }
 
     strict_values = []
     for case_id in strict_ids:
@@ -289,7 +312,13 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
 
     latencies = [float(trace["latency_ms"]) for trace in traces
                  if trace.get("latency_ms") is not None]
-    api_calls = sum(int(trace.get("paid_api_calls", 0) or 0) for trace in traces)
+    latency_by_source = defaultdict(list)
+    for trace in traces:
+        if trace.get("latency_ms") is not None:
+            latency_by_source[str(trace.get("latency_source") or "unspecified")].append(
+                float(trace["latency_ms"])
+            )
+    api_calls = sum(int(trace.get("external_api_calls", 0) or 0) for trace in traces)
     if not api_calls:
         api_calls = sum(
             int(trace.get("llm_calls", 0) or 0)
@@ -297,6 +326,7 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
             + int(trace.get("rag_analyzer_api_calls", 0) or 0)
             for trace in traces
         )
+    paid_api_calls = sum(int(trace.get("paid_api_calls", 0) or 0) for trace in traces)
     return {
         "n": len(traces),
         "retrieval": {
@@ -304,6 +334,7 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
             "r3": _retrieval_metric(retrieval_by_id, retrieval_ids, "r3"),
             "r5": _retrieval_metric(retrieval_by_id, retrieval_ids, "r5"),
             "mrr": _retrieval_metric(retrieval_by_id, retrieval_ids, "mrr"),
+            "all_required_evidence_group_recall": evidence_group_recall_metrics,
             "by_bucket": _bucket_retrieval(retrieval_by_id, retrieval_ids, cases_by_id),
         },
         "answers": {
@@ -354,9 +385,18 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
                 "n": len(latencies),
                 "p50": _nearest_rank(latencies, 0.50),
                 "p95": _nearest_rank(latencies, 0.95),
+                "by_source": {
+                    source: {
+                        "n": len(values),
+                        "p50": _nearest_rank(values, 0.50),
+                        "p95": _nearest_rank(values, 0.95),
+                    }
+                    for source, values in sorted(latency_by_source.items())
+                },
             },
             "calls": {
-                "paid_api_calls": api_calls,
+                "external_api_calls": api_calls,
+                "paid_api_calls": paid_api_calls,
                 "answer_api_calls": sum(int(t.get("llm_calls", 0) or 0) for t in traces),
                 "evidence_judge_api_calls": sum(
                     int(t.get("evidence_judge_calls", 0) or 0) for t in traces
@@ -518,10 +558,11 @@ def protocol_sha256(source_contract: dict) -> str:
     rewrite.pop("cache_sha256", None)
     harness_source = source_contract.get("harness") or {}
     run_source = source_contract.get("run") or {}
-    code_hashes = {}
-    for name in ("ch16_analysis.py", "eval_rag_ablation.py"):
-        code_path = Path(__file__).resolve().with_name(name)
-        code_hashes[name] = hashlib.sha256(code_path.read_bytes()).hexdigest()
+    repo_root = Path(__file__).resolve().parent.parent
+    code_hashes = {
+        name: hashlib.sha256((repo_root / name).read_bytes()).hexdigest()
+        for name in PROTOCOL_CODE_PATHS
+    }
     payload = {
         "corpus": source_contract.get("corpus"),
         "index": index,
@@ -539,9 +580,10 @@ def protocol_sha256(source_contract: dict) -> str:
             "retrieval_metrics": ["R@3", "R@5", "MRR@10"],
             "strict_accuracy": "gold_answer_behaviors;gate_blocked_is_failure",
             "unsupported_claims": "all_non_gate_blocked_attempts_micro_average",
-            "latency": "offline_wall_clock_not_live_model_latency",
+            "latency": "full_case_wall_clock_includes_live_calls",
             "requested_allow_paid": bool(run_source.get("ch16_allow_paid", False)),
-            "max_cost_usd_per_group": float(run_source.get("ch16_max_cost_usd", 0.0)),
+            "budget_mode": "unbounded" if run_source.get("ch16_unbounded_budget") else "bounded",
+            "retry_policy": run_source.get("ch16_retry_policy", "default"),
             "answer_prompt_is_shared": True,
         },
     }
@@ -576,8 +618,10 @@ def build_experiment_contract(*, split: str, experiment: str, strategy: str,
         "dataset": deepcopy(source.get("dataset") or {}),
         "protocol_sha256": protocol_hash,
         "analysis_code_sha256": {
-            name: hashlib.sha256(Path(__file__).resolve().with_name(name).read_bytes()).hexdigest()
-            for name in ("ch16_analysis.py", "eval_rag_ablation.py")
+            name: hashlib.sha256(
+                (Path(__file__).resolve().parent.parent / name).read_bytes()
+            ).hexdigest()
+            for name in PROTOCOL_CODE_PATHS
         },
         "group": group,
         "source_contract": source,
@@ -672,10 +716,19 @@ def check_cross_experiment_locks(
             raise ContractError(f"跨实验 dev lock 与本次协议不一致:{path}")
 
 
-def validate_budget_request(*, allow_paid: bool, max_cost_usd: float, ledger) -> None:
-    """正预算必须显式启用付费并指定共享台账；默认零预算支持缓存重放。"""
-    if not math.isfinite(max_cost_usd):
-        raise ContractError("max_cost_usd 必须是有限数字")
+def validate_budget_request(*, allow_paid: bool, max_cost_usd: float | None,
+                            ledger, unbounded: bool = False) -> None:
+    """Require explicit paid mode and a durable ledger for live requests."""
+    if unbounded:
+        if not allow_paid:
+            raise ContractError("无限预算模式需要显式 --allow-paid")
+        if ledger is None:
+            raise ContractError("付费运行必须显式指定共享 --ledger")
+        if max_cost_usd is not None:
+            raise ContractError("无限预算模式不能同时设置 max_cost_usd")
+        return
+    if max_cost_usd is None or not math.isfinite(max_cost_usd):
+        raise ContractError("max_cost_usd 必须是有限数字；无限模式需显式 --unbounded-budget")
     if max_cost_usd < 0:
         raise ContractError("max_cost_usd 不能为负")
     if max_cost_usd > 0 and not allow_paid:

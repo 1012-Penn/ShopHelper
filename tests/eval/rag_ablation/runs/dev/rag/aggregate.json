@@ -1,233 +1,612 @@
 {
-  "schema_version": 1,
-  "experiment": "rag",
-  "split": "dev",
-  "dataset_sha256": "a67210c9a2d56ce690eb35fc957f9b75fefb4da365e252f25532196bab5680f7",
+  "api_attempt_ledger": {
+    "attempts": 98,
+    "groups": {
+      "decompose_once": {
+        "api_latency_ms": {
+          "n": 98,
+          "p50": 883.158,
+          "p95": 11688.38
+        },
+        "by_kind": {
+          "api": {
+            "cache_hits": 0,
+            "cost_actual_usd": 0.001006536,
+            "external_api_calls": 1,
+            "failures": 0,
+            "input_tokens": 2082,
+            "output_tokens": 381,
+            "retry_count": 0,
+            "successes": 1
+          },
+          "embedding": {
+            "cache_hits": 0,
+            "cost_actual_usd": 0.0,
+            "external_api_calls": 26,
+            "failures": 0,
+            "input_tokens": 212,
+            "output_tokens": 0,
+            "retry_count": 0,
+            "successes": 26
+          },
+          "evidence_judge": {
+            "cache_hits": 0,
+            "cost_actual_usd": 0.043788408,
+            "external_api_calls": 30,
+            "failures": 0,
+            "input_tokens": 44178,
+            "output_tokens": 26418,
+            "retry_count": 0,
+            "successes": 30
+          },
+          "gap_analyzer": {
+            "cache_hits": 0,
+            "cost_actual_usd": 0.009343619999999999,
+            "external_api_calls": 15,
+            "failures": 0,
+            "input_tokens": 5535,
+            "output_tokens": 6873,
+            "retry_count": 0,
+            "successes": 15
+          },
+          "rerank": {
+            "cache_hits": 0,
+            "cost_actual_usd": 0.0,
+            "external_api_calls": 26,
+            "failures": 0,
+            "input_tokens": 88751,
+            "output_tokens": 0,
+            "retry_count": 0,
+            "successes": 26
+          }
+        },
+        "cache_hits": 0,
+        "cost_actual_usd": 0.05413856,
+        "errors": [],
+        "external_api_calls": 98,
+        "failures": 0,
+        "input_tokens": 140758,
+        "output_tokens": 33672,
+        "paid_api_calls": 46,
+        "retry_count": 0,
+        "successes": 98
+      }
+    }
+  },
+  "budget_mode": "unbounded",
+  "cost_actual_usd": 0.03927213,
+  "cost_estimate": {
+    "currency": "USD",
+    "groups": [
+      {
+        "basis": "CH12 baseline 完整缓存重放为 $0；缓存未命中需重新估算",
+        "estimated_usd": [
+          0.0,
+          0.0
+        ],
+        "experiment": "rag",
+        "group": "baseline",
+        "max_cost_usd_per_group": 0.0,
+        "strategy": "hybrid_rerank"
+      },
+      {
+        "basis": "CH12 报告 90 题预估 $0.04–0.08，dev 按 60/90 缩放",
+        "estimated_usd": [
+          0.0267,
+          0.0533
+        ],
+        "experiment": "rag",
+        "group": "decompose_once",
+        "max_cost_usd_per_group": 0.06,
+        "strategy": "hybrid_rerank"
+      },
+      {
+        "basis": "CH12 报告 90 题预估 $0.07–0.15，dev 按 60/90 缩放",
+        "estimated_usd": [
+          0.0467,
+          0.1
+        ],
+        "experiment": "rag",
+        "group": "controlled_loop",
+        "max_cost_usd_per_group": 0.11,
+        "strategy": "hybrid_rerank"
+      }
+    ],
+    "paid_calls_executed": 42,
+    "total_estimated_usd": [
+      0.0734,
+      0.1533
+    ],
+    "total_max_cost_usd_if_all_groups_run": 0.17
+  },
   "dataset_n": 60,
-  "protocol_sha256": "c469d587a2a82a0bc2121a03810b2af045ef00ac4a313a06d84e127a3b2c55a3",
-  "paid_calls_executed": 0,
-  "max_cost_usd_per_group": 0.0,
-  "reference_group": "baseline",
+  "dataset_sha256": "a67210c9a2d56ce690eb35fc957f9b75fefb4da365e252f25532196bab5680f7",
+  "experiment": "rag",
+  "external_api_calls_executed": 90,
   "groups": {
     "baseline": {
-      "n": 60,
-      "retrieval": {
-        "positive_cases": 43,
-        "r3": {
-          "hits": 0,
-          "measured": 0,
-          "eligible": 43,
-          "unmeasured": 43,
-          "rate": null
-        },
-        "r5": {
-          "hits": 0,
-          "measured": 0,
-          "eligible": 43,
-          "unmeasured": 43,
-          "rate": null
-        },
-        "mrr": {
-          "mean": null,
-          "n": 0,
-          "eligible": 43,
-          "unmeasured": 43
-        },
-        "by_bucket": {
-          "entity_mismatch": {
-            "n": 6,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 6,
-              "unmeasured": 6,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 6,
-              "unmeasured": 6,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 6,
-              "unmeasured": 6
-            }
-          },
-          "multi_constraint": {
-            "n": 9,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 9,
-              "unmeasured": 9,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 9,
-              "unmeasured": 9,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 9,
-              "unmeasured": 9
-            }
-          },
-          "multi_hop": {
-            "n": 11,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 11,
-              "unmeasured": 11,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 11,
-              "unmeasured": 11,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 11,
-              "unmeasured": 11
-            }
-          },
-          "policy_conflict": {
-            "n": 5,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 5,
-              "unmeasured": 5,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 5,
-              "unmeasured": 5,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 5,
-              "unmeasured": 5
-            }
-          },
-          "single_hop": {
-            "n": 12,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 12,
-              "unmeasured": 12,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 12,
-              "unmeasured": 12,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 12,
-              "unmeasured": 12
-            }
-          }
-        }
-      },
       "answers": {
-        "strict_accuracy": {
-          "correct": 0,
-          "measured": 0,
-          "eligible": 42,
-          "unmeasured": 42,
-          "rate": null
-        },
         "ch11_compatible_attempted_strict_accuracy": {
-          "correct": 0,
-          "measured": 0,
+          "correct": 9,
           "excludes_gate_blocked": true,
           "includes_any_expected_behavior_with_gold_fact_check": true,
-          "rate": null
-        },
-        "condition_coverage": {
-          "mean": null,
-          "measured": 0,
-          "eligible": 24,
-          "unmeasured": 24
+          "measured": 40,
+          "rate": 0.225
         },
         "citation_supported_cases": {
-          "supported": 0,
-          "measured": 0,
-          "rate": null
+          "measured": 42,
+          "rate": 0.2619047619047619,
+          "supported": 11
         },
-        "unsupported_claims": {
-          "unsupported": 0,
-          "claims": 0,
-          "rate": null,
-          "cases_with_unsupported_claims": 0,
-          "case_ids": []
+        "condition_coverage": {
+          "eligible": 24,
+          "mean": 0.6527777777777778,
+          "measured": 24,
+          "unmeasured": 0
         },
         "over_refusal": {
-          "refused": 0,
-          "measured": 0,
+          "case_ids": [
+            "DEV-CLARIFY-01",
+            "DEV-CLARIFY-02",
+            "DEV-CONFLICT-04",
+            "DEV-ENTITY-03",
+            "DEV-MULTI-02",
+            "DEV-MULTI-10"
+          ],
           "eligible": 49,
-          "unmeasured": 49,
-          "rate": null,
-          "case_ids": []
+          "measured": 49,
+          "rate": 0.12244897959183673,
+          "refused": 6,
+          "unmeasured": 0
+        },
+        "strict_accuracy": {
+          "correct": 9,
+          "eligible": 42,
+          "measured": 42,
+          "rate": 0.21428571428571427,
+          "unmeasured": 0
+        },
+        "unsupported_claims": {
+          "case_ids": [
+            "DEV-CLARIFY-03",
+            "DEV-CLARIFY-04",
+            "DEV-CLARIFY-05",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-ENTITY-04",
+            "DEV-MULTI-01",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-12"
+          ],
+          "cases_with_unsupported_claims": 26,
+          "claims": 86,
+          "rate": 0.4883720930232558,
+          "unsupported": 42
         }
       },
-      "operations": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
+            "case_ids": [
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-01",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-SINGLE-04"
+            ],
+            "count": 11
+          },
+          "answer_wrong_fact": {
+            "case_ids": [
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-CONSTRAINT-08",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-08",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-04"
+            ],
+            "count": 15
+          },
+          "citation_unsupported": {
+            "case_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-04",
+              "DEV-CONSTRAINT-05",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-01",
+              "DEV-ENTITY-04",
+              "DEV-ENTITY-05",
+              "DEV-ENTITY-07",
+              "DEV-MULTI-01",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-07",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-03",
+              "DEV-SINGLE-04",
+              "DEV-SINGLE-06",
+              "DEV-SINGLE-07",
+              "DEV-SINGLE-08",
+              "DEV-SINGLE-09",
+              "DEV-SINGLE-10",
+              "DEV-SINGLE-12"
+            ],
+            "count": 29
+          },
+          "clarify_missing_slot": {
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ],
+            "count": 2
+          },
+          "clarify_over_asking": {
+            "case_ids": [
+              "DEV-CLARIFY-04",
+              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ],
+            "count": 4
+          },
+          "over_refusal": {
+            "case_ids": [
+              "DEV-CLARIFY-01",
+              "DEV-CLARIFY-02",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03",
+              "DEV-MULTI-02",
+              "DEV-MULTI-10"
+            ],
+            "count": 6
+          }
         },
+        "unmeasured": {}
+      },
+      "n": 60,
+      "operations": {
         "calls": {
-          "paid_api_calls": 0,
           "answer_api_calls": 0,
           "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
+          "evidence_judge_cache_hits": 60,
+          "external_api_calls": 0,
           "gap_analyzer_api_calls": 0,
           "gap_analyzer_cache_hits": 0,
           "gap_analyzer_logical_calls": 0,
+          "paid_api_calls": 0,
           "rag_judge_logical_calls": 0
         },
         "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
+        "cost_estimate_usd": 0.037395,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 60,
+              "p50": 32.263,
+              "p95": 45.913
+            }
+          },
+          "method": "nearest_rank",
+          "n": 60,
+          "p50": 32.263,
+          "p95": 45.913
+        }
+      },
+      "retrieval": {
+        "all_required_evidence_group_recall": {
+          "at_3": {
+            "eligible": 43,
+            "mean": 0.6627906976744186,
+            "measured": 43,
+            "unmeasured": 0
+          },
+          "at_5": {
+            "eligible": 43,
+            "mean": 0.7558139534883721,
+            "measured": 43,
+            "unmeasured": 0
+          }
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "mrr": {
+              "eligible": 6,
+              "mean": 0.22658730158730156,
+              "n": 6,
+              "unmeasured": 0
+            },
+            "n": 6,
+            "r3": {
+              "eligible": 6,
+              "hits": 2,
+              "measured": 6,
+              "rate": 0.3333333333333333,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 6,
+              "hits": 4,
+              "measured": 6,
+              "rate": 0.6666666666666666,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "mrr": {
+              "eligible": 9,
+              "mean": 0.3677248677248677,
+              "n": 9,
+              "unmeasured": 0
+            },
+            "n": 9,
+            "r3": {
+              "eligible": 9,
+              "hits": 4,
+              "measured": 9,
+              "rate": 0.4444444444444444,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 9,
+              "hits": 4,
+              "measured": 9,
+              "rate": 0.4444444444444444,
+              "unmeasured": 0
+            }
+          },
+          "multi_hop": {
+            "mrr": {
+              "eligible": 11,
+              "mean": 0.21818181818181817,
+              "n": 11,
+              "unmeasured": 0
+            },
+            "n": 11,
+            "r3": {
+              "eligible": 11,
+              "hits": 2,
+              "measured": 11,
+              "rate": 0.18181818181818182,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 11,
+              "hits": 5,
+              "measured": 11,
+              "rate": 0.45454545454545453,
+              "unmeasured": 0
+            }
+          },
+          "policy_conflict": {
+            "mrr": {
+              "eligible": 5,
+              "mean": 0.11746031746031745,
+              "n": 5,
+              "unmeasured": 0
+            },
+            "n": 5,
+            "r3": {
+              "eligible": 5,
+              "hits": 1,
+              "measured": 5,
+              "rate": 0.2,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 5,
+              "hits": 1,
+              "measured": 5,
+              "rate": 0.2,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "mrr": {
+              "eligible": 12,
+              "mean": 0.9166666666666666,
+              "n": 12,
+              "unmeasured": 0
+            },
+            "n": 12,
+            "r3": {
+              "eligible": 12,
+              "hits": 12,
+              "measured": 12,
+              "rate": 1.0,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 12,
+              "hits": 12,
+              "measured": 12,
+              "rate": 1.0,
+              "unmeasured": 0
+            }
+          }
+        },
+        "mrr": {
+          "eligible": 43,
+          "mean": 0.43386858619416746,
+          "n": 43,
+          "unmeasured": 0
+        },
+        "positive_cases": 43,
+        "r3": {
+          "eligible": 43,
+          "hits": 21,
+          "measured": 43,
+          "rate": 0.4883720930232558,
+          "unmeasured": 0
+        },
+        "r5": {
+          "eligible": 43,
+          "hits": 26,
+          "measured": 43,
+          "rate": 0.6046511627906976,
+          "unmeasured": 0
+        }
+      }
+    },
+    "controlled_loop": {
+      "answers": {
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 9,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "measured": 41,
+          "rate": 0.21951219512195122
+        },
+        "citation_supported_cases": {
+          "measured": 42,
+          "rate": 0.2619047619047619,
+          "supported": 11
+        },
+        "condition_coverage": {
+          "eligible": 24,
+          "mean": 0.611111111111111,
+          "measured": 24,
+          "unmeasured": 0
+        },
+        "over_refusal": {
+          "case_ids": [
+            "DEV-CLARIFY-02",
+            "DEV-CONFLICT-04",
+            "DEV-ENTITY-03",
+            "DEV-MULTI-10"
+          ],
+          "eligible": 49,
+          "measured": 49,
+          "rate": 0.08163265306122448,
+          "refused": 4,
+          "unmeasured": 0
+        },
+        "strict_accuracy": {
+          "correct": 9,
+          "eligible": 42,
+          "measured": 42,
+          "rate": 0.21428571428571427,
+          "unmeasured": 0
+        },
+        "unsupported_claims": {
+          "case_ids": [
+            "DEV-CLARIFY-03",
+            "DEV-CLARIFY-04",
+            "DEV-CLARIFY-05",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-ENTITY-04",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-12"
+          ],
+          "cases_with_unsupported_claims": 27,
+          "claims": 89,
+          "rate": 0.4943820224719101,
+          "unsupported": 44
+        }
       },
       "failure_attribution": {
-        "failure_labels": {},
-        "unmeasured": {
-          "retrieval": {
-            "count": 60,
+        "failure_labels": {
+          "answer_missing_condition": {
             "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-01",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-10",
+              "DEV-SINGLE-04"
+            ],
+            "count": 12
+          },
+          "answer_wrong_fact": {
+            "case_ids": [
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-CONSTRAINT-08",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-08",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-04"
+            ],
+            "count": 15
+          },
+          "citation_unsupported": {
+            "case_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
               "DEV-CONFLICT-05",
               "DEV-CONSTRAINT-01",
               "DEV-CONSTRAINT-02",
@@ -236,136 +615,367 @@
               "DEV-CONSTRAINT-05",
               "DEV-CONSTRAINT-06",
               "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
               "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
               "DEV-ENTITY-04",
               "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
               "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
               "DEV-MULTI-01",
               "DEV-MULTI-02",
               "DEV-MULTI-03",
               "DEV-MULTI-04",
               "DEV-MULTI-05",
-              "DEV-MULTI-06",
               "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
               "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
               "DEV-SINGLE-03",
               "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
               "DEV-SINGLE-06",
               "DEV-SINGLE-07",
               "DEV-SINGLE-08",
               "DEV-SINGLE-09",
               "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
               "DEV-SINGLE-12"
             ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
+            "count": 30
+          },
+          "clarify_missing_slot": {
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ],
+            "count": 2
+          },
+          "clarify_over_asking": {
+            "case_ids": [
+              "DEV-CLARIFY-04",
+              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ],
+            "count": 4
+          },
+          "over_refusal": {
+            "case_ids": [
+              "DEV-CLARIFY-02",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03",
+              "DEV-MULTI-10"
+            ],
+            "count": 4
+          },
+          "under_refusal": {
+            "case_ids": [
+              "DEV-HARD-04",
+              "DEV-HARD-05"
+            ],
+            "count": 2
+          }
+        },
+        "unmeasured": {}
+      },
+      "n": 60,
+      "operations": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 95,
+          "external_api_calls": 0,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 17,
+          "gap_analyzer_logical_calls": 17,
+          "paid_api_calls": 0,
+          "rag_judge_logical_calls": 65
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.038477,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 60,
+              "p50": 46.968,
+              "p95": 256.942
             }
           },
-          "answer": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
-            ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
+          "method": "nearest_rank",
+          "n": 60,
+          "p50": 46.968,
+          "p95": 256.942
+        }
+      },
+      "retrieval": {
+        "all_required_evidence_group_recall": {
+          "at_3": {
+            "eligible": 43,
+            "mean": 0.6627906976744186,
+            "measured": 43,
+            "unmeasured": 0
+          },
+          "at_5": {
+            "eligible": 43,
+            "mean": 0.7441860465116279,
+            "measured": 43,
+            "unmeasured": 0
+          }
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "mrr": {
+              "eligible": 6,
+              "mean": 0.22658730158730156,
+              "n": 6,
+              "unmeasured": 0
+            },
+            "n": 6,
+            "r3": {
+              "eligible": 6,
+              "hits": 2,
+              "measured": 6,
+              "rate": 0.3333333333333333,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 6,
+              "hits": 4,
+              "measured": 6,
+              "rate": 0.6666666666666666,
+              "unmeasured": 0
             }
           },
-          "rag": {
-            "count": 60,
+          "multi_constraint": {
+            "mrr": {
+              "eligible": 9,
+              "mean": 0.3677248677248677,
+              "n": 9,
+              "unmeasured": 0
+            },
+            "n": 9,
+            "r3": {
+              "eligible": 9,
+              "hits": 4,
+              "measured": 9,
+              "rate": 0.4444444444444444,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 9,
+              "hits": 4,
+              "measured": 9,
+              "rate": 0.4444444444444444,
+              "unmeasured": 0
+            }
+          },
+          "multi_hop": {
+            "mrr": {
+              "eligible": 11,
+              "mean": 0.21060606060606063,
+              "n": 11,
+              "unmeasured": 0
+            },
+            "n": 11,
+            "r3": {
+              "eligible": 11,
+              "hits": 2,
+              "measured": 11,
+              "rate": 0.18181818181818182,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 11,
+              "hits": 4,
+              "measured": 11,
+              "rate": 0.36363636363636365,
+              "unmeasured": 0
+            }
+          },
+          "policy_conflict": {
+            "mrr": {
+              "eligible": 5,
+              "mean": 0.11746031746031745,
+              "n": 5,
+              "unmeasured": 0
+            },
+            "n": 5,
+            "r3": {
+              "eligible": 5,
+              "hits": 1,
+              "measured": 5,
+              "rate": 0.2,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 5,
+              "hits": 1,
+              "measured": 5,
+              "rate": 0.2,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "mrr": {
+              "eligible": 12,
+              "mean": 0.9166666666666666,
+              "n": 12,
+              "unmeasured": 0
+            },
+            "n": 12,
+            "r3": {
+              "eligible": 12,
+              "hits": 12,
+              "measured": 12,
+              "rate": 1.0,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 12,
+              "hits": 12,
+              "measured": 12,
+              "rate": 1.0,
+              "unmeasured": 0
+            }
+          }
+        },
+        "mrr": {
+          "eligible": 43,
+          "mean": 0.43193060169804337,
+          "n": 43,
+          "unmeasured": 0
+        },
+        "positive_cases": 43,
+        "r3": {
+          "eligible": 43,
+          "hits": 21,
+          "measured": 43,
+          "rate": 0.4883720930232558,
+          "unmeasured": 0
+        },
+        "r5": {
+          "eligible": 43,
+          "hits": 25,
+          "measured": 43,
+          "rate": 0.5813953488372093,
+          "unmeasured": 0
+        }
+      }
+    },
+    "decompose_once": {
+      "answers": {
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 9,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "measured": 41,
+          "rate": 0.21951219512195122
+        },
+        "citation_supported_cases": {
+          "measured": 42,
+          "rate": 0.2619047619047619,
+          "supported": 11
+        },
+        "condition_coverage": {
+          "eligible": 24,
+          "mean": 0.611111111111111,
+          "measured": 24,
+          "unmeasured": 0
+        },
+        "over_refusal": {
+          "case_ids": [
+            "DEV-CLARIFY-02",
+            "DEV-CONFLICT-04",
+            "DEV-ENTITY-03",
+            "DEV-MULTI-10"
+          ],
+          "eligible": 49,
+          "measured": 49,
+          "rate": 0.08163265306122448,
+          "refused": 4,
+          "unmeasured": 0
+        },
+        "strict_accuracy": {
+          "correct": 9,
+          "eligible": 42,
+          "measured": 42,
+          "rate": 0.21428571428571427,
+          "unmeasured": 0
+        },
+        "unsupported_claims": {
+          "case_ids": [
+            "DEV-CLARIFY-03",
+            "DEV-CLARIFY-04",
+            "DEV-CLARIFY-05",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-ENTITY-04",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-12"
+          ],
+          "cases_with_unsupported_claims": 27,
+          "claims": 89,
+          "rate": 0.4943820224719101,
+          "unsupported": 44
+        }
+      },
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
             "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-01",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-10",
+              "DEV-SINGLE-04"
+            ],
+            "count": 12
+          },
+          "answer_wrong_fact": {
+            "case_ids": [
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-CONSTRAINT-08",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-08",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-04"
+            ],
+            "count": 15
+          },
+          "citation_unsupported": {
+            "case_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
               "DEV-CONFLICT-05",
               "DEV-CONSTRAINT-01",
               "DEV-CONSTRAINT-02",
@@ -374,22 +984,466 @@
               "DEV-CONSTRAINT-05",
               "DEV-CONSTRAINT-06",
               "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
               "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
               "DEV-ENTITY-04",
               "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
               "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-07",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-03",
+              "DEV-SINGLE-04",
+              "DEV-SINGLE-06",
+              "DEV-SINGLE-07",
+              "DEV-SINGLE-08",
+              "DEV-SINGLE-09",
+              "DEV-SINGLE-10",
+              "DEV-SINGLE-12"
+            ],
+            "count": 30
+          },
+          "clarify_missing_slot": {
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ],
+            "count": 2
+          },
+          "clarify_over_asking": {
+            "case_ids": [
+              "DEV-CLARIFY-04",
+              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ],
+            "count": 4
+          },
+          "over_refusal": {
+            "case_ids": [
+              "DEV-CLARIFY-02",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03",
+              "DEV-MULTI-10"
+            ],
+            "count": 4
+          },
+          "under_refusal": {
+            "case_ids": [
               "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
+              "DEV-HARD-05"
+            ],
+            "count": 2
+          }
+        },
+        "unmeasured": {}
+      },
+      "n": 60,
+      "operations": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 27,
+          "evidence_judge_cache_hits": 68,
+          "external_api_calls": 90,
+          "gap_analyzer_api_calls": 15,
+          "gap_analyzer_cache_hits": 2,
+          "gap_analyzer_logical_calls": 17,
+          "paid_api_calls": 42,
+          "rag_judge_logical_calls": 65
+        },
+        "cost_actual_usd": 0.03927213,
+        "cost_estimate_usd": 0.077748,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 45,
+              "p50": 33.44,
+              "p95": 47.153
+            },
+            "live_api": {
+              "n": 15,
+              "p50": 12963.947,
+              "p95": 43501.389
+            }
+          },
+          "method": "nearest_rank",
+          "n": 60,
+          "p50": 35.625,
+          "p95": 20071.848
+        }
+      },
+      "retrieval": {
+        "all_required_evidence_group_recall": {
+          "at_3": {
+            "eligible": 43,
+            "mean": 0.6627906976744186,
+            "measured": 43,
+            "unmeasured": 0
+          },
+          "at_5": {
+            "eligible": 43,
+            "mean": 0.7441860465116279,
+            "measured": 43,
+            "unmeasured": 0
+          }
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "mrr": {
+              "eligible": 6,
+              "mean": 0.22658730158730156,
+              "n": 6,
+              "unmeasured": 0
+            },
+            "n": 6,
+            "r3": {
+              "eligible": 6,
+              "hits": 2,
+              "measured": 6,
+              "rate": 0.3333333333333333,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 6,
+              "hits": 4,
+              "measured": 6,
+              "rate": 0.6666666666666666,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "mrr": {
+              "eligible": 9,
+              "mean": 0.3677248677248677,
+              "n": 9,
+              "unmeasured": 0
+            },
+            "n": 9,
+            "r3": {
+              "eligible": 9,
+              "hits": 4,
+              "measured": 9,
+              "rate": 0.4444444444444444,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 9,
+              "hits": 4,
+              "measured": 9,
+              "rate": 0.4444444444444444,
+              "unmeasured": 0
+            }
+          },
+          "multi_hop": {
+            "mrr": {
+              "eligible": 11,
+              "mean": 0.21060606060606063,
+              "n": 11,
+              "unmeasured": 0
+            },
+            "n": 11,
+            "r3": {
+              "eligible": 11,
+              "hits": 2,
+              "measured": 11,
+              "rate": 0.18181818181818182,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 11,
+              "hits": 4,
+              "measured": 11,
+              "rate": 0.36363636363636365,
+              "unmeasured": 0
+            }
+          },
+          "policy_conflict": {
+            "mrr": {
+              "eligible": 5,
+              "mean": 0.11746031746031745,
+              "n": 5,
+              "unmeasured": 0
+            },
+            "n": 5,
+            "r3": {
+              "eligible": 5,
+              "hits": 1,
+              "measured": 5,
+              "rate": 0.2,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 5,
+              "hits": 1,
+              "measured": 5,
+              "rate": 0.2,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "mrr": {
+              "eligible": 12,
+              "mean": 0.9166666666666666,
+              "n": 12,
+              "unmeasured": 0
+            },
+            "n": 12,
+            "r3": {
+              "eligible": 12,
+              "hits": 12,
+              "measured": 12,
+              "rate": 1.0,
+              "unmeasured": 0
+            },
+            "r5": {
+              "eligible": 12,
+              "hits": 12,
+              "measured": 12,
+              "rate": 1.0,
+              "unmeasured": 0
+            }
+          }
+        },
+        "mrr": {
+          "eligible": 43,
+          "mean": 0.43193060169804337,
+          "n": 43,
+          "unmeasured": 0
+        },
+        "positive_cases": 43,
+        "r3": {
+          "eligible": 43,
+          "hits": 21,
+          "measured": 43,
+          "rate": 0.4883720930232558,
+          "unmeasured": 0
+        },
+        "r5": {
+          "eligible": 43,
+          "hits": 25,
+          "measured": 43,
+          "rate": 0.5813953488372093,
+          "unmeasured": 0
+        }
+      }
+    }
+  },
+  "latency_semantics": "每题端到端 wall-clock；operations.latency_ms.by_source 分别列出实际在线 API 与精确响应缓存/本地路径。缓存重放延迟不能解释为线上请求延迟；API 请求耗时另记入 attempts ledger。",
+  "max_cost_usd_per_group": null,
+  "measurement_status": {
+    "baseline": {
+      "answers_measured": 60,
+      "rag_measured": 60,
+      "retrieval_measured": 60
+    },
+    "controlled_loop": {
+      "answers_measured": 60,
+      "rag_measured": 60,
+      "retrieval_measured": 60
+    },
+    "decompose_once": {
+      "answers_measured": 60,
+      "rag_measured": 60,
+      "retrieval_measured": 60
+    }
+  },
+  "operations_by_bucket": {
+    "baseline": {
+      "multi_hop": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 11,
+          "external_api_calls": 0,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "paid_api_calls": 0,
+          "rag_judge_logical_calls": 0
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.008703,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 11,
+              "p50": 33.671,
+              "p95": 54.423
+            }
+          },
+          "method": "nearest_rank",
+          "n": 11,
+          "p50": 33.671,
+          "p95": 54.423
+        }
+      },
+      "policy_conflict": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 5,
+          "external_api_calls": 0,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "paid_api_calls": 0,
+          "rag_judge_logical_calls": 0
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.00429,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 5,
+              "p50": 43.21,
+              "p95": 45.913
+            }
+          },
+          "method": "nearest_rank",
+          "n": 5,
+          "p50": 43.21,
+          "p95": 45.913
+        }
+      }
+    },
+    "controlled_loop": {
+      "multi_hop": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 19,
+          "external_api_calls": 0,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 2,
+          "gap_analyzer_logical_calls": 2,
+          "paid_api_calls": 0,
+          "rag_judge_logical_calls": 13
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.009785,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 11,
+              "p50": 42.488,
+              "p95": 247.5
+            }
+          },
+          "method": "nearest_rank",
+          "n": 11,
+          "p50": 42.488,
+          "p95": 247.5
+        }
+      },
+      "policy_conflict": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 9,
+          "external_api_calls": 0,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 1,
+          "gap_analyzer_logical_calls": 1,
+          "paid_api_calls": 0,
+          "rag_judge_logical_calls": 6
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.00429,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 5,
+              "p50": 57.288,
+              "p95": 203.618
+            }
+          },
+          "method": "nearest_rank",
+          "n": 5,
+          "p50": 57.288,
+          "p95": 203.618
+        }
+      }
+    },
+    "decompose_once": {
+      "multi_hop": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 19,
+          "external_api_calls": 0,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 2,
+          "gap_analyzer_logical_calls": 2,
+          "paid_api_calls": 0,
+          "rag_judge_logical_calls": 13
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.009785,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 11,
+              "p50": 38.297,
+              "p95": 138.902
+            }
+          },
+          "method": "nearest_rank",
+          "n": 11,
+          "p50": 38.297,
+          "p95": 138.902
+        }
+      },
+      "policy_conflict": {
+        "calls": {
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 4,
+          "evidence_judge_cache_hits": 5,
+          "external_api_calls": 11,
+          "gap_analyzer_api_calls": 1,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 1,
+          "paid_api_calls": 5,
+          "rag_judge_logical_calls": 6
+        },
+        "cost_actual_usd": 0.00885444,
+        "cost_estimate_usd": 0.013144,
+        "latency_ms": {
+          "by_source": {
+            "cache_or_local": {
+              "n": 4,
+              "p50": 34.449,
+              "p95": 40.451
+            },
+            "live_api": {
+              "n": 1,
+              "p50": 43501.389,
+              "p95": 43501.389
+            }
+          },
+          "method": "nearest_rank",
+          "n": 5,
+          "p50": 37.093,
+          "p95": 43501.389
+        }
+      }
+    }
+  },
+  "paid_calls_executed": 42,
+  "paired_by_bucket": {
+    "controlled_loop": {
+      "multi_hop": {
+        "answers": {
+          "strict": {
+            "candidate_correct": 2,
+            "candidate_minus_reference": 0,
+            "gained_ids": [],
+            "lost_ids": [],
+            "pairs": 11,
+            "reference_correct": 2,
+            "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-02",
               "DEV-MULTI-03",
@@ -400,1310 +1454,745 @@
               "DEV-MULTI-08",
               "DEV-MULTI-09",
               "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
+              "DEV-MULTI-11"
             ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
+            "ties": 11
+          }
+        },
+        "common_case_ids": 11,
+        "retrieval": {
+          "mrr": {
+            "gained_ids": [
+              "DEV-MULTI-02"
+            ],
+            "lost_ids": [
+              "DEV-MULTI-10"
+            ],
+            "mean_delta": -0.007575757575757577,
+            "pairs": 11,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-11"
+            ],
+            "ties": 9
+          },
+          "r3": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 11,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11"
+            ],
+            "ties": 11
+          },
+          "r5": {
+            "gained_ids": [],
+            "lost_ids": [
+              "DEV-MULTI-10"
+            ],
+            "mean_delta": -0.09090909090909091,
+            "pairs": 11,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-11"
+            ],
+            "ties": 10
+          }
+        }
+      },
+      "policy_conflict": {
+        "answers": {
+          "strict": {
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0,
+            "gained_ids": [],
+            "lost_ids": [],
+            "pairs": 4,
+            "reference_correct": 0,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-05"
+            ],
+            "ties": 4
+          }
+        },
+        "common_case_ids": 5,
+        "retrieval": {
+          "mrr": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 5,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05"
+            ],
+            "ties": 5
+          },
+          "r3": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 5,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05"
+            ],
+            "ties": 5
+          },
+          "r5": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 5,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05"
+            ],
+            "ties": 5
           }
         }
       }
     },
     "decompose_once": {
-      "n": 60,
-      "retrieval": {
-        "positive_cases": 43,
-        "r3": {
-          "hits": 0,
-          "measured": 0,
-          "eligible": 43,
-          "unmeasured": 43,
-          "rate": null
+      "multi_hop": {
+        "answers": {
+          "strict": {
+            "candidate_correct": 2,
+            "candidate_minus_reference": 0,
+            "gained_ids": [],
+            "lost_ids": [],
+            "pairs": 11,
+            "reference_correct": 2,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11"
+            ],
+            "ties": 11
+          }
         },
-        "r5": {
-          "hits": 0,
-          "measured": 0,
-          "eligible": 43,
-          "unmeasured": 43,
-          "rate": null
-        },
-        "mrr": {
-          "mean": null,
-          "n": 0,
-          "eligible": 43,
-          "unmeasured": 43
-        },
-        "by_bucket": {
-          "entity_mismatch": {
-            "n": 6,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 6,
-              "unmeasured": 6,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 6,
-              "unmeasured": 6,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 6,
-              "unmeasured": 6
-            }
+        "common_case_ids": 11,
+        "retrieval": {
+          "mrr": {
+            "gained_ids": [
+              "DEV-MULTI-02"
+            ],
+            "lost_ids": [
+              "DEV-MULTI-10"
+            ],
+            "mean_delta": -0.007575757575757577,
+            "pairs": 11,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-11"
+            ],
+            "ties": 9
           },
-          "multi_constraint": {
-            "n": 9,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 9,
-              "unmeasured": 9,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 9,
-              "unmeasured": 9,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 9,
-              "unmeasured": 9
-            }
+          "r3": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 11,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11"
+            ],
+            "ties": 11
           },
-          "multi_hop": {
-            "n": 11,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 11,
-              "unmeasured": 11,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 11,
-              "unmeasured": 11,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 11,
-              "unmeasured": 11
-            }
-          },
-          "policy_conflict": {
-            "n": 5,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 5,
-              "unmeasured": 5,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 5,
-              "unmeasured": 5,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 5,
-              "unmeasured": 5
-            }
-          },
-          "single_hop": {
-            "n": 12,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 12,
-              "unmeasured": 12,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 12,
-              "unmeasured": 12,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 12,
-              "unmeasured": 12
-            }
+          "r5": {
+            "gained_ids": [],
+            "lost_ids": [
+              "DEV-MULTI-10"
+            ],
+            "mean_delta": -0.09090909090909091,
+            "pairs": 11,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-11"
+            ],
+            "ties": 10
           }
         }
       },
-      "answers": {
-        "strict_accuracy": {
-          "correct": 0,
-          "measured": 0,
-          "eligible": 42,
-          "unmeasured": 42,
-          "rate": null
-        },
-        "ch11_compatible_attempted_strict_accuracy": {
-          "correct": 0,
-          "measured": 0,
-          "excludes_gate_blocked": true,
-          "includes_any_expected_behavior_with_gold_fact_check": true,
-          "rate": null
-        },
-        "condition_coverage": {
-          "mean": null,
-          "measured": 0,
-          "eligible": 24,
-          "unmeasured": 24
-        },
-        "citation_supported_cases": {
-          "supported": 0,
-          "measured": 0,
-          "rate": null
-        },
-        "unsupported_claims": {
-          "unsupported": 0,
-          "claims": 0,
-          "rate": null,
-          "cases_with_unsupported_claims": 0,
-          "case_ids": []
-        },
-        "over_refusal": {
-          "refused": 0,
-          "measured": 0,
-          "eligible": 49,
-          "unmeasured": 49,
-          "rate": null,
-          "case_ids": []
-        }
-      },
-      "operations": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      },
-      "failure_attribution": {
-        "failure_labels": {},
-        "unmeasured": {
-          "retrieval": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
+      "policy_conflict": {
+        "answers": {
+          "strict": {
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0,
+            "gained_ids": [],
+            "lost_ids": [],
+            "pairs": 4,
+            "reference_correct": 0,
+            "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
+              "DEV-CONFLICT-05"
             ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
-          },
-          "answer": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
-            ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
-          },
-          "rag": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
-            ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
+            "ties": 4
           }
-        }
-      }
-    },
-    "controlled_loop": {
-      "n": 60,
-      "retrieval": {
-        "positive_cases": 43,
-        "r3": {
-          "hits": 0,
-          "measured": 0,
-          "eligible": 43,
-          "unmeasured": 43,
-          "rate": null
         },
-        "r5": {
-          "hits": 0,
-          "measured": 0,
-          "eligible": 43,
-          "unmeasured": 43,
-          "rate": null
-        },
-        "mrr": {
-          "mean": null,
-          "n": 0,
-          "eligible": 43,
-          "unmeasured": 43
-        },
-        "by_bucket": {
-          "entity_mismatch": {
-            "n": 6,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 6,
-              "unmeasured": 6,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 6,
-              "unmeasured": 6,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 6,
-              "unmeasured": 6
-            }
-          },
-          "multi_constraint": {
-            "n": 9,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 9,
-              "unmeasured": 9,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 9,
-              "unmeasured": 9,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 9,
-              "unmeasured": 9
-            }
-          },
-          "multi_hop": {
-            "n": 11,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 11,
-              "unmeasured": 11,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 11,
-              "unmeasured": 11,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 11,
-              "unmeasured": 11
-            }
-          },
-          "policy_conflict": {
-            "n": 5,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 5,
-              "unmeasured": 5,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 5,
-              "unmeasured": 5,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 5,
-              "unmeasured": 5
-            }
-          },
-          "single_hop": {
-            "n": 12,
-            "r3": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 12,
-              "unmeasured": 12,
-              "rate": null
-            },
-            "r5": {
-              "hits": 0,
-              "measured": 0,
-              "eligible": 12,
-              "unmeasured": 12,
-              "rate": null
-            },
-            "mrr": {
-              "mean": null,
-              "n": 0,
-              "eligible": 12,
-              "unmeasured": 12
-            }
-          }
-        }
-      },
-      "answers": {
-        "strict_accuracy": {
-          "correct": 0,
-          "measured": 0,
-          "eligible": 42,
-          "unmeasured": 42,
-          "rate": null
-        },
-        "ch11_compatible_attempted_strict_accuracy": {
-          "correct": 0,
-          "measured": 0,
-          "excludes_gate_blocked": true,
-          "includes_any_expected_behavior_with_gold_fact_check": true,
-          "rate": null
-        },
-        "condition_coverage": {
-          "mean": null,
-          "measured": 0,
-          "eligible": 24,
-          "unmeasured": 24
-        },
-        "citation_supported_cases": {
-          "supported": 0,
-          "measured": 0,
-          "rate": null
-        },
-        "unsupported_claims": {
-          "unsupported": 0,
-          "claims": 0,
-          "rate": null,
-          "cases_with_unsupported_claims": 0,
-          "case_ids": []
-        },
-        "over_refusal": {
-          "refused": 0,
-          "measured": 0,
-          "eligible": 49,
-          "unmeasured": 49,
-          "rate": null,
-          "case_ids": []
-        }
-      },
-      "operations": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      },
-      "failure_attribution": {
-        "failure_labels": {},
-        "unmeasured": {
-          "retrieval": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
+        "common_case_ids": 5,
+        "retrieval": {
+          "mrr": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 5,
+            "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-03",
               "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
+              "DEV-CONFLICT-05"
             ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
+            "ties": 5
           },
-          "answer": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
+          "r3": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 5,
+            "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-03",
               "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
+              "DEV-CONFLICT-05"
             ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
+            "ties": 5
           },
-          "rag": {
-            "count": 60,
-            "case_ids": [
-              "DEV-CLARIFY-01",
-              "DEV-CLARIFY-02",
-              "DEV-CLARIFY-03",
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
+          "r5": {
+            "gained_ids": [],
+            "lost_ids": [],
+            "mean_delta": 0.0,
+            "pairs": 5,
+            "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-03",
               "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-CONSTRAINT-09",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-02",
-              "DEV-ENTITY-03",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-06",
-              "DEV-ENTITY-07",
-              "DEV-HARD-01",
-              "DEV-HARD-02",
-              "DEV-HARD-03",
-              "DEV-HARD-04",
-              "DEV-HARD-05",
-              "DEV-HARD-06",
-              "DEV-HARD-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-OOD-01",
-              "DEV-OOD-02",
-              "DEV-OOD-03",
-              "DEV-OOD-04",
-              "DEV-SINGLE-01",
-              "DEV-SINGLE-02",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-05",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-11",
-              "DEV-SINGLE-12"
+              "DEV-CONFLICT-05"
             ],
-            "reasons": {
-              "CH16 零预算：rerank 缓存未命中，未发起外部调用": 1,
-              "单次运行预算不足:已花 $0.0000,本次估算 $0.0000,上限 $0.0000": 59
-            }
+            "ties": 5
           }
         }
       }
     }
   },
   "paired_vs_reference": {
-    "decompose_once": {
-      "common_case_ids": 60,
-      "retrieval": {
-        "r3": {
-          "pairs": 0,
-          "gained_ids": [],
-          "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "mean_delta": null
-        },
-        "r5": {
-          "pairs": 0,
-          "gained_ids": [],
-          "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "mean_delta": null
-        },
-        "mrr": {
-          "pairs": 0,
-          "gained_ids": [],
-          "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "mean_delta": null
-        }
-      },
+    "controlled_loop": {
       "answers": {
         "strict": {
-          "pairs": 0,
+          "candidate_correct": 9,
+          "candidate_minus_reference": 0,
           "gained_ids": [],
           "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "reference_correct": 0,
-          "candidate_correct": 0,
-          "candidate_minus_reference": 0
+          "pairs": 42,
+          "reference_correct": 9,
+          "tie_ids": [
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-10",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12"
+          ],
+          "ties": 42
+        }
+      },
+      "common_case_ids": 60,
+      "retrieval": {
+        "mrr": {
+          "gained_ids": [
+            "DEV-MULTI-02"
+          ],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "mean_delta": -0.0019379844961240312,
+          "pairs": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "ties": 41
+        },
+        "r3": {
+          "gained_ids": [],
+          "lost_ids": [],
+          "mean_delta": 0.0,
+          "pairs": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-10",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "ties": 43
+        },
+        "r5": {
+          "gained_ids": [],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "mean_delta": -0.023255813953488372,
+          "pairs": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "ties": 42
         }
       }
     },
-    "controlled_loop": {
-      "common_case_ids": 60,
-      "retrieval": {
-        "r3": {
-          "pairs": 0,
-          "gained_ids": [],
-          "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "mean_delta": null
-        },
-        "r5": {
-          "pairs": 0,
-          "gained_ids": [],
-          "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "mean_delta": null
-        },
-        "mrr": {
-          "pairs": 0,
-          "gained_ids": [],
-          "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "mean_delta": null
-        }
-      },
+    "decompose_once": {
       "answers": {
         "strict": {
-          "pairs": 0,
+          "candidate_correct": 9,
+          "candidate_minus_reference": 0,
           "gained_ids": [],
           "lost_ids": [],
-          "ties": 0,
-          "tie_ids": [],
-          "reference_correct": 0,
-          "candidate_correct": 0,
-          "candidate_minus_reference": 0
+          "pairs": 42,
+          "reference_correct": 9,
+          "tie_ids": [
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-10",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12"
+          ],
+          "ties": 42
+        }
+      },
+      "common_case_ids": 60,
+      "retrieval": {
+        "mrr": {
+          "gained_ids": [
+            "DEV-MULTI-02"
+          ],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "mean_delta": -0.0019379844961240312,
+          "pairs": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "ties": 41
+        },
+        "r3": {
+          "gained_ids": [],
+          "lost_ids": [],
+          "mean_delta": 0.0,
+          "pairs": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-10",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "ties": 43
+        },
+        "r5": {
+          "gained_ids": [],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "mean_delta": -0.023255813953488372,
+          "pairs": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "ties": 42
         }
       }
     }
   },
   "pairwise_comparisons": {},
-  "paired_by_bucket": {
-    "decompose_once": {
-      "multi_hop": {
-        "common_case_ids": 11,
-        "retrieval": {
-          "r3": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "r5": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "mrr": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          }
-        },
-        "answers": {
-          "strict": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "reference_correct": 0,
-            "candidate_correct": 0,
-            "candidate_minus_reference": 0
-          }
-        }
-      },
-      "policy_conflict": {
-        "common_case_ids": 5,
-        "retrieval": {
-          "r3": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "r5": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "mrr": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          }
-        },
-        "answers": {
-          "strict": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "reference_correct": 0,
-            "candidate_correct": 0,
-            "candidate_minus_reference": 0
-          }
-        }
-      }
-    },
-    "controlled_loop": {
-      "multi_hop": {
-        "common_case_ids": 11,
-        "retrieval": {
-          "r3": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "r5": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "mrr": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          }
-        },
-        "answers": {
-          "strict": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "reference_correct": 0,
-            "candidate_correct": 0,
-            "candidate_minus_reference": 0
-          }
-        }
-      },
-      "policy_conflict": {
-        "common_case_ids": 5,
-        "retrieval": {
-          "r3": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "r5": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          },
-          "mrr": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "mean_delta": null
-          }
-        },
-        "answers": {
-          "strict": {
-            "pairs": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "ties": 0,
-            "tie_ids": [],
-            "reference_correct": 0,
-            "candidate_correct": 0,
-            "candidate_minus_reference": 0
-          }
-        }
-      }
-    }
-  },
-  "operations_by_bucket": {
-    "baseline": {
-      "multi_hop": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      },
-      "policy_conflict": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      }
-    },
-    "decompose_once": {
-      "multi_hop": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      },
-      "policy_conflict": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      }
-    },
-    "controlled_loop": {
-      "multi_hop": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      },
-      "policy_conflict": {
-        "latency_ms": {
-          "method": "nearest_rank",
-          "n": 0,
-          "p50": null,
-          "p95": null
-        },
-        "calls": {
-          "paid_api_calls": 0,
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.0
-      }
-    }
-  },
-  "latency_semantics": "本地产生的检索/缓存回放 wall-clock；不是新模型调用的线上延迟。付费调用为 0，故不可据此推断线上 P50/P95。",
-  "measurement_status": {
-    "baseline": {
-      "retrieval_measured": 0,
-      "answers_measured": 0,
-      "rag_measured": 0
-    },
-    "decompose_once": {
-      "retrieval_measured": 0,
-      "answers_measured": 0,
-      "rag_measured": 0
-    },
-    "controlled_loop": {
-      "retrieval_measured": 0,
-      "answers_measured": 0,
-      "rag_measured": 0
-    }
-  },
-  "cost_estimate": {
-    "currency": "USD",
-    "paid_calls_executed": 0,
-    "groups": [
-      {
-        "experiment": "rag",
-        "group": "baseline",
-        "strategy": "hybrid_rerank",
-        "estimated_usd": [
-          0.0,
-          0.0
-        ],
-        "max_cost_usd_per_group": 0.0,
-        "basis": "CH12 baseline 完整缓存重放为 $0；缓存未命中需重新估算"
-      },
-      {
-        "experiment": "rag",
-        "group": "decompose_once",
-        "strategy": "hybrid_rerank",
-        "estimated_usd": [
-          0.0267,
-          0.0533
-        ],
-        "max_cost_usd_per_group": 0.06,
-        "basis": "CH12 报告 90 题预估 $0.04–0.08，dev 按 60/90 缩放"
-      },
-      {
-        "experiment": "rag",
-        "group": "controlled_loop",
-        "strategy": "hybrid_rerank",
-        "estimated_usd": [
-          0.0467,
-          0.1
-        ],
-        "max_cost_usd_per_group": 0.11,
-        "basis": "CH12 报告 90 题预估 $0.07–0.15，dev 按 60/90 缩放"
-      }
-    ],
-    "total_estimated_usd": [
-      0.0734,
-      0.1533
-    ],
-    "total_max_cost_usd_if_all_groups_run": 0.17
-  }
+  "protocol_sha256": "9998bddfc9a9d3935a248a4bb388a04d30960c4cf0af8a65b14ecbe7bec16d2f",
+  "reference_group": "baseline",
+  "schema_version": 1,
+  "split": "dev"
 }

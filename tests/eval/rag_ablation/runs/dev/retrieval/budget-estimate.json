@@ -11,7 +11,7 @@
         0.1019
       ],
       "max_cost_usd_per_group": 0.12,
-      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
     },
     {
       "experiment": "retrieval",
@@ -22,7 +22,7 @@
         0.1019
       ],
       "max_cost_usd_per_group": 0.12,
-      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
     },
     {
       "experiment": "retrieval",
@@ -33,23 +33,23 @@
         0.1019
       ],
       "max_cost_usd_per_group": 0.12,
-      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
     },
     {
       "experiment": "retrieval",
       "group": "rrf_rerank",
       "strategy": "hybrid_rerank",
       "estimated_usd": [
-        0.0509,
-        0.1052
+        0.0476,
+        0.1019
       ],
       "max_cost_usd_per_group": 0.12,
-      "basis": "CH11 首跑回答+证据判断 $0.1019/90 题，含嵌入/重排占位价"
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
     }
   ],
   "total_estimated_usd": [
-    0.1937,
-    0.4109
+    0.1904,
+    0.4076
   ],
   "total_max_cost_usd_if_all_groups_run": 0.48
 }

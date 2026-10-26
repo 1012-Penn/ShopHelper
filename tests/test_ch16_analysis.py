@@ -182,20 +182,24 @@ def test_bucket_pairing_preserves_multi_hop_and_policy_conflict_rows():
 
 def test_latency_uses_nearest_rank_and_reports_call_counts():
     traces = [
-        {**_trace("A1"), "latency_ms": 10, "paid_api_calls": 1,
+        {**_trace("A1"), "latency_ms": 10, "latency_source": "live_api", "paid_api_calls": 1,
          "llm_calls": 1, "evidence_judge_calls": 2},
-        {**_trace("A2"), "latency_ms": 20, "paid_api_calls": 0,
+        {**_trace("A2"), "latency_ms": 20, "latency_source": "cache_or_local", "paid_api_calls": 0,
          "llm_calls": 0, "evidence_judge_calls": 0},
-        {**_trace("A3"), "latency_ms": 90, "paid_api_calls": 2,
+        {**_trace("A3"), "latency_ms": 90, "latency_source": "live_api", "paid_api_calls": 2,
          "llm_calls": 0, "evidence_judge_calls": 0, "rag_analyzer_api_calls": 1},
-        {**_trace("A4"), "latency_ms": 100, "paid_api_calls": 1,
+        {**_trace("A4"), "latency_ms": 100, "latency_source": "cache_or_local", "paid_api_calls": 1,
          "llm_calls": 0, "evidence_judge_calls": 0, "rag_analyzer_cached": 2},
     ]
 
     operations = summarize_group(traces)["operations"]
 
     assert operations["latency_ms"] == {
-        "method": "nearest_rank", "n": 4, "p50": 20, "p95": 100
+        "method": "nearest_rank", "n": 4, "p50": 20, "p95": 100,
+        "by_source": {
+            "cache_or_local": {"n": 2, "p50": 20, "p95": 100},
+            "live_api": {"n": 2, "p50": 10, "p95": 90},
+        },
     }
     assert operations["calls"]["paid_api_calls"] == 4
     assert operations["calls"]["answer_api_calls"] == 1

@@ -136,6 +136,15 @@ def test_paid_budget_requires_explicit_allowance_and_global_ledger():
     with pytest.raises(ContractError, match="ledger"):
         validate_budget_request(allow_paid=True, max_cost_usd=0.01, ledger=None)
     validate_budget_request(allow_paid=True, max_cost_usd=0.01, ledger="global-ledger.json")
+    validate_budget_request(
+        allow_paid=True, max_cost_usd=None, ledger="ch16-ledger.json", unbounded=True
+    )
+    with pytest.raises(ContractError, match="无限预算模式需要显式 --allow-paid"):
+        validate_budget_request(
+            allow_paid=False, max_cost_usd=None, ledger="ch16-ledger.json", unbounded=True
+        )
+    with pytest.raises(ContractError, match="无限模式需显式"):
+        validate_budget_request(allow_paid=True, max_cost_usd=None, ledger="ledger.json")
 
 
 @pytest.mark.parametrize("amount", [float("nan"), float("inf"), float("-inf")])
@@ -181,3 +190,48 @@ def test_snapshot_identity_accepts_only_matching_sha256(tmp_path):
 def test_snapshot_identity_rejects_missing_file(tmp_path):
     with pytest.raises(ContractError, match="评测快照不存在"):
         ch16.validate_snapshot_identity(tmp_path / "missing.db", expected_sha256="0" * 64)
+
+
+def test_case_checkpoint_is_atomic_and_bound_to_exact_group_contract(tmp_path):
+    group = tmp_path / "group"
+    contract = {
+        "protocol_sha256": "protocol", "experiment": "retrieval", "split": "dev",
+        "group": {"strategy": "dense"},
+    }
+    cases = [{"id": "DEV-01"}, {"id": "DEV-02"}]
+    ch16._checkpoint_state(group, contract, cases)
+    trace = {
+        "case_id": "DEV-01", "retrieval_status": "measured",
+        "answer_status": "measured",
+    }
+    ch16._checkpoint_append(group, trace)
+
+    assert ch16._checkpoint_state(group, contract, cases) == [trace]
+    changed = {**contract, "protocol_sha256": "changed"}
+    with pytest.raises(ContractError, match="检查点契约不匹配"):
+        ch16._checkpoint_state(group, changed, cases)
+
+
+def test_checkpoint_resume_retries_unmeasured_cases_and_removes_old_rows(tmp_path):
+    group = tmp_path / "group"
+    contract = {
+        "protocol_sha256": "protocol", "experiment": "rag", "split": "dev",
+        "group": {"rag_mode": "controlled_loop"},
+    }
+    cases = [{"id": "DEV-01"}, {"id": "DEV-02"}]
+    ch16._checkpoint_state(group, contract, cases)
+    ch16._checkpoint_append(group, {
+        "case_id": "DEV-01", "rag_status": "measured",
+        "retrieval_status": "measured", "answer_status": "measured",
+    })
+    ch16._checkpoint_append(group, {
+        "case_id": "DEV-02", "rag_status": "unmeasured",
+        "retrieval_status": "unmeasured", "answer_status": "unmeasured",
+    })
+
+    traces = ch16._checkpoint_state(group, contract, cases)
+
+    assert [trace["case_id"] for trace in traces] == ["DEV-01"]
+    checkpoint_rows = [json.loads(row) for row in
+                       (group / "case-checkpoint.jsonl").read_text().splitlines()]
+    assert [trace["case_id"] for trace in checkpoint_rows] == ["DEV-01"]

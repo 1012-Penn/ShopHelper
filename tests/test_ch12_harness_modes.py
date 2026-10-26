@@ -80,9 +80,11 @@ class FakeCost:
         self.raise_guard = raise_guard
         self.guarded = 0
         self.added = []
+        self.guard_kinds = []
 
-    def guard(self, tokens, model):
+    def guard(self, tokens, model, *, kind="api", request_text=""):
         self.guarded += 1
+        self.guard_kinds.append(kind)
         if self.raise_guard:
             raise BudgetExceeded("over")
 
@@ -225,6 +227,7 @@ def test_guarded_gap_analyzer_miss_guards_then_records():
     report = wrapped.analyze("q", "e")
     assert report.action == "retrieve_more"
     assert cost.guarded == 1 and inner.calls == 1 and cost.added == ["gap_analyzer"]
+    assert cost.guard_kinds == ["gap_analyzer"]
     assert wrapped.calls == 1 and len(cache.data) == 1  # 结果已写缓存,复跑零费用
 
 

@@ -54,9 +54,11 @@ class FakeCost:
         self.raise_guard = raise_guard
         self.guarded = 0
         self.added = 0
+        self.guard_kinds = []
 
-    def guard(self, tokens, model):
+    def guard(self, tokens, model, *, kind="api", request_text=""):
         self.guarded += 1
+        self.guard_kinds.append(kind)
         if self.raise_guard:
             raise BudgetExceeded("over")
 
@@ -206,6 +208,7 @@ def test_full_mode_response_cache_avoids_second_paid_call():
     assert chat.calls == 1
     assert first["cached"] is False
     assert second["cached"] is True
+    assert ctx.cost.guard_kinds == ["answer"]
 
 
 def test_budget_exceeded_stops_before_llm_call():
