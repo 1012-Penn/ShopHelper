@@ -1,0 +1,20 @@
+version: "2026-10-26"
+verified: true
+currency: USD
+verified_at_utc: "2026-10-26"
+models:
+  deepseek-flash:
+    resolved_model: "DeepSeek-V4.1-Flash-1017"
+    input_per_million: 0.30
+    input_cache_hit_per_million: 0.006
+    output_per_million: 1.20
+    pricing_basis: "peak cache-miss rate; conservative estimate"
+    source_url: "https://api-docs.deepseek.com/quick_start/pricing/"
+  BAAI/bge-m3:
+    input_per_million: 0.0
+    pricing_basis: "SiliconFlow standard endpoint listed as free"
+    source_url: "https://siliconflow.cn/pricing"
+  BAAI/bge-reranker-v2-m3:
+    input_per_million: 0.0
+    pricing_basis: "SiliconFlow standard endpoint listed as free"
+    source_url: "https://siliconflow.cn/pricing"

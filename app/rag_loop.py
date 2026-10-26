@@ -24,6 +24,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+from contextvars import copy_context
 from concurrent.futures import ThreadPoolExecutor
 from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
@@ -95,7 +96,11 @@ def _call_bounded(fn, timeout: float):
         raise CallTimeout("剩余时间预算不足,未发起调用")
     executor = ThreadPoolExecutor(max_workers=1)
     try:
-        future = executor.submit(fn)
+        # The bounded worker runs one question's retrieval/judge/analyzer calls.
+        # Preserve its ContextVars so CH16 can attribute each API attempt to that
+        # question even though the request runs in a worker thread.
+        context = copy_context()
+        future = executor.submit(context.run, fn)
         return future.result(timeout=timeout)
     except FutureTimeout as exc:
         raise CallTimeout(f"受控调用超过 {timeout:.1f}s 未返回") from exc

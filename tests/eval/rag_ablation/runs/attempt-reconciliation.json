@@ -1,0 +1,314 @@
+{
+  "currency": "USD",
+  "date": "2026-10-26",
+  "groups": {
+    "dev/rag/decompose_once": {
+      "attempts": 98,
+      "by_kind": {
+        "api": {
+          "attempts": 1,
+          "cost_actual_usd": 0.001006536,
+          "failed": 0,
+          "succeeded": 1
+        },
+        "embedding": {
+          "attempts": 26,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 26
+        },
+        "evidence_judge": {
+          "attempts": 30,
+          "cost_actual_usd": 0.043788408,
+          "failed": 0,
+          "succeeded": 30
+        },
+        "gap_analyzer": {
+          "attempts": 15,
+          "cost_actual_usd": 0.00934362,
+          "failed": 0,
+          "succeeded": 15
+        },
+        "rerank": {
+          "attempts": 26,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 26
+        }
+      },
+      "cost_actual_usd": 0.054138564,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 98
+    },
+    "dev/retrieval/bm25": {
+      "attempts": 60,
+      "by_kind": {
+        "api": {
+          "attempts": 60,
+          "cost_actual_usd": 0.046692972,
+          "failed": 0,
+          "succeeded": 60
+        }
+      },
+      "cost_actual_usd": 0.046692972,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 60
+    },
+    "dev/retrieval/rrf": {
+      "attempts": 60,
+      "by_kind": {
+        "api": {
+          "attempts": 60,
+          "cost_actual_usd": 0.046454148,
+          "failed": 0,
+          "succeeded": 60
+        }
+      },
+      "cost_actual_usd": 0.046454148,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 60
+    },
+    "dev/retrieval/rrf_rerank": {
+      "attempts": 163,
+      "by_kind": {
+        "api": {
+          "attempts": 43,
+          "cost_actual_usd": 0.032768064,
+          "failed": 0,
+          "succeeded": 43
+        },
+        "evidence_judge": {
+          "attempts": 60,
+          "cost_actual_usd": 0.06351588,
+          "failed": 0,
+          "succeeded": 60
+        },
+        "rerank": {
+          "attempts": 60,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 60
+        }
+      },
+      "cost_actual_usd": 0.096283944,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 163
+    },
+    "dev/retrieval/vector": {
+      "attempts": 115,
+      "by_kind": {
+        "api": {
+          "attempts": 55,
+          "cost_actual_usd": 0.04040424,
+          "failed": 0,
+          "succeeded": 55
+        },
+        "embedding": {
+          "attempts": 60,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 60
+        }
+      },
+      "cost_actual_usd": 0.04040424,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 115
+    },
+    "frozen-v1/rag/controlled_loop": {
+      "attempts": 21,
+      "by_kind": {
+        "embedding": {
+          "attempts": 6,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 6
+        },
+        "evidence_judge": {
+          "attempts": 9,
+          "cost_actual_usd": 0.008586048,
+          "failed": 0,
+          "succeeded": 9
+        },
+        "rerank": {
+          "attempts": 6,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 6
+        }
+      },
+      "cost_actual_usd": 0.008586048,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 21
+    },
+    "frozen-v1/rag/decompose_once": {
+      "attempts": 140,
+      "by_kind": {
+        "answer": {
+          "attempts": 1,
+          "cost_actual_usd": 0.002188668,
+          "failed": 0,
+          "succeeded": 1
+        },
+        "embedding": {
+          "attempts": 38,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 38
+        },
+        "evidence_judge": {
+          "attempts": 40,
+          "cost_actual_usd": 0.05585022,
+          "failed": 0,
+          "succeeded": 40
+        },
+        "gap_analyzer": {
+          "attempts": 23,
+          "cost_actual_usd": 0.020716164,
+          "failed": 0,
+          "succeeded": 23
+        },
+        "rerank": {
+          "attempts": 38,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 38
+        }
+      },
+      "cost_actual_usd": 0.078755052,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 140
+    },
+    "frozen-v1/retrieval/bm25": {
+      "attempts": 90,
+      "by_kind": {
+        "answer": {
+          "attempts": 90,
+          "cost_actual_usd": 0.066400404,
+          "failed": 0,
+          "succeeded": 90
+        }
+      },
+      "cost_actual_usd": 0.066400404,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 90
+    },
+    "frozen-v1/retrieval/rrf": {
+      "attempts": 90,
+      "by_kind": {
+        "answer": {
+          "attempts": 90,
+          "cost_actual_usd": 0.070549308,
+          "failed": 0,
+          "succeeded": 90
+        }
+      },
+      "cost_actual_usd": 0.070549308,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 90
+    },
+    "frozen-v1/retrieval/rrf_rerank": {
+      "attempts": 247,
+      "by_kind": {
+        "answer": {
+          "attempts": 67,
+          "cost_actual_usd": 0.045007992,
+          "failed": 0,
+          "succeeded": 67
+        },
+        "evidence_judge": {
+          "attempts": 90,
+          "cost_actual_usd": 0.065727978,
+          "failed": 0,
+          "succeeded": 90
+        },
+        "rerank": {
+          "attempts": 90,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 90
+        }
+      },
+      "cost_actual_usd": 0.11073597,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 247
+    },
+    "frozen-v1/retrieval/vector": {
+      "attempts": 175,
+      "by_kind": {
+        "answer": {
+          "attempts": 85,
+          "cost_actual_usd": 0.067738644,
+          "failed": 0,
+          "succeeded": 85
+        },
+        "embedding": {
+          "attempts": 90,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 90
+        }
+      },
+      "cost_actual_usd": 0.067738644,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 175
+    },
+    "unattributed/unattributed/unattributed": {
+      "attempts": 15,
+      "by_kind": {
+        "embedding": {
+          "attempts": 4,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 4
+        },
+        "evidence_judge": {
+          "attempts": 5,
+          "cost_actual_usd": 0.01773384,
+          "failed": 0,
+          "succeeded": 5
+        },
+        "gap_analyzer": {
+          "attempts": 2,
+          "cost_actual_usd": 0.001365168,
+          "failed": 0,
+          "succeeded": 2
+        },
+        "rerank": {
+          "attempts": 4,
+          "cost_actual_usd": 0.0,
+          "failed": 0,
+          "succeeded": 4
+        }
+      },
+      "cost_actual_usd": 0.019099008,
+      "failed": 0,
+      "pending": 0,
+      "succeeded": 15
+    }
+  },
+  "schema_version": 1,
+  "source": "live attempt ledger; amount_usd on successful API responses; local exact-request response cache enabled",
+  "totals": {
+    "attempt_cost_usd": 0.705838302,
+    "attempts_started": 1274,
+    "cost_ledger_amount_usd": 0.705838302,
+    "cost_ledger_records": 1274,
+    "costs_reconcile": true,
+    "failed": 0,
+    "succeeded": 1274,
+    "terminal_events": 1274,
+    "unresolved": 0
+  },
+  "unattributed_note": "15 successful attempts lost split/experiment/group context. Their timestamps and call kinds suggest the initial dev RAG attempt, but attribution is uncertain; $0.019099008 is kept separate from group comparisons."
+}

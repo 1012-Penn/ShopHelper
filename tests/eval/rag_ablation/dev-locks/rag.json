@@ -1,0 +1,34 @@
+{
+  "analysis_code_sha256": {
+    "app/config.py": "9a9dcbcc3165e952363ab03d63ce50f5cf8cb32b62eef25f6314c2f0b305ad81",
+    "app/embedding.py": "be5550b8eba623f952af5b0d7f92098bdeb039e66fd2a4009986078fe5222687",
+    "app/evidence.py": "82f3830e873a813688b7b893c18fc9a1f82b4c1deba3eda9cb4a082c4a557b1c",
+    "app/llm.py": "0edc587391be1bbf1060d3b74ad140ac8e3a0a4b0af2ceef25e9fd2b18b7708d",
+    "app/prompts.py": "f66c04bc8ceee4b14b247e82bd0ac1cf67aea62170318711f805e22fa94e7ed7",
+    "app/rag_loop.py": "95398fa282ba4bfca81eba9d78906d92fccf3147fb5057506e16f546ba8d4238",
+    "app/rerank.py": "3d656083c6a9f5efda5de51f600bf1ae76b8d05fe4d22896f317480c03df0783",
+    "app/retrieval.py": "0dc15fbcb910a95ca279d47887b3026b4a0e315f56e20a04686e3ad924784202",
+    "scripts/ch11_harness.py": "dee27f5a62e99c4c11f1962cbe226db3e0012851c50e33c0cacfc5bee68e2aea",
+    "scripts/ch16_analysis.py": "c2d6aa4ebb3251d98fc4b2427eaa6f8c3a20cf18ddb5a949671c2a7b6a658174",
+    "scripts/eval_cache.py": "20047903af8791e9b96d812cfe04bcd80be57774563fc18aca0de6095c4f3637",
+    "scripts/eval_ch11.py": "fe096faa5eef5815591cf1d68a22d328b313fb17b7c98495c83b3b8b89e2e233",
+    "scripts/eval_checks.py": "afb16b3c3b73d443f53d63f40021f5c9147e9675f72141d4c5c026f295f0d1c7",
+    "scripts/eval_contract.py": "a37d269b2e09978085a0da2d9a0fc346a44e5b0b803e09dc89a9a3700a98bda6",
+    "scripts/eval_cost.py": "d78746bff6b9fad1a1e9d6d9857cce3df253a0e9681c1d01080fc751e5f56959",
+    "scripts/eval_metrics.py": "3b7967c6175e8fa4b21c129688ac97206965e3fd1d7f7c806476c71c8f59e11a",
+    "scripts/eval_prompts.py": "8cd3ebd35b309ea4925017d76f09508de32e13e5dc8bd71ad549cbb949da3d08",
+    "scripts/eval_rag_ablation.py": "9dcff481ab09da45fe317984d0930facf15d3879338fb5098840adc5ed3a2180",
+    "scripts/eval_snapshot.py": "395a0ad6a7a4b08f8eb671497563eefa317889fb0f0f9338ff447090fa2bff2c"
+  },
+  "dev_dataset_sha256": "a67210c9a2d56ce690eb35fc957f9b75fefb4da365e252f25532196bab5680f7",
+  "experiment": "rag",
+  "group_contracts": [
+    "9998bddfc9a9d3935a248a4bb388a04d30960c4cf0af8a65b14ecbe7bec16d2f",
+    "9998bddfc9a9d3935a248a4bb388a04d30960c4cf0af8a65b14ecbe7bec16d2f",
+    "9998bddfc9a9d3935a248a4bb388a04d30960c4cf0af8a65b14ecbe7bec16d2f"
+  ],
+  "locked_at_commit": "ccf7a9f",
+  "protocol_sha256": "9998bddfc9a9d3935a248a4bb388a04d30960c4cf0af8a65b14ecbe7bec16d2f",
+  "threshold_tuning_after_lock": false,
+  "working_tree_dirty": true
+}

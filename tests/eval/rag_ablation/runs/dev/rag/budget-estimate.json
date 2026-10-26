@@ -1,0 +1,44 @@
+{
+  "currency": "USD",
+  "paid_calls_executed": 42,
+  "groups": [
+    {
+      "experiment": "rag",
+      "group": "baseline",
+      "strategy": "hybrid_rerank",
+      "estimated_usd": [
+        0.0,
+        0.0
+      ],
+      "max_cost_usd_per_group": 0.0,
+      "basis": "CH12 baseline 完整缓存重放为 $0；缓存未命中需重新估算"
+    },
+    {
+      "experiment": "rag",
+      "group": "decompose_once",
+      "strategy": "hybrid_rerank",
+      "estimated_usd": [
+        0.0267,
+        0.0533
+      ],
+      "max_cost_usd_per_group": 0.06,
+      "basis": "CH12 报告 90 题预估 $0.04–0.08，dev 按 60/90 缩放"
+    },
+    {
+      "experiment": "rag",
+      "group": "controlled_loop",
+      "strategy": "hybrid_rerank",
+      "estimated_usd": [
+        0.0467,
+        0.1
+      ],
+      "max_cost_usd_per_group": 0.11,
+      "basis": "CH12 报告 90 题预估 $0.07–0.15，dev 按 60/90 缩放"
+    }
+  ],
+  "total_estimated_usd": [
+    0.0734,
+    0.1533
+  ],
+  "total_max_cost_usd_if_all_groups_run": 0.17
+}

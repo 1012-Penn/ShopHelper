@@ -1,6 +1,8 @@
 """L3/L4 确定性检查:数值、条件、禁用断言、槽位、引用。"""
 from __future__ import annotations
 
+import pytest
+
 from scripts.eval_checks import (
     check_case_deterministic,
     citation_support_rate,
@@ -139,3 +141,28 @@ def test_date_condition_accepts_chinese_alias():
 def test_transfer_to_human_after_verification_is_not_refusal():
     answer = "若仍无法确认签收时间，需转人工复核 [1]。"
     assert classify_behavior(answer) != "refuse"
+
+
+def test_marker_prefixed_slot_request_is_clarification():
+    answer = "【无法回答】 请提供订单号，以便查询您的包裹预计发货时间。"
+    assert classify_behavior(answer) == "clarify"
+
+
+def test_natural_evidence_refusal_is_classified_as_refusal():
+    answer = (
+        "现有证据未提供 SH-W20 屏幕更换价格，无法给出报价。"
+        "请转人工售后进一步核验。"
+    )
+    assert classify_behavior(answer) == "refuse"
+
+
+@pytest.mark.parametrize(
+    "answer",
+    [
+        "证据仅说明表带可更换，未提供单独购买价格，无法确定金额；建议转人工核实。",
+        "现有证据仅列出血氧监测，未提及微信安装方式。该问题需转人工核实。",
+        "无法确认 SH-E300 的充电功率；现有资料未包含该参数。",
+    ],
+)
+def test_short_natural_refusal_prefixes_are_classified_as_refusal(answer):
+    assert classify_behavior(answer) == "refuse"

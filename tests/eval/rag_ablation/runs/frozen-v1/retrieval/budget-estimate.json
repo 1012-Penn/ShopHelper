@@ -1,0 +1,55 @@
+{
+  "currency": "USD",
+  "paid_calls_executed": 422,
+  "groups": [
+    {
+      "experiment": "retrieval",
+      "group": "vector",
+      "strategy": "dense",
+      "estimated_usd": [
+        0.0713,
+        0.1529
+      ],
+      "max_cost_usd_per_group": 0.18,
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
+    },
+    {
+      "experiment": "retrieval",
+      "group": "bm25",
+      "strategy": "bm25",
+      "estimated_usd": [
+        0.0713,
+        0.1529
+      ],
+      "max_cost_usd_per_group": 0.18,
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
+    },
+    {
+      "experiment": "retrieval",
+      "group": "rrf",
+      "strategy": "hybrid",
+      "estimated_usd": [
+        0.0713,
+        0.1529
+      ],
+      "max_cost_usd_per_group": 0.18,
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
+    },
+    {
+      "experiment": "retrieval",
+      "group": "rrf_rerank",
+      "strategy": "hybrid_rerank",
+      "estimated_usd": [
+        0.0713,
+        0.1529
+      ],
+      "max_cost_usd_per_group": 0.18,
+      "basis": "CH11 首跑回答+证据判断实测 $0.1019/90 题；DeepSeek official peak cache-miss rate, BGE standard endpoints free"
+    }
+  ],
+  "total_estimated_usd": [
+    0.2852,
+    0.6116
+  ],
+  "total_max_cost_usd_if_all_groups_run": 0.72
+}
