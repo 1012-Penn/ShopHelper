@@ -1,5 +1,6 @@
 import json
 import hashlib
+from pathlib import Path
 
 import pytest
 import scripts.eval_rag_ablation as ch16
@@ -72,6 +73,19 @@ def test_rag_group_contracts_allow_only_rag_configuration_to_change():
     ]
 
     validate_group_contracts(contracts)
+
+
+def test_historical_contract_validation_can_skip_current_code_rehash(monkeypatch):
+    contracts = [
+        _group("retrieval", strategy=strategy)
+        for strategy in ("dense", "bm25", "hybrid", "hybrid_rerank")
+    ]
+
+    def unexpected_rehash(_source):
+        raise AssertionError("historical validation must use the stored protocol")
+
+    monkeypatch.setattr(ch16, "protocol_sha256", unexpected_rehash)
+    validate_group_contracts(contracts, verify_current_code=False)
 
 
 def test_protocol_lock_allows_split_specific_rewrite_cache_hashes():
@@ -175,6 +189,65 @@ def test_estimates_are_per_group_and_never_authorize_spending():
         "vector", "bm25", "rrf", "rrf_rerank", "baseline", "decompose_once", "controlled_loop"
     }
     assert all(row["max_cost_usd_per_group"] >= 0 for row in estimate["groups"])
+
+
+def test_retrieval_comparability_flags_mixed_answer_gate_policies():
+    outputs = {
+        "vector": [{"gate": {"evidence_entailment": None}}],
+        "rrf_rerank": [{"gate": {"evidence_entailment": True}}],
+    }
+
+    result = ch16._answer_comparability("retrieval", outputs)
+
+    assert result["retrieval_ranking_comparable"] is True
+    assert result["answer_gate_policy_comparable"] is False
+    assert result["gate_entailment_measured_cases"] == {
+        "vector": 0, "rrf_rerank": 1
+    }
+
+
+def test_answer_gate_comparability_uses_case_membership_not_only_counts():
+    outputs = {
+        "vector": [
+            {"case_id": "A", "gate": {"evidence_entailment": None}},
+            {"case_id": "B", "gate": {"evidence_entailment": True}},
+        ],
+        "bm25": [
+            {"case_id": "A", "gate": {"evidence_entailment": True}},
+            {"case_id": "B", "gate": {"evidence_entailment": None}},
+        ],
+    }
+
+    result = ch16._answer_comparability("retrieval", outputs)
+
+    assert result["answer_gate_policy_comparable"] is False
+
+
+def test_budget_audit_does_not_treat_estimate_as_enforced_approval():
+    contracts = [_group("retrieval", strategy="dense")]
+    contracts[0]["source_contract"]["run"].update({
+        "ch16_allow_paid": True,
+        "ch16_unbounded_budget": True,
+        "ch16_max_cost_usd": None,
+    })
+
+    audit = ch16._budget_audit(contracts)
+
+    assert audit["contract_mode"] == "unbounded"
+    assert audit["enforced_group_caps"] is False
+    assert audit["approval_artifact_recorded"] is False
+
+
+def test_scoring_code_hashes_cover_reproduction_sources():
+    hashes = ch16._scoring_code_hashes()
+
+    assert set(hashes) == {
+        "scripts/eval_checks.py", "scripts/ch11_harness.py",
+        "scripts/ch16_analysis.py", "scripts/eval_rag_ablation.py",
+    }
+    assert hashes["scripts/eval_checks.py"] == hashlib.sha256(
+        Path("scripts/eval_checks.py").read_bytes()
+    ).hexdigest()
 
 
 def test_snapshot_identity_accepts_only_matching_sha256(tmp_path):

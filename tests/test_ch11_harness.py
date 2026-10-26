@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pytest
 
+import scripts.ch11_harness as ch11
 from scripts.ch11_harness import (
     HarnessConfig,
     HarnessContext,
@@ -218,6 +219,30 @@ def test_budget_exceeded_stops_before_llm_call():
     with pytest.raises(BudgetExceeded):
         run_case(_case(), ctx, _config("full"))
     assert chat.calls == 0
+
+
+def test_rescore_preserves_answer_and_updates_deterministic_behavior():
+    case = _case(
+        expected_behavior="refuse",
+        answerable=False,
+        evidence_state="insufficient",
+        gold_facts=[],
+        required_evidence=[],
+    )
+    trace = {
+        "case_id": "T01",
+        "expected_behavior": "refuse",
+        "answer": "现有证据未提供屏幕价格，无法给出报价，请转人工核验。",
+        "retrieved": [{"rank": 1, "chunk_id": 1, "score": 0.9}],
+        "rag_stop_reason": "",
+    }
+
+    rescored = ch11.rescore_answer_trace(case, trace, {1: _row()})
+
+    assert rescored["answer"] == trace["answer"]
+    assert rescored["behavior_pred"] == "refuse"
+    assert rescored["deterministic_checks"]["refused"] is True
+    assert rescored["failure_labels"] == []
 
 
 def test_trace_jsonl_one_line_per_case(tmp_path):

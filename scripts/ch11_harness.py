@@ -9,6 +9,7 @@ import hashlib
 import json
 import time
 from dataclasses import dataclass, field
+from types import SimpleNamespace
 from typing import Any, Literal
 
 from app.guard import REFUSAL_MARKER
@@ -376,6 +377,40 @@ def run_answer_case(
     else:
         trace["judge"] = None
     return trace
+
+
+def rescore_answer_trace(case: dict, trace: dict, all_rows: dict[int, Any]) -> dict:
+    """Re-run deterministic answer checks without changing the model answer.
+
+    Historical traces intentionally keep the full candidate ranking but drop the
+    transient top-10 evidence block. Reconstruct that same block from the KB rows
+    so classifier or check fixes can be replayed without another model call.
+    """
+    rescored = dict(trace)
+    items = _evidence_items(
+        SimpleNamespace(items=[
+            SimpleNamespace(chunk_id=int(item["chunk_id"]), score=item.get("score"))
+            for item in trace.get("retrieved", [])
+        ]),
+        all_rows,
+        top_n=10,
+    )
+    checks = check_case_deterministic(case, str(trace.get("answer") or ""),
+                                      _evidence_by_n(items))
+    labels = list(checks["failure_labels"])
+    stop = str(trace.get("rag_stop_reason") or "")
+    if stop in {"time_budget", "call_timeout"}:
+        labels.append("timeout")
+    elif stop == "retrieval_error":
+        labels.append("tool_error")
+    rescored.update({
+        "citations": checks["citation_support"],
+        "deterministic_checks": checks,
+        "behavior_pred": checks["behavior_pred"],
+        "failure_labels": list(dict.fromkeys(labels)),
+        "scoring_version": "ch16-rescore-1",
+    })
+    return rescored
 
 
 def run_case(case: dict, ctx: HarnessContext, config: HarnessConfig) -> dict:

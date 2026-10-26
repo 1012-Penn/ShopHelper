@@ -300,16 +300,46 @@ def citation_support_rate(
 
 def classify_behavior(answer: str) -> str:
     normalized = normalize_answer(answer)
+    marker = normalize_answer(REFUSAL_MARKER)
+    body = (
+        normalized[len(marker):].lstrip(" :：")
+        if normalized.startswith(marker)
+        else normalized
+    )
     asks = "?" in answer or "？" in answer
     slot_terms = ("请提供", "请问", "哪款", "订单号", "订单编号", "型号", "会员等级")
-    if asks and any(term in normalized for term in slot_terms):
+    requests_slot = body.startswith(("请提供", "请告知", "请告诉我", "请问", "麻烦提供"))
+    if (asks and any(term in normalized for term in slot_terms)) or requests_slot:
         return "clarify"
     if answer.lstrip().startswith(REFUSAL_MARKER) or normalized.startswith(("无法回答", "抱歉")):
         return "refuse"
     if "查不到" in normalized and not asks:
         return "refuse"
-    if normalized.startswith(("请提供", "请告知", "麻烦提供", "请问")):
+    if normalized.startswith(("请提供", "请告知", "请告诉我", "麻烦提供", "请问")):
         return "clarify"
+    refusal_phrases = (
+        "我无法", "无法根据", "无法依据", "无法提供", "无法给出", "无法告知",
+        "无法协助", "该请求不在", "该问题不在",
+    )
+    explicit_refusal_prefix = normalized.startswith(
+        ("无法确认", "无法判断", "无法核实")
+    )
+    evidence_limited = normalized.startswith(
+        ("现有证据", "现有资料", "现有商品", "证据仅")
+    ) and any(
+        term in normalized
+        for term in (
+            "未提供", "未说明", "未包含", "未涉及", "未覆盖", "未列出", "未提及", "无法"
+        )
+    )
+    out_of_scope = normalized.startswith("该问题属于") and "不在" in normalized
+    if (
+        any(term in normalized for term in refusal_phrases)
+        or explicit_refusal_prefix
+        or evidence_limited
+        or out_of_scope
+    ):
+        return "refuse"
     return "answer"
 
 

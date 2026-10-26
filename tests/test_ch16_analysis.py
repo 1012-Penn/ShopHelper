@@ -141,6 +141,8 @@ def test_group_summary_separates_retrieval_and_answer_metrics():
         "refused": 1, "measured": 2, "eligible": 3, "unmeasured": 1, "rate": 0.5,
         "case_ids": ["A2"],
     }
+    assert summary["answers"]["uncertainty"]["strict_accuracy_wilson95"] == [0.0945, 0.9055]
+    assert summary["retrieval"]["uncertainty"]["r3_wilson95"] == [0.0615, 0.7923]
 
 
 def test_pairing_reports_retrieval_and_strict_answer_gains_and_losses():
@@ -157,8 +159,12 @@ def test_pairing_reports_retrieval_and_strict_answer_gains_and_losses():
 
     assert paired["retrieval"]["r3"]["gained_ids"] == ["A1"]
     assert paired["retrieval"]["r3"]["lost_ids"] == ["A2"]
+    assert paired["retrieval"]["r3"]["mcnemar_exact_p"] == 1.0
+    assert paired["retrieval"]["mrr"]["sign_test_exact_p"] == 1.0
+    assert "mcnemar_exact_p" not in paired["retrieval"]["mrr"]
     assert paired["answers"]["strict"]["gained_ids"] == ["A1"]
     assert paired["answers"]["strict"]["lost_ids"] == ["A2"]
+    assert paired["answers"]["strict"]["mcnemar_exact_p"] == 1.0
 
 
 def test_bucket_pairing_preserves_multi_hop_and_policy_conflict_rows():

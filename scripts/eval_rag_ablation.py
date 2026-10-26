@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import math
 import os
@@ -706,6 +707,174 @@ def _run_rag_group(mode: str, cases: list[dict], args) -> tuple[list[dict], dict
     return traces, contract
 
 
+def _answer_comparability(experiment: str, outputs: dict[str, list[dict]]) -> dict:
+    """Document whether answer metrics share the same evidence-gate policy."""
+    measured = {
+        name: sum(
+            (trace.get("gate") or {}).get("evidence_entailment") is not None
+            for trace in traces
+        )
+        for name, traces in outputs.items()
+    }
+    policies = {
+        frozenset(
+            str(trace.get("case_id", index))
+            for index, trace in enumerate(traces)
+            if (trace.get("gate") or {}).get("evidence_entailment") is not None
+        )
+        for traces in outputs.values()
+    }
+    same_policy = len(policies) <= 1
+    return {
+        "retrieval_ranking_comparable": experiment in {"retrieval", "rag"},
+        "answer_gate_policy_comparable": same_policy,
+        "gate_entailment_measured_cases": measured,
+        "answer_metric_scope": (
+            "strategy_default_end_to_end" if experiment == "retrieval"
+            else "same_hybrid_rerank_gate_across_rag_modes"
+        ),
+        "interpretation": (
+            "检索排序指标可直接比较；答案指标包含各组默认闸门策略差异。"
+            if experiment == "retrieval" and not same_policy
+            else "答案指标未检测到组间闸门策略差异。"
+        ),
+    }
+
+
+def _budget_audit(contracts: list[dict]) -> dict:
+    """Distinguish a planning estimate from a hard limit approved before spending."""
+    run = ((contracts[0].get("source_contract") or {}).get("run") or {})
+    unbounded = bool(run.get("ch16_unbounded_budget"))
+    max_cost = run.get("ch16_max_cost_usd")
+    approval_artifact = bool(
+        run.get("ch16_budget_approval")
+        or run.get("budget_approval")
+        or run.get("approval_reference")
+    )
+    return {
+        "contract_mode": "unbounded" if unbounded else "bounded",
+        "per_group_hard_limit_usd": None if unbounded else max_cost,
+        "enforced_group_caps": bool(
+            not unbounded and isinstance(max_cost, (int, float))
+            and math.isfinite(float(max_cost)) and float(max_cost) >= 0
+        ),
+        "approval_artifact_recorded": approval_artifact,
+        "cost_is_posthoc_estimate": True,
+        "note": (
+            "budget-estimate.json 是执行前规划值；只有契约中的有限逐组上限"
+            "才表示运行时硬约束，实际金额仍须按调用账本事后对账。"
+        ),
+    }
+
+
+def _build_experiment_report(
+    args,
+    cases: list[dict],
+    outputs: dict[str, list[dict]],
+    contracts: list[dict],
+    *,
+    validate_current_code: bool = True,
+    attempt_ledger_summary: dict | None = None,
+) -> dict:
+    validate_group_contracts(
+        contracts, verify_current_code=validate_current_code
+    )
+    protocol = contracts[0]["protocol_sha256"]
+    all_cases = {case["id"]: case for case in cases}
+    summaries = {name: summarize_group(traces, all_cases) for name, traces in outputs.items()}
+    reference = "vector" if args.experiment == "retrieval" else "baseline"
+    paired = {
+        name: compare_groups(outputs[reference], traces, all_cases)
+        for name, traces in outputs.items() if name != reference
+    }
+    pairwise = {}
+    if args.experiment == "retrieval":
+        names = list(outputs)
+        for left_index, left in enumerate(names):
+            for right in names[left_index + 1:]:
+                pairwise[f"{right}_vs_{left}"] = compare_groups(
+                    outputs[left], outputs[right], all_cases
+                )
+    buckets = paired_bucket_outcomes(
+        outputs, RAG_BUCKETS if args.experiment == "rag"
+        else tuple(sorted({case["bucket"] for case in cases}))
+    )
+    operations_by_bucket = {}
+    if args.experiment == "rag":
+        for name, traces in outputs.items():
+            operations_by_bucket[name] = {}
+            for bucket in RAG_BUCKETS:
+                subset = [trace for trace in traces if trace.get("bucket") == bucket]
+                operations_by_bucket[name][bucket] = summarize_group(subset)["operations"]
+    report = {
+        "schema_version": 1,
+        "experiment": args.experiment,
+        "split": args.split,
+        "dataset_sha256": contracts[0]["dataset"].get("sha256"),
+        "dataset_n": len(cases),
+        "protocol_sha256": protocol,
+        "paid_calls_executed": sum(
+            row["operations"]["calls"]["paid_api_calls"] for row in summaries.values()
+        ),
+        "external_api_calls_executed": sum(
+            row["operations"]["calls"]["external_api_calls"] for row in summaries.values()
+        ),
+        "budget_mode": "unbounded" if args.unbounded_budget else "bounded",
+        "max_cost_usd_per_group": args.max_cost_usd,
+        "reference_group": reference,
+        "groups": summaries,
+        "paired_vs_reference": paired,
+        "pairwise_comparisons": pairwise,
+        "paired_by_bucket": buckets,
+        "operations_by_bucket": operations_by_bucket,
+        "answer_comparability": _answer_comparability(args.experiment, outputs),
+        "budget_audit": _budget_audit(contracts),
+        "latency_semantics": (
+            "每题端到端 wall-clock；operations.latency_ms.by_source 分别列出实际在线 API "
+            "与精确响应缓存/本地路径。缓存重放延迟不能解释为线上请求延迟；API 请求耗时另记入 attempts ledger。"
+        ),
+        "measurement_status": {
+            name: {
+                "retrieval_measured": sum(
+                    trace.get("retrieval_status") == "measured" for trace in traces
+                ),
+                "answers_measured": sum(
+                    trace.get("answer_status") == "measured" for trace in traces
+                ),
+                "rag_measured": sum(
+                    trace.get("rag_status") != "unmeasured" for trace in traces
+                ) if args.experiment == "rag" else None,
+            }
+            for name, traces in outputs.items()
+        },
+    }
+    if attempt_ledger_summary is None:
+        attempt_ledger_summary = _summarize_attempt_ledger(
+            args.attempt_ledger, split=args.split, experiment=args.experiment
+        )
+    report["api_attempt_ledger"] = attempt_ledger_summary
+    report["cost_actual_usd"] = round(sum(
+        row["operations"]["cost_actual_usd"] for row in summaries.values()
+    ), 8)
+    estimate = estimate_group_costs(args.split)
+    selected_estimates = [
+        row for row in estimate["groups"] if row["experiment"] == args.experiment
+    ]
+    report["cost_estimate"] = {
+        "currency": "USD",
+        "paid_calls_executed": report["paid_calls_executed"],
+        "groups": selected_estimates,
+        "total_estimated_usd": [
+            round(sum(row["estimated_usd"][0] for row in selected_estimates), 4),
+            round(sum(row["estimated_usd"][1] for row in selected_estimates), 4),
+        ],
+        "total_max_cost_usd_if_all_groups_run": round(
+            sum(row["max_cost_usd_per_group"] for row in selected_estimates), 4
+        ),
+    }
+    return report
+
+
 def _run(args) -> dict:
     from scripts.eval_dataset import load_split
 
@@ -757,90 +926,10 @@ def _run(args) -> dict:
         contracts.append(contract)
 
     validate_group_contracts(contracts)
+    report = _build_experiment_report(args, cases, outputs, contracts)
     protocol = contracts[0]["protocol_sha256"]
     check_phase_lock(args.split, args.out / "dev-locks" / f"{args.experiment}.json", protocol)
-    all_cases = {case["id"]: case for case in cases}
-    summaries = {name: summarize_group(traces, all_cases) for name, traces in outputs.items()}
-    reference = "vector" if args.experiment == "retrieval" else "baseline"
-    paired = {
-        name: compare_groups(outputs[reference], traces, all_cases)
-        for name, traces in outputs.items() if name != reference
-    }
-    pairwise = {}
-    if args.experiment == "retrieval":
-        names = list(outputs)
-        for left_index, left in enumerate(names):
-            for right in names[left_index + 1:]:
-                pairwise[f"{right}_vs_{left}"] = compare_groups(
-                    outputs[left], outputs[right], all_cases
-                )
-    buckets = paired_bucket_outcomes(outputs, RAG_BUCKETS if args.experiment == "rag"
-                                     else tuple(sorted({case["bucket"] for case in cases})))
-    operations_by_bucket = {}
-    if args.experiment == "rag":
-        for name, traces in outputs.items():
-            operations_by_bucket[name] = {}
-            for bucket in RAG_BUCKETS:
-                subset = [trace for trace in traces if trace.get("bucket") == bucket]
-                operations_by_bucket[name][bucket] = summarize_group(subset)["operations"]
-    report = {
-        "schema_version": 1,
-        "experiment": args.experiment,
-        "split": args.split,
-        "dataset_sha256": contracts[0]["dataset"].get("sha256"),
-        "dataset_n": len(cases),
-        "protocol_sha256": protocol,
-        "paid_calls_executed": sum(
-            row["operations"]["calls"]["paid_api_calls"] for row in summaries.values()
-        ),
-        "external_api_calls_executed": sum(
-            row["operations"]["calls"]["external_api_calls"] for row in summaries.values()
-        ),
-        "budget_mode": "unbounded" if args.unbounded_budget else "bounded",
-        "max_cost_usd_per_group": args.max_cost_usd,
-        "reference_group": reference,
-        "groups": summaries,
-        "paired_vs_reference": paired,
-        "pairwise_comparisons": pairwise,
-        "paired_by_bucket": buckets,
-        "operations_by_bucket": operations_by_bucket,
-        "latency_semantics": (
-            "每题端到端 wall-clock；operations.latency_ms.by_source 分别列出实际在线 API "
-            "与精确响应缓存/本地路径。缓存重放延迟不能解释为线上请求延迟；API 请求耗时另记入 attempts ledger。"
-        ),
-        "measurement_status": {
-            name: {
-                "retrieval_measured": sum(t.get("retrieval_status") == "measured" for t in traces),
-                "answers_measured": sum(t.get("answer_status") == "measured" for t in traces),
-                "rag_measured": sum(t.get("rag_status") != "unmeasured" for t in traces)
-                if args.experiment == "rag" else None,
-            }
-            for name, traces in outputs.items()
-        },
-    }
-    report["api_attempt_ledger"] = _summarize_attempt_ledger(
-        args.attempt_ledger, split=args.split, experiment=args.experiment
-    )
-    report["cost_actual_usd"] = round(sum(
-        row["operations"]["cost_actual_usd"] for row in summaries.values()
-    ), 8)
     phase_root = args.out / "runs" / args.split / args.experiment
-    estimate = estimate_group_costs(args.split)
-    selected_estimates = [
-        row for row in estimate["groups"] if row["experiment"] == args.experiment
-    ]
-    report["cost_estimate"] = {
-        "currency": "USD",
-        "paid_calls_executed": report["paid_calls_executed"],
-        "groups": selected_estimates,
-        "total_estimated_usd": [
-            round(sum(row["estimated_usd"][0] for row in selected_estimates), 4),
-            round(sum(row["estimated_usd"][1] for row in selected_estimates), 4),
-        ],
-        "total_max_cost_usd_if_all_groups_run": round(
-            sum(row["max_cost_usd_per_group"] for row in selected_estimates), 4
-        ),
-    }
     for (name, _, _), contract, traces in zip(groups, contracts,
                                                [outputs[name] for name, _, _ in groups]):
         group_root = phase_root / name
@@ -863,6 +952,124 @@ def _run(args) -> dict:
             ).strip()),
             "threshold_tuning_after_lock": False,
         })
+    return report
+
+
+def _load_kb_rows(args) -> dict[int, object]:
+    """Load only corpus rows needed by deterministic answer rescoring."""
+    from app.config import Settings
+    from app.db import make_engine, make_session_factory
+    from app.kb import KnowledgeBaseStore
+    from scripts.eval_snapshot import is_runtime_chunk
+
+    validate_snapshot_identity(args.snapshot)
+    _configure_environment(args)
+    settings = Settings()
+    factory = make_session_factory(make_engine(settings))
+    kb = KnowledgeBaseStore(factory)
+    return {
+        row.id: row
+        for row in kb.get_chunks(kb.doc_chunk_ids_all())
+        if not is_runtime_chunk(row)
+    }
+
+
+def _scoring_code_hashes() -> dict[str, str]:
+    return {
+        name: hashlib.sha256((ROOT / name).read_bytes()).hexdigest()
+        for name in (
+            "scripts/eval_checks.py", "scripts/ch11_harness.py",
+            "scripts/ch16_analysis.py", "scripts/eval_rag_ablation.py",
+        )
+    }
+
+
+def _rescore_existing(args) -> dict:
+    """Recompute deterministic answer checks over saved traces without model calls."""
+    from scripts.ch11_harness import rescore_answer_trace
+    from scripts.eval_dataset import load_split
+
+    if args.split not in {"dev", "frozen-v1"}:
+        raise ContractError("CH16 只允许 dev 与 frozen-v1")
+    cases = load_split(args.split)
+    cases_by_id = {case["id"]: case for case in cases}
+    groups = (
+        list(RETRIEVAL_GROUPS)
+        if args.experiment == "retrieval"
+        else list(RAG_GROUPS)
+    )
+    phase_root = args.out / "runs" / args.split / args.experiment
+    aggregate_path = phase_root / "aggregate.json"
+    if not aggregate_path.exists():
+        raise ContractError(f"缺少待复算聚合:{aggregate_path}")
+    previous = json.loads(aggregate_path.read_text(encoding="utf-8"))
+    all_rows = _load_kb_rows(args)
+    outputs: dict[str, list[dict]] = {}
+    contracts: list[dict] = []
+    for name in groups:
+        group_root = phase_root / name
+        contract_path = group_root / "contract.json"
+        traces_path = group_root / "traces.jsonl"
+        if not contract_path.exists() or not traces_path.exists():
+            raise ContractError(f"缺少待复算轨迹:{group_root}")
+        contracts.append(json.loads(contract_path.read_text(encoding="utf-8")))
+        traces = [
+            json.loads(line)
+            for line in traces_path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        ids = [str(trace.get("case_id", "")) for trace in traces]
+        if len(ids) != len(set(ids)) or set(ids) != set(cases_by_id):
+            raise ContractError(f"复算轨迹未完整覆盖 {args.split}:{group_root}")
+        outputs[name] = [
+            rescore_answer_trace(cases_by_id[str(trace["case_id"])], trace, all_rows)
+            if trace.get("answer_status") == "measured" and trace.get("deterministic_checks")
+            else trace
+            for trace in traces
+        ]
+
+    report = {
+        **previous,
+        **_build_experiment_report(
+            args,
+            cases,
+            outputs,
+            contracts,
+            validate_current_code=False,
+            attempt_ledger_summary=previous.get("api_attempt_ledger", {}),
+        ),
+    }
+    # Rescoring changes no request, response, latency or payment facts.
+    for key in (
+        "budget_mode", "max_cost_usd_per_group", "latency_semantics",
+        "protocol_sha256", "dataset_sha256", "dataset_n",
+    ):
+        if key in previous:
+            report[key] = previous[key]
+    current_commit = subprocess.check_output(
+        ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True
+    ).strip()
+    working_tree_dirty = bool(subprocess.check_output(
+        ["git", "status", "--porcelain"], cwd=ROOT, text=True
+    ).strip())
+    report["posthoc_rescore"] = {
+        "scoring_version": "ch16-rescore-1",
+        "model_calls": 0,
+        "paid_calls": 0,
+        "raw_answers_preserved": True,
+        "recomputed": [
+            "behavior_pred", "citation_support", "unsupported_claims",
+            "refusal_rules", "failure_labels",
+        ],
+        "reason": "修复自然拒答与带标记澄清的确定性行为分类；模型答案原样保留",
+        "code_basis_commit": current_commit,
+        "working_tree_dirty": working_tree_dirty,
+        "scoring_code_sha256": _scoring_code_hashes(),
+    }
+    for name in groups:
+        _write_jsonl(phase_root / name / "traces.jsonl", outputs[name])
+    _write_json(aggregate_path, report)
+    _write_json(phase_root / "budget-estimate.json", report["cost_estimate"])
     return report
 
 
@@ -890,6 +1097,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--unbounded-budget", action="store_true",
                         help="显式启用无限累计预算；仍持久记录每次费用")
     parser.add_argument("--estimate-only", action="store_true")
+    parser.add_argument(
+        "--rescore-only", action="store_true",
+        help="只重算已保存答案的确定性检查与聚合；不调用模型、不改原始回答",
+    )
     args = parser.parse_args(argv)
     if args.unbounded_budget:
         args.max_cost_usd = None
@@ -898,19 +1109,26 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(estimate_group_costs(split), ensure_ascii=False, indent=2))
         return 0
     try:
-        report = _run(args)
+        report = _rescore_existing(args) if args.rescore_only else _run(args)
     except BudgetExceeded as exc:
         print(f"预算守卫阻止运行: {exc}", file=sys.stderr)
         return 2
     except ContractError as exc:
         print(f"实验契约阻止运行: {exc}", file=sys.stderr)
         return 2
-    print(json.dumps({
+    output = {
         "experiment": report["experiment"],
         "split": report["split"],
-        "paid_calls_executed": report["paid_calls_executed"],
         "aggregate": str(args.out / "runs" / args.split / args.experiment / "aggregate.json"),
-    }, ensure_ascii=False))
+    }
+    if args.rescore_only:
+        output.update({
+            "model_calls_executed": 0,
+            "historical_paid_calls": report["paid_calls_executed"],
+        })
+    else:
+        output["paid_calls_executed"] = report["paid_calls_executed"]
+    print(json.dumps(output, ensure_ascii=False))
     return 0
 
 

@@ -39,6 +39,29 @@ def _rate(numerator: int, denominator: int) -> float | None:
     return numerator / denominator if denominator else None
 
 
+def _wilson_interval(numerator: int, denominator: int) -> list[float] | None:
+    """Two-sided 95% Wilson interval for a binomial observed count."""
+    if denominator <= 0:
+        return None
+    z = 1.959963984540054
+    p = numerator / denominator
+    scale = 1 + z * z / denominator
+    center = (p + z * z / (2 * denominator)) / scale
+    margin = z * math.sqrt(
+        p * (1 - p) / denominator + z * z / (4 * denominator * denominator)
+    ) / scale
+    return [round(max(0.0, center - margin), 4), round(min(1.0, center + margin), 4)]
+
+
+def _mcnemar_exact_p(gained: int, lost: int) -> float:
+    """Exact two-sided McNemar p-value for paired binary outcomes."""
+    n = gained + lost
+    if n == 0:
+        return 1.0
+    tail = sum(math.comb(n, index) for index in range(min(gained, lost) + 1))
+    return round(min(1.0, 2 * tail / (2 ** n)), 6)
+
+
 def _case_map(cases) -> dict[str, dict]:
     if cases is None:
         return {}
@@ -327,15 +350,21 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
             for trace in traces
         )
     paid_api_calls = sum(int(trace.get("paid_api_calls", 0) or 0) for trace in traces)
+    r3 = _retrieval_metric(retrieval_by_id, retrieval_ids, "r3")
+    r5 = _retrieval_metric(retrieval_by_id, retrieval_ids, "r5")
     return {
         "n": len(traces),
         "retrieval": {
             "positive_cases": len(retrieval_ids),
-            "r3": _retrieval_metric(retrieval_by_id, retrieval_ids, "r3"),
-            "r5": _retrieval_metric(retrieval_by_id, retrieval_ids, "r5"),
+            "r3": r3,
+            "r5": r5,
             "mrr": _retrieval_metric(retrieval_by_id, retrieval_ids, "mrr"),
             "all_required_evidence_group_recall": evidence_group_recall_metrics,
             "by_bucket": _bucket_retrieval(retrieval_by_id, retrieval_ids, cases_by_id),
+            "uncertainty": {
+                "r3_wilson95": _wilson_interval(r3["hits"], r3["measured"]),
+                "r5_wilson95": _wilson_interval(r5["hits"], r5["measured"]),
+            },
         },
         "answers": {
             "strict_accuracy": {
@@ -377,6 +406,17 @@ def summarize_group(traces: list[dict], cases=None) -> dict:
                 "unmeasured": over_refusal_eligible - over_refusal_measured,
                 "rate": _rate(len(over_refusal_ids), over_refusal_measured),
                 "case_ids": sorted(over_refusal_ids),
+            },
+            "uncertainty": {
+                "strict_accuracy_wilson95": _wilson_interval(
+                    int(strict_correct), len(strict_values)
+                ),
+                "citation_support_wilson95": _wilson_interval(
+                    sum(citation_support), len(citation_support)
+                ),
+                "over_refusal_wilson95": _wilson_interval(
+                    len(over_refusal_ids), over_refusal_measured
+                ),
             },
         },
         "operations": {
@@ -463,7 +503,7 @@ def _paired_change(reference: dict[str, dict], candidate: dict[str, dict],
     lost = [case_id for case_id, before, after in pairs if after < before]
     ties = [case_id for case_id, before, after in pairs if after == before]
     deltas = [after - before for _, before, after in pairs]
-    return {
+    result = {
         "pairs": len(pairs),
         "gained_ids": gained,
         "lost_ids": lost,
@@ -471,6 +511,10 @@ def _paired_change(reference: dict[str, dict], candidate: dict[str, dict],
         "tie_ids": ties,
         "mean_delta": sum(deltas) / len(deltas) if deltas else None,
     }
+    result[
+        "mcnemar_exact_p" if metric in {"r3", "r5"} else "sign_test_exact_p"
+    ] = _mcnemar_exact_p(len(gained), len(lost))
+    return result
 
 
 def compare_groups(reference_traces: list[dict], candidate_traces: list[dict], cases=None) -> dict:
@@ -513,6 +557,7 @@ def compare_groups(reference_traces: list[dict], candidate_traces: list[dict], c
                 "reference_correct": before_correct,
                 "candidate_correct": after_correct,
                 "candidate_minus_reference": after_correct - before_correct,
+                "mcnemar_exact_p": _mcnemar_exact_p(len(gained), len(lost)),
             }
         },
     }
@@ -637,7 +682,9 @@ def _contract_differences(left: dict, right: dict) -> list[str]:
     return contract_diff(left_copy, right_copy)
 
 
-def validate_group_contracts(contracts: list[dict]) -> None:
+def validate_group_contracts(
+    contracts: list[dict], *, verify_current_code: bool = True
+) -> None:
     """校验组间只变更对应实验变量，且冻结使用相同协议、题集和候选上限。"""
     if not contracts:
         raise ContractError("实验组为空")
@@ -658,7 +705,7 @@ def validate_group_contracts(contracts: list[dict]) -> None:
         if candidate.get("protocol_sha256") != reference.get("protocol_sha256"):
             raise ContractError("共同实验协议 hash 不一致")
         source = candidate.get("source_contract") or {}
-        if source:
+        if source and verify_current_code:
             protocol_sha256(source)
     reference_source = reference.get("source_contract") or {}
     for candidate in contracts[1:]:

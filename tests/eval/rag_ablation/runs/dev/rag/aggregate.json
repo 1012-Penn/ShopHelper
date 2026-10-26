@@ -77,42 +77,42 @@
   "cost_actual_usd": 0.03927213,
   "cost_estimate": {
     "currency": "USD",
+    "paid_calls_executed": 42,
     "groups": [
       {
-        "basis": "CH12 baseline 完整缓存重放为 $0；缓存未命中需重新估算",
+        "experiment": "rag",
+        "group": "baseline",
+        "strategy": "hybrid_rerank",
         "estimated_usd": [
           0.0,
           0.0
         ],
-        "experiment": "rag",
-        "group": "baseline",
         "max_cost_usd_per_group": 0.0,
-        "strategy": "hybrid_rerank"
+        "basis": "CH12 baseline 完整缓存重放为 $0；缓存未命中需重新估算"
       },
       {
-        "basis": "CH12 报告 90 题预估 $0.04–0.08，dev 按 60/90 缩放",
+        "experiment": "rag",
+        "group": "decompose_once",
+        "strategy": "hybrid_rerank",
         "estimated_usd": [
           0.0267,
           0.0533
         ],
-        "experiment": "rag",
-        "group": "decompose_once",
         "max_cost_usd_per_group": 0.06,
-        "strategy": "hybrid_rerank"
+        "basis": "CH12 报告 90 题预估 $0.04–0.08，dev 按 60/90 缩放"
       },
       {
-        "basis": "CH12 报告 90 题预估 $0.07–0.15，dev 按 60/90 缩放",
+        "experiment": "rag",
+        "group": "controlled_loop",
+        "strategy": "hybrid_rerank",
         "estimated_usd": [
           0.0467,
           0.1
         ],
-        "experiment": "rag",
-        "group": "controlled_loop",
         "max_cost_usd_per_group": 0.11,
-        "strategy": "hybrid_rerank"
+        "basis": "CH12 报告 90 题预估 $0.07–0.15，dev 按 60/90 缩放"
       }
     ],
-    "paid_calls_executed": 42,
     "total_estimated_usd": [
       0.0734,
       0.1533
@@ -125,26 +125,237 @@
   "external_api_calls_executed": 90,
   "groups": {
     "baseline": {
-      "answers": {
-        "ch11_compatible_attempted_strict_accuracy": {
-          "correct": 9,
-          "excludes_gate_blocked": true,
-          "includes_any_expected_behavior_with_gold_fact_check": true,
-          "measured": 40,
-          "rate": 0.225
+      "n": 60,
+      "retrieval": {
+        "positive_cases": 43,
+        "r3": {
+          "hits": 21,
+          "measured": 43,
+          "eligible": 43,
+          "unmeasured": 0,
+          "rate": 0.4883720930232558
         },
-        "citation_supported_cases": {
-          "measured": 42,
-          "rate": 0.2619047619047619,
-          "supported": 11
+        "r5": {
+          "hits": 26,
+          "measured": 43,
+          "eligible": 43,
+          "unmeasured": 0,
+          "rate": 0.6046511627906976
         },
-        "condition_coverage": {
-          "eligible": 24,
-          "mean": 0.6527777777777778,
-          "measured": 24,
+        "mrr": {
+          "mean": 0.43386858619416746,
+          "n": 43,
+          "eligible": 43,
           "unmeasured": 0
         },
+        "all_required_evidence_group_recall": {
+          "at_3": {
+            "mean": 0.6627906976744186,
+            "measured": 43,
+            "eligible": 43,
+            "unmeasured": 0
+          },
+          "at_5": {
+            "mean": 0.7558139534883721,
+            "measured": 43,
+            "eligible": 43,
+            "unmeasured": 0
+          }
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "n": 6,
+            "r3": {
+              "hits": 2,
+              "measured": 6,
+              "eligible": 6,
+              "unmeasured": 0,
+              "rate": 0.3333333333333333
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 6,
+              "eligible": 6,
+              "unmeasured": 0,
+              "rate": 0.6666666666666666
+            },
+            "mrr": {
+              "mean": 0.22658730158730156,
+              "n": 6,
+              "eligible": 6,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "n": 9,
+            "r3": {
+              "hits": 4,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.4444444444444444
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.4444444444444444
+            },
+            "mrr": {
+              "mean": 0.3677248677248677,
+              "n": 9,
+              "eligible": 9,
+              "unmeasured": 0
+            }
+          },
+          "multi_hop": {
+            "n": 11,
+            "r3": {
+              "hits": 2,
+              "measured": 11,
+              "eligible": 11,
+              "unmeasured": 0,
+              "rate": 0.18181818181818182
+            },
+            "r5": {
+              "hits": 5,
+              "measured": 11,
+              "eligible": 11,
+              "unmeasured": 0,
+              "rate": 0.45454545454545453
+            },
+            "mrr": {
+              "mean": 0.21818181818181817,
+              "n": 11,
+              "eligible": 11,
+              "unmeasured": 0
+            }
+          },
+          "policy_conflict": {
+            "n": 5,
+            "r3": {
+              "hits": 1,
+              "measured": 5,
+              "eligible": 5,
+              "unmeasured": 0,
+              "rate": 0.2
+            },
+            "r5": {
+              "hits": 1,
+              "measured": 5,
+              "eligible": 5,
+              "unmeasured": 0,
+              "rate": 0.2
+            },
+            "mrr": {
+              "mean": 0.11746031746031745,
+              "n": 5,
+              "eligible": 5,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "n": 12,
+            "r3": {
+              "hits": 12,
+              "measured": 12,
+              "eligible": 12,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "r5": {
+              "hits": 12,
+              "measured": 12,
+              "eligible": 12,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.9166666666666666,
+              "n": 12,
+              "eligible": 12,
+              "unmeasured": 0
+            }
+          }
+        },
+        "uncertainty": {
+          "r3_wilson95": [
+            0.3462,
+            0.6325
+          ],
+          "r5_wilson95": [
+            0.4558,
+            0.7363
+          ]
+        }
+      },
+      "answers": {
+        "strict_accuracy": {
+          "correct": 9,
+          "measured": 42,
+          "eligible": 42,
+          "unmeasured": 0,
+          "rate": 0.21428571428571427
+        },
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 9,
+          "measured": 40,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "rate": 0.225
+        },
+        "condition_coverage": {
+          "mean": 0.6527777777777778,
+          "measured": 24,
+          "eligible": 24,
+          "unmeasured": 0
+        },
+        "citation_supported_cases": {
+          "supported": 11,
+          "measured": 42,
+          "rate": 0.2619047619047619
+        },
+        "unsupported_claims": {
+          "unsupported": 42,
+          "claims": 86,
+          "rate": 0.4883720930232558,
+          "cases_with_unsupported_claims": 26,
+          "case_ids": [
+            "DEV-CLARIFY-03",
+            "DEV-CLARIFY-04",
+            "DEV-CLARIFY-05",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-ENTITY-04",
+            "DEV-MULTI-01",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-12"
+          ]
+        },
         "over_refusal": {
+          "refused": 6,
+          "measured": 49,
+          "eligible": 49,
+          "unmeasured": 0,
+          "rate": 0.12244897959183673,
           "case_ids": [
             "DEV-CLARIFY-01",
             "DEV-CLARIFY-02",
@@ -152,58 +363,55 @@
             "DEV-ENTITY-03",
             "DEV-MULTI-02",
             "DEV-MULTI-10"
-          ],
-          "eligible": 49,
-          "measured": 49,
-          "rate": 0.12244897959183673,
-          "refused": 6,
-          "unmeasured": 0
+          ]
         },
-        "strict_accuracy": {
-          "correct": 9,
-          "eligible": 42,
-          "measured": 42,
-          "rate": 0.21428571428571427,
-          "unmeasured": 0
-        },
-        "unsupported_claims": {
-          "case_ids": [
-            "DEV-CLARIFY-03",
-            "DEV-CLARIFY-04",
-            "DEV-CLARIFY-05",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-05",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-ENTITY-04",
-            "DEV-MULTI-01",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-11",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-12"
+        "uncertainty": {
+          "strict_accuracy_wilson95": [
+            0.1171,
+            0.3594
           ],
-          "cases_with_unsupported_claims": 26,
-          "claims": 86,
-          "rate": 0.4883720930232558,
-          "unsupported": 42
+          "citation_support_wilson95": [
+            0.153,
+            0.4107
+          ],
+          "over_refusal_wilson95": [
+            0.0573,
+            0.2424
+          ]
         }
+      },
+      "operations": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 60,
+          "p50": 32.263,
+          "p95": 45.913,
+          "by_source": {
+            "cache_or_local": {
+              "n": 60,
+              "p50": 32.263,
+              "p95": 45.913
+            }
+          }
+        },
+        "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 60,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 0
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.037395
       },
       "failure_attribution": {
         "failure_labels": {
           "answer_missing_condition": {
+            "count": 11,
             "case_ids": [
               "DEV-CONFLICT-02",
               "DEV-CONFLICT-05",
@@ -216,10 +424,10 @@
               "DEV-MULTI-04",
               "DEV-MULTI-05",
               "DEV-SINGLE-04"
-            ],
-            "count": 11
+            ]
           },
           "answer_wrong_fact": {
+            "count": 15,
             "case_ids": [
               "DEV-CONFLICT-03",
               "DEV-CONFLICT-04",
@@ -236,10 +444,10 @@
               "DEV-MULTI-08",
               "DEV-MULTI-11",
               "DEV-SINGLE-04"
-            ],
-            "count": 15
+            ]
           },
           "citation_unsupported": {
+            "count": 29,
             "case_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
@@ -270,26 +478,26 @@
               "DEV-SINGLE-09",
               "DEV-SINGLE-10",
               "DEV-SINGLE-12"
-            ],
-            "count": 29
+            ]
           },
           "clarify_missing_slot": {
+            "count": 2,
             "case_ids": [
               "DEV-CONFLICT-04",
               "DEV-ENTITY-03"
-            ],
-            "count": 2
+            ]
           },
           "clarify_over_asking": {
+            "count": 4,
             "case_ids": [
               "DEV-CLARIFY-04",
               "DEV-CLARIFY-05",
               "DEV-CONFLICT-04",
               "DEV-ENTITY-03"
-            ],
-            "count": 4
+            ]
           },
           "over_refusal": {
+            "count": 6,
             "case_ids": [
               "DEV-CLARIFY-01",
               "DEV-CLARIFY-02",
@@ -297,606 +505,209 @@
               "DEV-ENTITY-03",
               "DEV-MULTI-02",
               "DEV-MULTI-10"
-            ],
-            "count": 6
+            ]
           }
         },
         "unmeasured": {}
-      },
-      "n": 60,
-      "operations": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 60,
-          "external_api_calls": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "paid_api_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.037395,
-        "latency_ms": {
-          "by_source": {
-            "cache_or_local": {
-              "n": 60,
-              "p50": 32.263,
-              "p95": 45.913
-            }
-          },
-          "method": "nearest_rank",
-          "n": 60,
-          "p50": 32.263,
-          "p95": 45.913
-        }
-      },
-      "retrieval": {
-        "all_required_evidence_group_recall": {
-          "at_3": {
-            "eligible": 43,
-            "mean": 0.6627906976744186,
-            "measured": 43,
-            "unmeasured": 0
-          },
-          "at_5": {
-            "eligible": 43,
-            "mean": 0.7558139534883721,
-            "measured": 43,
-            "unmeasured": 0
-          }
-        },
-        "by_bucket": {
-          "entity_mismatch": {
-            "mrr": {
-              "eligible": 6,
-              "mean": 0.22658730158730156,
-              "n": 6,
-              "unmeasured": 0
-            },
-            "n": 6,
-            "r3": {
-              "eligible": 6,
-              "hits": 2,
-              "measured": 6,
-              "rate": 0.3333333333333333,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 6,
-              "hits": 4,
-              "measured": 6,
-              "rate": 0.6666666666666666,
-              "unmeasured": 0
-            }
-          },
-          "multi_constraint": {
-            "mrr": {
-              "eligible": 9,
-              "mean": 0.3677248677248677,
-              "n": 9,
-              "unmeasured": 0
-            },
-            "n": 9,
-            "r3": {
-              "eligible": 9,
-              "hits": 4,
-              "measured": 9,
-              "rate": 0.4444444444444444,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 9,
-              "hits": 4,
-              "measured": 9,
-              "rate": 0.4444444444444444,
-              "unmeasured": 0
-            }
-          },
-          "multi_hop": {
-            "mrr": {
-              "eligible": 11,
-              "mean": 0.21818181818181817,
-              "n": 11,
-              "unmeasured": 0
-            },
-            "n": 11,
-            "r3": {
-              "eligible": 11,
-              "hits": 2,
-              "measured": 11,
-              "rate": 0.18181818181818182,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 11,
-              "hits": 5,
-              "measured": 11,
-              "rate": 0.45454545454545453,
-              "unmeasured": 0
-            }
-          },
-          "policy_conflict": {
-            "mrr": {
-              "eligible": 5,
-              "mean": 0.11746031746031745,
-              "n": 5,
-              "unmeasured": 0
-            },
-            "n": 5,
-            "r3": {
-              "eligible": 5,
-              "hits": 1,
-              "measured": 5,
-              "rate": 0.2,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 5,
-              "hits": 1,
-              "measured": 5,
-              "rate": 0.2,
-              "unmeasured": 0
-            }
-          },
-          "single_hop": {
-            "mrr": {
-              "eligible": 12,
-              "mean": 0.9166666666666666,
-              "n": 12,
-              "unmeasured": 0
-            },
-            "n": 12,
-            "r3": {
-              "eligible": 12,
-              "hits": 12,
-              "measured": 12,
-              "rate": 1.0,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 12,
-              "hits": 12,
-              "measured": 12,
-              "rate": 1.0,
-              "unmeasured": 0
-            }
-          }
-        },
-        "mrr": {
-          "eligible": 43,
-          "mean": 0.43386858619416746,
-          "n": 43,
-          "unmeasured": 0
-        },
-        "positive_cases": 43,
-        "r3": {
-          "eligible": 43,
-          "hits": 21,
-          "measured": 43,
-          "rate": 0.4883720930232558,
-          "unmeasured": 0
-        },
-        "r5": {
-          "eligible": 43,
-          "hits": 26,
-          "measured": 43,
-          "rate": 0.6046511627906976,
-          "unmeasured": 0
-        }
-      }
-    },
-    "controlled_loop": {
-      "answers": {
-        "ch11_compatible_attempted_strict_accuracy": {
-          "correct": 9,
-          "excludes_gate_blocked": true,
-          "includes_any_expected_behavior_with_gold_fact_check": true,
-          "measured": 41,
-          "rate": 0.21951219512195122
-        },
-        "citation_supported_cases": {
-          "measured": 42,
-          "rate": 0.2619047619047619,
-          "supported": 11
-        },
-        "condition_coverage": {
-          "eligible": 24,
-          "mean": 0.611111111111111,
-          "measured": 24,
-          "unmeasured": 0
-        },
-        "over_refusal": {
-          "case_ids": [
-            "DEV-CLARIFY-02",
-            "DEV-CONFLICT-04",
-            "DEV-ENTITY-03",
-            "DEV-MULTI-10"
-          ],
-          "eligible": 49,
-          "measured": 49,
-          "rate": 0.08163265306122448,
-          "refused": 4,
-          "unmeasured": 0
-        },
-        "strict_accuracy": {
-          "correct": 9,
-          "eligible": 42,
-          "measured": 42,
-          "rate": 0.21428571428571427,
-          "unmeasured": 0
-        },
-        "unsupported_claims": {
-          "case_ids": [
-            "DEV-CLARIFY-03",
-            "DEV-CLARIFY-04",
-            "DEV-CLARIFY-05",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-05",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-ENTITY-04",
-            "DEV-MULTI-01",
-            "DEV-MULTI-02",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-11",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-12"
-          ],
-          "cases_with_unsupported_claims": 27,
-          "claims": 89,
-          "rate": 0.4943820224719101,
-          "unsupported": 44
-        }
-      },
-      "failure_attribution": {
-        "failure_labels": {
-          "answer_missing_condition": {
-            "case_ids": [
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-ENTITY-04",
-              "DEV-MULTI-01",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-10",
-              "DEV-SINGLE-04"
-            ],
-            "count": 12
-          },
-          "answer_wrong_fact": {
-            "case_ids": [
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-ENTITY-04",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-08",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-SINGLE-04"
-            ],
-            "count": 15
-          },
-          "citation_unsupported": {
-            "case_ids": [
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-07",
-              "DEV-MULTI-11",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-12"
-            ],
-            "count": 30
-          },
-          "clarify_missing_slot": {
-            "case_ids": [
-              "DEV-CONFLICT-04",
-              "DEV-ENTITY-03"
-            ],
-            "count": 2
-          },
-          "clarify_over_asking": {
-            "case_ids": [
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
-              "DEV-CONFLICT-04",
-              "DEV-ENTITY-03"
-            ],
-            "count": 4
-          },
-          "over_refusal": {
-            "case_ids": [
-              "DEV-CLARIFY-02",
-              "DEV-CONFLICT-04",
-              "DEV-ENTITY-03",
-              "DEV-MULTI-10"
-            ],
-            "count": 4
-          },
-          "under_refusal": {
-            "case_ids": [
-              "DEV-HARD-04",
-              "DEV-HARD-05"
-            ],
-            "count": 2
-          }
-        },
-        "unmeasured": {}
-      },
-      "n": 60,
-      "operations": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 95,
-          "external_api_calls": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 17,
-          "gap_analyzer_logical_calls": 17,
-          "paid_api_calls": 0,
-          "rag_judge_logical_calls": 65
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.038477,
-        "latency_ms": {
-          "by_source": {
-            "cache_or_local": {
-              "n": 60,
-              "p50": 46.968,
-              "p95": 256.942
-            }
-          },
-          "method": "nearest_rank",
-          "n": 60,
-          "p50": 46.968,
-          "p95": 256.942
-        }
-      },
-      "retrieval": {
-        "all_required_evidence_group_recall": {
-          "at_3": {
-            "eligible": 43,
-            "mean": 0.6627906976744186,
-            "measured": 43,
-            "unmeasured": 0
-          },
-          "at_5": {
-            "eligible": 43,
-            "mean": 0.7441860465116279,
-            "measured": 43,
-            "unmeasured": 0
-          }
-        },
-        "by_bucket": {
-          "entity_mismatch": {
-            "mrr": {
-              "eligible": 6,
-              "mean": 0.22658730158730156,
-              "n": 6,
-              "unmeasured": 0
-            },
-            "n": 6,
-            "r3": {
-              "eligible": 6,
-              "hits": 2,
-              "measured": 6,
-              "rate": 0.3333333333333333,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 6,
-              "hits": 4,
-              "measured": 6,
-              "rate": 0.6666666666666666,
-              "unmeasured": 0
-            }
-          },
-          "multi_constraint": {
-            "mrr": {
-              "eligible": 9,
-              "mean": 0.3677248677248677,
-              "n": 9,
-              "unmeasured": 0
-            },
-            "n": 9,
-            "r3": {
-              "eligible": 9,
-              "hits": 4,
-              "measured": 9,
-              "rate": 0.4444444444444444,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 9,
-              "hits": 4,
-              "measured": 9,
-              "rate": 0.4444444444444444,
-              "unmeasured": 0
-            }
-          },
-          "multi_hop": {
-            "mrr": {
-              "eligible": 11,
-              "mean": 0.21060606060606063,
-              "n": 11,
-              "unmeasured": 0
-            },
-            "n": 11,
-            "r3": {
-              "eligible": 11,
-              "hits": 2,
-              "measured": 11,
-              "rate": 0.18181818181818182,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 11,
-              "hits": 4,
-              "measured": 11,
-              "rate": 0.36363636363636365,
-              "unmeasured": 0
-            }
-          },
-          "policy_conflict": {
-            "mrr": {
-              "eligible": 5,
-              "mean": 0.11746031746031745,
-              "n": 5,
-              "unmeasured": 0
-            },
-            "n": 5,
-            "r3": {
-              "eligible": 5,
-              "hits": 1,
-              "measured": 5,
-              "rate": 0.2,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 5,
-              "hits": 1,
-              "measured": 5,
-              "rate": 0.2,
-              "unmeasured": 0
-            }
-          },
-          "single_hop": {
-            "mrr": {
-              "eligible": 12,
-              "mean": 0.9166666666666666,
-              "n": 12,
-              "unmeasured": 0
-            },
-            "n": 12,
-            "r3": {
-              "eligible": 12,
-              "hits": 12,
-              "measured": 12,
-              "rate": 1.0,
-              "unmeasured": 0
-            },
-            "r5": {
-              "eligible": 12,
-              "hits": 12,
-              "measured": 12,
-              "rate": 1.0,
-              "unmeasured": 0
-            }
-          }
-        },
-        "mrr": {
-          "eligible": 43,
-          "mean": 0.43193060169804337,
-          "n": 43,
-          "unmeasured": 0
-        },
-        "positive_cases": 43,
-        "r3": {
-          "eligible": 43,
-          "hits": 21,
-          "measured": 43,
-          "rate": 0.4883720930232558,
-          "unmeasured": 0
-        },
-        "r5": {
-          "eligible": 43,
-          "hits": 25,
-          "measured": 43,
-          "rate": 0.5813953488372093,
-          "unmeasured": 0
-        }
       }
     },
     "decompose_once": {
-      "answers": {
-        "ch11_compatible_attempted_strict_accuracy": {
-          "correct": 9,
-          "excludes_gate_blocked": true,
-          "includes_any_expected_behavior_with_gold_fact_check": true,
-          "measured": 41,
-          "rate": 0.21951219512195122
+      "n": 60,
+      "retrieval": {
+        "positive_cases": 43,
+        "r3": {
+          "hits": 21,
+          "measured": 43,
+          "eligible": 43,
+          "unmeasured": 0,
+          "rate": 0.4883720930232558
         },
-        "citation_supported_cases": {
-          "measured": 42,
-          "rate": 0.2619047619047619,
-          "supported": 11
+        "r5": {
+          "hits": 25,
+          "measured": 43,
+          "eligible": 43,
+          "unmeasured": 0,
+          "rate": 0.5813953488372093
         },
-        "condition_coverage": {
-          "eligible": 24,
-          "mean": 0.611111111111111,
-          "measured": 24,
+        "mrr": {
+          "mean": 0.43193060169804337,
+          "n": 43,
+          "eligible": 43,
           "unmeasured": 0
         },
-        "over_refusal": {
-          "case_ids": [
-            "DEV-CLARIFY-02",
-            "DEV-CONFLICT-04",
-            "DEV-ENTITY-03",
-            "DEV-MULTI-10"
+        "all_required_evidence_group_recall": {
+          "at_3": {
+            "mean": 0.6627906976744186,
+            "measured": 43,
+            "eligible": 43,
+            "unmeasured": 0
+          },
+          "at_5": {
+            "mean": 0.7441860465116279,
+            "measured": 43,
+            "eligible": 43,
+            "unmeasured": 0
+          }
+        },
+        "by_bucket": {
+          "entity_mismatch": {
+            "n": 6,
+            "r3": {
+              "hits": 2,
+              "measured": 6,
+              "eligible": 6,
+              "unmeasured": 0,
+              "rate": 0.3333333333333333
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 6,
+              "eligible": 6,
+              "unmeasured": 0,
+              "rate": 0.6666666666666666
+            },
+            "mrr": {
+              "mean": 0.22658730158730156,
+              "n": 6,
+              "eligible": 6,
+              "unmeasured": 0
+            }
+          },
+          "multi_constraint": {
+            "n": 9,
+            "r3": {
+              "hits": 4,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.4444444444444444
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 9,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.4444444444444444
+            },
+            "mrr": {
+              "mean": 0.3677248677248677,
+              "n": 9,
+              "eligible": 9,
+              "unmeasured": 0
+            }
+          },
+          "multi_hop": {
+            "n": 11,
+            "r3": {
+              "hits": 2,
+              "measured": 11,
+              "eligible": 11,
+              "unmeasured": 0,
+              "rate": 0.18181818181818182
+            },
+            "r5": {
+              "hits": 4,
+              "measured": 11,
+              "eligible": 11,
+              "unmeasured": 0,
+              "rate": 0.36363636363636365
+            },
+            "mrr": {
+              "mean": 0.21060606060606063,
+              "n": 11,
+              "eligible": 11,
+              "unmeasured": 0
+            }
+          },
+          "policy_conflict": {
+            "n": 5,
+            "r3": {
+              "hits": 1,
+              "measured": 5,
+              "eligible": 5,
+              "unmeasured": 0,
+              "rate": 0.2
+            },
+            "r5": {
+              "hits": 1,
+              "measured": 5,
+              "eligible": 5,
+              "unmeasured": 0,
+              "rate": 0.2
+            },
+            "mrr": {
+              "mean": 0.11746031746031745,
+              "n": 5,
+              "eligible": 5,
+              "unmeasured": 0
+            }
+          },
+          "single_hop": {
+            "n": 12,
+            "r3": {
+              "hits": 12,
+              "measured": 12,
+              "eligible": 12,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "r5": {
+              "hits": 12,
+              "measured": 12,
+              "eligible": 12,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.9166666666666666,
+              "n": 12,
+              "eligible": 12,
+              "unmeasured": 0
+            }
+          }
+        },
+        "uncertainty": {
+          "r3_wilson95": [
+            0.3462,
+            0.6325
           ],
-          "eligible": 49,
-          "measured": 49,
-          "rate": 0.08163265306122448,
-          "refused": 4,
-          "unmeasured": 0
-        },
+          "r5_wilson95": [
+            0.4333,
+            0.7162
+          ]
+        }
+      },
+      "answers": {
         "strict_accuracy": {
           "correct": 9,
-          "eligible": 42,
           "measured": 42,
-          "rate": 0.21428571428571427,
+          "eligible": 42,
+          "unmeasured": 0,
+          "rate": 0.21428571428571427
+        },
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 9,
+          "measured": 41,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "rate": 0.21951219512195122
+        },
+        "condition_coverage": {
+          "mean": 0.611111111111111,
+          "measured": 24,
+          "eligible": 24,
           "unmeasured": 0
         },
+        "citation_supported_cases": {
+          "supported": 11,
+          "measured": 42,
+          "rate": 0.2619047619047619
+        },
         "unsupported_claims": {
+          "unsupported": 44,
+          "claims": 89,
+          "rate": 0.4943820224719101,
+          "cases_with_unsupported_claims": 27,
           "case_ids": [
             "DEV-CLARIFY-03",
             "DEV-CLARIFY-04",
@@ -925,138 +736,41 @@
             "DEV-SINGLE-09",
             "DEV-SINGLE-10",
             "DEV-SINGLE-12"
+          ]
+        },
+        "over_refusal": {
+          "refused": 3,
+          "measured": 49,
+          "eligible": 49,
+          "unmeasured": 0,
+          "rate": 0.061224489795918366,
+          "case_ids": [
+            "DEV-CONFLICT-04",
+            "DEV-ENTITY-03",
+            "DEV-MULTI-10"
+          ]
+        },
+        "uncertainty": {
+          "strict_accuracy_wilson95": [
+            0.1171,
+            0.3594
           ],
-          "cases_with_unsupported_claims": 27,
-          "claims": 89,
-          "rate": 0.4943820224719101,
-          "unsupported": 44
+          "citation_support_wilson95": [
+            0.153,
+            0.4107
+          ],
+          "over_refusal_wilson95": [
+            0.021,
+            0.1652
+          ]
         }
       },
-      "failure_attribution": {
-        "failure_labels": {
-          "answer_missing_condition": {
-            "case_ids": [
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-ENTITY-04",
-              "DEV-MULTI-01",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-10",
-              "DEV-SINGLE-04"
-            ],
-            "count": 12
-          },
-          "answer_wrong_fact": {
-            "case_ids": [
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-CONSTRAINT-08",
-              "DEV-ENTITY-04",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-08",
-              "DEV-MULTI-10",
-              "DEV-MULTI-11",
-              "DEV-SINGLE-04"
-            ],
-            "count": 15
-          },
-          "citation_unsupported": {
-            "case_ids": [
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-05",
-              "DEV-CONSTRAINT-01",
-              "DEV-CONSTRAINT-02",
-              "DEV-CONSTRAINT-03",
-              "DEV-CONSTRAINT-04",
-              "DEV-CONSTRAINT-05",
-              "DEV-CONSTRAINT-06",
-              "DEV-CONSTRAINT-07",
-              "DEV-ENTITY-01",
-              "DEV-ENTITY-04",
-              "DEV-ENTITY-05",
-              "DEV-ENTITY-07",
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-07",
-              "DEV-MULTI-11",
-              "DEV-SINGLE-03",
-              "DEV-SINGLE-04",
-              "DEV-SINGLE-06",
-              "DEV-SINGLE-07",
-              "DEV-SINGLE-08",
-              "DEV-SINGLE-09",
-              "DEV-SINGLE-10",
-              "DEV-SINGLE-12"
-            ],
-            "count": 30
-          },
-          "clarify_missing_slot": {
-            "case_ids": [
-              "DEV-CONFLICT-04",
-              "DEV-ENTITY-03"
-            ],
-            "count": 2
-          },
-          "clarify_over_asking": {
-            "case_ids": [
-              "DEV-CLARIFY-04",
-              "DEV-CLARIFY-05",
-              "DEV-CONFLICT-04",
-              "DEV-ENTITY-03"
-            ],
-            "count": 4
-          },
-          "over_refusal": {
-            "case_ids": [
-              "DEV-CLARIFY-02",
-              "DEV-CONFLICT-04",
-              "DEV-ENTITY-03",
-              "DEV-MULTI-10"
-            ],
-            "count": 4
-          },
-          "under_refusal": {
-            "case_ids": [
-              "DEV-HARD-04",
-              "DEV-HARD-05"
-            ],
-            "count": 2
-          }
-        },
-        "unmeasured": {}
-      },
-      "n": 60,
       "operations": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 27,
-          "evidence_judge_cache_hits": 68,
-          "external_api_calls": 90,
-          "gap_analyzer_api_calls": 15,
-          "gap_analyzer_cache_hits": 2,
-          "gap_analyzer_logical_calls": 17,
-          "paid_api_calls": 42,
-          "rag_judge_logical_calls": 65
-        },
-        "cost_actual_usd": 0.03927213,
-        "cost_estimate_usd": 0.077748,
         "latency_ms": {
+          "method": "nearest_rank",
+          "n": 60,
+          "p50": 35.625,
+          "p95": 20071.848,
           "by_source": {
             "cache_or_local": {
               "n": 45,
@@ -1068,166 +782,520 @@
               "p50": 12963.947,
               "p95": 43501.389
             }
-          },
-          "method": "nearest_rank",
-          "n": 60,
-          "p50": 35.625,
-          "p95": 20071.848
-        }
+          }
+        },
+        "calls": {
+          "external_api_calls": 90,
+          "paid_api_calls": 42,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 27,
+          "evidence_judge_cache_hits": 68,
+          "gap_analyzer_api_calls": 15,
+          "gap_analyzer_cache_hits": 2,
+          "gap_analyzer_logical_calls": 17,
+          "rag_judge_logical_calls": 65
+        },
+        "cost_actual_usd": 0.03927213,
+        "cost_estimate_usd": 0.077748
       },
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
+            "count": 12,
+            "case_ids": [
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-01",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-10",
+              "DEV-SINGLE-04"
+            ]
+          },
+          "answer_wrong_fact": {
+            "count": 15,
+            "case_ids": [
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-CONSTRAINT-08",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-08",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-04"
+            ]
+          },
+          "citation_unsupported": {
+            "count": 30,
+            "case_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-04",
+              "DEV-CONSTRAINT-05",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-01",
+              "DEV-ENTITY-04",
+              "DEV-ENTITY-05",
+              "DEV-ENTITY-07",
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-07",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-03",
+              "DEV-SINGLE-04",
+              "DEV-SINGLE-06",
+              "DEV-SINGLE-07",
+              "DEV-SINGLE-08",
+              "DEV-SINGLE-09",
+              "DEV-SINGLE-10",
+              "DEV-SINGLE-12"
+            ]
+          },
+          "clarify_missing_slot": {
+            "count": 2,
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ]
+          },
+          "clarify_over_asking": {
+            "count": 4,
+            "case_ids": [
+              "DEV-CLARIFY-04",
+              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ]
+          },
+          "over_refusal": {
+            "count": 3,
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03",
+              "DEV-MULTI-10"
+            ]
+          },
+          "under_refusal": {
+            "count": 2,
+            "case_ids": [
+              "DEV-HARD-04",
+              "DEV-HARD-05"
+            ]
+          }
+        },
+        "unmeasured": {}
+      }
+    },
+    "controlled_loop": {
+      "n": 60,
       "retrieval": {
+        "positive_cases": 43,
+        "r3": {
+          "hits": 21,
+          "measured": 43,
+          "eligible": 43,
+          "unmeasured": 0,
+          "rate": 0.4883720930232558
+        },
+        "r5": {
+          "hits": 25,
+          "measured": 43,
+          "eligible": 43,
+          "unmeasured": 0,
+          "rate": 0.5813953488372093
+        },
+        "mrr": {
+          "mean": 0.43193060169804337,
+          "n": 43,
+          "eligible": 43,
+          "unmeasured": 0
+        },
         "all_required_evidence_group_recall": {
           "at_3": {
-            "eligible": 43,
             "mean": 0.6627906976744186,
             "measured": 43,
+            "eligible": 43,
             "unmeasured": 0
           },
           "at_5": {
-            "eligible": 43,
             "mean": 0.7441860465116279,
             "measured": 43,
+            "eligible": 43,
             "unmeasured": 0
           }
         },
         "by_bucket": {
           "entity_mismatch": {
-            "mrr": {
-              "eligible": 6,
-              "mean": 0.22658730158730156,
-              "n": 6,
-              "unmeasured": 0
-            },
             "n": 6,
             "r3": {
-              "eligible": 6,
               "hits": 2,
               "measured": 6,
-              "rate": 0.3333333333333333,
-              "unmeasured": 0
+              "eligible": 6,
+              "unmeasured": 0,
+              "rate": 0.3333333333333333
             },
             "r5": {
-              "eligible": 6,
               "hits": 4,
               "measured": 6,
-              "rate": 0.6666666666666666,
+              "eligible": 6,
+              "unmeasured": 0,
+              "rate": 0.6666666666666666
+            },
+            "mrr": {
+              "mean": 0.22658730158730156,
+              "n": 6,
+              "eligible": 6,
               "unmeasured": 0
             }
           },
           "multi_constraint": {
-            "mrr": {
-              "eligible": 9,
-              "mean": 0.3677248677248677,
-              "n": 9,
-              "unmeasured": 0
-            },
             "n": 9,
             "r3": {
-              "eligible": 9,
               "hits": 4,
               "measured": 9,
-              "rate": 0.4444444444444444,
-              "unmeasured": 0
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.4444444444444444
             },
             "r5": {
-              "eligible": 9,
               "hits": 4,
               "measured": 9,
-              "rate": 0.4444444444444444,
+              "eligible": 9,
+              "unmeasured": 0,
+              "rate": 0.4444444444444444
+            },
+            "mrr": {
+              "mean": 0.3677248677248677,
+              "n": 9,
+              "eligible": 9,
               "unmeasured": 0
             }
           },
           "multi_hop": {
-            "mrr": {
-              "eligible": 11,
-              "mean": 0.21060606060606063,
-              "n": 11,
-              "unmeasured": 0
-            },
             "n": 11,
             "r3": {
-              "eligible": 11,
               "hits": 2,
               "measured": 11,
-              "rate": 0.18181818181818182,
-              "unmeasured": 0
+              "eligible": 11,
+              "unmeasured": 0,
+              "rate": 0.18181818181818182
             },
             "r5": {
-              "eligible": 11,
               "hits": 4,
               "measured": 11,
-              "rate": 0.36363636363636365,
+              "eligible": 11,
+              "unmeasured": 0,
+              "rate": 0.36363636363636365
+            },
+            "mrr": {
+              "mean": 0.21060606060606063,
+              "n": 11,
+              "eligible": 11,
               "unmeasured": 0
             }
           },
           "policy_conflict": {
-            "mrr": {
-              "eligible": 5,
-              "mean": 0.11746031746031745,
-              "n": 5,
-              "unmeasured": 0
-            },
             "n": 5,
             "r3": {
-              "eligible": 5,
               "hits": 1,
               "measured": 5,
-              "rate": 0.2,
-              "unmeasured": 0
+              "eligible": 5,
+              "unmeasured": 0,
+              "rate": 0.2
             },
             "r5": {
-              "eligible": 5,
               "hits": 1,
               "measured": 5,
-              "rate": 0.2,
+              "eligible": 5,
+              "unmeasured": 0,
+              "rate": 0.2
+            },
+            "mrr": {
+              "mean": 0.11746031746031745,
+              "n": 5,
+              "eligible": 5,
               "unmeasured": 0
             }
           },
           "single_hop": {
-            "mrr": {
-              "eligible": 12,
-              "mean": 0.9166666666666666,
-              "n": 12,
-              "unmeasured": 0
-            },
             "n": 12,
             "r3": {
-              "eligible": 12,
               "hits": 12,
               "measured": 12,
-              "rate": 1.0,
-              "unmeasured": 0
+              "eligible": 12,
+              "unmeasured": 0,
+              "rate": 1.0
             },
             "r5": {
-              "eligible": 12,
               "hits": 12,
               "measured": 12,
-              "rate": 1.0,
+              "eligible": 12,
+              "unmeasured": 0,
+              "rate": 1.0
+            },
+            "mrr": {
+              "mean": 0.9166666666666666,
+              "n": 12,
+              "eligible": 12,
               "unmeasured": 0
             }
           }
         },
-        "mrr": {
-          "eligible": 43,
-          "mean": 0.43193060169804337,
-          "n": 43,
-          "unmeasured": 0
-        },
-        "positive_cases": 43,
-        "r3": {
-          "eligible": 43,
-          "hits": 21,
-          "measured": 43,
-          "rate": 0.4883720930232558,
-          "unmeasured": 0
-        },
-        "r5": {
-          "eligible": 43,
-          "hits": 25,
-          "measured": 43,
-          "rate": 0.5813953488372093,
-          "unmeasured": 0
+        "uncertainty": {
+          "r3_wilson95": [
+            0.3462,
+            0.6325
+          ],
+          "r5_wilson95": [
+            0.4333,
+            0.7162
+          ]
         }
+      },
+      "answers": {
+        "strict_accuracy": {
+          "correct": 9,
+          "measured": 42,
+          "eligible": 42,
+          "unmeasured": 0,
+          "rate": 0.21428571428571427
+        },
+        "ch11_compatible_attempted_strict_accuracy": {
+          "correct": 9,
+          "measured": 41,
+          "excludes_gate_blocked": true,
+          "includes_any_expected_behavior_with_gold_fact_check": true,
+          "rate": 0.21951219512195122
+        },
+        "condition_coverage": {
+          "mean": 0.611111111111111,
+          "measured": 24,
+          "eligible": 24,
+          "unmeasured": 0
+        },
+        "citation_supported_cases": {
+          "supported": 11,
+          "measured": 42,
+          "rate": 0.2619047619047619
+        },
+        "unsupported_claims": {
+          "unsupported": 44,
+          "claims": 89,
+          "rate": 0.4943820224719101,
+          "cases_with_unsupported_claims": 27,
+          "case_ids": [
+            "DEV-CLARIFY-03",
+            "DEV-CLARIFY-04",
+            "DEV-CLARIFY-05",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-05",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-ENTITY-04",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-11",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-12"
+          ]
+        },
+        "over_refusal": {
+          "refused": 3,
+          "measured": 49,
+          "eligible": 49,
+          "unmeasured": 0,
+          "rate": 0.061224489795918366,
+          "case_ids": [
+            "DEV-CONFLICT-04",
+            "DEV-ENTITY-03",
+            "DEV-MULTI-10"
+          ]
+        },
+        "uncertainty": {
+          "strict_accuracy_wilson95": [
+            0.1171,
+            0.3594
+          ],
+          "citation_support_wilson95": [
+            0.153,
+            0.4107
+          ],
+          "over_refusal_wilson95": [
+            0.021,
+            0.1652
+          ]
+        }
+      },
+      "operations": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 60,
+          "p50": 46.968,
+          "p95": 256.942,
+          "by_source": {
+            "cache_or_local": {
+              "n": 60,
+              "p50": 46.968,
+              "p95": 256.942
+            }
+          }
+        },
+        "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 95,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 17,
+          "gap_analyzer_logical_calls": 17,
+          "rag_judge_logical_calls": 65
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.038477
+      },
+      "failure_attribution": {
+        "failure_labels": {
+          "answer_missing_condition": {
+            "count": 12,
+            "case_ids": [
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-01",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-10",
+              "DEV-SINGLE-04"
+            ]
+          },
+          "answer_wrong_fact": {
+            "count": 15,
+            "case_ids": [
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-CONSTRAINT-08",
+              "DEV-ENTITY-04",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-08",
+              "DEV-MULTI-10",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-04"
+            ]
+          },
+          "citation_unsupported": {
+            "count": 30,
+            "case_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-05",
+              "DEV-CONSTRAINT-01",
+              "DEV-CONSTRAINT-02",
+              "DEV-CONSTRAINT-03",
+              "DEV-CONSTRAINT-04",
+              "DEV-CONSTRAINT-05",
+              "DEV-CONSTRAINT-06",
+              "DEV-CONSTRAINT-07",
+              "DEV-ENTITY-01",
+              "DEV-ENTITY-04",
+              "DEV-ENTITY-05",
+              "DEV-ENTITY-07",
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-07",
+              "DEV-MULTI-11",
+              "DEV-SINGLE-03",
+              "DEV-SINGLE-04",
+              "DEV-SINGLE-06",
+              "DEV-SINGLE-07",
+              "DEV-SINGLE-08",
+              "DEV-SINGLE-09",
+              "DEV-SINGLE-10",
+              "DEV-SINGLE-12"
+            ]
+          },
+          "clarify_missing_slot": {
+            "count": 2,
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ]
+          },
+          "clarify_over_asking": {
+            "count": 4,
+            "case_ids": [
+              "DEV-CLARIFY-04",
+              "DEV-CLARIFY-05",
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03"
+            ]
+          },
+          "over_refusal": {
+            "count": 3,
+            "case_ids": [
+              "DEV-CONFLICT-04",
+              "DEV-ENTITY-03",
+              "DEV-MULTI-10"
+            ]
+          },
+          "under_refusal": {
+            "count": 2,
+            "case_ids": [
+              "DEV-HARD-04",
+              "DEV-HARD-05"
+            ]
+          }
+        },
+        "unmeasured": {}
       }
     }
   },
@@ -1235,182 +1303,115 @@
   "max_cost_usd_per_group": null,
   "measurement_status": {
     "baseline": {
+      "retrieval_measured": 60,
       "answers_measured": 60,
-      "rag_measured": 60,
-      "retrieval_measured": 60
-    },
-    "controlled_loop": {
-      "answers_measured": 60,
-      "rag_measured": 60,
-      "retrieval_measured": 60
+      "rag_measured": 60
     },
     "decompose_once": {
+      "retrieval_measured": 60,
       "answers_measured": 60,
-      "rag_measured": 60,
-      "retrieval_measured": 60
+      "rag_measured": 60
+    },
+    "controlled_loop": {
+      "retrieval_measured": 60,
+      "answers_measured": 60,
+      "rag_measured": 60
     }
   },
   "operations_by_bucket": {
     "baseline": {
       "multi_hop": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 11,
-          "external_api_calls": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 0,
-          "paid_api_calls": 0,
-          "rag_judge_logical_calls": 0
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.008703,
         "latency_ms": {
+          "method": "nearest_rank",
+          "n": 11,
+          "p50": 33.671,
+          "p95": 54.423,
           "by_source": {
             "cache_or_local": {
               "n": 11,
               "p50": 33.671,
               "p95": 54.423
             }
-          },
-          "method": "nearest_rank",
-          "n": 11,
-          "p50": 33.671,
-          "p95": 54.423
-        }
-      },
-      "policy_conflict": {
+          }
+        },
         "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
           "answer_api_calls": 0,
           "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 5,
-          "external_api_calls": 0,
+          "evidence_judge_cache_hits": 11,
           "gap_analyzer_api_calls": 0,
           "gap_analyzer_cache_hits": 0,
           "gap_analyzer_logical_calls": 0,
-          "paid_api_calls": 0,
           "rag_judge_logical_calls": 0
         },
         "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.00429,
+        "cost_estimate_usd": 0.008703
+      },
+      "policy_conflict": {
         "latency_ms": {
+          "method": "nearest_rank",
+          "n": 5,
+          "p50": 43.21,
+          "p95": 45.913,
           "by_source": {
             "cache_or_local": {
               "n": 5,
               "p50": 43.21,
               "p95": 45.913
             }
-          },
-          "method": "nearest_rank",
-          "n": 5,
-          "p50": 43.21,
-          "p95": 45.913
-        }
-      }
-    },
-    "controlled_loop": {
-      "multi_hop": {
+          }
+        },
         "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
           "answer_api_calls": 0,
           "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 19,
-          "external_api_calls": 0,
+          "evidence_judge_cache_hits": 5,
           "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 2,
-          "gap_analyzer_logical_calls": 2,
-          "paid_api_calls": 0,
-          "rag_judge_logical_calls": 13
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 0,
+          "rag_judge_logical_calls": 0
         },
         "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.009785,
-        "latency_ms": {
-          "by_source": {
-            "cache_or_local": {
-              "n": 11,
-              "p50": 42.488,
-              "p95": 247.5
-            }
-          },
-          "method": "nearest_rank",
-          "n": 11,
-          "p50": 42.488,
-          "p95": 247.5
-        }
-      },
-      "policy_conflict": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 9,
-          "external_api_calls": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 1,
-          "gap_analyzer_logical_calls": 1,
-          "paid_api_calls": 0,
-          "rag_judge_logical_calls": 6
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.00429,
-        "latency_ms": {
-          "by_source": {
-            "cache_or_local": {
-              "n": 5,
-              "p50": 57.288,
-              "p95": 203.618
-            }
-          },
-          "method": "nearest_rank",
-          "n": 5,
-          "p50": 57.288,
-          "p95": 203.618
-        }
+        "cost_estimate_usd": 0.00429
       }
     },
     "decompose_once": {
       "multi_hop": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 0,
-          "evidence_judge_cache_hits": 19,
-          "external_api_calls": 0,
-          "gap_analyzer_api_calls": 0,
-          "gap_analyzer_cache_hits": 2,
-          "gap_analyzer_logical_calls": 2,
-          "paid_api_calls": 0,
-          "rag_judge_logical_calls": 13
-        },
-        "cost_actual_usd": 0.0,
-        "cost_estimate_usd": 0.009785,
         "latency_ms": {
+          "method": "nearest_rank",
+          "n": 11,
+          "p50": 38.297,
+          "p95": 138.902,
           "by_source": {
             "cache_or_local": {
               "n": 11,
               "p50": 38.297,
               "p95": 138.902
             }
-          },
-          "method": "nearest_rank",
-          "n": 11,
-          "p50": 38.297,
-          "p95": 138.902
-        }
+          }
+        },
+        "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 19,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 2,
+          "gap_analyzer_logical_calls": 2,
+          "rag_judge_logical_calls": 13
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.009785
       },
       "policy_conflict": {
-        "calls": {
-          "answer_api_calls": 0,
-          "evidence_judge_api_calls": 4,
-          "evidence_judge_cache_hits": 5,
-          "external_api_calls": 11,
-          "gap_analyzer_api_calls": 1,
-          "gap_analyzer_cache_hits": 0,
-          "gap_analyzer_logical_calls": 1,
-          "paid_api_calls": 5,
-          "rag_judge_logical_calls": 6
-        },
-        "cost_actual_usd": 0.00885444,
-        "cost_estimate_usd": 0.013144,
         "latency_ms": {
+          "method": "nearest_rank",
+          "n": 5,
+          "p50": 37.093,
+          "p95": 43501.389,
           "by_source": {
             "cache_or_local": {
               "n": 4,
@@ -1422,27 +1423,93 @@
               "p50": 43501.389,
               "p95": 43501.389
             }
-          },
+          }
+        },
+        "calls": {
+          "external_api_calls": 11,
+          "paid_api_calls": 5,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 4,
+          "evidence_judge_cache_hits": 5,
+          "gap_analyzer_api_calls": 1,
+          "gap_analyzer_cache_hits": 0,
+          "gap_analyzer_logical_calls": 1,
+          "rag_judge_logical_calls": 6
+        },
+        "cost_actual_usd": 0.00885444,
+        "cost_estimate_usd": 0.013144
+      }
+    },
+    "controlled_loop": {
+      "multi_hop": {
+        "latency_ms": {
+          "method": "nearest_rank",
+          "n": 11,
+          "p50": 42.488,
+          "p95": 247.5,
+          "by_source": {
+            "cache_or_local": {
+              "n": 11,
+              "p50": 42.488,
+              "p95": 247.5
+            }
+          }
+        },
+        "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 19,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 2,
+          "gap_analyzer_logical_calls": 2,
+          "rag_judge_logical_calls": 13
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.009785
+      },
+      "policy_conflict": {
+        "latency_ms": {
           "method": "nearest_rank",
           "n": 5,
-          "p50": 37.093,
-          "p95": 43501.389
-        }
+          "p50": 57.288,
+          "p95": 203.618,
+          "by_source": {
+            "cache_or_local": {
+              "n": 5,
+              "p50": 57.288,
+              "p95": 203.618
+            }
+          }
+        },
+        "calls": {
+          "external_api_calls": 0,
+          "paid_api_calls": 0,
+          "answer_api_calls": 0,
+          "evidence_judge_api_calls": 0,
+          "evidence_judge_cache_hits": 9,
+          "gap_analyzer_api_calls": 0,
+          "gap_analyzer_cache_hits": 1,
+          "gap_analyzer_logical_calls": 1,
+          "rag_judge_logical_calls": 6
+        },
+        "cost_actual_usd": 0.0,
+        "cost_estimate_usd": 0.00429
       }
     }
   },
   "paid_calls_executed": 42,
   "paired_by_bucket": {
-    "controlled_loop": {
+    "decompose_once": {
       "multi_hop": {
-        "answers": {
-          "strict": {
-            "candidate_correct": 2,
-            "candidate_minus_reference": 0,
+        "common_case_ids": 11,
+        "retrieval": {
+          "r3": {
+            "pairs": 11,
             "gained_ids": [],
             "lost_ids": [],
-            "pairs": 11,
-            "reference_correct": 2,
+            "ties": 11,
             "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-02",
@@ -1456,20 +1523,40 @@
               "DEV-MULTI-10",
               "DEV-MULTI-11"
             ],
-            "ties": 11
-          }
-        },
-        "common_case_ids": 11,
-        "retrieval": {
+            "mean_delta": 0.0,
+            "mcnemar_exact_p": 1.0
+          },
+          "r5": {
+            "pairs": 11,
+            "gained_ids": [],
+            "lost_ids": [
+              "DEV-MULTI-10"
+            ],
+            "ties": 10,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-11"
+            ],
+            "mean_delta": -0.09090909090909091,
+            "mcnemar_exact_p": 1.0
+          },
           "mrr": {
+            "pairs": 11,
             "gained_ids": [
               "DEV-MULTI-02"
             ],
             "lost_ids": [
               "DEV-MULTI-10"
             ],
-            "mean_delta": -0.007575757575757577,
-            "pairs": 11,
+            "ties": 9,
             "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-03",
@@ -1481,13 +1568,16 @@
               "DEV-MULTI-09",
               "DEV-MULTI-11"
             ],
-            "ties": 9
-          },
-          "r3": {
+            "mean_delta": -0.007575757575757577,
+            "sign_test_exact_p": 1.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 11,
             "gained_ids": [],
             "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 11,
+            "ties": 11,
             "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-02",
@@ -1501,70 +1591,21 @@
               "DEV-MULTI-10",
               "DEV-MULTI-11"
             ],
-            "ties": 11
-          },
-          "r5": {
-            "gained_ids": [],
-            "lost_ids": [
-              "DEV-MULTI-10"
-            ],
-            "mean_delta": -0.09090909090909091,
-            "pairs": 11,
-            "tie_ids": [
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-11"
-            ],
-            "ties": 10
+            "reference_correct": 2,
+            "candidate_correct": 2,
+            "candidate_minus_reference": 0,
+            "mcnemar_exact_p": 1.0
           }
         }
       },
       "policy_conflict": {
-        "answers": {
-          "strict": {
-            "candidate_correct": 0,
-            "candidate_minus_reference": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "pairs": 4,
-            "reference_correct": 0,
-            "tie_ids": [
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-05"
-            ],
-            "ties": 4
-          }
-        },
         "common_case_ids": 5,
         "retrieval": {
-          "mrr": {
-            "gained_ids": [],
-            "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 5,
-            "tie_ids": [
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05"
-            ],
-            "ties": 5
-          },
           "r3": {
+            "pairs": 5,
             "gained_ids": [],
             "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 5,
+            "ties": 5,
             "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
@@ -1572,13 +1613,14 @@
               "DEV-CONFLICT-04",
               "DEV-CONFLICT-05"
             ],
-            "ties": 5
+            "mean_delta": 0.0,
+            "mcnemar_exact_p": 1.0
           },
           "r5": {
+            "pairs": 5,
             "gained_ids": [],
             "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 5,
+            "ties": 5,
             "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
@@ -1586,21 +1628,54 @@
               "DEV-CONFLICT-04",
               "DEV-CONFLICT-05"
             ],
-            "ties": 5
+            "mean_delta": 0.0,
+            "mcnemar_exact_p": 1.0
+          },
+          "mrr": {
+            "pairs": 5,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 5,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05"
+            ],
+            "mean_delta": 0.0,
+            "sign_test_exact_p": 1.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 4,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 4,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-05"
+            ],
+            "reference_correct": 0,
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0,
+            "mcnemar_exact_p": 1.0
           }
         }
       }
     },
-    "decompose_once": {
+    "controlled_loop": {
       "multi_hop": {
-        "answers": {
-          "strict": {
-            "candidate_correct": 2,
-            "candidate_minus_reference": 0,
+        "common_case_ids": 11,
+        "retrieval": {
+          "r3": {
+            "pairs": 11,
             "gained_ids": [],
             "lost_ids": [],
-            "pairs": 11,
-            "reference_correct": 2,
+            "ties": 11,
             "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-02",
@@ -1614,20 +1689,40 @@
               "DEV-MULTI-10",
               "DEV-MULTI-11"
             ],
-            "ties": 11
-          }
-        },
-        "common_case_ids": 11,
-        "retrieval": {
+            "mean_delta": 0.0,
+            "mcnemar_exact_p": 1.0
+          },
+          "r5": {
+            "pairs": 11,
+            "gained_ids": [],
+            "lost_ids": [
+              "DEV-MULTI-10"
+            ],
+            "ties": 10,
+            "tie_ids": [
+              "DEV-MULTI-01",
+              "DEV-MULTI-02",
+              "DEV-MULTI-03",
+              "DEV-MULTI-04",
+              "DEV-MULTI-05",
+              "DEV-MULTI-06",
+              "DEV-MULTI-07",
+              "DEV-MULTI-08",
+              "DEV-MULTI-09",
+              "DEV-MULTI-11"
+            ],
+            "mean_delta": -0.09090909090909091,
+            "mcnemar_exact_p": 1.0
+          },
           "mrr": {
+            "pairs": 11,
             "gained_ids": [
               "DEV-MULTI-02"
             ],
             "lost_ids": [
               "DEV-MULTI-10"
             ],
-            "mean_delta": -0.007575757575757577,
-            "pairs": 11,
+            "ties": 9,
             "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-03",
@@ -1639,13 +1734,16 @@
               "DEV-MULTI-09",
               "DEV-MULTI-11"
             ],
-            "ties": 9
-          },
-          "r3": {
+            "mean_delta": -0.007575757575757577,
+            "sign_test_exact_p": 1.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 11,
             "gained_ids": [],
             "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 11,
+            "ties": 11,
             "tie_ids": [
               "DEV-MULTI-01",
               "DEV-MULTI-02",
@@ -1659,70 +1757,21 @@
               "DEV-MULTI-10",
               "DEV-MULTI-11"
             ],
-            "ties": 11
-          },
-          "r5": {
-            "gained_ids": [],
-            "lost_ids": [
-              "DEV-MULTI-10"
-            ],
-            "mean_delta": -0.09090909090909091,
-            "pairs": 11,
-            "tie_ids": [
-              "DEV-MULTI-01",
-              "DEV-MULTI-02",
-              "DEV-MULTI-03",
-              "DEV-MULTI-04",
-              "DEV-MULTI-05",
-              "DEV-MULTI-06",
-              "DEV-MULTI-07",
-              "DEV-MULTI-08",
-              "DEV-MULTI-09",
-              "DEV-MULTI-11"
-            ],
-            "ties": 10
+            "reference_correct": 2,
+            "candidate_correct": 2,
+            "candidate_minus_reference": 0,
+            "mcnemar_exact_p": 1.0
           }
         }
       },
       "policy_conflict": {
-        "answers": {
-          "strict": {
-            "candidate_correct": 0,
-            "candidate_minus_reference": 0,
-            "gained_ids": [],
-            "lost_ids": [],
-            "pairs": 4,
-            "reference_correct": 0,
-            "tie_ids": [
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-05"
-            ],
-            "ties": 4
-          }
-        },
         "common_case_ids": 5,
         "retrieval": {
-          "mrr": {
-            "gained_ids": [],
-            "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 5,
-            "tie_ids": [
-              "DEV-CONFLICT-01",
-              "DEV-CONFLICT-02",
-              "DEV-CONFLICT-03",
-              "DEV-CONFLICT-04",
-              "DEV-CONFLICT-05"
-            ],
-            "ties": 5
-          },
           "r3": {
+            "pairs": 5,
             "gained_ids": [],
             "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 5,
+            "ties": 5,
             "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
@@ -1730,13 +1779,14 @@
               "DEV-CONFLICT-04",
               "DEV-CONFLICT-05"
             ],
-            "ties": 5
+            "mean_delta": 0.0,
+            "mcnemar_exact_p": 1.0
           },
           "r5": {
+            "pairs": 5,
             "gained_ids": [],
             "lost_ids": [],
-            "mean_delta": 0.0,
-            "pairs": 5,
+            "ties": 5,
             "tie_ids": [
               "DEV-CONFLICT-01",
               "DEV-CONFLICT-02",
@@ -1744,22 +1794,219 @@
               "DEV-CONFLICT-04",
               "DEV-CONFLICT-05"
             ],
-            "ties": 5
+            "mean_delta": 0.0,
+            "mcnemar_exact_p": 1.0
+          },
+          "mrr": {
+            "pairs": 5,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 5,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-04",
+              "DEV-CONFLICT-05"
+            ],
+            "mean_delta": 0.0,
+            "sign_test_exact_p": 1.0
+          }
+        },
+        "answers": {
+          "strict": {
+            "pairs": 4,
+            "gained_ids": [],
+            "lost_ids": [],
+            "ties": 4,
+            "tie_ids": [
+              "DEV-CONFLICT-01",
+              "DEV-CONFLICT-02",
+              "DEV-CONFLICT-03",
+              "DEV-CONFLICT-05"
+            ],
+            "reference_correct": 0,
+            "candidate_correct": 0,
+            "candidate_minus_reference": 0,
+            "mcnemar_exact_p": 1.0
           }
         }
       }
     }
   },
   "paired_vs_reference": {
-    "controlled_loop": {
-      "answers": {
-        "strict": {
-          "candidate_correct": 9,
-          "candidate_minus_reference": 0,
+    "decompose_once": {
+      "common_case_ids": 60,
+      "retrieval": {
+        "r3": {
+          "pairs": 43,
           "gained_ids": [],
           "lost_ids": [],
+          "ties": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-10",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "mean_delta": 0.0,
+          "mcnemar_exact_p": 1.0
+        },
+        "r5": {
+          "pairs": 43,
+          "gained_ids": [],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "ties": 42,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "mean_delta": -0.023255813953488372,
+          "mcnemar_exact_p": 1.0
+        },
+        "mrr": {
+          "pairs": 43,
+          "gained_ids": [
+            "DEV-MULTI-02"
+          ],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "ties": 41,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "mean_delta": -0.0019379844961240312,
+          "sign_test_exact_p": 1.0
+        }
+      },
+      "answers": {
+        "strict": {
           "pairs": 42,
-          "reference_correct": 9,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 42,
           "tie_ids": [
             "DEV-CONFLICT-01",
             "DEV-CONFLICT-02",
@@ -1804,181 +2051,185 @@
             "DEV-SINGLE-11",
             "DEV-SINGLE-12"
           ],
-          "ties": 42
-        }
-      },
-      "common_case_ids": 60,
-      "retrieval": {
-        "mrr": {
-          "gained_ids": [
-            "DEV-MULTI-02"
-          ],
-          "lost_ids": [
-            "DEV-MULTI-10"
-          ],
-          "mean_delta": -0.0019379844961240312,
-          "pairs": 43,
-          "tie_ids": [
-            "DEV-SINGLE-01",
-            "DEV-SINGLE-02",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-04",
-            "DEV-SINGLE-05",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-07",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-11",
-            "DEV-SINGLE-12",
-            "DEV-MULTI-01",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-06",
-            "DEV-MULTI-07",
-            "DEV-MULTI-08",
-            "DEV-MULTI-09",
-            "DEV-MULTI-11",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-CONSTRAINT-08",
-            "DEV-CONSTRAINT-09",
-            "DEV-ENTITY-01",
-            "DEV-ENTITY-02",
-            "DEV-ENTITY-04",
-            "DEV-ENTITY-05",
-            "DEV-ENTITY-06",
-            "DEV-ENTITY-07",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-04",
-            "DEV-CONFLICT-05"
-          ],
-          "ties": 41
-        },
-        "r3": {
-          "gained_ids": [],
-          "lost_ids": [],
-          "mean_delta": 0.0,
-          "pairs": 43,
-          "tie_ids": [
-            "DEV-SINGLE-01",
-            "DEV-SINGLE-02",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-04",
-            "DEV-SINGLE-05",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-07",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-11",
-            "DEV-SINGLE-12",
-            "DEV-MULTI-01",
-            "DEV-MULTI-02",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-06",
-            "DEV-MULTI-07",
-            "DEV-MULTI-08",
-            "DEV-MULTI-09",
-            "DEV-MULTI-10",
-            "DEV-MULTI-11",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-CONSTRAINT-08",
-            "DEV-CONSTRAINT-09",
-            "DEV-ENTITY-01",
-            "DEV-ENTITY-02",
-            "DEV-ENTITY-04",
-            "DEV-ENTITY-05",
-            "DEV-ENTITY-06",
-            "DEV-ENTITY-07",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-04",
-            "DEV-CONFLICT-05"
-          ],
-          "ties": 43
-        },
-        "r5": {
-          "gained_ids": [],
-          "lost_ids": [
-            "DEV-MULTI-10"
-          ],
-          "mean_delta": -0.023255813953488372,
-          "pairs": 43,
-          "tie_ids": [
-            "DEV-SINGLE-01",
-            "DEV-SINGLE-02",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-04",
-            "DEV-SINGLE-05",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-07",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-11",
-            "DEV-SINGLE-12",
-            "DEV-MULTI-01",
-            "DEV-MULTI-02",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-06",
-            "DEV-MULTI-07",
-            "DEV-MULTI-08",
-            "DEV-MULTI-09",
-            "DEV-MULTI-11",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-CONSTRAINT-08",
-            "DEV-CONSTRAINT-09",
-            "DEV-ENTITY-01",
-            "DEV-ENTITY-02",
-            "DEV-ENTITY-04",
-            "DEV-ENTITY-05",
-            "DEV-ENTITY-06",
-            "DEV-ENTITY-07",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-04",
-            "DEV-CONFLICT-05"
-          ],
-          "ties": 42
+          "reference_correct": 9,
+          "candidate_correct": 9,
+          "candidate_minus_reference": 0,
+          "mcnemar_exact_p": 1.0
         }
       }
     },
-    "decompose_once": {
-      "answers": {
-        "strict": {
-          "candidate_correct": 9,
-          "candidate_minus_reference": 0,
+    "controlled_loop": {
+      "common_case_ids": 60,
+      "retrieval": {
+        "r3": {
+          "pairs": 43,
           "gained_ids": [],
           "lost_ids": [],
+          "ties": 43,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-10",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "mean_delta": 0.0,
+          "mcnemar_exact_p": 1.0
+        },
+        "r5": {
+          "pairs": 43,
+          "gained_ids": [],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "ties": 42,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-02",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "mean_delta": -0.023255813953488372,
+          "mcnemar_exact_p": 1.0
+        },
+        "mrr": {
+          "pairs": 43,
+          "gained_ids": [
+            "DEV-MULTI-02"
+          ],
+          "lost_ids": [
+            "DEV-MULTI-10"
+          ],
+          "ties": 41,
+          "tie_ids": [
+            "DEV-SINGLE-01",
+            "DEV-SINGLE-02",
+            "DEV-SINGLE-03",
+            "DEV-SINGLE-04",
+            "DEV-SINGLE-05",
+            "DEV-SINGLE-06",
+            "DEV-SINGLE-07",
+            "DEV-SINGLE-08",
+            "DEV-SINGLE-09",
+            "DEV-SINGLE-10",
+            "DEV-SINGLE-11",
+            "DEV-SINGLE-12",
+            "DEV-MULTI-01",
+            "DEV-MULTI-03",
+            "DEV-MULTI-04",
+            "DEV-MULTI-05",
+            "DEV-MULTI-06",
+            "DEV-MULTI-07",
+            "DEV-MULTI-08",
+            "DEV-MULTI-09",
+            "DEV-MULTI-11",
+            "DEV-CONSTRAINT-01",
+            "DEV-CONSTRAINT-02",
+            "DEV-CONSTRAINT-03",
+            "DEV-CONSTRAINT-04",
+            "DEV-CONSTRAINT-05",
+            "DEV-CONSTRAINT-06",
+            "DEV-CONSTRAINT-07",
+            "DEV-CONSTRAINT-08",
+            "DEV-CONSTRAINT-09",
+            "DEV-ENTITY-01",
+            "DEV-ENTITY-02",
+            "DEV-ENTITY-04",
+            "DEV-ENTITY-05",
+            "DEV-ENTITY-06",
+            "DEV-ENTITY-07",
+            "DEV-CONFLICT-01",
+            "DEV-CONFLICT-02",
+            "DEV-CONFLICT-03",
+            "DEV-CONFLICT-04",
+            "DEV-CONFLICT-05"
+          ],
+          "mean_delta": -0.0019379844961240312,
+          "sign_test_exact_p": 1.0
+        }
+      },
+      "answers": {
+        "strict": {
           "pairs": 42,
-          "reference_correct": 9,
+          "gained_ids": [],
+          "lost_ids": [],
+          "ties": 42,
           "tie_ids": [
             "DEV-CONFLICT-01",
             "DEV-CONFLICT-02",
@@ -2023,169 +2274,10 @@
             "DEV-SINGLE-11",
             "DEV-SINGLE-12"
           ],
-          "ties": 42
-        }
-      },
-      "common_case_ids": 60,
-      "retrieval": {
-        "mrr": {
-          "gained_ids": [
-            "DEV-MULTI-02"
-          ],
-          "lost_ids": [
-            "DEV-MULTI-10"
-          ],
-          "mean_delta": -0.0019379844961240312,
-          "pairs": 43,
-          "tie_ids": [
-            "DEV-SINGLE-01",
-            "DEV-SINGLE-02",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-04",
-            "DEV-SINGLE-05",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-07",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-11",
-            "DEV-SINGLE-12",
-            "DEV-MULTI-01",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-06",
-            "DEV-MULTI-07",
-            "DEV-MULTI-08",
-            "DEV-MULTI-09",
-            "DEV-MULTI-11",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-CONSTRAINT-08",
-            "DEV-CONSTRAINT-09",
-            "DEV-ENTITY-01",
-            "DEV-ENTITY-02",
-            "DEV-ENTITY-04",
-            "DEV-ENTITY-05",
-            "DEV-ENTITY-06",
-            "DEV-ENTITY-07",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-04",
-            "DEV-CONFLICT-05"
-          ],
-          "ties": 41
-        },
-        "r3": {
-          "gained_ids": [],
-          "lost_ids": [],
-          "mean_delta": 0.0,
-          "pairs": 43,
-          "tie_ids": [
-            "DEV-SINGLE-01",
-            "DEV-SINGLE-02",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-04",
-            "DEV-SINGLE-05",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-07",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-11",
-            "DEV-SINGLE-12",
-            "DEV-MULTI-01",
-            "DEV-MULTI-02",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-06",
-            "DEV-MULTI-07",
-            "DEV-MULTI-08",
-            "DEV-MULTI-09",
-            "DEV-MULTI-10",
-            "DEV-MULTI-11",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-CONSTRAINT-08",
-            "DEV-CONSTRAINT-09",
-            "DEV-ENTITY-01",
-            "DEV-ENTITY-02",
-            "DEV-ENTITY-04",
-            "DEV-ENTITY-05",
-            "DEV-ENTITY-06",
-            "DEV-ENTITY-07",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-04",
-            "DEV-CONFLICT-05"
-          ],
-          "ties": 43
-        },
-        "r5": {
-          "gained_ids": [],
-          "lost_ids": [
-            "DEV-MULTI-10"
-          ],
-          "mean_delta": -0.023255813953488372,
-          "pairs": 43,
-          "tie_ids": [
-            "DEV-SINGLE-01",
-            "DEV-SINGLE-02",
-            "DEV-SINGLE-03",
-            "DEV-SINGLE-04",
-            "DEV-SINGLE-05",
-            "DEV-SINGLE-06",
-            "DEV-SINGLE-07",
-            "DEV-SINGLE-08",
-            "DEV-SINGLE-09",
-            "DEV-SINGLE-10",
-            "DEV-SINGLE-11",
-            "DEV-SINGLE-12",
-            "DEV-MULTI-01",
-            "DEV-MULTI-02",
-            "DEV-MULTI-03",
-            "DEV-MULTI-04",
-            "DEV-MULTI-05",
-            "DEV-MULTI-06",
-            "DEV-MULTI-07",
-            "DEV-MULTI-08",
-            "DEV-MULTI-09",
-            "DEV-MULTI-11",
-            "DEV-CONSTRAINT-01",
-            "DEV-CONSTRAINT-02",
-            "DEV-CONSTRAINT-03",
-            "DEV-CONSTRAINT-04",
-            "DEV-CONSTRAINT-05",
-            "DEV-CONSTRAINT-06",
-            "DEV-CONSTRAINT-07",
-            "DEV-CONSTRAINT-08",
-            "DEV-CONSTRAINT-09",
-            "DEV-ENTITY-01",
-            "DEV-ENTITY-02",
-            "DEV-ENTITY-04",
-            "DEV-ENTITY-05",
-            "DEV-ENTITY-06",
-            "DEV-ENTITY-07",
-            "DEV-CONFLICT-01",
-            "DEV-CONFLICT-02",
-            "DEV-CONFLICT-03",
-            "DEV-CONFLICT-04",
-            "DEV-CONFLICT-05"
-          ],
-          "ties": 42
+          "reference_correct": 9,
+          "candidate_correct": 9,
+          "candidate_minus_reference": 0,
+          "mcnemar_exact_p": 1.0
         }
       }
     }
@@ -2194,5 +2286,46 @@
   "protocol_sha256": "9998bddfc9a9d3935a248a4bb388a04d30960c4cf0af8a65b14ecbe7bec16d2f",
   "reference_group": "baseline",
   "schema_version": 1,
-  "split": "dev"
+  "split": "dev",
+  "posthoc_rescore": {
+    "scoring_version": "ch16-rescore-1",
+    "model_calls": 0,
+    "paid_calls": 0,
+    "raw_answers_preserved": true,
+    "recomputed": [
+      "behavior_pred",
+      "citation_support",
+      "unsupported_claims",
+      "refusal_rules",
+      "failure_labels"
+    ],
+    "reason": "修复自然拒答与带标记澄清的确定性行为分类；模型答案原样保留",
+    "code_basis_commit": "1c807f3",
+    "working_tree_dirty": true,
+    "scoring_code_sha256": {
+      "scripts/eval_checks.py": "972678d2785fd7d9d8a18365b7baad873c453cd95ccd6bf406a5df3866f1ca86",
+      "scripts/ch11_harness.py": "c5c8b7a1a2a52ffdb1b77bc0b6b6295e90f65af66905edb7384c84a7745b2a36",
+      "scripts/ch16_analysis.py": "43a8d3eb0ba84d1425e38493c768ce09242b98cf9c73a1a2dc192500bef6287c",
+      "scripts/eval_rag_ablation.py": "29cb698d48699f436a4967450b138340011c0e69aefa85ca9d69f88e49a20b44"
+    }
+  },
+  "answer_comparability": {
+    "retrieval_ranking_comparable": true,
+    "answer_gate_policy_comparable": true,
+    "gate_entailment_measured_cases": {
+      "baseline": 60,
+      "decompose_once": 60,
+      "controlled_loop": 60
+    },
+    "answer_metric_scope": "same_hybrid_rerank_gate_across_rag_modes",
+    "interpretation": "答案指标未检测到组间闸门策略差异。"
+  },
+  "budget_audit": {
+    "contract_mode": "unbounded",
+    "per_group_hard_limit_usd": null,
+    "enforced_group_caps": false,
+    "approval_artifact_recorded": false,
+    "cost_is_posthoc_estimate": true,
+    "note": "budget-estimate.json 是执行前规划值；只有契约中的有限逐组上限才表示运行时硬约束，实际金额仍须按调用账本事后对账。"
+  }
 }
