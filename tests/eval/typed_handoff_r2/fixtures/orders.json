@@ -1,0 +1,12 @@
+{
+  "1001": {"order_id": "1001", "product": "无线耳机", "sku": "SKU-HEADPHONE-V2", "status": "已签收", "logistics_status": "派送中", "logistics_status_valid_until": "2026-10-21T00:00:00+00:00", "order_date": "2026-10-20"},
+  "1002": {"order_id": "1002", "product": "机械键盘", "sku": "SKU-KEYBOARD-V1", "status": "已发货", "logistics_status": "已揽收", "logistics_status_valid_until": "2026-10-22T00:00:00+00:00", "order_date": "2026-09-28"},
+  "1003": {"order_id": "1003", "product": "护眼台灯", "sku": "SKU-LAMP-V1", "status": "待发货", "logistics_status": "等待出库", "logistics_status_valid_until": "2026-10-21T00:00:00+00:00", "order_date": "2026-10-21"},
+  "1004": {"order_id": "1004", "product": "智能手表", "sku": "SKU-WATCH-V2", "status": "已签收", "logistics_status": "已签收", "logistics_status_valid_until": "2026-10-24T00:00:00+00:00", "order_date": "2026-10-18"},
+  "1005": {"order_id": "1005", "product": "双肩包", "sku": "SKU-BAG-V1", "status": "已发货", "logistics_status": "运输中", "logistics_status_valid_until": "2026-10-23T00:00:00+00:00", "order_date": "2026-10-14"},
+  "1006": {"order_id": "1006", "product": "便携相机", "sku": "SKU-CAMERA-V2", "status": "已签收", "logistics_status": "派送中", "logistics_status_valid_until": "2026-10-25T00:00:00+00:00", "order_date": "2026-10-09"},
+  "1007": {"order_id": "1007", "product": "跑步鞋", "sku": "SKU-SHOES-V2", "status": "待发货", "logistics_status": "等待出库", "logistics_status_valid_until": "2026-10-24T00:00:00+00:00", "order_date": "2026-10-19"},
+  "1008": {"order_id": "1008", "product": "显示器", "sku": "SKU-MONITOR-V1", "status": "已签收", "logistics_status": "已签收", "logistics_status_valid_until": "2026-10-12T00:00:00+00:00", "order_date": "2026-09-20"},
+  "1009": {"order_id": "1009", "product": "无线鼠标", "sku": "SKU-MOUSE-V2", "status": "已发货", "logistics_status": "运输中", "logistics_status_valid_until": "2026-10-23T00:00:00+00:00", "order_date": "2026-10-18"},
+  "1010": {"order_id": "1010", "product": "咖啡机", "sku": "SKU-COFFEE-V2", "status": "已签收", "logistics_status": "派送中", "logistics_status_valid_until": "2026-10-22T00:00:00+00:00", "order_date": "2026-10-16"}
+}

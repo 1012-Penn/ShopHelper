@@ -7,12 +7,21 @@ import json
 import time
 import uuid
 from dataclasses import dataclass
-from typing import Any
+from datetime import datetime, timezone
+from typing import Any, Literal
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from langgraph.graph import END, START, StateGraph
 
 from app.history import estimate_tokens
+from app.evidence_contracts import (
+    EvidenceLedger,
+    TaskHandoff,
+    ToolResultCache,
+    claims_from_tool_result,
+    subjects_from_arguments,
+    subjects_from_text,
+)
 from app.multi_agent.models import (
     AgentOutcome,
     AgentPlan,
@@ -35,10 +44,16 @@ class _RunContext:
     steps: int = 0
     tokens: int = 0
     agent_histories: dict[str, list[dict[str, Any]]] | None = None
+    evidence_ledger: EvidenceLedger | None = None
+    tool_cache: ToolResultCache | None = None
 
     def __post_init__(self) -> None:
         if self.agent_histories is None:
             self.agent_histories = {}
+        if self.evidence_ledger is None:
+            self.evidence_ledger = EvidenceLedger()
+        if self.tool_cache is None:
+            self.tool_cache = ToolResultCache()
 
 
 @dataclass(frozen=True)
@@ -74,13 +89,17 @@ class MultiAgentRunner:
     """
 
     def __init__(self, *, planner_model, retrieval_model, action_model,
-                 supervisor_model, engine, limits: MultiAgentLimits | None = None) -> None:
+                 supervisor_model, engine, limits: MultiAgentLimits | None = None,
+                 handoff_mode: Literal["raw", "typed"] = "raw",
+                 dynamic_status_ttl_seconds: int = 300) -> None:
         self.planner_model = planner_model
         self.retrieval_model = retrieval_model
         self.action_model = action_model
         self.supervisor_model = supervisor_model
         self.engine = engine
         self.limits = limits or MultiAgentLimits()
+        self.handoff_mode = handoff_mode
+        self.dynamic_status_ttl_seconds = max(0, int(dynamic_status_ttl_seconds))
         self._runs: dict[str, _RunContext] = {}
 
     def _context(self, run_id: str) -> _RunContext:
@@ -92,6 +111,9 @@ class MultiAgentRunner:
         context = self._runs.get(run_id)
         if context is None:
             context = _RunContext(**params)
+            if self.handoff_mode == "typed":
+                context.tool_cache = ToolResultCache(
+                    dynamic_ttl_seconds=self.dynamic_status_ttl_seconds)
             self._runs[run_id] = context
         return context
 
@@ -131,6 +153,33 @@ class MultiAgentRunner:
             f"evidence_ids={_json(list(evidence))}"
         )
 
+    @staticmethod
+    def _typed_prompt(task: AgentTask, handoff: TaskHandoff,
+                      claims: list[Any]) -> str:
+        projected_claims = []
+        for claim in claims:
+            payload = claim.model_dump(mode="json")
+            payload["source"] = {
+                key: value for key, value in payload["source"].items()
+                if key != "raw_result"
+            }
+            projected_claims.append(payload)
+        return _json({
+            "task_id": task.task_id,
+            "agent_id": f"{task.agent}:{task.task_id}",
+            "objective": task.objective,
+            "dependency_task_ids": task.depends_on,
+            "subject_ids": handoff.subject_ids,
+            "evidence_claims": projected_claims,
+        })
+
+    def _tool_is_read(self, name: str) -> bool:
+        registry = getattr(self.engine, "registry", None)
+        record = registry.get(name) if registry is not None else None
+        if record is not None:
+            return getattr(record, "access", "write") == "read"
+        return name in {"query_order", "query_faq"}
+
     async def _model_call(self, model: Any, messages: list[Any], context: _RunContext,
                           child_deadline: float) -> Any:
         remaining = min(context.deadline, child_deadline) - time.monotonic()
@@ -147,9 +196,29 @@ class MultiAgentRunner:
         child_deadline = min(deadline, time.monotonic() + self.limits.child_timeout_seconds)
         role = ROLE_SPECS[agent_name]
         model = self.retrieval_model if agent_name == "retrieval" else self.action_model
+        observed_at = datetime.now(timezone.utc).isoformat()
+        task_subjects = subjects_from_text(task.objective)
+        handoff = TaskHandoff.role(
+            run_id=run_id, from_agent="supervisor", to_agent=agent_name,
+            task=task, subject_ids=task_subjects, observed_at=observed_at,
+        )
+        if self.handoff_mode == "typed":
+            assert context.evidence_ledger is not None
+            projected = context.evidence_ledger.project(task=task, handoff=handoff)
+            handoff.evidence_claim_ids = [claim.claim_id for claim in projected]
+            initial_prompt = self._typed_prompt(task, handoff, projected)
+            system_prompt = (
+                role.system_prompt
+                + " typed_evidence 中只使用 source-backed evidence_claims；"
+                  "unknown 字段不得当作已证实事实，superseded/过期证据不可复用。"
+            )
+        else:
+            projected = []
+            initial_prompt = self._fact_prompt(task, facts, evidence)
+            system_prompt = role.system_prompt
         messages: list[Any] = [
-            SystemMessage(content=role.system_prompt),
-            HumanMessage(content=self._fact_prompt(task, facts, evidence)),
+            SystemMessage(content=system_prompt),
+            HumanMessage(content=initial_prompt),
         ]
         tool_calls: list[dict[str, Any]] = []
         task_facts: dict[str, Any] = {}
@@ -157,6 +226,8 @@ class MultiAgentRunner:
         preview: dict[str, Any] | None = None
         steps = 0
         start_tokens = context.tokens
+        task_claims = []
+        handoff_records: list[TaskHandoff] = [handoff]
 
         try:
             bound = model.bind_tools(self._tool_specs(agent_name))
@@ -179,6 +250,9 @@ class MultiAgentRunner:
                         messages=_serialize_messages(messages), write_preview=preview,
                         stop_reason="agent_completed", steps=steps,
                         tokens=context.tokens - start_tokens,
+                        evidence_claims=task_claims,
+                        handoff=handoff,
+                        handoff_records=handoff_records,
                     )
                     context.agent_histories[task.task_id] = outcome.messages
                     return outcome
@@ -216,14 +290,39 @@ class MultiAgentRunner:
                     remaining = min(context.deadline, child_deadline) - time.monotonic()
                     if remaining <= 0:
                         raise asyncio.TimeoutError
-                    result = await asyncio.wait_for(
-                        self.engine.execute(
-                            name, _json(args), conversation_id=None,
-                            tool_call_id=str(call.get("id") or f"{task.task_id}-{index}"),
-                            on_write_intercept=intercept,
-                        ),
-                        timeout=remaining,
-                    )
+                    tool_call_id = str(call.get("id") or f"{task.task_id}-{index}")
+                    call_observed_at = datetime.now(timezone.utc).isoformat()
+                    handoff_records.append(TaskHandoff.tool(
+                        run_id=run_id, from_agent=f"{agent_name}:{task.task_id}",
+                        task_id=task.task_id, tool_name=name,
+                        observed_at=call_observed_at,
+                    ))
+
+                    async def execute_tool():
+                        return await asyncio.wait_for(
+                            self.engine.execute(
+                                name, _json(args), conversation_id=None,
+                                tool_call_id=tool_call_id,
+                                on_write_intercept=intercept,
+                            ),
+                            timeout=remaining,
+                        )
+
+                    if self.handoff_mode == "typed" and context.tool_cache is not None:
+                        cached = await context.tool_cache.execute(
+                            name, args, read=self._tool_is_read(name),
+                            execute=execute_tool,
+                            scope={
+                                key: args[key] for key in (
+                                    "as_of", "valid_at", "knowledge_as_of",
+                                    "policy_version", "scope",
+                                ) if key in args
+                            },
+                            ttl_seconds=self.dynamic_status_ttl_seconds,
+                        )
+                        result = cached.result
+                    else:
+                        result = await execute_tool()
                     self._count_tokens(context, str(result))
                     if str(result).startswith("错误:"):
                         raise RuntimeError(str(result))
@@ -237,6 +336,16 @@ class MultiAgentRunner:
                         parsed = {"text": str(result)}
                     if isinstance(parsed, dict):
                         task_facts.update(parsed)
+                        if self.handoff_mode == "typed":
+                            assert context.evidence_ledger is not None
+                            new_claims = claims_from_tool_result(
+                                name, args, str(result), run_id=run_id,
+                                task_id=task.task_id, tool_call_id=tool_call_id,
+                                observed_at=call_observed_at,
+                                dynamic_ttl_seconds=self.dynamic_status_ttl_seconds,
+                            )
+                            context.evidence_ledger.add_many(new_claims)
+                            task_claims.extend(new_claims)
                         for item in parsed.get("items") or []:
                             if isinstance(item, dict) and item.get("chunk_id") is not None:
                                 chunk_id = str(item["chunk_id"])
@@ -250,6 +359,9 @@ class MultiAgentRunner:
                     messages=_serialize_messages(messages), write_preview=preview,
                     stop_reason="agent_iteration_limit_with_facts", steps=steps,
                     tokens=context.tokens - start_tokens,
+                    evidence_claims=task_claims,
+                    handoff=handoff,
+                    handoff_records=handoff_records,
                 )
                 context.agent_histories[task.task_id] = outcome.messages
                 return outcome
@@ -270,6 +382,9 @@ class MultiAgentRunner:
             tool_calls=tool_calls, messages=_serialize_messages(messages),
             write_preview=preview, error=error, stop_reason=stop, steps=steps,
             tokens=context.tokens - start_tokens,
+            evidence_claims=task_claims,
+            handoff=handoff,
+            handoff_records=handoff_records,
         )
 
     async def plan(self, *, run_id: str, message: str,
@@ -313,6 +428,8 @@ class MultiAgentRunner:
         tool_calls: list[dict[str, Any]] = []
         previews: list[dict[str, Any]] = []
         trace: list[dict[str, Any]] = []
+        handoffs: list[TaskHandoff] = []
+        evidence_claims: list[Any] = []
 
         while pending:
             ready = [
@@ -347,6 +464,8 @@ class MultiAgentRunner:
                 task = pending.pop(outcome.task_id)
                 task_agents[outcome.task_id] = task.agent
                 tool_calls.extend(outcome.tool_calls)
+                handoffs.extend(outcome.handoff_records)
+                evidence_claims.extend(outcome.evidence_claims)
                 if outcome.write_preview:
                     previews.append(outcome.write_preview)
                 if outcome.status != "success":
@@ -368,6 +487,18 @@ class MultiAgentRunner:
                     "task_id": outcome.task_id,
                     "agent_id": f"{outcome.agent}:{outcome.task_id}",
                 })
+                trace.append({
+                    "event": "role_handoff", "run_id": run_id,
+                    "task_id": outcome.task_id,
+                    "agent_id": f"supervisor->{outcome.agent}:{outcome.task_id}",
+                    "detail": _json({
+                        "evidence_claim_ids": (
+                            outcome.handoff.evidence_claim_ids
+                            if outcome.handoff else []
+                        ),
+                        "dependency_task_ids": task.depends_on,
+                    }),
+                })
             if errors:
                 break
         return {
@@ -376,6 +507,13 @@ class MultiAgentRunner:
             "trace": trace, "task_agents": task_agents,
             "tool_calls": tool_calls, "write_previews": previews,
             "role_histories": dict(context.agent_histories or {}),
+            "handoffs": [item.model_dump(mode="json") for item in handoffs],
+            "evidence_claims": [item.model_dump(mode="json")
+                                for item in evidence_claims],
+            "tool_cache_stats": (
+                context.tool_cache.stats.as_dict()
+                if context.tool_cache is not None else {}
+            ),
             "steps": context.steps, "tokens": context.tokens,
         }
 
@@ -391,11 +529,26 @@ class MultiAgentRunner:
 
         context = self._context(run_id)
         self._claim_step(context)
-        prompt = (
-            f"user_message={message}\nshared_facts={_json(facts)}\n"
-            f"evidence={_json(evidence)}\nplan_reason={plan.reason}\n"
-            f"errors={_json(errors)}"
-        )
+        if self.handoff_mode == "typed":
+            assert context.evidence_ledger is not None
+            task_ids = [task.task_id for task in plan.tasks]
+            subjects = subjects_from_text(message)
+            claims = context.evidence_ledger.project_supervisor(
+                run_id=run_id, task_ids=task_ids, subject_ids=subjects)
+            prompt = _json({
+                "user_message": message,
+                "dependency_task_ids": task_ids,
+                "subject_ids": subjects,
+                "evidence_claims": [claim.model_dump(mode="json") for claim in claims],
+                "plan_reason": plan.reason,
+                "errors": errors,
+            })
+        else:
+            prompt = (
+                f"user_message={message}\nshared_facts={_json(facts)}\n"
+                f"evidence={_json(evidence)}\nplan_reason={plan.reason}\n"
+                f"errors={_json(errors)}"
+            )
         messages = [
             SystemMessage(content=ROLE_SPECS["supervisor"].system_prompt),
             HumanMessage(content=prompt),
@@ -499,7 +652,7 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
             final = "【无法回答】多Agent汇总未完成，请稍后重试或转人工。"
         context = runner._context(state["run_id"])
         runner._runs.pop(state["run_id"], None)
-        return {
+        updates = {
             "final_reply": final,
             "status": "failed" if errors else "success",
             "errors": errors,
@@ -511,6 +664,13 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
                 "detail": "failed" if errors else "success",
             }],
         }
+        if plan.disposition == "handoff":
+            updates["handoffs"] = [TaskHandoff.human(
+                run_id=state["run_id"], from_agent="planner:supervisor",
+                reason=plan.reason,
+                observed_at=datetime.now(timezone.utc).isoformat(),
+            ).model_dump(mode="json")]
+        return updates
 
     graph = StateGraph(MultiAgentState)
     graph.add_node("supervisor_plan", supervisor_plan)
@@ -530,7 +690,9 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
 
 
 def build_multi_agent_runtime(*, engine, model,
-                              limits: MultiAgentLimits | None = None) -> MultiAgentRunner:
+                              limits: MultiAgentLimits | None = None,
+                              handoff_mode: Literal["raw", "typed"] = "raw",
+                              dynamic_status_ttl_seconds: int = 300) -> MultiAgentRunner:
     """Production wiring helper: one approved chat model, four explicit role labels."""
 
     return MultiAgentRunner(
@@ -540,4 +702,6 @@ def build_multi_agent_runtime(*, engine, model,
         supervisor_model=model,
         engine=engine,
         limits=limits,
+        handoff_mode=handoff_mode,
+        dynamic_status_ttl_seconds=dynamic_status_ttl_seconds,
     )

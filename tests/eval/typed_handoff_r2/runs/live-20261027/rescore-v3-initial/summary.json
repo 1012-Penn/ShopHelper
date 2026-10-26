@@ -1,0 +1,1080 @@
+{
+  "model": "deepseek-flash",
+  "scoring_version": "typed-handoff-r2-v3",
+  "scenario_count": 30,
+  "manifest": {
+    "created_at": "2026-10-26T17:47:59.036086+00:00",
+    "scenario_count": 30,
+    "split": {
+      "dev": 10,
+      "held-out": 20
+    },
+    "scoring_version": "typed-handoff-r2-v3",
+    "sha256": {
+      "scenarios": "8758c2c3d1edaea310a117f04e53b151179020968e3429a0fe832eecc06b8224",
+      "scoring": "d89f0efc11b237f9f37244e8cd0faa4de6f6b84bbd0dc66f2542d7c8b10977db",
+      "config": "65b96d29d759b7c1d44b39ea943232e14f77b597cbb4c60f04741eac4431e0c2",
+      "orders": "d8b2d84026a559ebcde705fb6565760fee3417da535a1ac6e2df61be381e4337",
+      "policies": "4c234d2e066fe2d74d52c199899d77b7920bcab87f626790b827117fab6420d9",
+      "runtime": "f830bed0dcdbc8193e1fe4d735fe4994ad544f07b31b406cf2070abd25366139",
+      "models": "2fbb0a5af5870f86f967e2461910e0fd5b900d5ce5ebc4b8d36586a082b3843c",
+      "contracts": "afb5bbdee8c55a7d95a0e92f938f429c3386635fb3c1861150d6c9285152cc6f",
+      "ledger": "97b653eaf4e6489dbe4c22b7486bdaa3603754b40dd1b8ca46ff7977647f0b8b",
+      "cache": "fe7b91d1b008ac6e4d6efb1b2fa69bf7843da1d9de48d8775ca9b3a0145da327",
+      "extraction": "36ec3d0b0ff28c6776109c8d589717848aa670c6e7fc407f2d4460ff3830da5c"
+    },
+    "model": "deepseek-flash",
+    "arms": [
+      "raw",
+      "typed"
+    ],
+    "only_semantic_variable": "MultiAgentRunner.handoff_mode",
+    "run_cap_usd": 2.0,
+    "stopping_rule": "one complete paired run; preserve every failed attempt"
+  },
+  "budget": {
+    "model": "deepseek-flash",
+    "experiment_id": "typed-handoff-r2-20261027-v1",
+    "config_hash": "65b96d29d759b7c1d44b39ea943232e14f77b597cbb4c60f04741eac4431e0c2",
+    "allow_paid": true,
+    "pricing_verified": true,
+    "run_cap_usd": 2.0,
+    "charged_upper_bound_usd": 0.09256836,
+    "usage_cost_at_pinned_peak_rates_usd": 0.09256835,
+    "stop_reason": null,
+    "reserved_usd": 0,
+    "max_call_cost_usd": 0.0054,
+    "max_input_tokens": 16000,
+    "max_output_tokens": 500,
+    "arms": {
+      "raw": {
+        "generations": 156,
+        "max_generations": 180,
+        "cap_usd": 0.98,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.04200161,
+        "charged_upper_bound_usd": 0.04200161,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "typed": {
+        "generations": 156,
+        "max_generations": 180,
+        "cap_usd": 0.98,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.05056675,
+        "charged_upper_bound_usd": 0.05056675,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      }
+    }
+  },
+  "arms": {
+    "raw": {
+      "n": 30,
+      "success": 25,
+      "task_success_rate": 0.8333,
+      "entity_error_count": 0,
+      "condition_error_count": 0,
+      "source_missing_count": 2,
+      "handoff_omission_count": 6,
+      "duplicate_tool_calls": 1,
+      "attempted_tool_calls": 71,
+      "executed_tool_calls": 71,
+      "input_tokens": 97506,
+      "output_tokens": 22573,
+      "model_calls": 156,
+      "cost_usd": 0.04200161,
+      "cost_per_success_usd": 0.00168006,
+      "p50_case_ms": 4856,
+      "p95_case_ms": 11260,
+      "p95_model_attempt_ms": 2305,
+      "provider_failures": 0
+    },
+    "typed": {
+      "n": 30,
+      "success": 25,
+      "task_success_rate": 0.8333,
+      "entity_error_count": 0,
+      "condition_error_count": 0,
+      "source_missing_count": 0,
+      "handoff_omission_count": 0,
+      "duplicate_tool_calls": 0,
+      "attempted_tool_calls": 63,
+      "executed_tool_calls": 63,
+      "input_tokens": 130455,
+      "output_tokens": 22851,
+      "model_calls": 156,
+      "cost_usd": 0.05056675,
+      "cost_per_success_usd": 0.00202267,
+      "p50_case_ms": 5367,
+      "p95_case_ms": 11163,
+      "p95_model_attempt_ms": 2087,
+      "provider_failures": 0
+    }
+  },
+  "splits": {
+    "dev": {
+      "raw": {
+        "n": 10,
+        "success": 8,
+        "task_success_rate": 0.8,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 2,
+        "duplicate_tool_calls": 1,
+        "attempted_tool_calls": 34,
+        "executed_tool_calls": 34,
+        "input_tokens": 43255,
+        "output_tokens": 9631,
+        "model_calls": 65,
+        "cost_usd": 0.01836205,
+        "cost_per_success_usd": 0.00229526,
+        "p50_case_ms": 5001,
+        "p95_case_ms": 13443,
+        "p95_model_attempt_ms": 2069,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 10,
+        "success": 8,
+        "task_success_rate": 0.8,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 27,
+        "executed_tool_calls": 27,
+        "input_tokens": 56562,
+        "output_tokens": 9687,
+        "model_calls": 62,
+        "cost_usd": 0.02219674,
+        "cost_per_success_usd": 0.00277459,
+        "p50_case_ms": 5553,
+        "p95_case_ms": 13187,
+        "p95_model_attempt_ms": 2057,
+        "provider_failures": 0
+      }
+    },
+    "held-out": {
+      "raw": {
+        "n": 20,
+        "success": 17,
+        "task_success_rate": 0.85,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 2,
+        "handoff_omission_count": 4,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 37,
+        "executed_tool_calls": 37,
+        "input_tokens": 54251,
+        "output_tokens": 12942,
+        "model_calls": 91,
+        "cost_usd": 0.02363956,
+        "cost_per_success_usd": 0.00139056,
+        "p50_case_ms": 4691,
+        "p95_case_ms": 9964,
+        "p95_model_attempt_ms": 2351,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 20,
+        "success": 17,
+        "task_success_rate": 0.85,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 36,
+        "executed_tool_calls": 36,
+        "input_tokens": 73893,
+        "output_tokens": 13164,
+        "model_calls": 94,
+        "cost_usd": 0.02837001,
+        "cost_per_success_usd": 0.00166882,
+        "p50_case_ms": 4851,
+        "p95_case_ms": 10293,
+        "p95_model_attempt_ms": 1992,
+        "provider_failures": 0
+      }
+    }
+  },
+  "paired": {
+    "dev": {
+      "typed_wins": 0,
+      "typed_losses": 0,
+      "ties": 10
+    },
+    "held-out": {
+      "typed_wins": 0,
+      "typed_losses": 0,
+      "ties": 20
+    },
+    "all": {
+      "typed_wins": 0,
+      "typed_losses": 0,
+      "ties": 30
+    }
+  },
+  "groups": {
+    "edge_disposition_v1_held": {
+      "raw": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 0,
+        "executed_tool_calls": 0,
+        "input_tokens": 1868,
+        "output_tokens": 366,
+        "model_calls": 3,
+        "cost_usd": 0.00066091,
+        "cost_per_success_usd": 0.0002203,
+        "p50_case_ms": 1126,
+        "p95_case_ms": 1126,
+        "p95_model_attempt_ms": 1086,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 0,
+        "executed_tool_calls": 0,
+        "input_tokens": 1868,
+        "output_tokens": 372,
+        "model_calls": 3,
+        "cost_usd": 0.00066811,
+        "cost_per_success_usd": 0.0002227,
+        "p50_case_ms": 1340,
+        "p95_case_ms": 1340,
+        "p95_model_attempt_ms": 1299,
+        "provider_failures": 0
+      }
+    },
+    "order_catalog_v1_dev": {
+      "raw": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 4,
+        "executed_tool_calls": 4,
+        "input_tokens": 8274,
+        "output_tokens": 2020,
+        "model_calls": 15,
+        "cost_usd": 0.00381487,
+        "cost_per_success_usd": 0.00127162,
+        "p50_case_ms": 4213,
+        "p95_case_ms": 4213,
+        "p95_model_attempt_ms": 1611,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 4,
+        "executed_tool_calls": 4,
+        "input_tokens": 11588,
+        "output_tokens": 1951,
+        "model_calls": 15,
+        "cost_usd": 0.00465101,
+        "cost_per_success_usd": 0.00155034,
+        "p50_case_ms": 4480,
+        "p95_case_ms": 4480,
+        "p95_model_attempt_ms": 1688,
+        "provider_failures": 0
+      }
+    },
+    "order_catalog_v1_held": {
+      "raw": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 4,
+        "executed_tool_calls": 4,
+        "input_tokens": 7094,
+        "output_tokens": 1244,
+        "model_calls": 14,
+        "cost_usd": 0.00252967,
+        "cost_per_success_usd": 0.00084322,
+        "p50_case_ms": 3900,
+        "p95_case_ms": 3900,
+        "p95_model_attempt_ms": 1243,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 4,
+        "executed_tool_calls": 4,
+        "input_tokens": 10027,
+        "output_tokens": 1354,
+        "model_calls": 14,
+        "cost_usd": 0.00339104,
+        "cost_per_success_usd": 0.00113035,
+        "p50_case_ms": 3876,
+        "p95_case_ms": 3876,
+        "p95_model_attempt_ms": 1335,
+        "provider_failures": 0
+      }
+    },
+    "order_scope_v1_dev": {
+      "raw": {
+        "n": 1,
+        "success": 1,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 1,
+        "attempted_tool_calls": 3,
+        "executed_tool_calls": 3,
+        "input_tokens": 3722,
+        "output_tokens": 592,
+        "model_calls": 6,
+        "cost_usd": 0.00130015,
+        "cost_per_success_usd": 0.00130015,
+        "p50_case_ms": 4980,
+        "p95_case_ms": 4980,
+        "p95_model_attempt_ms": 1398,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 1,
+        "success": 1,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 2,
+        "executed_tool_calls": 2,
+        "input_tokens": 3545,
+        "output_tokens": 700,
+        "model_calls": 4,
+        "cost_usd": 0.00152836,
+        "cost_per_success_usd": 0.00152836,
+        "p50_case_ms": 5553,
+        "p95_case_ms": 5553,
+        "p95_model_attempt_ms": 1478,
+        "provider_failures": 0
+      }
+    },
+    "order_scope_v1_held": {
+      "raw": {
+        "n": 3,
+        "success": 2,
+        "task_success_rate": 0.6667,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 1,
+        "handoff_omission_count": 2,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 6,
+        "executed_tool_calls": 6,
+        "input_tokens": 9535,
+        "output_tokens": 1986,
+        "model_calls": 17,
+        "cost_usd": 0.00385132,
+        "cost_per_success_usd": 0.00192566,
+        "p50_case_ms": 4160,
+        "p95_case_ms": 4160,
+        "p95_model_attempt_ms": 1703,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 3,
+        "success": 2,
+        "task_success_rate": 0.6667,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 7,
+        "executed_tool_calls": 7,
+        "input_tokens": 15744,
+        "output_tokens": 2238,
+        "model_calls": 18,
+        "cost_usd": 0.00534051,
+        "cost_per_success_usd": 0.00267026,
+        "p50_case_ms": 4851,
+        "p95_case_ms": 4851,
+        "p95_model_attempt_ms": 1814,
+        "provider_failures": 0
+      }
+    },
+    "policy_v1_v2_dev": {
+      "raw": {
+        "n": 2,
+        "success": 2,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 6,
+        "executed_tool_calls": 6,
+        "input_tokens": 6578,
+        "output_tokens": 937,
+        "model_calls": 9,
+        "cost_usd": 0.00219463,
+        "cost_per_success_usd": 0.00109732,
+        "p50_case_ms": 4255,
+        "p95_case_ms": 4255,
+        "p95_model_attempt_ms": 1274,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 2,
+        "success": 2,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 4,
+        "executed_tool_calls": 4,
+        "input_tokens": 8003,
+        "output_tokens": 1347,
+        "model_calls": 9,
+        "cost_usd": 0.00311413,
+        "cost_per_success_usd": 0.00155707,
+        "p50_case_ms": 5158,
+        "p95_case_ms": 5158,
+        "p95_model_attempt_ms": 1603,
+        "provider_failures": 0
+      }
+    },
+    "policy_v1_v2_held": {
+      "raw": {
+        "n": 4,
+        "success": 4,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 9,
+        "executed_tool_calls": 9,
+        "input_tokens": 10492,
+        "output_tokens": 1947,
+        "model_calls": 17,
+        "cost_usd": 0.00390346,
+        "cost_per_success_usd": 0.00097586,
+        "p50_case_ms": 4790,
+        "p95_case_ms": 4856,
+        "p95_model_attempt_ms": 1649,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 4,
+        "success": 4,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 7,
+        "executed_tool_calls": 7,
+        "input_tokens": 12450,
+        "output_tokens": 2365,
+        "model_calls": 16,
+        "cost_usd": 0.00521825,
+        "cost_per_success_usd": 0.00130456,
+        "p50_case_ms": 4866,
+        "p95_case_ms": 5397,
+        "p95_model_attempt_ms": 1926,
+        "provider_failures": 0
+      }
+    },
+    "revision_v1_dev": {
+      "raw": {
+        "n": 2,
+        "success": 1,
+        "task_success_rate": 0.5,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 15,
+        "executed_tool_calls": 15,
+        "input_tokens": 16984,
+        "output_tokens": 3926,
+        "model_calls": 23,
+        "cost_usd": 0.00743558,
+        "cost_per_success_usd": 0.00743558,
+        "p50_case_ms": 13443,
+        "p95_case_ms": 13443,
+        "p95_model_attempt_ms": 2069,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 2,
+        "success": 1,
+        "task_success_rate": 0.5,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 13,
+        "executed_tool_calls": 13,
+        "input_tokens": 24236,
+        "output_tokens": 3624,
+        "model_calls": 23,
+        "cost_usd": 0.00887246,
+        "cost_per_success_usd": 0.00887246,
+        "p50_case_ms": 13187,
+        "p95_case_ms": 13187,
+        "p95_model_attempt_ms": 1968,
+        "provider_failures": 0
+      }
+    },
+    "revision_v1_held": {
+      "raw": {
+        "n": 2,
+        "success": 2,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 5,
+        "executed_tool_calls": 5,
+        "input_tokens": 6365,
+        "output_tokens": 1361,
+        "model_calls": 12,
+        "cost_usd": 0.00252664,
+        "cost_per_success_usd": 0.00126332,
+        "p50_case_ms": 4132,
+        "p95_case_ms": 4132,
+        "p95_model_attempt_ms": 1225,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 2,
+        "success": 2,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 3,
+        "executed_tool_calls": 3,
+        "input_tokens": 8459,
+        "output_tokens": 1285,
+        "model_calls": 12,
+        "cost_usd": 0.003026,
+        "cost_per_success_usd": 0.001513,
+        "p50_case_ms": 4642,
+        "p95_case_ms": 4642,
+        "p95_model_attempt_ms": 1382,
+        "provider_failures": 0
+      }
+    },
+    "stale_logistics_v1_dev": {
+      "raw": {
+        "n": 1,
+        "success": 1,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 1,
+        "executed_tool_calls": 1,
+        "input_tokens": 2988,
+        "output_tokens": 1012,
+        "model_calls": 5,
+        "cost_usd": 0.00169685,
+        "cost_per_success_usd": 0.00169685,
+        "p50_case_ms": 8414,
+        "p95_case_ms": 8414,
+        "p95_model_attempt_ms": 1804,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 1,
+        "success": 1,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 1,
+        "executed_tool_calls": 1,
+        "input_tokens": 3899,
+        "output_tokens": 947,
+        "model_calls": 5,
+        "cost_usd": 0.00189215,
+        "cost_per_success_usd": 0.00189215,
+        "p50_case_ms": 8380,
+        "p95_case_ms": 8380,
+        "p95_model_attempt_ms": 1964,
+        "provider_failures": 0
+      }
+    },
+    "stale_logistics_v1_held": {
+      "raw": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 5,
+        "executed_tool_calls": 5,
+        "input_tokens": 9292,
+        "output_tokens": 3191,
+        "model_calls": 15,
+        "cost_usd": 0.00537494,
+        "cost_per_success_usd": 0.00179165,
+        "p50_case_ms": 7891,
+        "p95_case_ms": 7891,
+        "p95_model_attempt_ms": 2361,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 3,
+        "success": 3,
+        "task_success_rate": 1.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 6,
+        "executed_tool_calls": 6,
+        "input_tokens": 12689,
+        "output_tokens": 2756,
+        "model_calls": 17,
+        "cost_usd": 0.00564625,
+        "cost_per_success_usd": 0.00188208,
+        "p50_case_ms": 6989,
+        "p95_case_ms": 6989,
+        "p95_model_attempt_ms": 1992,
+        "provider_failures": 0
+      }
+    },
+    "write_preview_v1_dev": {
+      "raw": {
+        "n": 1,
+        "success": 0,
+        "task_success_rate": 0.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 2,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 5,
+        "executed_tool_calls": 5,
+        "input_tokens": 4709,
+        "output_tokens": 1144,
+        "model_calls": 7,
+        "cost_usd": 0.00191996,
+        "cost_per_success_usd": null,
+        "p50_case_ms": 9652,
+        "p95_case_ms": 9652,
+        "p95_model_attempt_ms": 1517,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 1,
+        "success": 0,
+        "task_success_rate": 0.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 3,
+        "executed_tool_calls": 3,
+        "input_tokens": 5291,
+        "output_tokens": 1118,
+        "model_calls": 6,
+        "cost_usd": 0.00213863,
+        "cost_per_success_usd": null,
+        "p50_case_ms": 8767,
+        "p95_case_ms": 8767,
+        "p95_model_attempt_ms": 1837,
+        "provider_failures": 0
+      }
+    },
+    "write_preview_v1_held": {
+      "raw": {
+        "n": 2,
+        "success": 0,
+        "task_success_rate": 0.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 1,
+        "handoff_omission_count": 2,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 8,
+        "executed_tool_calls": 8,
+        "input_tokens": 9605,
+        "output_tokens": 2847,
+        "model_calls": 13,
+        "cost_usd": 0.00479262,
+        "cost_per_success_usd": null,
+        "p50_case_ms": 9964,
+        "p95_case_ms": 9964,
+        "p95_model_attempt_ms": 2997,
+        "provider_failures": 0
+      },
+      "typed": {
+        "n": 2,
+        "success": 0,
+        "task_success_rate": 0.0,
+        "entity_error_count": 0,
+        "condition_error_count": 0,
+        "source_missing_count": 0,
+        "handoff_omission_count": 0,
+        "duplicate_tool_calls": 0,
+        "attempted_tool_calls": 9,
+        "executed_tool_calls": 9,
+        "input_tokens": 12656,
+        "output_tokens": 2794,
+        "model_calls": 14,
+        "cost_usd": 0.00507984,
+        "cost_per_success_usd": null,
+        "p50_case_ms": 10293,
+        "p95_case_ms": 10293,
+        "p95_model_attempt_ms": 2619,
+        "provider_failures": 0
+      }
+    }
+  },
+  "rescoring": {
+    "model_calls": 0,
+    "source_results": "tests/eval/typed_handoff_r2/runs/live-20261027/results.jsonl",
+    "source_results_sha256": "b0d051a25a8b705c4d182a936618370071bc3a8fdf04609edbf46cc8ab829e87",
+    "source_scoring_version": "typed-handoff-r2-v1",
+    "new_scoring_version": "typed-handoff-r2-v3",
+    "new_scoring_sha256": "d89f0efc11b237f9f37244e8cd0faa4de6f6b84bbd0dc66f2542d7c8b10977db",
+    "reason": "v1/v2 treated correct expired-policy background and opposite-case qualifications as forbidden claims, misparsed markdown or bullet relations, and counted negated order mentions as entity use",
+    "score_changes": [
+      {
+        "scenario_id": "TH-DEV-003",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 2,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-003",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 1,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-004",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-004",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-005",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-005",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-008",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-008",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-DEV-009",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 2,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-016",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-016",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-020",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-021",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-021",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-022",
+        "arm": "raw",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-022",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 1,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      },
+      {
+        "scenario_id": "TH-HLD-024",
+        "arm": "typed",
+        "old_success": false,
+        "new_success": true,
+        "old_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 2,
+          "source_missing_count": 0
+        },
+        "new_errors": {
+          "condition_error_count": 0,
+          "entity_error_count": 0,
+          "source_missing_count": 0
+        }
+      }
+    ]
+  }
+}

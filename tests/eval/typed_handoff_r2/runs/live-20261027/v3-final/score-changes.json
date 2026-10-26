@@ -1,0 +1,274 @@
+[
+  {
+    "scenario_id": "TH-DEV-003",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 2,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-003",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 1,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-004",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-004",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-005",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-005",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-008",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-008",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-DEV-009",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 2,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-016",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-016",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-020",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-021",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-021",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-022",
+    "arm": "raw",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-022",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 1,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  },
+  {
+    "scenario_id": "TH-HLD-024",
+    "arm": "typed",
+    "old_success": false,
+    "new_success": true,
+    "old_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 2,
+      "source_missing_count": 0
+    },
+    "new_errors": {
+      "condition_error_count": 0,
+      "entity_error_count": 0,
+      "source_missing_count": 0
+    }
+  }
+]

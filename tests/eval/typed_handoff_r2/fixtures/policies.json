@@ -1,0 +1,59 @@
+{
+  "version": "policy-fixture-2026-10-16",
+  "items": [
+    {
+      "chunk_id": "policy-v1-window",
+      "policy_version": "v1",
+      "scope": "global",
+      "valid_from": "2026-01-01",
+      "valid_until": "2026-10-15T23:59:59+00:00",
+      "match_any": ["退货", "无理由", "窗口"],
+      "answer": "v1 政策：签收后15天内可无理由退货。"
+    },
+    {
+      "chunk_id": "policy-v2-window",
+      "policy_version": "v2",
+      "scope": "global",
+      "valid_from": "2026-10-16",
+      "valid_until": "2027-12-31T23:59:59+00:00",
+      "match_any": ["退货", "无理由", "窗口", "包装"],
+      "answer": "v2 政策：签收后7天内可无理由退货，商品须未经使用且吊牌、原包装完整。"
+    },
+    {
+      "chunk_id": "policy-v2-nonquality-shipping",
+      "policy_version": "v2",
+      "scope": "global",
+      "valid_from": "2026-10-16",
+      "valid_until": "2027-12-31T23:59:59+00:00",
+      "match_any": ["非质量", "运费"],
+      "answer": "非质量问题退货运费由买家承担。"
+    },
+    {
+      "chunk_id": "policy-v2-quality-shipping",
+      "policy_version": "v2",
+      "scope": "global",
+      "valid_from": "2026-10-16",
+      "valid_until": "2027-12-31T23:59:59+00:00",
+      "match_any": ["质量", "运费"],
+      "answer": "质量问题退货运费由商家承担。"
+    },
+    {
+      "chunk_id": "policy-v2-refund",
+      "policy_version": "v2",
+      "scope": "global",
+      "valid_from": "2026-10-16",
+      "valid_until": "2027-12-31T23:59:59+00:00",
+      "match_any": ["退款", "到账", "支付渠道"],
+      "answer": "退款审核通过后3个工作日内退回原支付渠道。"
+    },
+    {
+      "chunk_id": "policy-v2-cancel",
+      "policy_version": "v2",
+      "scope": "global",
+      "valid_from": "2026-10-16",
+      "valid_until": "2027-12-31T23:59:59+00:00",
+      "match_any": ["取消", "待发货"],
+      "answer": "待发货订单可以申请取消；已发货订单不能直接取消。"
+    }
+  ]
+}

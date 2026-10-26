@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "experiment_id": "typed-handoff-r2-20261027-v1",
+  "base_commit": "446fbb7f9972875b7649555cb9b4b19e402cea29",
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com",
+  "temperature": 0,
+  "thinking": "disabled",
+  "provider_retries": 0,
+  "harness_retries": 2,
+  "max_output_tokens": 500,
+  "max_request_bytes": 16000,
+  "run_cap_usd": 2.0,
+  "arm_cap_usd": 0.98,
+  "arms": ["raw", "typed"],
+  "dataset": {
+    "path": "tests/eval/typed_handoff_r2/scenarios.jsonl",
+    "dev": 10,
+    "held_out": 20,
+    "split_unit": "group",
+    "gold_visibility": "scorer only"
+  },
+  "scoring": {
+    "path": "tests/eval/typed_handoff_r2/scoring.py",
+    "version": "typed-handoff-r2-v1"
+  },
+  "pricing": {
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "verified_on": "2026-10-27",
+    "input_per_million": 0.3,
+    "input_cache_hit_per_million": 0.006,
+    "output_per_million": 1.2,
+    "mode": "peak-rate upper bound"
+  },
+  "stopping_rule": "one complete paired run; infrastructure retry must retain prior result and export all attempts"
+}

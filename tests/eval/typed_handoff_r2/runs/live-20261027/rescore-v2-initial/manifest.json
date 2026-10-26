@@ -1,0 +1,30 @@
+{
+  "created_at": "2026-10-26T17:46:59.509744+00:00",
+  "scenario_count": 30,
+  "split": {
+    "dev": 10,
+    "held-out": 20
+  },
+  "scoring_version": "typed-handoff-r2-v2",
+  "sha256": {
+    "scenarios": "8758c2c3d1edaea310a117f04e53b151179020968e3429a0fe832eecc06b8224",
+    "scoring": "f0c1cd2fcffe196479321d47e22486274bd58d9155097e29411af6f23542b245",
+    "config": "65b96d29d759b7c1d44b39ea943232e14f77b597cbb4c60f04741eac4431e0c2",
+    "orders": "d8b2d84026a559ebcde705fb6565760fee3417da535a1ac6e2df61be381e4337",
+    "policies": "4c234d2e066fe2d74d52c199899d77b7920bcab87f626790b827117fab6420d9",
+    "runtime": "f830bed0dcdbc8193e1fe4d735fe4994ad544f07b31b406cf2070abd25366139",
+    "models": "2fbb0a5af5870f86f967e2461910e0fd5b900d5ce5ebc4b8d36586a082b3843c",
+    "contracts": "afb5bbdee8c55a7d95a0e92f938f429c3386635fb3c1861150d6c9285152cc6f",
+    "ledger": "97b653eaf4e6489dbe4c22b7486bdaa3603754b40dd1b8ca46ff7977647f0b8b",
+    "cache": "fe7b91d1b008ac6e4d6efb1b2fa69bf7843da1d9de48d8775ca9b3a0145da327",
+    "extraction": "36ec3d0b0ff28c6776109c8d589717848aa670c6e7fc407f2d4460ff3830da5c"
+  },
+  "model": "deepseek-flash",
+  "arms": [
+    "raw",
+    "typed"
+  ],
+  "only_semantic_variable": "MultiAgentRunner.handoff_mode",
+  "run_cap_usd": 2.0,
+  "stopping_rule": "one complete paired run; preserve every failed attempt"
+}

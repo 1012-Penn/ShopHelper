@@ -6,6 +6,8 @@ from typing import Annotated, Any, Literal, TypedDict
 
 from pydantic import BaseModel, Field, model_validator
 
+from app.evidence_contracts import EvidenceClaim, TaskHandoff
+
 
 AgentName = Literal["retrieval", "action"]
 Disposition = Literal["execute", "clarify", "refuse", "handoff"]
@@ -76,6 +78,9 @@ class AgentOutcome(BaseModel):
     stop_reason: str = ""
     steps: int = 0
     tokens: int = 0
+    evidence_claims: list[EvidenceClaim] = Field(default_factory=list)
+    handoff: TaskHandoff | None = None
+    handoff_records: list[TaskHandoff] = Field(default_factory=list)
 
 
 class TraceEvent(TypedDict, total=False):
@@ -111,5 +116,8 @@ class MultiAgentState(TypedDict, total=False):
     status: str
     steps: int
     tokens: int
+    handoffs: list[dict[str, Any]]
+    evidence_claims: list[dict[str, Any]]
+    tool_cache_stats: dict[str, int]
     started_at: float
     deadline: float
