@@ -1,0 +1,166 @@
+{
+  "scenario_count": 20,
+  "result_count": 40,
+  "model": "deepseek-flash",
+  "scenario_sha256": "1c1ea643bf7e8e6903adfd6496b2632ab0ccf185b76eb83fde46d88b0c47dc6a",
+  "pricing_verified_on": "2026-10-27",
+  "pricing_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "budget": {
+    "model": "deepseek-flash",
+    "experiment_id": "multi-agent-paired-v1",
+    "config_hash": "scenarios:1c1ea643bf7e8e6903adfd6496b2632ab0ccf185b76eb83fde46d88b0c47dc6a",
+    "allow_paid": true,
+    "pricing_verified": true,
+    "run_cap_usd": 2.0,
+    "charged_upper_bound_usd": 0.04923598,
+    "usage_cost_at_pinned_peak_rates_usd": 0.04923599,
+    "stop_reason": null,
+    "reserved_usd": 0,
+    "max_call_cost_usd": 0.0042,
+    "max_input_tokens": 12000,
+    "max_output_tokens": 500,
+    "arms": {
+      "single_agent": {
+        "generations": 44,
+        "max_generations": 100,
+        "cap_usd": 0.7,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.00595814,
+        "charged_upper_bound_usd": 0.00595814,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "multi_agent": {
+        "generations": 123,
+        "max_generations": 200,
+        "cap_usd": 1.1,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.04327784,
+        "charged_upper_bound_usd": 0.04327784,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      }
+    }
+  },
+  "arms": {
+    "multi_agent": {
+      "task_success": {
+        "numerator": 17,
+        "denominator": 20,
+        "rate": 0.85
+      },
+      "entity_error_count": 0,
+      "parameter_error_count": 0,
+      "condition_error_count": 3,
+      "reasonable_outcome": {
+        "numerator": 19,
+        "denominator": 20,
+        "rate": 0.95
+      },
+      "required_tool_coverage": {
+        "numerator": 19,
+        "denominator": 20,
+        "rate": 0.95
+      },
+      "write_contract": {
+        "numerator": 19,
+        "denominator": 20,
+        "rate": 0.95
+      },
+      "failure_or_timeout_count": 1,
+      "p50_ms": 7213,
+      "p95_ms": 16404,
+      "model_calls": 123,
+      "input_tokens": 108539,
+      "output_tokens": 20941,
+      "usage_cost_usd": 0.04327784,
+      "cost_per_success_usd": 0.00254576
+    },
+    "single_agent": {
+      "task_success": {
+        "numerator": 15,
+        "denominator": 20,
+        "rate": 0.75
+      },
+      "entity_error_count": 0,
+      "parameter_error_count": 0,
+      "condition_error_count": 4,
+      "reasonable_outcome": {
+        "numerator": 20,
+        "denominator": 20,
+        "rate": 1.0
+      },
+      "required_tool_coverage": {
+        "numerator": 17,
+        "denominator": 20,
+        "rate": 0.85
+      },
+      "write_contract": {
+        "numerator": 18,
+        "denominator": 20,
+        "rate": 0.9
+      },
+      "failure_or_timeout_count": 0,
+      "p50_ms": 1906,
+      "p95_ms": 3551,
+      "model_calls": 44,
+      "input_tokens": 49048,
+      "output_tokens": 2362,
+      "usage_cost_usd": 0.00595814,
+      "cost_per_success_usd": 0.00039721
+    }
+  },
+  "paired": {
+    "wins": 4,
+    "losses": 2,
+    "ties": 14,
+    "ids": {
+      "wins": [
+        "MA-FRZ-021",
+        "MA-FRZ-023",
+        "MA-FRZ-024",
+        "MA-FRZ-027"
+      ],
+      "losses": [
+        "MA-FRZ-022",
+        "MA-FRZ-030"
+      ],
+      "ties": [
+        "MA-FRZ-011",
+        "MA-FRZ-012",
+        "MA-FRZ-013",
+        "MA-FRZ-014",
+        "MA-FRZ-015",
+        "MA-FRZ-016",
+        "MA-FRZ-017",
+        "MA-FRZ-018",
+        "MA-FRZ-019",
+        "MA-FRZ-020",
+        "MA-FRZ-025",
+        "MA-FRZ-026",
+        "MA-FRZ-028",
+        "MA-FRZ-029"
+      ]
+    }
+  },
+  "buckets": {
+    "simple": {
+      "single_success": 12,
+      "multi_success": 11,
+      "count": 12,
+      "wins": 0,
+      "losses": 1,
+      "ties": 11
+    },
+    "complex": {
+      "single_success": 3,
+      "multi_success": 6,
+      "count": 8,
+      "wins": 4,
+      "losses": 1,
+      "ties": 3
+    }
+  },
+  "rescore_only": true,
+  "paid_calls_during_rescore": 0
+}

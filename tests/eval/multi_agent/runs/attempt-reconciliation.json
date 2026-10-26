@@ -1,0 +1,345 @@
+{
+  "run_cap_usd": 2.0,
+  "ledgers": [
+    {
+      "ledger": "multi_agent_paid_run.sqlite3",
+      "calls": 1,
+      "charged_upper_bound_usd": 0.003,
+      "statuses": [
+        {
+          "call_kind": "agent",
+          "status": "failed_unknown_usage",
+          "calls": 1,
+          "charged_usd": 0.003,
+          "input_tokens": 0,
+          "output_tokens": 0
+        }
+      ],
+      "stop_reason": "provider_call_failed:BudgetExceeded"
+    },
+    {
+      "ledger": "multi_agent_paid_run_v2.sqlite3",
+      "calls": 6,
+      "charged_upper_bound_usd": 0.00147138,
+      "statuses": [
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.000200904,
+          "input_tokens": 982,
+          "output_tokens": 16
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 2,
+          "charged_usd": 0.000646872,
+          "input_tokens": 1286,
+          "output_tokens": 343
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 2,
+          "charged_usd": 0.000450204,
+          "input_tokens": 1173,
+          "output_tokens": 176
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.0001734,
+          "input_tokens": 166,
+          "output_tokens": 103
+        }
+      ],
+      "stop_reason": null
+    },
+    {
+      "ledger": "multi_agent_paid_run_v3.sqlite3",
+      "calls": 6,
+      "charged_upper_bound_usd": 0.001233696,
+      "statuses": [
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 2,
+          "charged_usd": 0.000251652,
+          "input_tokens": 2183,
+          "output_tokens": 103
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.000259704,
+          "input_tokens": 626,
+          "output_tokens": 154
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 2,
+          "charged_usd": 0.00049494,
+          "input_tokens": 1589,
+          "output_tokens": 172
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.0002274,
+          "input_tokens": 442,
+          "output_tokens": 79
+        }
+      ],
+      "stop_reason": null
+    },
+    {
+      "ledger": "multi_agent_paid_run_v4_dev.sqlite3",
+      "calls": 27,
+      "charged_upper_bound_usd": 0.005552316,
+      "statuses": [
+        {
+          "call_kind": "action",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.0007758,
+          "input_tokens": 1374,
+          "output_tokens": 303
+        },
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 8,
+          "charged_usd": 0.00096714,
+          "input_tokens": 8635,
+          "output_tokens": 372
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 5,
+          "charged_usd": 0.001709688,
+          "input_tokens": 3182,
+          "output_tokens": 1131
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 10,
+          "charged_usd": 0.001641552,
+          "input_tokens": 7892,
+          "output_tokens": 618
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 3,
+          "charged_usd": 0.000458136,
+          "input_tokens": 1026,
+          "output_tokens": 188
+        }
+      ],
+      "stop_reason": null
+    },
+    {
+      "ledger": "multi_agent_paid_run_v5_dev.sqlite3",
+      "calls": 50,
+      "charged_upper_bound_usd": 0.011859864,
+      "statuses": [
+        {
+          "call_kind": "action",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.000969936,
+          "input_tokens": 1456,
+          "output_tokens": 507
+        },
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 16,
+          "charged_usd": 0.002091948,
+          "input_tokens": 17397,
+          "output_tokens": 875
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 9,
+          "charged_usd": 0.00344064,
+          "input_tokens": 5808,
+          "output_tokens": 2356
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 18,
+          "charged_usd": 0.003156168,
+          "input_tokens": 15346,
+          "output_tokens": 1177
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 6,
+          "charged_usd": 0.002201172,
+          "input_tokens": 4067,
+          "output_tokens": 943
+        }
+      ],
+      "stop_reason": null
+    },
+    {
+      "ledger": "multi_agent_paid_run_v6_dev.sqlite3",
+      "calls": 6,
+      "charged_upper_bound_usd": 0.001044036,
+      "statuses": [
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 2,
+          "charged_usd": 0.000251652,
+          "input_tokens": 2183,
+          "output_tokens": 103
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.000259704,
+          "input_tokens": 626,
+          "output_tokens": 154
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 2,
+          "charged_usd": 0.000388944,
+          "input_tokens": 1592,
+          "output_tokens": 177
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 1,
+          "charged_usd": 0.000143736,
+          "input_tokens": 442,
+          "output_tokens": 72
+        }
+      ],
+      "stop_reason": null
+    },
+    {
+      "ledger": "multi_agent_paid_run_v7_dev.sqlite3",
+      "calls": 77,
+      "charged_upper_bound_usd": 0.020498604,
+      "statuses": [
+        {
+          "call_kind": "action",
+          "status": "complete",
+          "calls": 7,
+          "charged_usd": 0.003729192,
+          "input_tokens": 6870,
+          "output_tokens": 1986
+        },
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 22,
+          "charged_usd": 0.002810172,
+          "input_tokens": 24161,
+          "output_tokens": 1131
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 15,
+          "charged_usd": 0.0055386,
+          "input_tokens": 9850,
+          "output_tokens": 3721
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 24,
+          "charged_usd": 0.004724568,
+          "input_tokens": 20474,
+          "output_tokens": 1986
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 9,
+          "charged_usd": 0.003696072,
+          "input_tokens": 6430,
+          "output_tokens": 1598
+        }
+      ],
+      "stop_reason": null
+    },
+    {
+      "ledger": "multi_agent_paid_run_v8_frozen.sqlite3",
+      "calls": 167,
+      "charged_upper_bound_usd": 0.049235988,
+      "statuses": [
+        {
+          "call_kind": "action",
+          "status": "complete",
+          "calls": 14,
+          "charged_usd": 0.008735844,
+          "input_tokens": 15567,
+          "output_tokens": 4423
+        },
+        {
+          "call_kind": "agent",
+          "status": "complete",
+          "calls": 44,
+          "charged_usd": 0.005958144,
+          "input_tokens": 49048,
+          "output_tokens": 2362
+        },
+        {
+          "call_kind": "planner",
+          "status": "complete",
+          "calls": 31,
+          "charged_usd": 0.012087972,
+          "input_tokens": 21379,
+          "output_tokens": 7990
+        },
+        {
+          "call_kind": "retrieval",
+          "status": "complete",
+          "calls": 57,
+          "charged_usd": 0.012262728,
+          "input_tokens": 53882,
+          "output_tokens": 4463
+        },
+        {
+          "call_kind": "supervisor",
+          "status": "complete",
+          "calls": 21,
+          "charged_usd": 0.0101913,
+          "input_tokens": 17711,
+          "output_tokens": 4065
+        }
+      ],
+      "stop_reason": null
+    }
+  ],
+  "all_attempt_calls": 340,
+  "all_attempt_charged_upper_bound_usd": 0.093895884,
+  "all_attempt_usage_cost_at_peak_usd": 0.090895884,
+  "final_comparison_cost_usd": 0.069734592,
+  "final_comparison_calls": 244,
+  "pending_calls": 0,
+  "notes": {
+    "multi_agent_paid_run.sqlite3": "Pre-provider double-guard instrumentation failure; ledger conservatively charged one unknown call.",
+    "multi_agent_paid_run_v4_dev.sqlite3": "Aborted on runtime token guard.",
+    "multi_agent_paid_run_v5_dev.sqlite3": "Aborted on inflated request envelope.",
+    "multi_agent_paid_run_v6_dev.sqlite3": "Pre-provider guard attribute failure plus one repaired smoke pair."
+  }
+}

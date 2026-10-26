@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "experiment_id": "multi-agent-paired-v1",
+  "base_commit": "392e058d195bf731deff9ef6b4c2113da2a36a8b",
+  "branch": "codex/interview-multiagent-20261027",
+  "model": "deepseek-flash",
+  "base_url": "https://api.deepseek.com",
+  "temperature": 0,
+  "thinking": "disabled",
+  "provider_retries": 0,
+  "max_output_tokens": 500,
+  "max_input_tokens": 12000,
+  "run_cap_usd": 2.0,
+  "arm_limits": {
+    "single_agent": {"max_generations": 100, "cap_usd": 0.7},
+    "multi_agent": {"max_generations": 200, "cap_usd": 1.1}
+  },
+  "pricing": {
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "verified_on": "2026-10-27",
+    "input_per_million": 0.3,
+    "input_cache_hit_per_million": 0.006,
+    "output_per_million": 1.2,
+    "mode": "peak-rate upper bound"
+  },
+  "dataset": {
+    "path": "tests/eval/multi_agent/scenarios.jsonl",
+    "sha256": "1c1ea643bf7e8e6903adfd6496b2632ab0ccf185b76eb83fde46d88b0c47dc6a",
+    "dev": 10,
+    "frozen": 20,
+    "gold_visibility": "scorer only; never projected into a model prompt"
+  },
+  "scoring": {
+    "version": "multi_agent_semantic_v2",
+    "rubric": "tests/eval/multi_agent/scoring-rubric-v2.json",
+    "sha256": "3d9b17bfaf7d0d9d9bc26cc15c50db1d4e5a9f9628d79e095ce0b523d15b0d00",
+    "rescored_existing_answers_with_model_calls": 0
+  },
+  "roles": {
+    "planner": "structured plan, max 3 tasks and one replan",
+    "retrieval": ["query_order", "query_faq"],
+    "action": ["create_ticket"],
+    "supervisor": "final synthesis from shared facts"
+  },
+  "source_sha256": {
+    "app/multi_agent/__init__.py": "e90acbb867fbd78989ef72e237c90d9e423d253844e31ede28ecf283fb98934c",
+    "app/multi_agent/api.py": "04cc321fe32e88a82673c5cafd6c851c713d155e4f1e520760d9946ead8b12a0",
+    "app/multi_agent/models.py": "814f1bfb8f46ec535dbe10406d44b631384e33fb46f15d5a4aa12561217531a9",
+    "app/multi_agent/roles.py": "a5021c43fab8d26ad2f1de7e1f6dd3aa3b932645cf53f10f9501118f1d5a8d44",
+    "app/multi_agent/runtime.py": "4d683d07074b2c2afedf7fb6ad4b7cfe2e0f49008de302f2bd60230afa8829a8",
+    "app/graph/agent.py": "e55ee39ed9f3a62553c5fa2eb7985b379a85c5beeadc9cbe3240afa3e6cce9fe",
+    "app/tools/engine.py": "81dfd7569dcc0585ac1e5af6f59a711802d7afb5b84e683fe5c154ce93b9124a",
+    "app/orders.py": "2db8a201f1eb9f9d13ab4ad9b3a1ec2f52ab4f81662bac5975d2ba2d428e5247",
+    "scripts/eval_multi_agent.py": "013ca9e04cb511a994eeba5e654d68993aad31146674e783717b61b7c1144f6b",
+    "tests/eval/tasks/fixtures/policies.json": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289"
+  },
+  "artifacts": {
+    "dev_traces": "tests/eval/multi_agent/runs/dev/traces.jsonl.gz",
+    "dev_traces_sha256": "daa76b45d7ccc480c5efbf2a5bb65a0e07fadd824a0ad054defc3c624a91b838",
+    "frozen_traces": "tests/eval/multi_agent/runs/frozen/traces.jsonl.gz",
+    "frozen_traces_sha256": "9f524e76ade45e5b9066aed77b29c0c96a0e6604d1f9c82ddd794acb6b5eece2",
+    "combined_traces": "tests/eval/multi_agent/runs/all/traces.jsonl.gz",
+    "combined_traces_sha256": "3ddad9b955ae0e9a04130fba099f3f515e810a62394799915339af30ce533eb4",
+    "combined_summary": "tests/eval/multi_agent/runs/all/summary.json",
+    "combined_summary_sha256": "1c38fdf349ca3eaf973db9624c1c561b7faf4ef583920a3eda686a8d95acbc66",
+    "cost_reconciliation": "tests/eval/multi_agent/runs/attempt-reconciliation.json",
+    "cost_reconciliation_sha256": "7b2b24226246c1ddb7e07e818cc7d870b8138a51cdc51847380477f1971651eb",
+    "report_sha256": "e9401caf22f942ab50a986c43562a264f8f60a1f51a59421e687d2ac755849a2"
+  },
+  "cost_usd": {
+    "final_comparison": 0.069734592,
+    "all_attempt_charged_upper_bound": 0.093895884,
+    "all_attempt_usage_at_peak": 0.090895884,
+    "pending": 0.0
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "scenario_count": 10,
+  "result_count": 20,
+  "model": "deepseek-flash",
+  "scenario_sha256": "1c1ea643bf7e8e6903adfd6496b2632ab0ccf185b76eb83fde46d88b0c47dc6a",
+  "pricing_verified_on": "2026-10-27",
+  "pricing_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "budget": {
+    "model": "deepseek-flash",
+    "experiment_id": "multi-agent-paired-v1",
+    "config_hash": "scenarios:1c1ea643bf7e8e6903adfd6496b2632ab0ccf185b76eb83fde46d88b0c47dc6a",
+    "allow_paid": true,
+    "pricing_verified": true,
+    "run_cap_usd": 2.0,
+    "charged_upper_bound_usd": 0.0204986,
+    "usage_cost_at_pinned_peak_rates_usd": 0.0204986,
+    "stop_reason": null,
+    "reserved_usd": 0,
+    "max_call_cost_usd": 0.0042,
+    "max_input_tokens": 12000,
+    "max_output_tokens": 500,
+    "arms": {
+      "single_agent": {
+        "generations": 22,
+        "max_generations": 100,
+        "cap_usd": 0.7,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.00281017,
+        "charged_upper_bound_usd": 0.00281017,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "multi_agent": {
+        "generations": 55,
+        "max_generations": 200,
+        "cap_usd": 1.1,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.01768843,
+        "charged_upper_bound_usd": 0.01768843,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      }
+    }
+  },
+  "arms": {
+    "multi_agent": {
+      "task_success": {
+        "numerator": 10,
+        "denominator": 10,
+        "rate": 1.0
+      },
+      "entity_error_count": 0,
+      "parameter_error_count": 0,
+      "condition_error_count": 0,
+      "reasonable_outcome": {
+        "numerator": 10,
+        "denominator": 10,
+        "rate": 1.0
+      },
+      "required_tool_coverage": {
+        "numerator": 10,
+        "denominator": 10,
+        "rate": 1.0
+      },
+      "write_contract": {
+        "numerator": 10,
+        "denominator": 10,
+        "rate": 1.0
+      },
+      "failure_or_timeout_count": 0,
+      "p50_ms": 5007,
+      "p95_ms": 17303,
+      "model_calls": 55,
+      "input_tokens": 43624,
+      "output_tokens": 9291,
+      "usage_cost_usd": 0.01768843,
+      "cost_per_success_usd": 0.00176884
+    },
+    "single_agent": {
+      "task_success": {
+        "numerator": 8,
+        "denominator": 10,
+        "rate": 0.8
+      },
+      "entity_error_count": 0,
+      "parameter_error_count": 0,
+      "condition_error_count": 1,
+      "reasonable_outcome": {
+        "numerator": 9,
+        "denominator": 10,
+        "rate": 0.9
+      },
+      "required_tool_coverage": {
+        "numerator": 9,
+        "denominator": 10,
+        "rate": 0.9
+      },
+      "write_contract": {
+        "numerator": 9,
+        "denominator": 10,
+        "rate": 0.9
+      },
+      "failure_or_timeout_count": 0,
+      "p50_ms": 1823,
+      "p95_ms": 4800,
+      "model_calls": 22,
+      "input_tokens": 24161,
+      "output_tokens": 1131,
+      "usage_cost_usd": 0.00281017,
+      "cost_per_success_usd": 0.00035127
+    }
+  },
+  "paired": {
+    "wins": 2,
+    "losses": 0,
+    "ties": 8,
+    "ids": {
+      "wins": [
+        "MA-DEV-008",
+        "MA-DEV-010"
+      ],
+      "losses": [],
+      "ties": [
+        "MA-DEV-001",
+        "MA-DEV-002",
+        "MA-DEV-003",
+        "MA-DEV-004",
+        "MA-DEV-005",
+        "MA-DEV-006",
+        "MA-DEV-007",
+        "MA-DEV-009"
+      ]
+    }
+  },
+  "buckets": {
+    "simple": {
+      "single_success": 5,
+      "multi_success": 6,
+      "count": 6,
+      "wins": 1,
+      "losses": 0,
+      "ties": 5
+    },
+    "complex": {
+      "single_success": 3,
+      "multi_success": 4,
+      "count": 4,
+      "wins": 1,
+      "losses": 0,
+      "ties": 3
+    }
+  },
+  "rescore_only": true,
+  "paid_calls_during_rescore": 0
+}

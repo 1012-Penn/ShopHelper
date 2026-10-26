@@ -1,0 +1,915 @@
+{
+  "scenario_count": 30,
+  "result_count": 60,
+  "model": "deepseek-flash",
+  "scenario_sha256": "1c1ea643bf7e8e6903adfd6496b2632ab0ccf185b76eb83fde46d88b0c47dc6a",
+  "scoring_version": "multi_agent_semantic_v2",
+  "scoring_rubric_sha256": "3d9b17bfaf7d0d9d9bc26cc15c50db1d4e5a9f9628d79e095ce0b523d15b0d00",
+  "pricing_verified_on": "2026-10-27",
+  "pricing_source": "https://api-docs.deepseek.com/quick_start/pricing/",
+  "budget": {
+    "model": "deepseek-flash",
+    "allow_paid": true,
+    "pricing_verified": true,
+    "run_cap_usd": 2.0,
+    "charged_upper_bound_usd": 0.06973458,
+    "usage_cost_at_pinned_peak_rates_usd": 0.06973459,
+    "reserved_usd": 0,
+    "stop_reason": null,
+    "arms": {
+      "single_agent": {
+        "generations": 66,
+        "max_generations": 200,
+        "cap_usd": 1.4,
+        "reserved_usd": 0.0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.00876831,
+        "charged_upper_bound_usd": 0.00876831,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "multi_agent": {
+        "generations": 178,
+        "max_generations": 400,
+        "cap_usd": 2.2,
+        "reserved_usd": 0.0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.06096627,
+        "charged_upper_bound_usd": 0.06096627,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      }
+    }
+  },
+  "arms": {
+    "multi_agent": {
+      "task_success": {
+        "numerator": 27,
+        "denominator": 30,
+        "rate": 0.9
+      },
+      "entity_error_count": 0,
+      "parameter_error_count": 0,
+      "condition_error_count": 3,
+      "reasonable_outcome": {
+        "numerator": 29,
+        "denominator": 30,
+        "rate": 0.9667
+      },
+      "reasonable_clarification": {
+        "numerator": 2,
+        "denominator": 2,
+        "rate": 1.0
+      },
+      "reasonable_refusal": {
+        "numerator": 2,
+        "denominator": 3,
+        "rate": 0.6667
+      },
+      "reasonable_handoff": {
+        "numerator": 0,
+        "denominator": 0,
+        "rate": null
+      },
+      "required_tool_coverage": {
+        "numerator": 29,
+        "denominator": 30,
+        "rate": 0.9667
+      },
+      "write_contract": {
+        "numerator": 29,
+        "denominator": 30,
+        "rate": 0.9667
+      },
+      "failure_or_timeout_count": 1,
+      "p50_ms": 7213,
+      "p95_ms": 17303,
+      "model_calls": 178,
+      "input_tokens": 152163,
+      "output_tokens": 30232,
+      "usage_cost_usd": 0.06096628,
+      "cost_per_success_usd": 0.00225801,
+      "by_role": {
+        "planner": {
+          "calls": 46,
+          "input_tokens": 31229,
+          "output_tokens": 11711,
+          "cost_usd": 0.01762657
+        },
+        "retrieval": {
+          "calls": 81,
+          "input_tokens": 74356,
+          "output_tokens": 6449,
+          "cost_usd": 0.0169873
+        },
+        "supervisor": {
+          "calls": 30,
+          "input_tokens": 24141,
+          "output_tokens": 5663,
+          "cost_usd": 0.01388737
+        },
+        "action": {
+          "calls": 21,
+          "input_tokens": 22437,
+          "output_tokens": 6409,
+          "cost_usd": 0.01246504
+        }
+      },
+      "validation_calls": 0,
+      "validation_cost_usd": 0.0,
+      "write_attempts": 2,
+      "generated_preview_count": 2,
+      "unconfirmed_sink_writes": 0,
+      "confirmation_cases": 2,
+      "confirmation_idempotent_passes": 2,
+      "cancel_only_cases": 1,
+      "cancel_only_generated_previews": 0,
+      "cancel_only_sink_writes": 0,
+      "cancellation_no_confirm_probes": 2,
+      "cancellation_probe_sink_writes": 0,
+      "failed_cases": [
+        {
+          "scenario_id": "MA-FRZ-022",
+          "actual_outcome": "answer",
+          "missing_conditions": [
+            "吊牌",
+            "包装"
+          ],
+          "forbidden_conditions": [],
+          "missing_tools": [],
+          "write_correct": true,
+          "errors": [
+            "return_policy:BudgetExceeded:CH15 账本存在未结算调用 6ad194b475234b508e871223cae68a2c；先核实 provider usage 再恢复:agent_error"
+          ]
+        },
+        {
+          "scenario_id": "MA-FRZ-028",
+          "actual_outcome": "answer",
+          "missing_conditions": [],
+          "forbidden_conditions": [],
+          "missing_tools": [
+            "create_ticket"
+          ],
+          "write_correct": false,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-FRZ-030",
+          "actual_outcome": "clarify",
+          "missing_conditions": [
+            "无法回答"
+          ],
+          "forbidden_conditions": [],
+          "missing_tools": [],
+          "write_correct": true,
+          "errors": []
+        }
+      ]
+    },
+    "single_agent": {
+      "task_success": {
+        "numerator": 23,
+        "denominator": 30,
+        "rate": 0.7667
+      },
+      "entity_error_count": 0,
+      "parameter_error_count": 0,
+      "condition_error_count": 5,
+      "reasonable_outcome": {
+        "numerator": 29,
+        "denominator": 30,
+        "rate": 0.9667
+      },
+      "reasonable_clarification": {
+        "numerator": 1,
+        "denominator": 2,
+        "rate": 0.5
+      },
+      "reasonable_refusal": {
+        "numerator": 3,
+        "denominator": 3,
+        "rate": 1.0
+      },
+      "reasonable_handoff": {
+        "numerator": 0,
+        "denominator": 0,
+        "rate": null
+      },
+      "required_tool_coverage": {
+        "numerator": 26,
+        "denominator": 30,
+        "rate": 0.8667
+      },
+      "write_contract": {
+        "numerator": 27,
+        "denominator": 30,
+        "rate": 0.9
+      },
+      "failure_or_timeout_count": 0,
+      "p50_ms": 1906,
+      "p95_ms": 4800,
+      "model_calls": 66,
+      "input_tokens": 73209,
+      "output_tokens": 3493,
+      "usage_cost_usd": 0.00876832,
+      "cost_per_success_usd": 0.00038123,
+      "by_role": {
+        "agent": {
+          "calls": 66,
+          "input_tokens": 73209,
+          "output_tokens": 3493,
+          "cost_usd": 0.00876832
+        }
+      },
+      "validation_calls": 0,
+      "validation_cost_usd": 0.0,
+      "write_attempts": 0,
+      "generated_preview_count": 0,
+      "unconfirmed_sink_writes": 0,
+      "confirmation_cases": 2,
+      "confirmation_idempotent_passes": 0,
+      "cancel_only_cases": 1,
+      "cancel_only_generated_previews": 0,
+      "cancel_only_sink_writes": 0,
+      "cancellation_no_confirm_probes": 0,
+      "cancellation_probe_sink_writes": 0,
+      "failed_cases": [
+        {
+          "scenario_id": "MA-DEV-008",
+          "actual_outcome": "answer",
+          "missing_conditions": [],
+          "forbidden_conditions": [],
+          "missing_tools": [],
+          "write_correct": true,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-DEV-010",
+          "actual_outcome": "answer",
+          "missing_conditions": [
+            "预览"
+          ],
+          "forbidden_conditions": [],
+          "missing_tools": [
+            "create_ticket"
+          ],
+          "write_correct": false,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-FRZ-021",
+          "actual_outcome": "answer",
+          "missing_conditions": [
+            "都不能直接取消"
+          ],
+          "forbidden_conditions": [],
+          "missing_tools": [
+            "query_faq"
+          ],
+          "write_correct": true,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-FRZ-023",
+          "actual_outcome": "answer",
+          "missing_conditions": [],
+          "forbidden_conditions": [
+            "商家承担"
+          ],
+          "missing_tools": [],
+          "write_correct": true,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-FRZ-024",
+          "actual_outcome": "answer",
+          "missing_conditions": [
+            "不会"
+          ],
+          "forbidden_conditions": [],
+          "missing_tools": [],
+          "write_correct": true,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-FRZ-027",
+          "actual_outcome": "answer",
+          "missing_conditions": [],
+          "forbidden_conditions": [],
+          "missing_tools": [
+            "create_ticket"
+          ],
+          "write_correct": false,
+          "errors": []
+        },
+        {
+          "scenario_id": "MA-FRZ-028",
+          "actual_outcome": "answer",
+          "missing_conditions": [
+            "不会提交"
+          ],
+          "forbidden_conditions": [],
+          "missing_tools": [
+            "create_ticket"
+          ],
+          "write_correct": false,
+          "errors": []
+        }
+      ]
+    }
+  },
+  "paired": {
+    "wins": 6,
+    "losses": 2,
+    "ties": 22,
+    "ids": {
+      "wins": [
+        "MA-DEV-008",
+        "MA-DEV-010",
+        "MA-FRZ-021",
+        "MA-FRZ-023",
+        "MA-FRZ-024",
+        "MA-FRZ-027"
+      ],
+      "losses": [
+        "MA-FRZ-022",
+        "MA-FRZ-030"
+      ],
+      "ties": [
+        "MA-DEV-001",
+        "MA-DEV-002",
+        "MA-DEV-003",
+        "MA-DEV-004",
+        "MA-DEV-005",
+        "MA-DEV-006",
+        "MA-DEV-007",
+        "MA-DEV-009",
+        "MA-FRZ-011",
+        "MA-FRZ-012",
+        "MA-FRZ-013",
+        "MA-FRZ-014",
+        "MA-FRZ-015",
+        "MA-FRZ-016",
+        "MA-FRZ-017",
+        "MA-FRZ-018",
+        "MA-FRZ-019",
+        "MA-FRZ-020",
+        "MA-FRZ-025",
+        "MA-FRZ-026",
+        "MA-FRZ-028",
+        "MA-FRZ-029"
+      ]
+    }
+  },
+  "buckets": {
+    "simple": {
+      "single_success": 17,
+      "multi_success": 17,
+      "count": 18,
+      "wins": 1,
+      "losses": 1,
+      "ties": 16
+    },
+    "complex": {
+      "single_success": 6,
+      "multi_success": 10,
+      "count": 12,
+      "wins": 5,
+      "losses": 1,
+      "ties": 6
+    }
+  },
+  "splits": {
+    "dev": {
+      "arms": {
+        "multi_agent": {
+          "task_success": {
+            "numerator": 10,
+            "denominator": 10,
+            "rate": 1.0
+          },
+          "entity_error_count": 0,
+          "parameter_error_count": 0,
+          "condition_error_count": 0,
+          "reasonable_outcome": {
+            "numerator": 10,
+            "denominator": 10,
+            "rate": 1.0
+          },
+          "reasonable_clarification": {
+            "numerator": 1,
+            "denominator": 1,
+            "rate": 1.0
+          },
+          "reasonable_refusal": {
+            "numerator": 1,
+            "denominator": 1,
+            "rate": 1.0
+          },
+          "reasonable_handoff": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "required_tool_coverage": {
+            "numerator": 10,
+            "denominator": 10,
+            "rate": 1.0
+          },
+          "write_contract": {
+            "numerator": 10,
+            "denominator": 10,
+            "rate": 1.0
+          },
+          "failure_or_timeout_count": 0,
+          "p50_ms": 5007,
+          "p95_ms": 17303,
+          "model_calls": 55,
+          "input_tokens": 43624,
+          "output_tokens": 9291,
+          "usage_cost_usd": 0.01768843,
+          "cost_per_success_usd": 0.00176884,
+          "by_role": {
+            "planner": {
+              "calls": 15,
+              "input_tokens": 9850,
+              "output_tokens": 3721,
+              "cost_usd": 0.0055386
+            },
+            "retrieval": {
+              "calls": 24,
+              "input_tokens": 20474,
+              "output_tokens": 1986,
+              "cost_usd": 0.00472457
+            },
+            "supervisor": {
+              "calls": 9,
+              "input_tokens": 6430,
+              "output_tokens": 1598,
+              "cost_usd": 0.00369607
+            },
+            "action": {
+              "calls": 7,
+              "input_tokens": 6870,
+              "output_tokens": 1986,
+              "cost_usd": 0.00372919
+            }
+          },
+          "validation_calls": 0,
+          "validation_cost_usd": 0.0,
+          "write_attempts": 1,
+          "generated_preview_count": 1,
+          "unconfirmed_sink_writes": 0,
+          "confirmation_cases": 1,
+          "confirmation_idempotent_passes": 1,
+          "cancel_only_cases": 0,
+          "cancel_only_generated_previews": 0,
+          "cancel_only_sink_writes": 0,
+          "cancellation_no_confirm_probes": 1,
+          "cancellation_probe_sink_writes": 0,
+          "failed_cases": []
+        },
+        "single_agent": {
+          "task_success": {
+            "numerator": 8,
+            "denominator": 10,
+            "rate": 0.8
+          },
+          "entity_error_count": 0,
+          "parameter_error_count": 0,
+          "condition_error_count": 1,
+          "reasonable_outcome": {
+            "numerator": 9,
+            "denominator": 10,
+            "rate": 0.9
+          },
+          "reasonable_clarification": {
+            "numerator": 0,
+            "denominator": 1,
+            "rate": 0.0
+          },
+          "reasonable_refusal": {
+            "numerator": 1,
+            "denominator": 1,
+            "rate": 1.0
+          },
+          "reasonable_handoff": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "required_tool_coverage": {
+            "numerator": 9,
+            "denominator": 10,
+            "rate": 0.9
+          },
+          "write_contract": {
+            "numerator": 9,
+            "denominator": 10,
+            "rate": 0.9
+          },
+          "failure_or_timeout_count": 0,
+          "p50_ms": 1823,
+          "p95_ms": 4800,
+          "model_calls": 22,
+          "input_tokens": 24161,
+          "output_tokens": 1131,
+          "usage_cost_usd": 0.00281017,
+          "cost_per_success_usd": 0.00035127,
+          "by_role": {
+            "agent": {
+              "calls": 22,
+              "input_tokens": 24161,
+              "output_tokens": 1131,
+              "cost_usd": 0.00281017
+            }
+          },
+          "validation_calls": 0,
+          "validation_cost_usd": 0.0,
+          "write_attempts": 0,
+          "generated_preview_count": 0,
+          "unconfirmed_sink_writes": 0,
+          "confirmation_cases": 1,
+          "confirmation_idempotent_passes": 0,
+          "cancel_only_cases": 0,
+          "cancel_only_generated_previews": 0,
+          "cancel_only_sink_writes": 0,
+          "cancellation_no_confirm_probes": 0,
+          "cancellation_probe_sink_writes": 0,
+          "failed_cases": [
+            {
+              "scenario_id": "MA-DEV-008",
+              "actual_outcome": "answer",
+              "missing_conditions": [],
+              "forbidden_conditions": [],
+              "missing_tools": [],
+              "write_correct": true,
+              "errors": []
+            },
+            {
+              "scenario_id": "MA-DEV-010",
+              "actual_outcome": "answer",
+              "missing_conditions": [
+                "预览"
+              ],
+              "forbidden_conditions": [],
+              "missing_tools": [
+                "create_ticket"
+              ],
+              "write_correct": false,
+              "errors": []
+            }
+          ]
+        }
+      },
+      "paired": {
+        "wins": 2,
+        "losses": 0,
+        "ties": 8,
+        "ids": {
+          "wins": [
+            "MA-DEV-008",
+            "MA-DEV-010"
+          ],
+          "losses": [],
+          "ties": [
+            "MA-DEV-001",
+            "MA-DEV-002",
+            "MA-DEV-003",
+            "MA-DEV-004",
+            "MA-DEV-005",
+            "MA-DEV-006",
+            "MA-DEV-007",
+            "MA-DEV-009"
+          ]
+        }
+      },
+      "buckets": {
+        "simple": {
+          "single_success": 5,
+          "multi_success": 6,
+          "count": 6,
+          "wins": 1,
+          "losses": 0,
+          "ties": 5
+        },
+        "complex": {
+          "single_success": 3,
+          "multi_success": 4,
+          "count": 4,
+          "wins": 1,
+          "losses": 0,
+          "ties": 3
+        }
+      }
+    },
+    "frozen": {
+      "arms": {
+        "multi_agent": {
+          "task_success": {
+            "numerator": 17,
+            "denominator": 20,
+            "rate": 0.85
+          },
+          "entity_error_count": 0,
+          "parameter_error_count": 0,
+          "condition_error_count": 3,
+          "reasonable_outcome": {
+            "numerator": 19,
+            "denominator": 20,
+            "rate": 0.95
+          },
+          "reasonable_clarification": {
+            "numerator": 1,
+            "denominator": 1,
+            "rate": 1.0
+          },
+          "reasonable_refusal": {
+            "numerator": 1,
+            "denominator": 2,
+            "rate": 0.5
+          },
+          "reasonable_handoff": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "required_tool_coverage": {
+            "numerator": 19,
+            "denominator": 20,
+            "rate": 0.95
+          },
+          "write_contract": {
+            "numerator": 19,
+            "denominator": 20,
+            "rate": 0.95
+          },
+          "failure_or_timeout_count": 1,
+          "p50_ms": 7213,
+          "p95_ms": 16404,
+          "model_calls": 123,
+          "input_tokens": 108539,
+          "output_tokens": 20941,
+          "usage_cost_usd": 0.04327784,
+          "cost_per_success_usd": 0.00254576,
+          "by_role": {
+            "planner": {
+              "calls": 31,
+              "input_tokens": 21379,
+              "output_tokens": 7990,
+              "cost_usd": 0.01208797
+            },
+            "retrieval": {
+              "calls": 57,
+              "input_tokens": 53882,
+              "output_tokens": 4463,
+              "cost_usd": 0.01226273
+            },
+            "supervisor": {
+              "calls": 21,
+              "input_tokens": 17711,
+              "output_tokens": 4065,
+              "cost_usd": 0.0101913
+            },
+            "action": {
+              "calls": 14,
+              "input_tokens": 15567,
+              "output_tokens": 4423,
+              "cost_usd": 0.00873584
+            }
+          },
+          "validation_calls": 0,
+          "validation_cost_usd": 0.0,
+          "write_attempts": 1,
+          "generated_preview_count": 1,
+          "unconfirmed_sink_writes": 0,
+          "confirmation_cases": 1,
+          "confirmation_idempotent_passes": 1,
+          "cancel_only_cases": 1,
+          "cancel_only_generated_previews": 0,
+          "cancel_only_sink_writes": 0,
+          "cancellation_no_confirm_probes": 1,
+          "cancellation_probe_sink_writes": 0,
+          "failed_cases": [
+            {
+              "scenario_id": "MA-FRZ-022",
+              "actual_outcome": "answer",
+              "missing_conditions": [
+                "吊牌",
+                "包装"
+              ],
+              "forbidden_conditions": [],
+              "missing_tools": [],
+              "write_correct": true,
+              "errors": [
+                "return_policy:BudgetExceeded:CH15 账本存在未结算调用 6ad194b475234b508e871223cae68a2c；先核实 provider usage 再恢复:agent_error"
+              ]
+            },
+            {
+              "scenario_id": "MA-FRZ-028",
+              "actual_outcome": "answer",
+              "missing_conditions": [],
+              "forbidden_conditions": [],
+              "missing_tools": [
+                "create_ticket"
+              ],
+              "write_correct": false,
+              "errors": []
+            },
+            {
+              "scenario_id": "MA-FRZ-030",
+              "actual_outcome": "clarify",
+              "missing_conditions": [
+                "无法回答"
+              ],
+              "forbidden_conditions": [],
+              "missing_tools": [],
+              "write_correct": true,
+              "errors": []
+            }
+          ]
+        },
+        "single_agent": {
+          "task_success": {
+            "numerator": 15,
+            "denominator": 20,
+            "rate": 0.75
+          },
+          "entity_error_count": 0,
+          "parameter_error_count": 0,
+          "condition_error_count": 4,
+          "reasonable_outcome": {
+            "numerator": 20,
+            "denominator": 20,
+            "rate": 1.0
+          },
+          "reasonable_clarification": {
+            "numerator": 1,
+            "denominator": 1,
+            "rate": 1.0
+          },
+          "reasonable_refusal": {
+            "numerator": 2,
+            "denominator": 2,
+            "rate": 1.0
+          },
+          "reasonable_handoff": {
+            "numerator": 0,
+            "denominator": 0,
+            "rate": null
+          },
+          "required_tool_coverage": {
+            "numerator": 17,
+            "denominator": 20,
+            "rate": 0.85
+          },
+          "write_contract": {
+            "numerator": 18,
+            "denominator": 20,
+            "rate": 0.9
+          },
+          "failure_or_timeout_count": 0,
+          "p50_ms": 1906,
+          "p95_ms": 3551,
+          "model_calls": 44,
+          "input_tokens": 49048,
+          "output_tokens": 2362,
+          "usage_cost_usd": 0.00595814,
+          "cost_per_success_usd": 0.00039721,
+          "by_role": {
+            "agent": {
+              "calls": 44,
+              "input_tokens": 49048,
+              "output_tokens": 2362,
+              "cost_usd": 0.00595814
+            }
+          },
+          "validation_calls": 0,
+          "validation_cost_usd": 0.0,
+          "write_attempts": 0,
+          "generated_preview_count": 0,
+          "unconfirmed_sink_writes": 0,
+          "confirmation_cases": 1,
+          "confirmation_idempotent_passes": 0,
+          "cancel_only_cases": 1,
+          "cancel_only_generated_previews": 0,
+          "cancel_only_sink_writes": 0,
+          "cancellation_no_confirm_probes": 0,
+          "cancellation_probe_sink_writes": 0,
+          "failed_cases": [
+            {
+              "scenario_id": "MA-FRZ-021",
+              "actual_outcome": "answer",
+              "missing_conditions": [
+                "都不能直接取消"
+              ],
+              "forbidden_conditions": [],
+              "missing_tools": [
+                "query_faq"
+              ],
+              "write_correct": true,
+              "errors": []
+            },
+            {
+              "scenario_id": "MA-FRZ-023",
+              "actual_outcome": "answer",
+              "missing_conditions": [],
+              "forbidden_conditions": [
+                "商家承担"
+              ],
+              "missing_tools": [],
+              "write_correct": true,
+              "errors": []
+            },
+            {
+              "scenario_id": "MA-FRZ-024",
+              "actual_outcome": "answer",
+              "missing_conditions": [
+                "不会"
+              ],
+              "forbidden_conditions": [],
+              "missing_tools": [],
+              "write_correct": true,
+              "errors": []
+            },
+            {
+              "scenario_id": "MA-FRZ-027",
+              "actual_outcome": "answer",
+              "missing_conditions": [],
+              "forbidden_conditions": [],
+              "missing_tools": [
+                "create_ticket"
+              ],
+              "write_correct": false,
+              "errors": []
+            },
+            {
+              "scenario_id": "MA-FRZ-028",
+              "actual_outcome": "answer",
+              "missing_conditions": [
+                "不会提交"
+              ],
+              "forbidden_conditions": [],
+              "missing_tools": [
+                "create_ticket"
+              ],
+              "write_correct": false,
+              "errors": []
+            }
+          ]
+        }
+      },
+      "paired": {
+        "wins": 4,
+        "losses": 2,
+        "ties": 14,
+        "ids": {
+          "wins": [
+            "MA-FRZ-021",
+            "MA-FRZ-023",
+            "MA-FRZ-024",
+            "MA-FRZ-027"
+          ],
+          "losses": [
+            "MA-FRZ-022",
+            "MA-FRZ-030"
+          ],
+          "ties": [
+            "MA-FRZ-011",
+            "MA-FRZ-012",
+            "MA-FRZ-013",
+            "MA-FRZ-014",
+            "MA-FRZ-015",
+            "MA-FRZ-016",
+            "MA-FRZ-017",
+            "MA-FRZ-018",
+            "MA-FRZ-019",
+            "MA-FRZ-020",
+            "MA-FRZ-025",
+            "MA-FRZ-026",
+            "MA-FRZ-028",
+            "MA-FRZ-029"
+          ]
+        }
+      },
+      "buckets": {
+        "simple": {
+          "single_success": 12,
+          "multi_success": 11,
+          "count": 12,
+          "wins": 0,
+          "losses": 1,
+          "ties": 11
+        },
+        "complex": {
+          "single_success": 3,
+          "multi_success": 6,
+          "count": 8,
+          "wins": 4,
+          "losses": 1,
+          "ties": 3
+        }
+      }
+    }
+  },
+  "rescore_only": true,
+  "paid_calls_during_rescore": 0
+}
