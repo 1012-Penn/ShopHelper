@@ -4,9 +4,9 @@ import pytest
 from langchain_core.messages import AIMessage, ToolMessage
 from sqlalchemy import select
 
+from app.models import Ticket
 from app.multi_agent.models import AgentPlan, AgentTask, MultiAgentLimits
 from app.multi_agent.runtime import MultiAgentRunner, build_multi_agent_runtime
-from app.models import Ticket
 
 
 class StaticPlanner:
@@ -117,6 +117,21 @@ def test_application_runtime_builder_uses_existing_engine_and_model():
     assert runtime.retrieval_model is model
     assert runtime.action_model is model
     assert runtime.supervisor_model is model
+
+
+@pytest.mark.asyncio
+async def test_application_factory_wires_typed_handoff_as_explicit_opt_in(make_client):
+    _, app = await make_client(
+        type("IntentModel", (), {
+            "ainvoke": lambda self, *_args, **_kwargs: AIMessage(
+                content=json.dumps({"intent": "其他"}, ensure_ascii=False)
+            )
+        })(),
+        settings_overrides={"multi_agent_handoff_mode": "typed"},
+    )
+
+    assert app.state.multi_agent.handoff_mode == "typed"
+    assert app.state.settings.multi_agent_handoff_mode == "typed"
 
 
 @pytest.mark.asyncio

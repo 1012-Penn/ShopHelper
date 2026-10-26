@@ -30,8 +30,9 @@ def _mapping(value: Any) -> Mapping[str, Any]:
         key: getattr(value, key)
         for key in (
             "final_reply", "reply", "answer", "message", "content",
-            "conversation_id", "disposition", "facts", "evidence", "trace",
-            "errors", "stop_reasons", "write_previews", "tokens",
+            "run_id", "conversation_id", "status", "disposition", "facts",
+            "evidence", "trace", "errors", "stop_reasons", "write_previews",
+            "usage", "tokens",
         )
         if hasattr(value, key)
     }
@@ -68,7 +69,9 @@ def normalize_response(value: Any) -> NormalizedResponse:
         conversation_id = None
     return NormalizedResponse(
         reply=reply,
+        run_id=str(row.get("run_id") or "") or None,
         conversation_id=conversation_id,
+        status=str(row.get("status") or ""),
         disposition=str(row.get("disposition") or ""),
         facts=dict(row.get("facts") or {}),
         evidence=dict(row.get("evidence") or {}),
@@ -84,6 +87,7 @@ def normalize_response(value: Any) -> NormalizedResponse:
             if isinstance(previews, (list, tuple))
             else []
         ),
+        usage=dict(row.get("usage") or {}),
         tokens=tokens,
     )
 
@@ -111,7 +115,7 @@ class RouteDispatcher:
         execution_started = time.perf_counter()
         try:
             raw = await executor(routing_input)
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - executor boundary returns a structured error
             error = f"{type(exc).__name__}:{exc}"
         execution_ms = int((time.perf_counter() - execution_started) * 1000)
         total_ms = int((time.perf_counter() - total_started) * 1000)

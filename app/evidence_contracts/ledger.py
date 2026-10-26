@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import datetime, timezone
-from typing import Callable
 
 from app.evidence_contracts.models import (
     UNKNOWN,
@@ -32,6 +32,7 @@ class EvidenceLedger:
     def __init__(self, *, now: Callable[[], datetime] | None = None) -> None:
         self._now = now or (lambda: datetime.now(timezone.utc))
         self.claims: dict[str, EvidenceClaim] = {}
+        self._sequence_by_key: dict[tuple, int] = {}
 
     def _timestamp(self) -> str:
         return self._now().astimezone(timezone.utc).isoformat()
@@ -45,7 +46,13 @@ class EvidenceLedger:
 
     def add_many(self, claims: list[EvidenceClaim]) -> None:
         for claim in claims:
+            if claim.claim_id in self.claims:
+                continue
             key = self._lifecycle_key(claim)
+            prior_sequence = self._sequence_by_key.get(key, 0)
+            if claim.observed_sequence <= prior_sequence:
+                claim.observed_sequence = prior_sequence + 1
+            self._sequence_by_key[key] = claim.observed_sequence
             replacement = next((
                 existing for existing in self.claims.values()
                 if self._lifecycle_key(existing) == key
@@ -68,9 +75,7 @@ class EvidenceLedger:
         if end is not None and now > end:
             return False
         knowledge = _parse_time(claim.knowledge_as_of)
-        if knowledge is not None and knowledge > now:
-            return False
-        return True
+        return not (knowledge is not None and knowledge > now)
 
     @staticmethod
     def _subject_matches(claim: EvidenceClaim, handoff: TaskHandoff,

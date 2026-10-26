@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     chat_temperature: float = 0.7
     llm_max_retries: int = 6  # 上游 429/1305(访问量过大)是分钟级波动,默认重试 2 次不够
     extract_temperature: float = 0
+    # auto: DeepSeek thinking 类模型使用 JSON 文本 + Pydantic；其它模型优先原生
+    # function calling。也可显式设为 json / function_calling 做兼容或回滚。
+    structured_output_mode: Literal["auto", "json", "function_calling"] = "auto"
 
     # ch09：Langfuse 是可选的本地可观测副本，缺 key/SDK/服务均不得影响聊天。
     langfuse_enabled: bool = False
@@ -101,6 +104,16 @@ class Settings(BaseSettings):
     # 最终候选答案复核默认关闭。开启后最终 token 先缓冲,工具状态与引用仍可流式。
     answer_verification_enabled: bool = False
     answer_verification_max_revisions: int = 1  # 硬上限固定为 1,配置值仅允许 0/1
+
+    # 第二轮可选能力。默认继续走现有 /api/chat 单 Agent；Opt-in 后才暴露
+    # /api/adaptive-routing/chat，且多 Agent 的 handoff 仍默认 raw。
+    adaptive_routing_enabled: bool = False
+    multi_agent_handoff_mode: Literal["raw", "typed"] = "raw"
+    multi_agent_dynamic_status_ttl_seconds: int = 300
+    claim_grounding_enabled: bool = False
+    claim_grounding_ledger_path: str = ""
+    claim_grounding_max_cost_usd: float = 2.0
+    claim_grounding_reserve_usd: float = 0.005
 
     # ch14:后台管理员鉴权(DB 管理员表;secret 为空时后台登录 503,不阻断聊天)
     admin_session_secret: str = ""        # 生产必须设置;python -c 'import secrets; print(secrets.token_urlsafe(48))'

@@ -10,18 +10,17 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Literal
 
-from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
+from langchain_core.messages import HumanMessage, SystemMessage, ToolMessage
 from langgraph.graph import END, START, StateGraph
 
-from app.history import estimate_tokens
 from app.evidence_contracts import (
     EvidenceLedger,
     TaskHandoff,
     ToolResultCache,
     claims_from_tool_result,
-    subjects_from_arguments,
     subjects_from_text,
 )
+from app.history import estimate_tokens
 from app.multi_agent.models import (
     AgentOutcome,
     AgentPlan,
@@ -91,7 +90,8 @@ class MultiAgentRunner:
     def __init__(self, *, planner_model, retrieval_model, action_model,
                  supervisor_model, engine, limits: MultiAgentLimits | None = None,
                  handoff_mode: Literal["raw", "typed"] = "raw",
-                 dynamic_status_ttl_seconds: int = 300) -> None:
+                 dynamic_status_ttl_seconds: int = 300,
+                 planner_structured=None) -> None:
         self.planner_model = planner_model
         self.retrieval_model = retrieval_model
         self.action_model = action_model
@@ -100,6 +100,7 @@ class MultiAgentRunner:
         self.limits = limits or MultiAgentLimits()
         self.handoff_mode = handoff_mode
         self.dynamic_status_ttl_seconds = max(0, int(dynamic_status_ttl_seconds))
+        self.planner_structured = planner_structured
         self._runs: dict[str, _RunContext] = {}
 
     def _context(self, run_id: str) -> _RunContext:
@@ -154,16 +155,20 @@ class MultiAgentRunner:
         )
 
     @staticmethod
-    def _typed_prompt(task: AgentTask, handoff: TaskHandoff,
+    def _model_claim_payload(claim) -> dict[str, Any]:
+        payload = claim.model_dump(mode="json")
+        payload["source"] = {
+            key: value for key, value in payload["source"].items()
+            if key != "raw_result"
+        }
+        return payload
+
+    @classmethod
+    def _typed_prompt(cls, task: AgentTask, handoff: TaskHandoff,
                       claims: list[Any]) -> str:
         projected_claims = []
         for claim in claims:
-            payload = claim.model_dump(mode="json")
-            payload["source"] = {
-                key: value for key, value in payload["source"].items()
-                if key != "raw_result"
-            }
-            projected_claims.append(payload)
+            projected_claims.append(cls._model_claim_payload(claim))
         return _json({
             "task_id": task.task_id,
             "agent_id": f"{task.agent}:{task.task_id}",
@@ -273,11 +278,11 @@ class MultiAgentRunner:
                         args["conversation_id"] = conversation_id
                     tool_calls.append({"name": name, "arguments": args})
 
-                    def intercept(record, values):
+                    def intercept(record, values, call_name=name):
                         nonlocal preview
                         preview = {
                             "type": "ticket_preview",
-                            "tool_name": getattr(record, "name", name),
+                            "tool_name": getattr(record, "name", call_name),
                             "conversation_id": values.get("conversation_id"),
                             "description": values.get("description", ""),
                             "ticket_type": values.get("ticket_type", "售后"),
@@ -298,14 +303,19 @@ class MultiAgentRunner:
                         observed_at=call_observed_at,
                     ))
 
-                    async def execute_tool():
+                    async def execute_tool(
+                        tool_name=name,
+                        call_args=args,
+                        call_id=tool_call_id,
+                        timeout=remaining,
+                    ):
                         return await asyncio.wait_for(
                             self.engine.execute(
-                                name, _json(args), conversation_id=None,
-                                tool_call_id=tool_call_id,
+                                tool_name, _json(dict(call_args)), conversation_id=None,
+                                tool_call_id=call_id,
                                 on_write_intercept=intercept,
                             ),
-                            timeout=remaining,
+                            timeout=timeout,
                         )
 
                     if self.handoff_mode == "typed" and context.tool_cache is not None:
@@ -372,7 +382,7 @@ class MultiAgentRunner:
             error, status, stop = str(exc), "failed", "tool_permission_denied"
         except RunLimitError as exc:
             error, status, stop = str(exc), "failed", "global_limit"
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - task failures become structured outcomes
             error, status, stop = f"{type(exc).__name__}:{exc}", "failed", "agent_error"
 
         context.agent_histories[task.task_id] = _serialize_messages(messages)
@@ -403,7 +413,7 @@ class MultiAgentRunner:
             HumanMessage(content=_json(prompt)),
         ]
         self._count_tokens(context, _json(prompt))
-        structured = self.planner_model.with_structured_output(
+        structured = self.planner_structured or self.planner_model.with_structured_output(
             AgentPlan, method="function_calling"
         )
         response = await self._model_call(
@@ -539,7 +549,9 @@ class MultiAgentRunner:
                 "user_message": message,
                 "dependency_task_ids": task_ids,
                 "subject_ids": subjects,
-                "evidence_claims": [claim.model_dump(mode="json") for claim in claims],
+                "evidence_claims": [
+                    self._model_claim_payload(claim) for claim in claims
+                ],
                 "plan_reason": plan.reason,
                 "errors": errors,
             })
@@ -576,7 +588,7 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
                 message=state["user_message"],
                 conversation_history=state.get("conversation_history") or [],
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - planner failure must return a safe plan
             error = f"planner:{type(exc).__name__}:{exc}"
             errors.append(error)
             plan = AgentPlan(
@@ -618,7 +630,7 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
                 conversation_history=state.get("conversation_history") or [],
                 failure_context=_json(errors),
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - replanner failure must return a safe plan
             errors.append(f"replanner:{type(exc).__name__}:{exc}")
             plan = AgentPlan(
                 disposition="refuse",
@@ -647,7 +659,7 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
                 evidence=dict(state.get("evidence") or {}),
                 errors=errors,
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - finalization failure must return safe text
             errors.append(f"finalize:{type(exc).__name__}:{exc}")
             final = "【无法回答】多Agent汇总未完成，请稍后重试或转人工。"
         context = runner._context(state["run_id"])
@@ -692,7 +704,8 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
 def build_multi_agent_runtime(*, engine, model,
                               limits: MultiAgentLimits | None = None,
                               handoff_mode: Literal["raw", "typed"] = "raw",
-                              dynamic_status_ttl_seconds: int = 300) -> MultiAgentRunner:
+                              dynamic_status_ttl_seconds: int = 300,
+                              planner_structured=None) -> MultiAgentRunner:
     """Production wiring helper: one approved chat model, four explicit role labels."""
 
     return MultiAgentRunner(
@@ -704,4 +717,5 @@ def build_multi_agent_runtime(*, engine, model,
         limits=limits,
         handoff_mode=handoff_mode,
         dynamic_status_ttl_seconds=dynamic_status_ttl_seconds,
+        planner_structured=planner_structured,
     )

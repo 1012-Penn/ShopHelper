@@ -251,10 +251,9 @@ class GapAnalyzer:
 
 
 def make_gap_analyzer(settings):
-    from app.llm import make_extract_model
+    from app.llm import make_structured_extractor
 
-    return GapAnalyzer(make_extract_model(settings).with_structured_output(
-        GapReport, method="function_calling"))
+    return GapAnalyzer(make_structured_extractor(settings, GapReport))
 
 
 def _step_record(round_index: int, phase: str, query: str) -> dict:

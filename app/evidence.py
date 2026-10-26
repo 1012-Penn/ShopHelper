@@ -7,7 +7,7 @@ from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel
 
 from app.config import Settings
-from app.llm import make_extract_model
+from app.llm import make_structured_extractor
 
 EVIDENCE_JUDGE_PROMPT = PromptTemplate.from_template(
     "你是证据审核员。只根据给定证据判断:证据是否明确回答了用户问题。\n"
@@ -48,6 +48,5 @@ class EvidenceJudge:
 
 
 def make_evidence_judge(settings: Settings) -> EvidenceJudge:
-    llm = make_extract_model(settings).with_structured_output(
-        EvidenceVerdict, method="function_calling")
+    llm = make_structured_extractor(settings, EvidenceVerdict)
     return EvidenceJudge(llm)

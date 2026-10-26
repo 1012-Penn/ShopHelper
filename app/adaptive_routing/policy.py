@@ -15,7 +15,6 @@ from app.adaptive_routing.models import (
     RoutingInput,
 )
 
-
 POLICY_VERSION = "adaptive-routing-r2-v1"
 JUDGE_MIN_CONFIDENCE = 0.75
 POLICY_CONTRACT = {

@@ -6,7 +6,6 @@ query_logistics 自本章起由物流 MCP Server 接管,不再内置(Spec「MCP 
 """
 import json
 import logging
-import random
 import time
 from typing import Literal
 
@@ -43,12 +42,9 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
     @tool
     def query_product(keyword: str) -> str:
         """按关键词查询商品:名称、价格、库存。用户咨询商品信息时使用。"""
-        return json.dumps({
-            "keyword": keyword,
-            "name": f"{keyword}精选款",
-            "price": round(random.uniform(9.9, 499.0), 2),
-            "stock": random.randint(0, 500),
-        }, ensure_ascii=False)
+        from app.products import get_product
+
+        return json.dumps(get_product(keyword), ensure_ascii=False)
 
     @tool
     def query_faq(keyword: str, category: str | None = None) -> str:
@@ -98,7 +94,11 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
     def create_ticket(conversation_id: int, description: str, ticket_type: str,
                       confirm_key: str | None = None) -> str:
         """创建人工工单转人工处理。问题超出自动客服能力、用户强烈要求人工时使用。"""
-        from app.tickets import CONFIRM_KEY_CONFLICT, ConfirmKeyConflict, create_ticket_idempotent
+        from app.tickets import (
+            CONFIRM_KEY_CONFLICT,
+            ConfirmKeyConflict,
+            create_ticket_idempotent,
+        )
 
         try:
             payload = create_ticket_idempotent(

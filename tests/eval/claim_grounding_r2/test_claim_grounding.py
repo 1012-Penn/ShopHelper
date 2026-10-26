@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from concurrent.futures import ThreadPoolExecutor
 
+import pytest
+
 from app.answer_verifier import AnswerVerifier
 from app.claim_grounding.answer_adapter import ClaimGroundingAnswerSemantic
 from app.claim_grounding.backends import (
@@ -13,6 +15,42 @@ from app.claim_grounding.backends import (
 from app.claim_grounding.budget import BudgetExceeded, ClaimBudgetLedger
 from app.claim_grounding.grounder import ClaimGrounder
 from app.claim_grounding.models import ClaimInput, EvidenceCandidate
+
+
+def test_runtime_factory_fails_closed_without_an_explicit_budget_path(tmp_path):
+    from app.claim_grounding.runtime import build_claim_grounding_semantic
+    from app.config import Settings
+
+    settings = Settings(
+        openai_api_key="sk-test",
+        _env_file=None,
+        claim_grounding_enabled=True,
+        answer_verification_enabled=True,
+        claim_grounding_ledger_path="",
+    )
+    with pytest.raises(ValueError, match="ledger_path"):
+        build_claim_grounding_semantic(settings)
+
+
+@pytest.mark.asyncio
+async def test_application_factory_builds_explicit_claim_grounding_service(
+        make_client, tmp_path):
+    ledger_path = tmp_path / "claim-grounding.sqlite"
+    _, app = await make_client(
+        type("IntentModel", (), {
+            "ainvoke": lambda self, *_args, **_kwargs: pytest.fail(
+                "intent model must not run during factory construction"
+            )
+        })(),
+        settings_overrides={
+            "answer_verification_enabled": True,
+            "claim_grounding_enabled": True,
+            "claim_grounding_ledger_path": str(ledger_path),
+        },
+    )
+
+    assert app.state.claim_grounding_semantic is not None
+    assert ledger_path.exists()
 
 
 class RecordingBackend:

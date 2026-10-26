@@ -1,7 +1,5 @@
 import json
 
-from sqlalchemy import select
-
 from app.chunking import Chunk
 from app.db import make_session_factory
 from app.kb import KnowledgeBaseStore, vectorize_pending
@@ -21,7 +19,6 @@ def _make():
         ])
         s.commit()
     registry = build_default_registry(factory)
-    tools = [r.tool for r in registry.records()]
     return [r.tool for r in registry.records()], factory
 
 
@@ -57,6 +54,20 @@ def test_mock_tools_return_structured_json():
     assert order["order_id"] == "1001" and "status" in order and "amount" in order
     product = json.loads(by_name["query_product"].invoke({"keyword": "手机"}))
     assert "name" in product and "price" in product
+
+
+def test_query_product_uses_stable_catalog_values():
+    tools, _ = _make()
+    by_name = {t.name: t for t in tools}
+
+    first = json.loads(by_name["query_product"].invoke({"keyword": "SH-E300"}))
+    second = json.loads(by_name["query_product"].invoke({"keyword": "SH-E300"}))
+    speaker = json.loads(by_name["query_product"].invoke({"keyword": "SH-S10"}))
+
+    assert first == second
+    assert first["price"] == 299.0
+    assert first["status"] == "在售"
+    assert speaker["price"] == 189.0
 
 
 def test_query_faq_paraphrase_hit():
@@ -165,7 +176,7 @@ def test_create_ticket_rejects_bad_type():
             "conversation_id": 1, "description": "x", "ticket_type": "砍价",
         })
         raised = False
-    except Exception:
+    except Exception:  # noqa: BLE001 - assertion intentionally accepts any tool exception
         raised = True
     assert raised
 

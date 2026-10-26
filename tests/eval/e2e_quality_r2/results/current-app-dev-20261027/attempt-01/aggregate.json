@@ -1,0 +1,127 @@
+{
+  "answer_verification_enabled": false,
+  "budget": {
+    "calls": 54,
+    "limit_usd": 2.0,
+    "pending_usd": 0,
+    "settled_usd": 0.0177346
+  },
+  "contract": {
+    "answer_verification_enabled": false,
+    "arm": "baseline",
+    "budget_limit_usd": 2.0,
+    "case_counts": {
+      "dev": 8
+    },
+    "case_files": {
+      "dev": "06ad620f92803b4adb9231288d93ef98f33185162f4a1cbec65fcb9c44418029",
+      "heldout": "0e133a917088fb5be585eb37f031cf507b6875535926c0b8b16097380f542919"
+    },
+    "case_manifest": "tests/eval/e2e_quality_r2/manifest.json",
+    "case_manifest_sha256": "41e17bc316b88f2cbeb74ae421118ee2edaa5bd57d42014e4f9e449cc95c0e62",
+    "harness_sha256": "7b548e53495750775fcfa691bfd2deb6118f4a6fb6f931d8df2b4d38961896de",
+    "heldout_policy": "run once after freeze; no held-out-driven tuning",
+    "history_sha256": "e5205d1d41c96181b4f6a46340d0a77325df78a2762a10062b29981f3be9e8a7",
+    "model": "deepseek-flash",
+    "model_temperature": "production default",
+    "pricing": {
+      "path": "tests/eval/rag_ablation/pricing-snapshot-2026-10-26.yaml",
+      "sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+      "verified": true,
+      "version": "2026-10-26"
+    },
+    "rag_gap_trigger_enabled": false,
+    "retrieval_route": "hybrid_rerank",
+    "run_version": "e2e-quality-r2-v1",
+    "schema_version": 1,
+    "scorer_sha256": "fe9999044dd5ff88fff579e79017cb08d328ecae27455b3da3480b4cdd43d679",
+    "snapshot_expected_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+    "splits": [
+      "dev"
+    ],
+    "structured_output_mode": "production"
+  },
+  "model": "deepseek-flash",
+  "retrieval_route": "hybrid_rerank",
+  "schema_version": 1,
+  "splits": {
+    "dev": {
+      "case_ids": [
+        "DEV-DIRECT-E300",
+        "DEV-DIRECT-E120",
+        "DEV-SHIP-REMOTE",
+        "DEV-POLICY-V2",
+        "DEV-ENTITY-T50",
+        "DEV-ORDER-1002-TOOL",
+        "DEV-CLARIFY-SKU",
+        "DEV-REFUSE-B5-GLUCOSE"
+      ],
+      "citations": {
+        "not_required": 1,
+        "tool_only": 2,
+        "uncertain": 3,
+        "unsupported": 2
+      },
+      "clarify": 0,
+      "conditions": {
+        "measured": 2,
+        "passed": 2
+      },
+      "embedding_cost_usd": 0.0,
+      "empty_answers": 0,
+      "entities": {
+        "measured": 3,
+        "passed": 3
+      },
+      "expected_actual_behavior": {
+        "answer->answer": 4,
+        "answer_with_conditions->answer": 2,
+        "clarify->answer": 1,
+        "refuse->refuse": 1
+      },
+      "facts": {
+        "measured": 6,
+        "passed": 6
+      },
+      "failure_labels": {
+        "behavior_answer_expected_clarify": 1,
+        "citation_uncertain": 3,
+        "citation_unsupported": 2
+      },
+      "generation_cost_usd": 0.011128044,
+      "input_tokens": 64266,
+      "judge_cost_usd": 0.006606552,
+      "model_calls": {
+        "by_kind": {
+          "answer": 8,
+          "embedding": 7,
+          "evidence_judge": 7,
+          "intent": 8,
+          "llm": 10,
+          "rerank": 7,
+          "resolve": 8
+        },
+        "cache_hits": 1,
+        "calls": 55
+      },
+      "n": 8,
+      "other_cost_usd": 0.0,
+      "output_tokens": 8649,
+      "p50_latency_ms": 8792.525,
+      "p95_latency_ms": 22448.024,
+      "refusal": 1,
+      "rerank_cost_usd": 0.0,
+      "review_required": 3,
+      "routes": {
+        "measured": 1,
+        "passed": 1
+      },
+      "success": 2,
+      "technical_failures": 0,
+      "tools": {
+        "measured": 1,
+        "passed": 1
+      }
+    }
+  }
+}

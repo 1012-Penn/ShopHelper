@@ -6,7 +6,8 @@ import re
 
 from langchain_core.messages import HumanMessage, SystemMessage
 
-from app.prompts import INTENT_PROMPT, RESOLVE_PROMPT, ResolvedQuestion
+from app.orders import extract_order_id
+from app.prompts import INTENT_PROMPT, RESOLVE_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +20,9 @@ REFUND_INTENTS = {"退款退货", "售后"}
 BUSINESS_INTENTS = {"物流", "订单"}
 
 _FENCE_RE = re.compile(r"^\s*```(?:json)?\s*(.*?)\s*```\s*$", re.DOTALL)
+_GENERAL_POLICY_RE = re.compile(
+    r"政策|规则|条件|运费|邮费|包装|吊牌|多少天|几天|期限|时效|流程|标准"
+)
 
 
 def parse_intent(raw: str) -> tuple[str, float, bool]:
@@ -141,7 +145,18 @@ def route(state, *, refund_flow_mode: str = "fixed") -> str:
     if state["intent"] in KNOWLEDGE_INTENTS:
         return "retrieve"
     if state["intent"] in REFUND_INTENTS:
-        return "prepare_order" if refund_flow_mode == "fixed" else "agent"
+        if refund_flow_mode != "fixed":
+            return "agent"
+        message = state.get("resolved_message") or state.get("user_message") or ""
+        has_order = bool(
+            state.get("resume_order_id")
+            or extract_order_id(message, require_known=True)
+        )
+        if has_order:
+            return "prepare_order"
+        if _GENERAL_POLICY_RE.search(message):
+            return "retrieve"
+        return "prepare_order"
     if state["intent"] in BUSINESS_INTENTS:
         return "agent"
     if state["intent"] == "投诉":

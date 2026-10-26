@@ -32,8 +32,8 @@ __all__ = [
     "TaskHandoff",
     "ToolCacheResult",
     "ToolResultCache",
-    "claims_from_tool_result",
     "call_cache_key",
+    "claims_from_tool_result",
     "subjects_from_arguments",
     "subjects_from_text",
 ]

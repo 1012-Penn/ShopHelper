@@ -11,7 +11,6 @@ from uuid import uuid4
 
 from pydantic import BaseModel, Field, model_validator
 
-
 UNKNOWN = "unknown"
 Certainty = Literal["verified", "unverified", "unknown"]
 HandoffKind = Literal["role_handoff", "human_handoff", "tool_call"]
@@ -48,7 +47,7 @@ class EvidenceClaim(BaseModel):
     superseded_at: str | None = None
 
     @model_validator(mode="after")
-    def validate_source(self) -> "EvidenceClaim":
+    def validate_source(self) -> EvidenceClaim:
         if not self.source.tool_name.strip() or not self.source.raw_result.strip():
             raise ValueError("source tool_name and raw_result are required")
         if self.certainty == "verified" and not self.subject_ids:
@@ -73,7 +72,7 @@ class TaskHandoff(BaseModel):
     reason: str = Field(default="", max_length=500)
 
     @model_validator(mode="after")
-    def validate_role_transfer(self) -> "TaskHandoff":
+    def validate_role_transfer(self) -> TaskHandoff:
         if self.kind == "role_handoff" and (
                 self.task_id == UNKNOWN or self.objective == UNKNOWN):
             raise ValueError("role handoff requires task_id and objective")
@@ -81,7 +80,7 @@ class TaskHandoff(BaseModel):
 
     @classmethod
     def role(cls, *, run_id: str, from_agent: str, to_agent: str,
-             task, subject_ids: list[str], observed_at: str) -> "TaskHandoff":
+             task, subject_ids: list[str], observed_at: str) -> TaskHandoff:
         return cls(
             run_id=run_id, kind="role_handoff", from_agent=from_agent,
             to_agent=to_agent, task_id=task.task_id, objective=task.objective,
@@ -91,7 +90,7 @@ class TaskHandoff(BaseModel):
 
     @classmethod
     def tool(cls, *, run_id: str, from_agent: str, task_id: str,
-             tool_name: str, observed_at: str) -> "TaskHandoff":
+             tool_name: str, observed_at: str) -> TaskHandoff:
         return cls(
             run_id=run_id, kind="tool_call", from_agent=from_agent,
             to_agent=f"tool:{tool_name}", task_id=task_id,
@@ -100,7 +99,7 @@ class TaskHandoff(BaseModel):
 
     @classmethod
     def human(cls, *, run_id: str, from_agent: str, reason: str,
-              observed_at: str) -> "TaskHandoff":
+              observed_at: str) -> TaskHandoff:
         return cls(
             run_id=run_id, kind="human_handoff", from_agent=from_agent,
             to_agent="human", reason=reason, observed_at=observed_at,

@@ -3,7 +3,7 @@ from langchain_core.prompts import PromptTemplate
 from pydantic import BaseModel
 
 from app.config import Settings
-from app.llm import make_extract_model
+from app.llm import make_structured_extractor
 
 # 模板无花括号文案,只有 {query} 占位
 REWRITE_PROMPT = PromptTemplate.from_template(
@@ -42,5 +42,5 @@ def bm25_query_text(qr: QueryRewrite) -> str:
 
 
 def make_rewriter(settings: Settings) -> QueryRewriter:
-    llm = make_extract_model(settings).with_structured_output(QueryRewrite, method="function_calling")
+    llm = make_structured_extractor(settings, QueryRewrite)
     return QueryRewriter(llm)

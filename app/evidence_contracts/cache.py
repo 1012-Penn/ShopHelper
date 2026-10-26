@@ -6,8 +6,9 @@ import asyncio
 import hashlib
 import json
 import time
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Any, Awaitable, Callable
+from typing import Any
 
 from app.evidence_contracts.extraction import subjects_from_arguments
 
@@ -109,6 +110,13 @@ class ToolResultCache:
                 value = await execute()
                 if not entry.future.done():
                     entry.future.set_result(value)
+                if value.startswith("错误:"):
+                    # ToolEngine normalizes execution errors into strings.  Do not
+                    # let a transient error suppress a later retry for the whole TTL.
+                    self.stats.errors += 1
+                    async with self._guard:
+                        if self._entries.get(key) is entry:
+                            self._entries.pop(key, None)
                 return ToolCacheResult(value, deduplicated=False)
             except Exception as exc:
                 self.stats.errors += 1

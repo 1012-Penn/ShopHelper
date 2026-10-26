@@ -10,7 +10,6 @@ from typing import Any
 
 from app.evidence_contracts.models import UNKNOWN, EvidenceClaim, EvidenceSource
 
-
 _SUBJECT_ARGUMENT_KEYS = (
     "order_id", "order_ids", "product_id", "sku", "model", "subject_id",
 )

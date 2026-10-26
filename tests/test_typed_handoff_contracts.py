@@ -5,11 +5,11 @@ from datetime import datetime, timezone
 
 import pytest
 from httpx import ASGITransport, AsyncClient
-from langchain_core.messages import AIMessage, HumanMessage, ToolMessage
+from langchain_core.messages import AIMessage, ToolMessage
 from pydantic import ValidationError
 
-from app.multi_agent.models import AgentPlan, AgentTask, MultiAgentLimits
 from app.multi_agent.api import create_multi_agent_app
+from app.multi_agent.models import AgentPlan, AgentTask, MultiAgentLimits
 from app.multi_agent.roles import ROLE_SPECS
 from app.multi_agent.runtime import MultiAgentRunner, build_multi_agent_graph
 
@@ -177,6 +177,31 @@ def test_newer_observation_supersedes_old_and_expired_claim_is_not_projected():
     assert ledger.claims["old"].superseded_by == "new"
 
 
+def test_repeated_equivalent_observation_supersedes_prior_claim():
+    from app.evidence_contracts import EvidenceLedger, TaskHandoff
+
+    ledger = EvidenceLedger(now=lambda: datetime(2026, 10, 27, tzinfo=timezone.utc))
+    old = _claim(claim_id="r1", value="已发货", observed_sequence=1)
+    refreshed = _claim(claim_id="r2", value="已签收", observed_sequence=1)
+    ledger.add_many([old])
+    ledger.add_many([refreshed])
+
+    task = AgentTask(
+        task_id="a1", agent="action", objective="处理订单1001",
+        depends_on=["r1"],
+    )
+    handoff = TaskHandoff.role(
+        run_id="run", from_agent="supervisor", to_agent="action",
+        task=task, subject_ids=["1001"],
+        observed_at="2026-10-27T00:00:00+00:00",
+    )
+
+    assert [claim.claim_id for claim in ledger.project(task=task, handoff=handoff)] == [
+        "r2"
+    ]
+    assert ledger.claims["r1"].superseded_by == "r2"
+
+
 @pytest.mark.asyncio
 async def test_tool_cache_coalesces_concurrent_equivalent_reads_and_never_caches_writes():
     from app.evidence_contracts import ToolResultCache
@@ -212,6 +237,28 @@ async def test_tool_cache_coalesces_concurrent_equivalent_reads_and_never_caches
     assert writes == 2
     assert cache.stats.executed == 3
     assert cache.stats.deduplicated == 1
+
+
+@pytest.mark.asyncio
+async def test_tool_cache_does_not_reuse_tool_error_text():
+    from app.evidence_contracts import ToolResultCache
+
+    cache = ToolResultCache(dynamic_ttl_seconds=60)
+    calls = 0
+
+    async def read():
+        nonlocal calls
+        calls += 1
+        return "错误: temporary upstream failure" if calls == 1 else '{"status":"ok"}'
+
+    first = await cache.execute(
+        "query_order", {"order_id": "1001"}, read=True, execute=read)
+    second = await cache.execute(
+        "query_order", {"order_id": "1001"}, read=True, execute=read)
+
+    assert first.result.startswith("错误:")
+    assert second.result == '{"status":"ok"}'
+    assert calls == 2
 
 
 @pytest.mark.asyncio
@@ -261,6 +308,46 @@ class _Final:
     async def ainvoke(self, messages, **_kwargs):
         self.messages = messages
         return AIMessage(content="汇总")
+
+
+@pytest.mark.asyncio
+async def test_typed_supervisor_projection_excludes_raw_tool_payload():
+    plan = AgentPlan(disposition="execute", tasks=[
+        AgentTask(task_id="r1", agent="retrieval", objective="查询订单1001"),
+    ])
+    final = _Final()
+    runner = MultiAgentRunner(
+        planner_model=_Planner(plan), retrieval_model=_NoToolModel(),
+        action_model=_NoToolModel(), supervisor_model=final, engine=object(),
+        limits=MultiAgentLimits(max_seconds=3, child_timeout_seconds=1),
+        handoff_mode="typed",
+    )
+    context = runner._context("typed-final")
+    context.evidence_ledger.add_many([
+        _claim(
+            claim_id="supervisor-claim",
+            run_id="typed-final",
+            task_id="r1",
+            source=_claim().source.model_copy(
+                update={"raw_result": '{"secret":"must stay in audit only"}'}
+            ),
+        )
+    ])
+
+    await runner.finalize(
+        run_id="typed-final",
+        message="订单1001",
+        plan=plan,
+        facts={},
+        evidence={},
+        errors=[],
+    )
+
+    prompt = "\n".join(str(item.content) for item in final.messages)
+    assert "supervisor-claim" in prompt
+    assert "evidence_claims" in prompt
+    assert "raw_result" not in prompt
+    assert "must stay in audit only" not in prompt
 
 
 @pytest.mark.asyncio

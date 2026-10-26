@@ -107,8 +107,29 @@ async def test_intent_escalation_skipped_when_confident():
 
 
 def test_route_refund_flows_to_prepare_order():
-    assert route(_state(intent="退款退货")) == "prepare_order"
-    assert route(_state(intent="售后")) == "prepare_order"
+    assert route(_state(
+        intent="退款退货", resolved_message="订单1001的无线耳机能退吗"
+    )) == "prepare_order"
+    assert route(_state(
+        intent="售后", resolved_message="订单1002的机械键盘怎么换"
+    )) == "prepare_order"
+
+
+def test_route_general_refund_policy_answers_before_asking_for_order():
+    assert route(_state(
+        intent="退款退货",
+        resolved_message="当前无理由退货政策要求保留哪些包装条件？",
+    )) == "retrieve"
+    assert route(_state(
+        intent="售后",
+        resolved_message="非人为质量问题退货运费由谁承担？",
+    )) == "retrieve"
+
+
+def test_route_specific_refund_request_without_order_keeps_selector_flow():
+    assert route(_state(
+        intent="退款退货", resolved_message="这个能退吗？"
+    )) == "prepare_order"
 
 
 def test_refund_route_can_be_selected_for_ch15_comparison():

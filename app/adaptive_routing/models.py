@@ -6,7 +6,6 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
 RouteTarget = Literal["single", "multi"]
 
 
@@ -91,7 +90,9 @@ class NormalizedResponse(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
     reply: str = ""
+    run_id: str | None = None
     conversation_id: int | None = None
+    status: str = ""
     disposition: str = ""
     facts: dict[str, Any] = Field(default_factory=dict)
     evidence: dict[str, Any] = Field(default_factory=dict)
@@ -99,6 +100,7 @@ class NormalizedResponse(BaseModel):
     errors: list[str] = Field(default_factory=list)
     stop_reasons: list[str] = Field(default_factory=list)
     write_previews: list[dict[str, Any]] = Field(default_factory=list)
+    usage: dict[str, Any] = Field(default_factory=dict)
     tokens: int = 0
 
 

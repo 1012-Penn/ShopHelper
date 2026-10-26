@@ -5,7 +5,6 @@ Python 3.10 async 上下文被官方守卫禁用,故节点发帧走 configurable
 路由层建 asyncio.Queue 注入 config,节点内 writer 闭包 put_nowait,路由层排空转 SSE。
 interrupt() 同受该守卫禁用(spike 实测),订单选择器停走走无状态回传(resume 旁路)。
 """
-import asyncio
 import json
 import logging
 from pathlib import Path
@@ -91,24 +90,21 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
     intent 默认用传入 model;intent_escalation_enabled 时小模型先判、大模型 escalator 重判。
     ch12:retrieval_route ∈ {decompose_once, controlled_loop} 时「商品咨询」改走
     agentic_retrieve 受控循环;默认 hybrid_rerank 图结构零变化(ADR-2)。"""
-    from app.llm import make_extract_model
+    from app.llm import make_extract_model, make_structured_extractor
     from app.prompts import ExpandedQueries, ResolvedQuestion
 
     retrieve_node, gate_node, fallback_node = make_knowledge_nodes(
         retrieval_service, kb, pool, snapshot_top_k=settings.langfuse_retrieval_top_k)
 
     if resolver is None:
-        resolver = make_extract_model(settings).with_structured_output(
-            ResolvedQuestion, method="function_calling")
+        resolver = make_structured_extractor(settings, ResolvedQuestion)
     if expander is None:
-        expander = make_extract_model(settings).with_structured_output(
-            ExpandedQueries, method="function_calling")
+        expander = make_structured_extractor(settings, ExpandedQueries)
     if answer_verifier is None and settings.answer_verification_enabled:
         from app.answer_verifier import AnswerVerdict, AnswerVerifier
 
         answer_verifier = AnswerVerifier(
-            make_extract_model(settings).with_structured_output(
-                AnswerVerdict, method="function_calling"),
+            make_structured_extractor(settings, AnswerVerdict),
             max_revisions=settings.answer_verification_max_revisions,
         )
     if settings.intent_escalation_enabled:

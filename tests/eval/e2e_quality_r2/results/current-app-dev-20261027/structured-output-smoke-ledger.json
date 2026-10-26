@@ -1,0 +1,24 @@
+{
+  "limit_usd": 0.05,
+  "pending": {},
+  "records": [
+    {
+      "actual_usd": 0.000309,
+      "attempt_id": "acffdb27568d47c483b6eea112123333",
+      "context": {
+        "kind": "structured_output_smoke"
+      },
+      "error": null,
+      "estimated_usd": 0.01,
+      "reserved_at": "2026-10-26T18:13:14.921696+00:00",
+      "settled_at": "2026-10-26T18:13:17.064686+00:00",
+      "status": "succeeded",
+      "usage": {
+        "cache_hit_input_tokens": 0,
+        "input_tokens": 146,
+        "output_tokens": 221
+      }
+    }
+  ],
+  "schema_version": 1
+}

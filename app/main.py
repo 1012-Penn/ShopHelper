@@ -9,18 +9,32 @@ from app.admin_store import AdminAuditStore, AdminStore
 from app.config import Settings
 from app.context import derive_budgets
 from app.db import make_engine, make_session_factory
-from app.guard import LowConfidencePool
-from app.llm import make_chat_model, make_extract_model
-from app.routers import (chat, conversations, evaluation, extract, feedback, orders,
-                          review_queue, sessions, tickets, usage)
-from app.schemas import AfterSaleExtraction
-from app.round_capture import RoundCapture
-from app.store import ConversationStore, UsageStore
-from app.flywheel import (DedupDecisionOutput, FlywheelService, NormalizedQuestion,
-                          NormalizedQuestionOutput)
 from app.evaluation import EvalRunStore
 from app.execution.service import ExecutionService
 from app.execution.store import ExecutionStore
+from app.flywheel import (
+    DedupDecisionOutput,
+    FlywheelService,
+    NormalizedQuestion,
+    NormalizedQuestionOutput,
+)
+from app.guard import LowConfidencePool
+from app.llm import make_chat_model, make_extract_model, make_structured_extractor
+from app.round_capture import RoundCapture
+from app.routers import (
+    chat,
+    conversations,
+    evaluation,
+    extract,
+    feedback,
+    orders,
+    review_queue,
+    sessions,
+    tickets,
+    usage,
+)
+from app.schemas import AfterSaleExtraction
+from app.store import ConversationStore, UsageStore
 from app.summarizer import SummaryService
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -82,6 +96,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.hydrated_threads = set()  # 已回灌完整历史的 thread(checkpoint 空时从 MySQL 灌一次)
     app.state.summary_service = SummaryService(app.state.store, make_extract_model(settings))
     # ch08 工具系统:注册中心(内置+插件 autoload)→ 统一执行引擎 → MCP 动态发现
+    from app.execution.tool_engine import ExecutionToolEngine
     from app.graph.builder import build_graph, make_retrieval_chain
     from app.tools.audit import ToolAuditStore
     from app.tools.base import ToolContext, ToolRegistryV2
@@ -89,13 +104,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from app.tools.engine import ToolEngine
     from app.tools.mcp_client import McpService
     from app.tools.plugins import load_plugins
-    from app.execution.tool_engine import ExecutionToolEngine
 
     service, kb = make_retrieval_chain(session_factory, settings)
-    normalize_model = make_extract_model(settings).with_structured_output(
-        NormalizedQuestionOutput, method="function_calling")
-    dedup_model = make_extract_model(settings).with_structured_output(
-        DedupDecisionOutput, method="function_calling")
+    normalize_model = make_structured_extractor(settings, NormalizedQuestionOutput)
+    dedup_model = make_structured_extractor(settings, DedupDecisionOutput)
 
     def normalize_question(raw: str) -> NormalizedQuestion:
         result = normalize_model.invoke(
@@ -136,17 +148,26 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         "aftersales": settings.mcp_aftersales_url,
     })
     app.state.chat_model = make_chat_model(settings)
-    app.state.extract_model = make_extract_model(settings).with_structured_output(
-        AfterSaleExtraction, method="function_calling"
-    )
+    app.state.extract_model = make_structured_extractor(settings, AfterSaleExtraction)
     # ch05:LangGraph 图骨架(检索链与工具检索生产分支同构,各自持有真实现)
     from app.rag_steps import RagLoopStepStore
     rag_steps_store = RagLoopStepStore(session_factory)
     app.state.rag_steps_store = rag_steps_store
+    answer_verifier = None
+    if settings.answer_verification_enabled and settings.claim_grounding_enabled:
+        from app.answer_verifier import AnswerVerifier
+        from app.claim_grounding.runtime import build_claim_grounding_semantic
+
+        app.state.claim_grounding_semantic = build_claim_grounding_semantic(settings)
+        answer_verifier = AnswerVerifier(
+            app.state.claim_grounding_semantic,
+            max_revisions=settings.answer_verification_max_revisions,
+        )
     compiled_graph = build_graph(
         app.state.chat_model, app.state.engine, settings,
         app.state.store, app.state.pool, service, kb,
         rag_steps_store=rag_steps_store,
+        answer_verifier=answer_verifier,
     )
     from app.observability import ObservabilityService
     app.state.observability = ObservabilityService(settings, app.state.usage_store)
@@ -179,13 +200,25 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # Optional multi-Agent route shares the existing engine/model/session store;
     # `POST /api/chat` remains the default single-Agent path.
     from app.multi_agent.api import create_multi_agent_router
+    from app.multi_agent.models import AgentPlan
     from app.multi_agent.runtime import build_multi_agent_runtime
     app.state.multi_agent = build_multi_agent_runtime(
         engine=app.state.engine,
         model=app.state.chat_model,
         limits=None,
+        planner_structured=make_structured_extractor(settings, AgentPlan),
+        handoff_mode=settings.multi_agent_handoff_mode,
+        dynamic_status_ttl_seconds=settings.multi_agent_dynamic_status_ttl_seconds,
     )
     app.include_router(create_multi_agent_router())
+    if settings.adaptive_routing_enabled:
+        from app.adaptive_routing.api import create_adaptive_routing_router
+        from app.adaptive_routing.application import AppAdaptiveRoutingService
+
+        app.state.adaptive_routing_service = AppAdaptiveRoutingService(app)
+        app.include_router(
+            create_adaptive_routing_router(app.state.adaptive_routing_service)
+        )
 
     @app.get("/")
     async def index() -> FileResponse:

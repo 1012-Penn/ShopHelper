@@ -7,7 +7,6 @@ from collections.abc import Sequence
 
 from app.adaptive_routing.models import HistoryTurn, RoutingFeatures
 
-
 _ORDER_CONTEXTUAL = re.compile(r"(?:订单|order)\s*号?\s*(\d{3,6})", re.IGNORECASE)
 _ORDER_BARE = re.compile(r"(?<!\d)(\d{4,6})(?!\d)")
 _COMPARISON = re.compile(
@@ -59,7 +58,7 @@ def extract_routing_features(
     current = question or ""
     order_ids = _order_ids(visible_text)
     entity_count = len(order_ids)
-    has_order_context = bool(order_ids) or bool(re.search(r"订单|order", visible_text, re.I))
+    has_order_context = bool(order_ids) or bool(re.search(r"订单|order", visible_text, re.IGNORECASE))
     has_policy_action = bool(_POLICY_ORDER_ACTION.search(current))
     policy_order_dependency = has_order_context and has_policy_action
     cross_order_comparison = entity_count >= 2 and bool(_COMPARISON.search(current))
