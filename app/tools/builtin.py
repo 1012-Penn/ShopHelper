@@ -4,6 +4,7 @@ query_logistics 自本章起由物流 MCP Server 接管,不再内置(Spec「MCP 
 写入类:create_ticket(access="write"),执行引擎把门,直调一律拦截等用户确认。
 检索依赖(service/kb)由接线层组装进 ToolContext 传入,这里不碰应用全局。
 """
+import inspect
 import json
 import logging
 import time
@@ -34,6 +35,7 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
     @tool
     def query_order(order_id: str) -> str:
         """按订单号查询订单的基础信息:商品、金额、状态;不包含物流轨迹。
+        裸数字如 1001 表示 legacy_demo 演示订单;完整 ORD-1001 表示 corpus 订单,两者不是同一主体。
         用户问订单买了什么、多少钱、什么状态时使用;问包裹/物流到哪了时不要用本工具。"""
         from app.orders import get_order
 
@@ -47,10 +49,64 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
         return json.dumps(get_product(keyword), ensure_ascii=False)
 
     @tool
-    def query_faq(keyword: str, category: str | None = None) -> str:
-        """语义检索常见问题知识库并精排。用户问退货政策、发货时间、邮费运费、付款、发票、会员等常见问题,或问具体商品型号(如 SH-E300)的参数、价格时使用;能从用户话里明确判断品类时传 category,判断不了不要传。"""
+    def query_faq(keyword: str, category: str | None = None,
+                  order_id: str | None = None,
+                  policy_version: str | None = None,
+                  as_of_date: str | None = None) -> str:
+        """语义检索常见问题知识库并精排。用户问退货政策、发货时间、邮费运费、付款、发票、会员等常见问题,或问具体商品型号(如 SH-E300)的参数、价格时使用;能从用户话里明确判断品类时传 category,判断不了不要传。已知具体订单时传 order_id;只有明确知道适用政策版本或假想签收日期时才传 policy_version/as_of_date。"""
         try:
-            result = service.retrieve(keyword, strategy="hybrid_rerank", category=category)
+            from datetime import date
+
+            from app.business_facts import policy_version_for_date
+            from app.orders import get_order
+            from app.retrieval import EvidenceScope
+
+            subject = None
+            derived_version = None
+            derived_date = None
+            order_error = None
+            if order_id:
+                order = get_order(order_id)
+                subject = (order.get("subject") or {}).get("canonical_id")
+                order_error = order.get("error")
+                if order.get("signed_at"):
+                    derived_date = str(order["signed_at"])[:10]
+                    derived_version = policy_version_for_date(derived_date)
+
+            selected_version = derived_version or (policy_version if not order_id else None)
+            parsed_date = None
+            if derived_date:
+                parsed_date = date.fromisoformat(str(derived_date)[:10])
+            elif not order_id and as_of_date:
+                try:
+                    parsed_date = date.fromisoformat(str(as_of_date)[:10])
+                except ValueError:
+                    parsed_date = None
+            scope = EvidenceScope(
+                subject=subject,
+                policy_version=selected_version,
+                reference_date=parsed_date,
+            )
+            scope_arg = scope if scope.has_constraints() else None
+            parameters = inspect.signature(service.retrieve).parameters.values()
+            supports_scope = any(
+                item.name == "scope" or item.kind == inspect.Parameter.VAR_KEYWORD
+                for item in parameters
+            )
+            if supports_scope:
+                result = service.retrieve(
+                    keyword,
+                    strategy="hybrid_rerank",
+                    category=category,
+                    scope=scope_arg,
+                )
+            else:
+                # Old injected services keep their three-argument contract.
+                result = service.retrieve(
+                    keyword,
+                    strategy="hybrid_rerank",
+                    category=category,
+                )
             # 低置信候选可以被问题池快照保留,但不能作为 Agent 工具证据继续向上游传播。
             visible_items = [] if result.low_confidence else result.items
             rows = kb.get_chunks([r.chunk_id for r in visible_items])
@@ -82,6 +138,19 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
                 "reason": result.reason,
                 "filter_fallback": result.filter_fallback,
                 "degraded": result.degraded,
+                "scope_filter": {
+                    "status": result.scope_status,
+                    "subject": subject,
+                    "policy_version": selected_version or "unknown",
+                    "reference_date": (
+                        parsed_date.isoformat() if parsed_date else "unknown"
+                    ),
+                    "order_error": order_error,
+                    "excluded_count": len(result.scope_excluded),
+                    "excluded": result.scope_excluded[:20],
+                    "unknown_chunk_ids": result.scope_unknown_ids,
+                    "matched_chunk_ids": result.scope_matched_ids,
+                },
             }, ensure_ascii=False)
         except Exception:
             logger.warning("query_faq 检索失败", exc_info=True)

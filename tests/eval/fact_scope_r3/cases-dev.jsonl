@@ -1,0 +1,8 @@
+{"id":"FSR3-DEV-001","split":"dev","group":"dev-legacy-status","question":"订单1001现在是什么状态？","order_ref":"1001","policy_query":"订单状态","hypothetical_date":null}
+{"id":"FSR3-DEV-002","split":"dev","group":"dev-corpus-same-suffix","question":"ORD-1001现在金额和状态是什么？","order_ref":"ORD-1001","policy_query":"订单金额 状态","hypothetical_date":null}
+{"id":"FSR3-DEV-003","split":"dev","group":"dev-ambiguous-suffix","question":"尾号1001那单要退，按什么政策？","order_ref":"1001","policy_query":"无理由退货 政策","hypothetical_date":null}
+{"id":"FSR3-DEV-004","split":"dev","group":"dev-unknown-order","question":"查一下ORD-9999的订单状态。","order_ref":"ORD-9999","policy_query":"订单状态","hypothetical_date":null}
+{"id":"FSR3-DEV-005","split":"dev","group":"dev-order-v2-window","question":"ORD-1004的退货窗口是几天？","order_ref":"ORD-1004","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-DEV-006","split":"dev","group":"dev-user-date-conflict","question":"我是在2026-05-20签收ORD-1004的，它能按几天无理由退货？","order_ref":"ORD-1004","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-DEV-007","split":"dev","group":"dev-generic-no-order","question":"没有订单号时，无理由退货窗口怎么判断？","order_ref":null,"policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-DEV-008","split":"dev","group":"dev-order-not-signed","question":"ORD-1003已经签收了吗，能直接取消吗？","order_ref":"ORD-1003","policy_query":"订单发货 取消","hypothetical_date":null}

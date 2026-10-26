@@ -163,7 +163,7 @@
   },
   "fixtures": {
     "policies_sha256": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
-    "orders_sha256": "2db8a201f1eb9f9d13ab4ad9b3a1ec2f52ab4f81662bac5975d2ba2d428e5247"
+    "orders_sha256": "4387a71b89c5c0c68c30d5c25e09d70b19433943849dc5270632acfbc1e631a7"
   },
   "evidence_sources": {
     "orders": "app/orders.py fixed simulated catalog",

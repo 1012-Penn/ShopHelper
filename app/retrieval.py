@@ -6,8 +6,10 @@
 """
 import hashlib
 import logging
+import re
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from datetime import date
 
 from app.kb import KnowledgeBaseStore, vector_text
 from app.rewrite import QueryRewrite, bm25_query_text
@@ -29,6 +31,134 @@ class PreparedQuery:
     """一次改写结果;评估时四策略共用,避免每条策略各改一次。"""
     rewritten: str
     search_text: str
+
+
+@dataclass(frozen=True)
+class PolicyWindow:
+    version: str
+    effective_from: date | None = None
+    effective_to: date | None = None
+
+    def includes(self, value: date) -> bool:
+        lower = self.effective_from or date.min
+        upper = self.effective_to or date.max
+        return lower <= value <= upper
+
+
+@dataclass(frozen=True)
+class EvidenceScope:
+    """Optional, explainable subject/policy-time constraint for retrieval."""
+
+    subject: str | None = None
+    policy_version: str | None = None
+    reference_date: date | None = None
+
+    def has_constraints(self) -> bool:
+        return bool(self.subject or self.policy_version or self.reference_date)
+
+
+@dataclass(frozen=True)
+class ScopedDocument:
+    chunk_id: int
+    text: str
+    section_path: str = ""
+
+
+@dataclass(frozen=True)
+class ScopeExclusion:
+    chunk_id: int
+    reason: str
+    detail: str
+
+
+@dataclass(frozen=True)
+class ScopeFilterResult:
+    kept: list[Retrieved]
+    excluded: list[ScopeExclusion]
+    unknown_ids: list[int]
+    matched_ids: list[int]
+    status: str
+
+
+_ORD_DOCUMENT_ID = re.compile(r"(?<![A-Z0-9])ORD-\d{4,6}(?![0-9])", re.IGNORECASE)
+_POLICY_VERSION = re.compile(r"(?<![A-Za-z0-9])v(\d+)(?![A-Za-z0-9])", re.IGNORECASE)
+
+
+def _explicit_policy_versions(section_path: str) -> set[str]:
+    return {f"v{number}" for number in _POLICY_VERSION.findall(section_path or "")}
+
+
+def filter_scoped_documents(
+    documents: list[ScopedDocument],
+    scope: EvidenceScope,
+    *,
+    policy_windows: tuple[PolicyWindow, ...] = (),
+) -> ScopeFilterResult:
+    """Keep generic evidence and exclude only provable entity/version conflicts."""
+    windows = {item.version.casefold(): item for item in policy_windows}
+    kept_ids: list[int] = []
+    excluded: list[ScopeExclusion] = []
+    unknown_ids: list[int] = []
+    matched_ids: list[int] = []
+    has_constraints = scope.has_constraints()
+
+    for document in documents:
+        combined = f"{document.section_path}\n{document.text}"
+        order_ids = {
+            f"corpus:{value.upper()}"
+            for value in _ORD_DOCUMENT_ID.findall(combined)
+        }
+        versions = _explicit_policy_versions(document.section_path)
+        explicit = bool(order_ids or versions)
+        reason = ""
+        detail = ""
+
+        if scope.subject and order_ids and scope.subject not in order_ids:
+            reason = "entity_conflict"
+            detail = f"requested={scope.subject}; evidence={','.join(sorted(order_ids))}"
+
+        version = next(iter(versions)) if len(versions) == 1 else None
+        if not reason and version and scope.policy_version:
+            if version.casefold() != scope.policy_version.casefold():
+                reason = "policy_version_conflict"
+                detail = f"requested={scope.policy_version}; evidence={version}"
+        if not reason and version and scope.reference_date:
+            window = windows.get(version.casefold())
+            if window is not None and not window.includes(scope.reference_date):
+                reason = "policy_date_conflict"
+                detail = (
+                    f"date={scope.reference_date.isoformat()}; "
+                    f"window={version}:{window.effective_from}:{window.effective_to}"
+                )
+
+        if reason:
+            excluded.append(ScopeExclusion(document.chunk_id, reason, detail))
+        elif explicit and has_constraints:
+            matched_ids.append(document.chunk_id)
+            kept_ids.append(document.chunk_id)
+        else:
+            unknown_ids.append(document.chunk_id)
+            kept_ids.append(document.chunk_id)
+
+    if not has_constraints:
+        status = "unknown"
+    elif not kept_ids:
+        status = "empty"
+    elif excluded and kept_ids:
+        status = "partial"
+    elif matched_ids:
+        status = "verified"
+    else:
+        status = "unknown"
+
+    by_id = {item.chunk_id: item for item in documents}
+    return ScopeFilterResult(
+        kept=[by_id[chunk_id] for chunk_id in kept_ids],
+        excluded=excluded,
+        unknown_ids=unknown_ids,
+        matched_ids=matched_ids,
+        status=status,
+    )
 
 
 @dataclass(frozen=True)
@@ -73,6 +203,10 @@ class RetrievalResult:
     degraded: bool = False  # reranker 缺失/失败降级 RRF 序时为 True(未精排,证据质量降档)
     evidence_confidence: EvidenceConfidence | None = None
     evidence_entailment: bool | None = None  # v2:LLM 判断证据是否真的回答问题;None=未启用/失败
+    scope_status: str = "not_requested"
+    scope_excluded: list[dict] = field(default_factory=list)
+    scope_unknown_ids: list[int] = field(default_factory=list)
+    scope_matched_ids: list[int] = field(default_factory=list)
 
     def snapshot(self, top_k: int = 3) -> list[dict]:
         """保留入池时可供人工审核的 Top-K 原始 chunk id 与精排分数。"""
@@ -320,7 +454,8 @@ class RetrievalService:
                  dense_score_floor: float = RETRIEVAL_SCORE_FLOOR,
                  rerank_score_floor: float = 0.30,
                  evidence_calibration: EvidenceCalibration | None = None,
-                 evidence_judge=None, evidence_top_n: int = 3) -> None:
+                 evidence_judge=None, evidence_top_n: int = 3,
+                 policy_windows: tuple[PolicyWindow, ...] | None = None) -> None:
         self._embedder = embedder
         self._vectors = vectors
         self._kb = kb
@@ -334,6 +469,7 @@ class RetrievalService:
             top1_floor=rerank_score_floor)
         self._evidence_judge = evidence_judge
         self._evidence_top_n = max(1, int(evidence_top_n))
+        self._policy_windows = policy_windows
 
     def prepare_query(self, query: str, use_rewrite: bool = True) -> PreparedQuery:
         """一次性改写;评估脚本可先缓存再让四策略共用。"""
@@ -346,7 +482,8 @@ class RetrievalService:
 
     def retrieve(self, query: str, strategy: str = "hybrid_rerank",
                  category: str | None = None, use_rewrite: bool = True,
-                 prepared: PreparedQuery | None = None) -> RetrievalResult:
+                 prepared: PreparedQuery | None = None,
+                 scope: EvidenceScope | None = None) -> RetrievalResult:
         if strategy not in STRATEGIES:
             raise ValueError(f"未知检索策略:{strategy}")
 
@@ -366,38 +503,131 @@ class RetrievalService:
                     return []
                 raise  # 无过滤也炸:真故障,交上层收敛为低置信
 
+        def apply_scope(
+            items: list[Retrieved],
+        ) -> tuple[list[Retrieved], ScopeFilterResult | None]:
+            if scope is None:
+                return items, None
+            rows = self._kb.get_chunks([item.chunk_id for item in items])
+            documents = [
+                ScopedDocument(
+                    chunk_id=row.id,
+                    text=vector_text(row.category, row.questions, row.answer),
+                    section_path=row.section_path or "",
+                )
+                for row in rows
+            ]
+            windows = self._policy_windows
+            if windows is None:
+                from app.business_facts import corpus_policy_windows
+
+                windows = corpus_policy_windows()
+                self._policy_windows = windows
+            filtered = filter_scoped_documents(
+                documents,
+                scope,
+                policy_windows=windows,
+            )
+            score_by_id = {item.chunk_id: item for item in items}
+            return [score_by_id[item.chunk_id] for item in filtered.kept], filtered
+
+        def scope_fields(filtered: ScopeFilterResult | None) -> dict:
+            if filtered is None:
+                return {}
+            return {
+                "scope_status": filtered.status,
+                "scope_excluded": [
+                    {
+                        "chunk_id": item.chunk_id,
+                        "reason": item.reason,
+                        "detail": item.detail,
+                    }
+                    for item in filtered.excluded
+                ],
+                "scope_unknown_ids": filtered.unknown_ids,
+                "scope_matched_ids": filtered.matched_ids,
+            }
+
         if strategy == "dense":
             items = search(self._dense, rewritten)
             fallback = not items and bool(expr)
             if fallback:
                 items = self._dense(rewritten, None)
-            return RetrievalResult(items, not items, "知识库无相关内容" if not items else "",
-                                   fallback, rewritten, search_text)
+            items, filtered = apply_scope(items)
+            reason = (
+                "作用域过滤后无适用证据"
+                if filtered is not None and not items
+                else ("知识库无相关内容" if not items else "")
+            )
+            return RetrievalResult(
+                items,
+                not items,
+                reason,
+                fallback,
+                rewritten,
+                search_text,
+                **scope_fields(filtered),
+            )
 
         if strategy == "bm25":
             items = search(self._bm25, search_text)
             fallback = not items and bool(expr)
             if fallback:
                 items = self._bm25(search_text, None)
-            return RetrievalResult(items, not items, "知识库无相关内容" if not items else "",
-                                   fallback, rewritten, search_text)
+            items, filtered = apply_scope(items)
+            reason = (
+                "作用域过滤后无适用证据"
+                if filtered is not None and not items
+                else ("知识库无相关内容" if not items else "")
+            )
+            return RetrievalResult(
+                items,
+                not items,
+                reason,
+                fallback,
+                rewritten,
+                search_text,
+                **scope_fields(filtered),
+            )
 
         # hybrid / hybrid_rerank 共用候选召回
         cand = search(self._hybrid, rewritten, search_text)
         fallback = not cand and bool(expr)
         if fallback:
             cand = self._hybrid(rewritten, search_text, None)
+        cand, filtered = apply_scope(cand)
         if not cand:
-            return RetrievalResult([], True, "知识库无相关内容", fallback, rewritten, search_text)
+            reason = (
+                "作用域过滤后无适用证据"
+                if filtered is not None
+                else "知识库无相关内容"
+            )
+            return RetrievalResult(
+                [],
+                True,
+                reason,
+                fallback,
+                rewritten,
+                search_text,
+                **scope_fields(filtered),
+            )
         if strategy == "hybrid":
-            return RetrievalResult(cand, False, "", fallback, rewritten, search_text)
+            return RetrievalResult(
+                cand,
+                False,
+                "",
+                fallback,
+                rewritten,
+                search_text,
+                **scope_fields(filtered),
+            )
 
         # hybrid_rerank:精排 Top-N;reranker 缺失或调用失败降级 RRF 序(质量掉档,记 warning 并标记)
         if self._reranker is None:
             logger.warning("reranker 未配置,hybrid_rerank 降级为 RRF 序,证据闸无法判定")
             return RetrievalResult(cand[: self._final_top_k], True,
                                    "重排不可用,证据闸无法判定,候选仅供诊断", fallback, rewritten,
-                                   search_text, degraded=True)
+                                   search_text, degraded=True, **scope_fields(filtered))
         texts = self._chunk_texts([r.chunk_id for r in cand])
         try:
             ranked = self._reranker.rerank(rewritten, [texts.get(r.chunk_id, "") for r in cand],
@@ -408,10 +638,18 @@ class RetrievalService:
             logger.warning("重排失败,降级 RRF 序,证据闸无法判定:%s", exc)
             return RetrievalResult(cand[: self._final_top_k], True,
                                    "重排不可用,证据闸无法判定,候选仅供诊断", fallback, rewritten,
-                                   search_text, degraded=True)
+                                   search_text, degraded=True, **scope_fields(filtered))
         items = [Retrieved(chunk_id=cand[idx].chunk_id, score=score) for idx, score in ranked]
         if not items:
-            return RetrievalResult([], True, "知识库无相关内容", fallback, rewritten, search_text)
+            return RetrievalResult(
+                [],
+                True,
+                "知识库无相关内容",
+                fallback,
+                rewritten,
+                search_text,
+                **scope_fields(filtered),
+            )
         confidence = evidence_confidence(items, self._evidence_calibration)
 
         # v2:语义层优先。判断器说“证据真的回答了”就放行(即使分数低);
@@ -433,10 +671,10 @@ class RetrievalService:
                 reason = f"证据未直接回答问题:{verdict.reason or '判断器未给出理由'}"
                 return RetrievalResult(items, True, reason, fallback, rewritten, search_text,
                                        evidence_confidence=confidence,
-                                       evidence_entailment=False)
+                                       evidence_entailment=False, **scope_fields(filtered))
             return RetrievalResult(items, False, "", fallback, rewritten, search_text,
                                    evidence_confidence=confidence,
-                                   evidence_entailment=True)
+                                   evidence_entailment=True, **scope_fields(filtered))
 
         if not confidence.passed:
             # 低置信不进 Agent,但保留候选快照给问题池和人工审核。
@@ -444,9 +682,9 @@ class RetrievalService:
                       f"有效证据={confidence.effective_count}, "
                       f"Top1/Top2差={confidence.top1_top2_margin:.2f})")
             return RetrievalResult(items, True, reason, fallback, rewritten, search_text,
-                                   evidence_confidence=confidence)
+                                   evidence_confidence=confidence, **scope_fields(filtered))
         return RetrievalResult(items, False, "", fallback, rewritten, search_text,
-                               evidence_confidence=confidence)
+                               evidence_confidence=confidence, **scope_fields(filtered))
 
     # ---- 单路封装 ----
 

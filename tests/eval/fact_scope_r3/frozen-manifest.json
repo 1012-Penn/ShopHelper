@@ -1,0 +1,27 @@
+{
+  "arms": [
+    "baseline",
+    "identity",
+    "scope"
+  ],
+  "budget_cap_usd": 2.0,
+  "config_hash": "d1f76d7eb9f6b42fde406e14f64333519c11f1f9f905a70466ebc6e1fa39d6e4",
+  "dev_cases": 8,
+  "experiment_id": "fact-scope-r3-20261027-final",
+  "files": {
+    "config/pricing.yaml": "d91c994b5ac7355829335108ed4e0404dc1f26f8dd55ecb9a57276cd236d249b",
+    "tests/eval/fact_scope_r3/cases-dev.jsonl": "dfde30c64b127fdfe8b424992a3ff9a5cdea5ae635bc4bb6ea3fae235753583b",
+    "tests/eval/fact_scope_r3/cases-heldout.jsonl": "ff8c929f6f4af24dd02c519e4caf74b89999a646851afae0892670c44840fc93",
+    "tests/eval/fact_scope_r3/gold-dev.jsonl": "20c1859833c2339c60eabb0ffe621f1051278707e77538461e9b5df631080002",
+    "tests/eval/fact_scope_r3/gold-heldout.jsonl": "edda47ea9f5badf74c974d968c5a695255973dda5aa492b85bcc87c9b4acb4e5",
+    "tests/eval/fact_scope_r3/harness.py": "bb2d18e7ffc3f08bd2b0959ff7bed519943aabc6698fa4c39a73b8cee8e5fadd"
+  },
+  "heldout_cases": 20,
+  "max_context_chars": 6000,
+  "max_evidence_items": 6,
+  "max_output_tokens": 400,
+  "model": "deepseek-flash",
+  "prior_dev_charged_usd": 0.0450606,
+  "provider_retries_max": 2,
+  "remaining_budget_cap_usd": 1.95
+}

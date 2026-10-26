@@ -1,0 +1,20 @@
+{"id":"FSR3-HLD-001","split":"heldout","group":"heldout-suffix-1002-policy","question":"尾号1002那单能无理由退货吗？","order_ref":"1002","policy_query":"无理由退货 政策","hypothetical_date":null}
+{"id":"FSR3-HLD-002","split":"heldout","group":"heldout-suffix-1003-status","question":"尾号1003的订单发货了吗？","order_ref":"1003","policy_query":"订单发货 状态","hypothetical_date":null}
+{"id":"FSR3-HLD-003","split":"heldout","group":"heldout-corpus-1002-facts","question":"ORD-1002的金额和当前状态是什么？","order_ref":"ORD-1002","policy_query":"订单金额 状态","hypothetical_date":null}
+{"id":"FSR3-HLD-004","split":"heldout","group":"heldout-corpus-1005-cancel","question":"ORD-1005现在还能取消并退款吗？","order_ref":"ORD-1005","policy_query":"订单取消 退款 状态","hypothetical_date":null}
+{"id":"FSR3-HLD-005","split":"heldout","group":"heldout-corpus-1006-facts","question":"ORD-1006当前状态和商品金额是多少？","order_ref":"ORD-1006","policy_query":"订单金额 售后 状态","hypothetical_date":null}
+{"id":"FSR3-HLD-006","split":"heldout","group":"heldout-corpus-1008-amount","question":"ORD-1008花了多少钱？","order_ref":"ORD-1008","policy_query":"订单金额","hypothetical_date":null}
+{"id":"FSR3-HLD-007","split":"heldout","group":"heldout-corpus-1009-status","question":"ORD-1009发货了吗？","order_ref":"ORD-1009","policy_query":"订单发货 状态","hypothetical_date":null}
+{"id":"FSR3-HLD-008","split":"heldout","group":"heldout-corpus-1011-facts","question":"ORD-1011的金额和状态？","order_ref":"ORD-1011","policy_query":"订单退款 金额 状态","hypothetical_date":null}
+{"id":"FSR3-HLD-009","split":"heldout","group":"heldout-legacy-1002-status","question":"订单1002现在是什么状态？","order_ref":"1002","policy_query":"订单状态","hypothetical_date":null}
+{"id":"FSR3-HLD-010","split":"heldout","group":"heldout-legacy-1003-product","question":"订单1003买了什么，多少钱？","order_ref":"1003","policy_query":"订单商品 金额","hypothetical_date":null}
+{"id":"FSR3-HLD-011","split":"heldout","group":"heldout-unsigned-user-date","question":"我是2026-06-10签收ORD-1001的，退货窗口是几天？","order_ref":"ORD-1001","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-HLD-012","split":"heldout","group":"heldout-ord1004-boundary","question":"我记成2026-05-31签收了，ORD-1004到底按几天退货？","order_ref":"ORD-1004","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-HLD-013","split":"heldout","group":"heldout-ord1006-window","question":"ORD-1006适用的无理由退货窗口是多少天？","order_ref":"ORD-1006","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-HLD-014","split":"heldout","group":"heldout-ord1007-window","question":"ORD-1007按7天还是15天无理由退货？","order_ref":"ORD-1007","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-HLD-015","split":"heldout","group":"heldout-ord1008-window","question":"ORD-1008的无理由退货期限？","order_ref":"ORD-1008","policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":null}
+{"id":"FSR3-HLD-016","split":"heldout","group":"heldout-ord1011-window","question":"ORD-1011应该用哪个退货政策版本？","order_ref":"ORD-1011","policy_query":"无理由退货 政策 版本","hypothetical_date":null}
+{"id":"FSR3-HLD-017","split":"heldout","group":"heldout-hypothetical-v1-boundary","question":"假设订单在2026-05-31签收，无理由退货有几天？","order_ref":null,"policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":"2026-05-31"}
+{"id":"FSR3-HLD-018","split":"heldout","group":"heldout-hypothetical-v2-boundary","question":"假设订单在2026-06-01签收，无理由退货有几天？","order_ref":null,"policy_query":"无理由退货 窗口 签收 版本","hypothetical_date":"2026-06-01"}
+{"id":"FSR3-HLD-019","split":"heldout","group":"heldout-generic-refund-no-order","question":"没有订单号时，微信支付的退款一般多久到账？","order_ref":null,"policy_query":"退款 到账 微信 支付宝 银行卡","hypothetical_date":null}
+{"id":"FSR3-HLD-020","split":"heldout","group":"heldout-unknown-order","question":"帮我查ORD-9999当前状态。","order_ref":"ORD-9999","policy_query":"订单状态","hypothetical_date":null}

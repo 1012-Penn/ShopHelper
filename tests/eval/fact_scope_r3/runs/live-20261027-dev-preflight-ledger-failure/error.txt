@@ -1,0 +1,4 @@
+provider_calls=0
+error=ValueError("各组费用上限之和超过 CH15 总费用上限")
+cause=three arm caps of 0.65 exceeded the remaining 1.95 USD run cap before dispatch
+resolution=lower each arm cap to 0.64, refreeze, and rerun dev
