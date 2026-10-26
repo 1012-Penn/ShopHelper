@@ -1,6 +1,10 @@
 import json
 import copy
 from pathlib import Path
+from datetime import date
+from types import SimpleNamespace
+
+import pytest
 
 from scripts.ch15_model_experiment import (
     model_parameter_score,
@@ -22,7 +26,7 @@ def model_result(scenario_id, arm="autonomous"):
 
 
 def test_frozen_paid_experiment_has_thirty_pairs_and_forty_two_user_turns():
-    config, scenarios = verify_frozen_experiment()
+    config, scenarios = verify_frozen_experiment(recorded=True)
 
     assert len(scenarios) == 30
     assert sum(len(row["turns"]) for row in scenarios) == 42
@@ -95,7 +99,7 @@ def test_model_report_metrics_table_renders_as_a_markdown_table():
 
 
 def test_rescore_preserves_legacy_score_and_applies_semantic_rubric():
-    config, scenarios = verify_frozen_experiment()
+    config, scenarios = verify_frozen_experiment(recorded=True)
     row = next(row for row in scenarios if row["id"] == "CH15-RFD-001")
     result = copy.deepcopy(model_result("CH15-RFD-001"))
 
@@ -104,6 +108,43 @@ def test_rescore_preserves_legacy_score_and_applies_semantic_rubric():
     assert rescored["legacy_score"]["task_success"] is False
     assert rescored["score"]["task_success"] is True
     assert rescored["score"]["scoring_version"] == "semantic_task_v2"
+
+
+def test_live_experiment_still_rejects_changed_current_sources(monkeypatch):
+    from scripts import ch15_model_experiment as experiment
+    from scripts.eval_cost import BudgetExceeded
+
+    config = json.loads(experiment.CONFIG_PATH.read_text())
+    monkeypatch.setattr(experiment, "date", SimpleNamespace(
+        today=lambda: date.fromisoformat(config["pricing"]["verified_on"])))
+    original = Path.read_bytes
+    changed = experiment.ROOT / "scripts/eval_cost.py"
+
+    def read_with_drift(path):
+        content = original(path)
+        return content + b"\n# changed current implementation\n" if path == changed else content
+
+    monkeypatch.setattr(Path, "read_bytes", read_with_drift)
+    with pytest.raises(BudgetExceeded, match="冻结源码/fixture 已变化"):
+        verify_frozen_experiment()
+
+
+def test_recorded_verification_rejects_edited_experiment_config(monkeypatch):
+    from scripts import ch15_model_experiment as experiment
+    from scripts.eval_cost import BudgetExceeded
+
+    original = Path.read_text
+    config = json.loads(original(experiment.CONFIG_PATH))
+    config["pricing"]["source_url"] += "?edited"
+    config["config_hash"] = "sha256:" + experiment._canonical_hash(
+        {key: value for key, value in config.items() if key != "config_hash"})
+
+    def edited_config(path, *args, **kwargs):
+        return json.dumps(config) if path == experiment.CONFIG_PATH else original(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "read_text", edited_config)
+    with pytest.raises(BudgetExceeded, match="历史配置"):
+        verify_frozen_experiment(recorded=True)
 
 
 def test_report_explains_original_and_corrected_task_success():

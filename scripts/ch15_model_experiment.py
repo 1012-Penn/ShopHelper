@@ -14,6 +14,7 @@ import hashlib
 import json
 import os
 import statistics
+import subprocess
 import sys
 import tempfile
 import time
@@ -79,13 +80,37 @@ def _canonical_hash(payload: dict) -> str:
 
 
 def verify_frozen_experiment(config_path: Path = CONFIG_PATH,
-                             scenario_path: Path = SCENARIO_PATH) -> tuple[dict, list[dict]]:
+                             scenario_path: Path = SCENARIO_PATH, *,
+                             recorded: bool = False) -> tuple[dict, list[dict]]:
+    """Validate live sources by default, or archived sources for offline rescoring.
+
+    Historical validation checks the committed config and every pinned source at
+    that config's Git revision. It never authorizes a new provider execution.
+    """
     config = json.loads(config_path.read_text(encoding="utf-8"))
     declared_hash = config.get("config_hash")
     fingerprint_payload = {key: value for key, value in config.items() if key != "config_hash"}
     if declared_hash != "sha256:" + _canonical_hash(fingerprint_payload):
         raise BudgetExceeded("CH15 实验配置 hash 不匹配，拒绝运行")
-    if config["pricing"]["verified_on"] != date.today().isoformat():
+    source_revision = None
+    if recorded:
+        try:
+            relative_config = config_path.resolve().relative_to(ROOT).as_posix()
+            source_revision = subprocess.check_output(
+                ["git", "log", "-1", "--format=%H", "--", relative_config],
+                cwd=ROOT, text=True, stderr=subprocess.DEVNULL,
+            ).strip()
+            if not source_revision:
+                raise ValueError("config is not committed")
+            archived = subprocess.check_output(
+                ["git", "show", f"{source_revision}:{relative_config}"],
+                cwd=ROOT, stderr=subprocess.DEVNULL,
+            )
+            if json.loads(archived) != config:
+                raise ValueError("config differs from recorded version")
+        except (ValueError, subprocess.CalledProcessError) as exc:
+            raise BudgetExceeded("CH15 历史配置与已提交版本不一致，拒绝复算") from exc
+    if not recorded and config["pricing"]["verified_on"] != date.today().isoformat():
         raise BudgetExceeded("DeepSeek 价格快照已过期；先核对官方价格并更新冻结配置")
     if (config.get("model") != MODEL or config.get("base_url") != BASE_URL
             or float(config.get("run_cap_usd", 0)) != RUN_CAP_USD):
@@ -104,7 +129,17 @@ def verify_frozen_experiment(config_path: Path = CONFIG_PATH,
     if manifest_hash != config.get("scenario_manifest_sha256"):
         raise BudgetExceeded("CH15 场景题集已变化，拒绝运行")
     for relative, expected in config["source_sha256"].items():
-        actual = _sha256_bytes((ROOT / relative).read_bytes())
+        if source_revision:
+            try:
+                content = subprocess.check_output(
+                    ["git", "show", f"{source_revision}:{relative}"],
+                    cwd=ROOT, stderr=subprocess.DEVNULL,
+                )
+            except subprocess.CalledProcessError as exc:
+                raise BudgetExceeded(f"CH15 历史源码缺失: {relative}") from exc
+        else:
+            content = (ROOT / relative).read_bytes()
+        actual = _sha256_bytes(content)
         if actual != expected:
             raise BudgetExceeded(f"CH15 冻结源码/fixture 已变化: {relative}")
     scenarios = harness.load_scenarios(scenario_path)
@@ -812,7 +847,7 @@ def main() -> int:
         return 0
     if args.rescore_existing:
         try:
-            config, scenarios = verify_frozen_experiment()
+            config, scenarios = verify_frozen_experiment(recorded=True)
             budget = PersistentPaidRunBudget(
                 _pricing(config), model=MODEL, path=LEDGER_PATH,
                 experiment_id=config["experiment_id"], config_hash=config["config_hash"],
