@@ -1,0 +1,76 @@
+{
+  "case_ids": [
+    "HELD-K870-PRICE",
+    "HELD-K104-KEYS",
+    "HELD-W20-GPS",
+    "HELD-W30-BATTERY",
+    "HELD-C60-WARRANTY",
+    "HELD-S10-MULTI",
+    "HELD-P30-CAPACITY",
+    "HELD-MEMBER-95",
+    "HELD-M10-CLEARANCE",
+    "HELD-TIBET-SHIP",
+    "HELD-CUSTOM-RETURN",
+    "HELD-FRESH-SECOND-DAY",
+    "HELD-VIRTUAL-ACTIVATED",
+    "HELD-REPAIR-QUOTE",
+    "HELD-QUALITY-SHIPPING",
+    "HELD-ORDER-1003-TOOL",
+    "HELD-ORDER-CORRECTION",
+    "HELD-CLARIFY-LOGISTICS",
+    "HELD-CLARIFY-RETURN",
+    "HELD-REFUSE-GIFT-ITEMS"
+  ],
+  "citations": {
+    "unknown": 20
+  },
+  "clarify": 0,
+  "conditions": {
+    "measured": 0,
+    "passed": 0
+  },
+  "cost_source": "captured_calls_reclassified_v2",
+  "embedding_cost_usd": 0.0,
+  "empty_answers": 6,
+  "entities": {
+    "measured": 0,
+    "passed": 0
+  },
+  "expected_actual_behavior": {
+    "answer->answer": 11,
+    "answer->refuse": 3,
+    "answer_with_conditions->answer": 3,
+    "clarify->answer": 1,
+    "clarify->refuse": 1,
+    "refuse->refuse": 1
+  },
+  "facts": {
+    "measured": 0,
+    "passed": 0
+  },
+  "failure_labels": {
+    "technical_failure": 20
+  },
+  "generation_cost_usd": 0.009768528,
+  "input_tokens": 89726,
+  "judge_cost_usd": 0.0,
+  "n": 20,
+  "other_cost_usd": 0.0,
+  "output_tokens": 1602,
+  "p50_latency_ms": 2926.398,
+  "p95_latency_ms": 6382.761,
+  "refusal": 5,
+  "rerank_cost_usd": 0.0,
+  "review_required": 0,
+  "routes": {
+    "measured": 0,
+    "passed": 0
+  },
+  "scoring_version": "e2e-quality-r2-score-v2",
+  "success": 0,
+  "technical_failures": 20,
+  "tools": {
+    "measured": 0,
+    "passed": 0
+  }
+}

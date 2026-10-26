@@ -1,0 +1,14 @@
+{
+  "harness_source_sha256": "48547a395eed4f9778180ba7e0107449afc3d5a3b2341cae79651740690e242f",
+  "heldout_regenerated": false,
+  "model_calls_checked": 53,
+  "model_input_boundary_violations": 0,
+  "order_fixture_sha256": "0911fe37b40a9b0893afd1ac4684f45de328d67f60fe2c9aa4da0748259b7ef0",
+  "original_cases_preserved": true,
+  "provider_calls": 0,
+  "rescored_cases_sha256": "3c8fd2144a2a9b13cc7e1789c832f7d4c3cc1b26feb98c9e428d0666daef8503",
+  "schema_version": 1,
+  "scoring_source_sha256": "8397e5f9b46840b1ddb8d3510f64d502cffffb0a9d0d81fbe4b3231a78fd6150",
+  "scoring_version": "e2e-quality-r2-score-v2",
+  "source_cases_sha256": "48b557b984b4c3957199ee2cda5c12ec2c1f330e0c788ae760eb2f4826c21a71"
+}

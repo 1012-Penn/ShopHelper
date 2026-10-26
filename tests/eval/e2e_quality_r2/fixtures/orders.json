@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "source": "app/orders.py:ORDER_CATALOG",
+  "scope": "Deterministic order-tool fixture for E2E quality R2. It is not a migration source.",
+  "catalog": {
+    "1001": {
+      "amount": 299.0,
+      "created_at": "2026-08-30",
+      "order_id": "1001",
+      "product": "无线耳机",
+      "status": "已签收"
+    },
+    "1002": {
+      "amount": 399.0,
+      "created_at": "2026-09-03",
+      "order_id": "1002",
+      "product": "机械键盘",
+      "status": "已发货"
+    },
+    "1003": {
+      "amount": 19.9,
+      "created_at": "2026-09-07",
+      "order_id": "1003",
+      "product": "硅胶手机壳",
+      "status": "待发货"
+    }
+  }
+}

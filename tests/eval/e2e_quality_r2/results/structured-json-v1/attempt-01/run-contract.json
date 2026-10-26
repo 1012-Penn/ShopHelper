@@ -1,0 +1,37 @@
+{
+  "answer_verification_enabled": false,
+  "arm": "structured-json",
+  "budget_limit_usd": 2.0,
+  "case_counts": {
+    "dev": 8,
+    "heldout": 20
+  },
+  "case_files": {
+    "dev": "06ad620f92803b4adb9231288d93ef98f33185162f4a1cbec65fcb9c44418029",
+    "heldout": "0e133a917088fb5be585eb37f031cf507b6875535926c0b8b16097380f542919"
+  },
+  "case_manifest": "tests/eval/e2e_quality_r2/manifest.json",
+  "case_manifest_sha256": "41e17bc316b88f2cbeb74ae421118ee2edaa5bd57d42014e4f9e449cc95c0e62",
+  "harness_sha256": "13171fde6099b18c35f8b692a1dc0d75fc85c7e74baf214513cc83ae0f615dff",
+  "heldout_policy": "run once after freeze; no held-out-driven tuning",
+  "history_sha256": "8478d7a90fcc8b6807bc87a8321420e2ebc61c8f55710f16c3f786c7b6084195",
+  "model": "deepseek-flash",
+  "model_temperature": "production default",
+  "pricing": {
+    "path": "tests/eval/rag_ablation/pricing-snapshot-2026-10-26.yaml",
+    "sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+    "verified": true,
+    "version": "2026-10-26"
+  },
+  "rag_gap_trigger_enabled": false,
+  "retrieval_route": "hybrid_rerank",
+  "run_version": "e2e-quality-r2-v1",
+  "schema_version": 1,
+  "scorer_sha256": "a0b26455783b9a6459937d0128b6c2ba8e636f42b7442452a45bd258d1a1a398",
+  "snapshot_expected_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+  "splits": [
+    "dev",
+    "heldout"
+  ],
+  "structured_output_mode": "json-fallback"
+}

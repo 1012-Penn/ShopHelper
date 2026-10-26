@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "attempt": 1,
+  "status": "failed_before_case_result",
+  "case_id": "DEV-DIRECT-E300",
+  "model_calls_that_reached_provider": [
+    {
+      "kind": "intent",
+      "status": "succeeded",
+      "input_tokens": 314,
+      "output_tokens": 17,
+      "actual_usd": 0.0001146
+    },
+    {
+      "kind": "structured",
+      "status": "failed",
+      "http_status": 400,
+      "reason": "Thinking mode does not support this tool_choice",
+      "actual_usd": 0.0
+    }
+  ],
+  "root_causes": [
+    {
+      "layer": "evaluation wiring",
+      "detail": "The private Milvus copy directory did not end in .db, so pymilvus rejected it before retrieval."
+    },
+    {
+      "layer": "evaluation isolation",
+      "detail": "Empty MCP URL strings still produced configured MCP servers, causing failed discovery attempts."
+    },
+    {
+      "layer": "production model compatibility",
+      "detail": "The production structured-output path requested tool_choice; deepseek-flash replies that thinking mode does not support this tool_choice."
+    }
+  ],
+  "response_artifact": null,
+  "notes": "No case-level answer was produced. The attempt is retained rather than overwritten; the infrastructure retry uses a new attempt number and the same protection ledger."
+}

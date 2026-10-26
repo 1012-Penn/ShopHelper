@@ -1,0 +1,45 @@
+{
+  "case_ids": [
+    "DEV-DIRECT-E300",
+    "DEV-DIRECT-E120",
+    "DEV-SHIP-REMOTE",
+    "DEV-POLICY-V2",
+    "DEV-ENTITY-T50",
+    "DEV-ORDER-1002-TOOL",
+    "DEV-CLARIFY-SKU",
+    "DEV-REFUSE-B5-GLUCOSE"
+  ],
+  "embedding_cost_usd": 0.0,
+  "failure_labels": {
+    "answer_missing_condition": 1,
+    "answer_wrong_fact": 1,
+    "behavior_clarify_expected_answer": 1,
+    "behavior_refuse_expected_clarify": 1,
+    "citation_missing": 2,
+    "citation_uncertain": 2,
+    "citation_unsupported": 2,
+    "evidence_missing": 1
+  },
+  "generation_cost_usd": 0.004214544,
+  "input_tokens": 54033,
+  "judge_cost_usd": 0.0,
+  "model_calls": {
+    "by_kind": {
+      "answer": 6,
+      "embedding": 6,
+      "intent": 8,
+      "rerank": 6,
+      "structured_json": 27
+    },
+    "cache_hits": 2,
+    "calls": 53
+  },
+  "n": 8,
+  "output_tokens": 11635,
+  "p50_latency_ms": 9034.281,
+  "p95_latency_ms": 39590.638,
+  "rerank_cost_usd": 0.0,
+  "review_required": 2,
+  "success": 2,
+  "technical_failures": 0
+}

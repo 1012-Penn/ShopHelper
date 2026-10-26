@@ -1,0 +1,136 @@
+{
+  "answer_verification_enabled": false,
+  "budget": {
+    "calls": 208,
+    "limit_usd": 2.0,
+    "pending_usd": 0,
+    "settled_usd": 0.01686067
+  },
+  "contract": {
+    "answer_verification_enabled": false,
+    "arm": "baseline",
+    "budget_limit_usd": 2.0,
+    "case_counts": {
+      "dev": 8,
+      "heldout": 20
+    },
+    "case_files": {
+      "dev": "06ad620f92803b4adb9231288d93ef98f33185162f4a1cbec65fcb9c44418029",
+      "heldout": "0e133a917088fb5be585eb37f031cf507b6875535926c0b8b16097380f542919"
+    },
+    "case_manifest": "tests/eval/e2e_quality_r2/manifest.json",
+    "case_manifest_sha256": "41e17bc316b88f2cbeb74ae421118ee2edaa5bd57d42014e4f9e449cc95c0e62",
+    "harness_sha256": "e7307ff1580e75403cd6cc79dec5897d821135e4e52c0f52223610fe6980ef75",
+    "heldout_policy": "run once after freeze; no held-out-driven tuning",
+    "history_sha256": "8478d7a90fcc8b6807bc87a8321420e2ebc61c8f55710f16c3f786c7b6084195",
+    "model": "deepseek-flash",
+    "model_temperature": "production default",
+    "pricing": {
+      "path": "tests/eval/rag_ablation/pricing-snapshot-2026-10-26.yaml",
+      "sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+      "verified": true,
+      "version": "2026-10-26"
+    },
+    "rag_gap_trigger_enabled": false,
+    "retrieval_route": "hybrid_rerank",
+    "run_version": "e2e-quality-r2-v1",
+    "schema_version": 1,
+    "scorer_sha256": "a0b26455783b9a6459937d0128b6c2ba8e636f42b7442452a45bd258d1a1a398",
+    "snapshot_expected_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+    "splits": [
+      "dev",
+      "heldout"
+    ]
+  },
+  "model": "deepseek-flash",
+  "retrieval_route": "hybrid_rerank",
+  "schema_version": 1,
+  "splits": {
+    "dev": {
+      "case_ids": [
+        "DEV-DIRECT-E300",
+        "DEV-DIRECT-E120",
+        "DEV-SHIP-REMOTE",
+        "DEV-POLICY-V2",
+        "DEV-ENTITY-T50",
+        "DEV-ORDER-1002-TOOL",
+        "DEV-CLARIFY-SKU",
+        "DEV-REFUSE-B5-GLUCOSE"
+      ],
+      "embedding_cost_usd": 0.0,
+      "failure_labels": {
+        "technical_failure": 8
+      },
+      "generation_cost_usd": 0.007092144,
+      "input_tokens": 57484,
+      "judge_cost_usd": 0.0,
+      "model_calls": {
+        "by_kind": {
+          "answer": 10,
+          "embedding": 10,
+          "intent": 8,
+          "rerank": 8
+        },
+        "cache_hits": 2,
+        "calls": 36
+      },
+      "n": 8,
+      "output_tokens": 1225,
+      "p50_latency_ms": 2689.982,
+      "p95_latency_ms": 13692.999,
+      "rerank_cost_usd": 0.0,
+      "review_required": 0,
+      "success": 0,
+      "technical_failures": 8
+    },
+    "heldout": {
+      "case_ids": [
+        "HELD-K870-PRICE",
+        "HELD-K104-KEYS",
+        "HELD-W20-GPS",
+        "HELD-W30-BATTERY",
+        "HELD-C60-WARRANTY",
+        "HELD-S10-MULTI",
+        "HELD-P30-CAPACITY",
+        "HELD-MEMBER-95",
+        "HELD-M10-CLEARANCE",
+        "HELD-TIBET-SHIP",
+        "HELD-CUSTOM-RETURN",
+        "HELD-FRESH-SECOND-DAY",
+        "HELD-VIRTUAL-ACTIVATED",
+        "HELD-REPAIR-QUOTE",
+        "HELD-QUALITY-SHIPPING",
+        "HELD-ORDER-1003-TOOL",
+        "HELD-ORDER-CORRECTION",
+        "HELD-CLARIFY-LOGISTICS",
+        "HELD-CLARIFY-RETURN",
+        "HELD-REFUSE-GIFT-ITEMS"
+      ],
+      "embedding_cost_usd": 0.0,
+      "failure_labels": {
+        "technical_failure": 20
+      },
+      "generation_cost_usd": 0.009768528,
+      "input_tokens": 89726,
+      "judge_cost_usd": 0.0,
+      "model_calls": {
+        "by_kind": {
+          "answer": 16,
+          "embedding": 14,
+          "intent": 21,
+          "rerank": 13
+        },
+        "cache_hits": 1,
+        "calls": 64
+      },
+      "n": 20,
+      "output_tokens": 1602,
+      "p50_latency_ms": 2926.398,
+      "p95_latency_ms": 6382.761,
+      "rerank_cost_usd": 0.0,
+      "review_required": 0,
+      "success": 0,
+      "technical_failures": 20
+    }
+  }
+}

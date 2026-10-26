@@ -1,0 +1,62 @@
+{
+  "case_ids": [
+    "DEV-DIRECT-E300",
+    "DEV-DIRECT-E120",
+    "DEV-SHIP-REMOTE",
+    "DEV-POLICY-V2",
+    "DEV-ENTITY-T50",
+    "DEV-ORDER-1002-TOOL",
+    "DEV-CLARIFY-SKU",
+    "DEV-REFUSE-B5-GLUCOSE"
+  ],
+  "citations": {
+    "unknown": 8
+  },
+  "clarify": 0,
+  "conditions": {
+    "measured": 0,
+    "passed": 0
+  },
+  "cost_source": "captured_calls_reclassified_v2",
+  "embedding_cost_usd": 0.0,
+  "empty_answers": 2,
+  "entities": {
+    "measured": 0,
+    "passed": 0
+  },
+  "expected_actual_behavior": {
+    "answer->answer": 4,
+    "answer_with_conditions->answer": 2,
+    "clarify->answer": 1,
+    "refuse->refuse": 1
+  },
+  "facts": {
+    "measured": 0,
+    "passed": 0
+  },
+  "failure_labels": {
+    "technical_failure": 8
+  },
+  "generation_cost_usd": 0.006977544,
+  "input_tokens": 57161,
+  "judge_cost_usd": 0.0,
+  "n": 8,
+  "other_cost_usd": 0.0,
+  "output_tokens": 1208,
+  "p50_latency_ms": 2689.982,
+  "p95_latency_ms": 13692.999,
+  "refusal": 1,
+  "rerank_cost_usd": 0.0,
+  "review_required": 0,
+  "routes": {
+    "measured": 0,
+    "passed": 0
+  },
+  "scoring_version": "e2e-quality-r2-score-v2",
+  "success": 0,
+  "technical_failures": 8,
+  "tools": {
+    "measured": 0,
+    "passed": 0
+  }
+}

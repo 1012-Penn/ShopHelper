@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "version": "e2e-quality-r2-cases-v1",
+  "frozen_at": "2026-10-27T00:00:00+08:00",
+  "frozen_before_paid_run": true,
+  "case_counts": {
+    "dev": 8,
+    "heldout": 20
+  },
+  "files": {
+    "dev": "06ad620f92803b4adb9231288d93ef98f33185162f4a1cbec65fcb9c44418029",
+    "heldout": "0e133a917088fb5be585eb37f031cf507b6875535926c0b8b16097380f542919"
+  },
+  "source_groups": {
+    "dev": [
+      "dev_catalog_earphone_price",
+      "dev_catalog_earphone_battery",
+      "dev_shipping_low_value_remote",
+      "dev_policy_window_v2_boundary",
+      "dev_catalog_accessory_exception",
+      "dev_order_query_single",
+      "dev_clarify_missing_sku",
+      "dev_refusal_unsupported_feature"
+    ],
+    "heldout": [
+      "heldout_catalog_keyboard_price",
+      "heldout_catalog_keyboard_keys",
+      "heldout_catalog_watch_gps",
+      "heldout_catalog_watch_battery",
+      "heldout_catalog_cable_warranty",
+      "heldout_catalog_speaker_multi",
+      "heldout_catalog_power_capacity",
+      "heldout_promotion_member_discount",
+      "heldout_promotion_clearance_exclusion",
+      "heldout_shipping_tibet_table",
+      "heldout_return_custom",
+      "heldout_return_fresh",
+      "heldout_return_virtual",
+      "heldout_repair_over_warranty",
+      "heldout_repair_quality_shipping",
+      "heldout_order_query_shipped",
+      "heldout_order_user_correction",
+      "heldout_clarify_order_logistics",
+      "heldout_clarify_order_return",
+      "heldout_refusal_gift_contents"
+    ]
+  }
+}

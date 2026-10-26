@@ -1,0 +1,255 @@
+{
+  "answer_prompt": {
+    "contains_expected_behavior": true,
+    "path": "scripts/eval_prompts.py",
+    "sha256": "a98ec0e6894bc148a08bdf933bf3ea8efc7583850dd382bb5578ac7fa5aaf861",
+    "template": "你是电商客服评测中的回答器。只依据给定编号证据回答。\n期望行为:{behavior}\n- answer:直接给出确定事实,每个事实句末尾标注 [n]。\n- answer_with_conditions:必须说全条件,不能把有条件结论说成无条件。\n- verify_then_answer:只给核验/检测流程和有限帮助,禁止直接判定\"是/否质量问题\"。\n- clarify:缺少必要槽位时只问必要问题,不要编答案。\n- refuse:明确拒答或转人工,不要给实质结论。\n\n规则:\n1. 角标 [n] 只能使用给定编号;没有证据支持的断言不要写。\n2. 多约束问题必须逐条覆盖;缺少任一约束时说明还缺什么。\n3. 证据冲突时说明适用版本/口径,不要混用。\n4. 回答简洁,不超过 3 句。\n\n【证据】\n{evidence}\n\n【用户问题】\n{query}\n"
+  },
+  "exact_answer_equivalence": {
+    "dev": {
+      "all_three": 43,
+      "baseline__controlled_loop": 43,
+      "baseline__decompose_once": 43,
+      "decompose_once__controlled_loop": 56
+    },
+    "frozen-v1": {
+      "all_three": 67,
+      "baseline__controlled_loop": 67,
+      "baseline__decompose_once": 67,
+      "decompose_once__controlled_loop": 85
+    }
+  },
+  "historical_traces_are_read_only": true,
+  "model_calls": 0,
+  "overall_outcomes": {
+    "correct": 93,
+    "model_wrong": 125,
+    "scoring_uncertain": 177,
+    "scoring_unsupported": 55
+  },
+  "response_cache_key_source_sha256": "764878fafb25bf459d99cad535924258add5658ed8d1f67f719fdf057855bff6",
+  "schema_version": 1,
+  "summaries": [
+    {
+      "answers_reused_in_two_or_more_modes": 56,
+      "behaviors": {
+        "answer->answer": 17,
+        "answer->refuse": 1,
+        "answer_with_conditions->answer": 23,
+        "answer_with_conditions->refuse": 1,
+        "clarify->clarify": 3,
+        "clarify->refuse": 4,
+        "refuse->refuse": 11
+      },
+      "mode": "baseline",
+      "n": 60,
+      "outcomes": {
+        "correct": 12,
+        "model_wrong": 17,
+        "scoring_uncertain": 26,
+        "scoring_unsupported": 5
+      },
+      "split": "dev"
+    },
+    {
+      "answers_reused_in_two_or_more_modes": 56,
+      "behaviors": {
+        "answer->answer": 18,
+        "answer_with_conditions->answer": 23,
+        "answer_with_conditions->refuse": 1,
+        "clarify->clarify": 5,
+        "clarify->refuse": 2,
+        "refuse->clarify": 2,
+        "refuse->refuse": 9
+      },
+      "mode": "decompose_once",
+      "n": 60,
+      "outcomes": {
+        "correct": 12,
+        "model_wrong": 16,
+        "scoring_uncertain": 26,
+        "scoring_unsupported": 6
+      },
+      "split": "dev"
+    },
+    {
+      "answers_reused_in_two_or_more_modes": 56,
+      "behaviors": {
+        "answer->answer": 18,
+        "answer_with_conditions->answer": 23,
+        "answer_with_conditions->refuse": 1,
+        "clarify->clarify": 5,
+        "clarify->refuse": 2,
+        "refuse->clarify": 2,
+        "refuse->refuse": 9
+      },
+      "mode": "controlled_loop",
+      "n": 60,
+      "outcomes": {
+        "correct": 12,
+        "model_wrong": 16,
+        "scoring_uncertain": 26,
+        "scoring_unsupported": 6
+      },
+      "split": "dev"
+    },
+    {
+      "answers_reused_in_two_or_more_modes": 85,
+      "behaviors": {
+        "answer->answer": 27,
+        "answer->refuse": 1,
+        "answer_with_conditions->answer": 30,
+        "answer_with_conditions->refuse": 2,
+        "clarify->answer": 2,
+        "clarify->clarify": 4,
+        "clarify->refuse": 4,
+        "refuse->refuse": 16,
+        "verify_then_answer->answer": 4
+      },
+      "mode": "baseline",
+      "n": 90,
+      "outcomes": {
+        "correct": 17,
+        "model_wrong": 28,
+        "scoring_uncertain": 33,
+        "scoring_unsupported": 12
+      },
+      "split": "frozen-v1"
+    },
+    {
+      "answers_reused_in_two_or_more_modes": 85,
+      "behaviors": {
+        "answer->answer": 28,
+        "answer_with_conditions->answer": 30,
+        "answer_with_conditions->refuse": 2,
+        "clarify->answer": 2,
+        "clarify->clarify": 7,
+        "clarify->refuse": 1,
+        "refuse->refuse": 16,
+        "verify_then_answer->answer": 4
+      },
+      "mode": "decompose_once",
+      "n": 90,
+      "outcomes": {
+        "correct": 20,
+        "model_wrong": 24,
+        "scoring_uncertain": 33,
+        "scoring_unsupported": 13
+      },
+      "split": "frozen-v1"
+    },
+    {
+      "answers_reused_in_two_or_more_modes": 85,
+      "behaviors": {
+        "answer->answer": 28,
+        "answer_with_conditions->answer": 30,
+        "answer_with_conditions->refuse": 2,
+        "clarify->answer": 2,
+        "clarify->clarify": 7,
+        "clarify->refuse": 1,
+        "refuse->refuse": 16,
+        "verify_then_answer->answer": 4
+      },
+      "mode": "controlled_loop",
+      "n": 90,
+      "outcomes": {
+        "correct": 20,
+        "model_wrong": 24,
+        "scoring_uncertain": 33,
+        "scoring_unsupported": 13
+      },
+      "split": "frozen-v1"
+    }
+  ],
+  "trace_source": "tests/eval/rag_quality/v3_1/runs/**/rag/**/rescore.jsonl",
+  "verified_dev_before": {
+    "answer_verification": {
+      "changed": 0,
+      "entity_issue_case_ids": [],
+      "measured": 0,
+      "pass": 0,
+      "refuse": 0,
+      "revision_calls": 0,
+      "uncertain": 0
+    },
+    "answers": {
+      "accuracy_among_determinate": 0.0,
+      "correct": 0,
+      "determinate": 9,
+      "incorrect": 9,
+      "not_applicable": 1,
+      "uncertain": 0,
+      "uncertain_case_ids": [],
+      "unmeasured": 0
+    },
+    "citations": {
+      "measurable": 9,
+      "supported": 0,
+      "supported_case_ids": [],
+      "uncertain": 4,
+      "uncertain_case_ids": [
+        "DEV-CONSTRAINT-03",
+        "DEV-CONSTRAINT-06",
+        "DEV-ENTITY-04",
+        "DEV-MULTI-05"
+      ],
+      "unsupported": 5,
+      "unsupported_case_ids": [
+        "DEV-CONFLICT-05",
+        "DEV-CONSTRAINT-01",
+        "DEV-CONSTRAINT-05",
+        "DEV-MULTI-01",
+        "DEV-MULTI-04"
+      ]
+    },
+    "conditions": {
+      "mean": 0.55,
+      "measured": 10,
+      "measured_case_ids": [
+        "DEV-CONFLICT-05",
+        "DEV-CONSTRAINT-01",
+        "DEV-CONSTRAINT-03",
+        "DEV-CONSTRAINT-05",
+        "DEV-CONSTRAINT-06",
+        "DEV-ENTITY-04",
+        "DEV-MULTI-01",
+        "DEV-MULTI-04",
+        "DEV-MULTI-05",
+        "DEV-MULTI-10"
+      ]
+    },
+    "factual_answers": {
+      "accuracy_among_determinate": 0.1111111111111111,
+      "correct": 1,
+      "determinate": 9,
+      "gold_fact_measured": 10,
+      "incorrect": 8,
+      "mean_gold_fact_coverage": 0.85,
+      "not_applicable": 1,
+      "uncertain": 0,
+      "uncertain_case_ids": [],
+      "unmeasured": 0
+    },
+    "latency_ms": {
+      "n": 10,
+      "p50": 32.631,
+      "p95": 40.662
+    },
+    "n": 10,
+    "over_refusal": {
+      "case_ids": [
+        "DEV-MULTI-10"
+      ],
+      "count": 1
+    },
+    "retrieval": {
+      "measured": 10,
+      "r3": 2,
+      "r3_rate": 0.2,
+      "r5": 3,
+      "r5_rate": 0.3
+    },
+    "source": "tests/eval/rag_quality/v3_1/verified/dev/aggregate.json",
+    "stop_reasons": {}
+  }
+}
