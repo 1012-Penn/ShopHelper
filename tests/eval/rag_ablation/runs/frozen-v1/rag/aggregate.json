@@ -2721,13 +2721,13 @@
       "failure_labels"
     ],
     "reason": "修复自然拒答与带标记澄清的确定性行为分类；模型答案原样保留",
-    "code_basis_commit": "1c807f3",
-    "working_tree_dirty": true,
+    "code_basis_commit": "422c4f7",
+    "working_tree_dirty": false,
     "scoring_code_sha256": {
       "scripts/eval_checks.py": "972678d2785fd7d9d8a18365b7baad873c453cd95ccd6bf406a5df3866f1ca86",
       "scripts/ch11_harness.py": "c5c8b7a1a2a52ffdb1b77bc0b6b6295e90f65af66905edb7384c84a7745b2a36",
       "scripts/ch16_analysis.py": "43a8d3eb0ba84d1425e38493c768ce09242b98cf9c73a1a2dc192500bef6287c",
-      "scripts/eval_rag_ablation.py": "29cb698d48699f436a4967450b138340011c0e69aefa85ca9d69f88e49a20b44"
+      "scripts/eval_rag_ablation.py": "5bacea6307b9ee315aa53af0208bc792c1551e6ffbf304241adbcdc3c593bc37"
     }
   },
   "answer_comparability": {
