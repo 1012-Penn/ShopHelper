@@ -32,8 +32,8 @@ from scripts.eval_prompts import parse_json_object, prompt_sha256
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_RUNS = ROOT / "tests" / "eval" / "rag_ablation" / "runs"
-OUTPUT_ROOT = ROOT / "tests" / "eval" / "rag_quality"
-OVERLAY = ROOT / "tests" / "eval" / "overlays" / "rag-quality-v3.json"
+OUTPUT_ROOT = ROOT / "tests" / "eval" / "rag_quality" / "v3_1"
+OVERLAY = ROOT / "tests" / "eval" / "overlays" / "rag-quality-v3.1.json"
 SNAPSHOT = (
     ROOT / "data" / "eval-snapshots"
     / "ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db"
@@ -737,7 +737,80 @@ def _offline_rescore(output_root: Path, snapshot: Path) -> dict:
                 _write_json(group_root / "aggregate.json", summary)
                 split_report[f"{experiment}:{group}"] = summary
         report["splits"][split] = split_report
+    report["verified_dev"] = offline_rescore_verified(output_root, snapshot)
     _write_json(output_root / "aggregate.json", report)
+    return report
+
+
+def offline_rescore_verified(
+    output_root: Path,
+    snapshot: Path,
+    *,
+    source_root: Path | None = None,
+    before_source_root: Path | None = None,
+    modes: tuple[str, ...] | None = None,
+) -> dict:
+    """Re-score the already verified answers without asking a verifier again."""
+    overlay = json.loads(OVERLAY.read_text(encoding="utf-8"))
+    subset = json.loads(DEV_SUBSET.read_text(encoding="utf-8"))
+    case_ids = set(subset["case_ids"])
+    cases = [case for case in load_split("dev") if case["id"] in case_ids]
+    cases_by_id = {str(case["id"]): case for case in cases}
+    evidence_texts = load_evidence_texts(snapshot)
+    source_root = source_root or ROOT / "tests" / "eval" / "rag_quality" / "verified" / "dev"
+    before_source_root = before_source_root or SOURCE_RUNS / "dev" / "rag"
+    selected_modes = modes or GROUPS["rag"]
+    run_root = output_root / "verified" / "dev"
+    report = {
+        "schema_version": 1,
+        "scoring_version": overlay["version"],
+        "case_set_version": subset.get("version"),
+        "case_ids": sorted(case_ids),
+        "source": str(source_root),
+        "output": str(run_root),
+        "model_calls": 0,
+        "groups": {},
+    }
+    for mode in selected_modes:
+        source = source_root / mode / "traces.jsonl"
+        traces = [
+            trace for trace in _read_jsonl(source)
+            if str(trace.get("case_id")) in case_ids
+        ]
+        rescored = [
+            rescore_trace(cases_by_id[str(trace["case_id"])], trace,
+                          evidence_texts, overlay)
+            for trace in traces
+        ]
+        summary = summarize_quality(cases, rescored)
+        verification_rows = [
+            trace.get("answer_verification") for trace in rescored
+            if trace.get("answer_verification")
+        ]
+        summary["answer_verification"] = {
+            "pass": sum(row.get("status") == "pass" for row in verification_rows),
+            "refuse": sum(row.get("status") == "refuse" for row in verification_rows),
+            "revisions": sum(int(row.get("revision_calls") or 0)
+                             for row in verification_rows),
+            "changed": sum(bool(row.get("changed")) for row in verification_rows),
+        }
+        before_path = before_source_root / mode / "traces.jsonl"
+        if before_path.exists():
+            before_by_id = {
+                str(trace["case_id"]): trace for trace in _read_jsonl(before_path)
+                if str(trace.get("case_id")) in case_ids
+            }
+            before = [
+                rescore_trace(cases_by_id[case["id"]], before_by_id[case["id"]],
+                              evidence_texts, overlay)
+                for case in cases if case["id"] in before_by_id
+            ]
+            summary["before"] = summarize_quality(cases, before)
+        group_root = run_root / mode
+        _write_jsonl(group_root / "traces.jsonl", rescored)
+        _write_json(group_root / "aggregate.json", summary)
+        report["groups"][mode] = summary
+    _write_json(run_root / "aggregate.json", report)
     return report
 
 
@@ -770,7 +843,7 @@ def main(argv: list[str] | None = None) -> int:
     if not any((args.offline_rescore, args.verify_dev_subset,
                 args.run_controlled_trigger)):
         parser.error("至少需要一个运行模式")
-    report = {"scoring_version": "rag-quality-v3", "model_calls": 0}
+    report = {"scoring_version": "rag-quality-v3.1", "model_calls": 0}
     output_path = args.output / "aggregate.json"
     if args.offline_rescore:
         report = _offline_rescore(args.output, args.snapshot)

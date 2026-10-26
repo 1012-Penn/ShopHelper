@@ -504,7 +504,8 @@ def _claim_counts(answer: str, evidence_by_n: dict[int, str]) -> tuple[int, int,
             support_status[sentence] = "unsupported"
         else:
             support_status[sentence] = "uncertain"
-    sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(answer) if len(s.strip()) >= 6]
+    owned = re.sub(r"([。！？!?；;])(\s*(?:\[\d+\])+)", r"\2\1", answer)
+    sentences = [s.strip() for s in _SENTENCE_SPLIT_RE.split(owned) if len(s.strip()) >= 6]
     unsupported = sum(support_status.get(sentence) != "supported" for sentence in sentences)
     uncertain = sum(support_status.get(sentence) == "uncertain" for sentence in sentences)
     return unsupported, uncertain, len(sentences)

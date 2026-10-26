@@ -90,6 +90,7 @@ class TraceEvent(TypedDict, total=False):
 class MultiAgentState(TypedDict, total=False):
     run_id: str
     task_id: str
+    conversation_id: int | None
     user_message: str
     conversation_history: list[dict[str, Any]]
     plan: dict[str, Any]

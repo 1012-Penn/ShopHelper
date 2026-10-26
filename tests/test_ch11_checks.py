@@ -13,6 +13,7 @@ from scripts.eval_checks import (
     forbidden_claims_found,
     gold_fact_accuracy,
     number_covered,
+    uncertain_claim_rate,
     unsupported_claim_rate,
 )
 
@@ -79,6 +80,15 @@ def test_citation_after_terminal_punctuation_belongs_to_previous_claim():
     outcome = citation_support_rate("SH-K104 是 104 键机械键盘。[1]", evidence)
     assert outcome.passed
     assert outcome.status == "supported"
+
+
+def test_claim_rate_preserves_owned_trailing_citation_sentence():
+    evidence = {1: "普通订单邮费 8 元。"}
+    answer = "普通订单邮费 8 元。[1]"
+
+    assert citation_support_rate(answer, evidence).status == "supported"
+    assert unsupported_claim_rate(answer, evidence) == 0.0
+    assert uncertain_claim_rate(answer, evidence) == 0.0
 
 
 def test_unmatched_paraphrase_is_uncertain_not_supported_by_character_overlap():

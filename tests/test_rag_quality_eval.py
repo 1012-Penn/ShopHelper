@@ -5,6 +5,7 @@ from app.answer_verifier import VerificationResult
 from scripts.eval_rag_quality import (
     apply_answer_verifier,
     classify_answer_outcome,
+    offline_rescore_verified,
     summarize_quality,
 )
 
@@ -80,7 +81,7 @@ def test_answer_verifier_overlay_preserves_original_and_rescores_final_answer():
     trace["answer"] = "普通订单邮费 9 元[1]。"
     result = apply_answer_verifier(
         case, trace, {1: "普通订单邮费 8 元。"}, FakeVerifier(),
-        json.loads(Path("tests/eval/overlays/rag-quality-v3.json").read_text()),
+        json.loads(Path("tests/eval/overlays/rag-quality-v3.1.json").read_text()),
     )
 
     assert result["original_answer"] == "普通订单邮费 9 元[1]。"
@@ -91,17 +92,49 @@ def test_answer_verifier_overlay_preserves_original_and_rescores_final_answer():
 
 def test_quality_overlay_is_versioned_and_every_case_has_a_basis():
     overlay = json.loads(
-        Path("tests/eval/overlays/rag-quality-v3.json").read_text()
+        Path("tests/eval/overlays/rag-quality-v3.1.json").read_text()
     )
     cases = {
         case["id"]: case
         for split in ("dev", "frozen-v1")
         for case in map(json.loads, Path(f"tests/eval/splits/{split}.jsonl").read_text().splitlines())
     }
-    assert overlay["version"] == "rag-quality-v3"
+    assert overlay["version"] == "rag-quality-v3.1"
     assert overlay["revision_basis"]
     for case_id, revision in overlay["cases"].items():
         assert case_id in cases
         assert revision["basis"].strip()
         fact_ids = {fact["fact_id"] for fact in cases[case_id]["gold_facts"]}
         assert set(revision.get("background_gold_fact_ids") or []) <= fact_ids
+
+
+def test_verified_offline_rescore_preserves_trace_and_writes_versioned_output(
+        tmp_path, monkeypatch):
+    import scripts.eval_rag_quality as rag_quality
+
+    source = tmp_path / "source"
+    trace_path = source / "baseline" / "traces.jsonl"
+    trace_path.parent.mkdir(parents=True)
+    trace_path.write_text(json.dumps(_trace()) + "\n", encoding="utf-8")
+    case_set = tmp_path / "case-set.json"
+    case_set.write_text(json.dumps({"case_ids": ["Q1"]}), encoding="utf-8")
+    monkeypatch.setattr(rag_quality, "DEV_SUBSET", case_set)
+    monkeypatch.setattr(rag_quality, "load_split", lambda _split: [_case()])
+    monkeypatch.setattr(
+        rag_quality, "load_evidence_texts",
+        lambda _snapshot: {1: "普通订单邮费 8 元。"},
+    )
+
+    report = offline_rescore_verified(
+        tmp_path / "out", tmp_path / "snapshot.db",
+        source_root=source, modes=("baseline",),
+    )
+
+    rows = [
+        json.loads(line)
+        for line in (tmp_path / "out" / "verified" / "dev" / "baseline" /
+                     "traces.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert rows[0]["answer"] == "普通订单邮费 8 元[1]。"
+    assert report["groups"]["baseline"]["answers"]["correct"] == 1
+    assert report["scoring_version"] == "rag-quality-v3.1"

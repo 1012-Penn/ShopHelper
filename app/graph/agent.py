@@ -251,7 +251,8 @@ def make_agent_node(model, engine, settings, pool, *, answer_verifier=None):
         if candidate is None:
             candidate = "问题比较复杂,请您稍后再试或换种问法。"
         cutoff, verification = await _finalize_answer(candidate)
-        emitted.append(AIMessage(content=cutoff))
+        if generated_fallback or cutoff != candidate:
+            emitted.append(AIMessage(content=cutoff))
         if verify_answers or generated_fallback:
             _emit(writer, {"type": "token", "content": cutoff})
         actions = ACTIONS_ON_REFUSAL if is_refusal(cutoff) else []

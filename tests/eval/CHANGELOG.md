@@ -1,5 +1,12 @@
 # 评测数据变更记录
 
+## 2026-10-27 · RAG 答案评分 v3.1
+
+- 新增 `tests/eval/overlays/rag-quality-v3.1.json`；v3 题集、金标、回答和聚合均保持只读。
+- 修正声明级 support/uncertain 比率在“句号后引用”场景中的切句不一致；
+  严格答案分类与引用三态判定不在本版本改变。
+- 零调用统一重评产物写入 `tests/eval/rag_quality/v3_1/`，用于与 v3 对照。
+
 ## 2026-10-27 · RAG 答案评分 v3
 
 - 新增 `tests/eval/overlays/rag-quality-v3.json`，不修改任何旧题、金标、回答或 CH16 聚合。

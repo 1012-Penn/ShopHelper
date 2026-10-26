@@ -1,0 +1,176 @@
+{
+  "answer_verification": {
+    "changed": 3,
+    "pass": 8,
+    "refuse": 2,
+    "revisions": 3
+  },
+  "answers": {
+    "accuracy_among_determinate": 0.0,
+    "correct": 0,
+    "determinate": 9,
+    "incorrect": 9,
+    "not_applicable": 1,
+    "uncertain": 0,
+    "uncertain_case_ids": [],
+    "unmeasured": 0
+  },
+  "before": {
+    "answer_verification": {
+      "changed": 0,
+      "entity_issue_case_ids": [],
+      "measured": 0,
+      "pass": 0,
+      "refuse": 0,
+      "revision_calls": 0,
+      "uncertain": 0
+    },
+    "answers": {
+      "accuracy_among_determinate": 0.0,
+      "correct": 0,
+      "determinate": 9,
+      "incorrect": 9,
+      "not_applicable": 1,
+      "uncertain": 0,
+      "uncertain_case_ids": [],
+      "unmeasured": 0
+    },
+    "citations": {
+      "measurable": 9,
+      "supported": 0,
+      "supported_case_ids": [],
+      "uncertain": 4,
+      "uncertain_case_ids": [
+        "DEV-CONSTRAINT-03",
+        "DEV-CONSTRAINT-06",
+        "DEV-ENTITY-04",
+        "DEV-MULTI-05"
+      ],
+      "unsupported": 5,
+      "unsupported_case_ids": [
+        "DEV-CONFLICT-05",
+        "DEV-CONSTRAINT-01",
+        "DEV-CONSTRAINT-05",
+        "DEV-MULTI-01",
+        "DEV-MULTI-04"
+      ]
+    },
+    "conditions": {
+      "mean": 0.55,
+      "measured": 10,
+      "measured_case_ids": [
+        "DEV-CONFLICT-05",
+        "DEV-CONSTRAINT-01",
+        "DEV-CONSTRAINT-03",
+        "DEV-CONSTRAINT-05",
+        "DEV-CONSTRAINT-06",
+        "DEV-ENTITY-04",
+        "DEV-MULTI-01",
+        "DEV-MULTI-04",
+        "DEV-MULTI-05",
+        "DEV-MULTI-10"
+      ]
+    },
+    "factual_answers": {
+      "accuracy_among_determinate": 0.1111111111111111,
+      "correct": 1,
+      "determinate": 9,
+      "gold_fact_measured": 10,
+      "incorrect": 8,
+      "mean_gold_fact_coverage": 0.85,
+      "not_applicable": 1,
+      "uncertain": 0,
+      "uncertain_case_ids": [],
+      "unmeasured": 0
+    },
+    "latency_ms": {
+      "n": 10,
+      "p50": 32.631,
+      "p95": 40.662
+    },
+    "n": 10,
+    "over_refusal": {
+      "case_ids": [
+        "DEV-MULTI-10"
+      ],
+      "count": 1
+    },
+    "retrieval": {
+      "measured": 10,
+      "r3": 2,
+      "r3_rate": 0.2,
+      "r5": 3,
+      "r5_rate": 0.3
+    },
+    "stop_reasons": {}
+  },
+  "citations": {
+    "measurable": 9,
+    "supported": 0,
+    "supported_case_ids": [],
+    "uncertain": 5,
+    "uncertain_case_ids": [
+      "DEV-CONSTRAINT-03",
+      "DEV-CONSTRAINT-05",
+      "DEV-CONSTRAINT-06",
+      "DEV-ENTITY-04",
+      "DEV-MULTI-05"
+    ],
+    "unsupported": 4,
+    "unsupported_case_ids": [
+      "DEV-CONFLICT-05",
+      "DEV-MULTI-01",
+      "DEV-MULTI-04",
+      "DEV-MULTI-10"
+    ]
+  },
+  "conditions": {
+    "mean": 0.45,
+    "measured": 10,
+    "measured_case_ids": [
+      "DEV-CONFLICT-05",
+      "DEV-CONSTRAINT-01",
+      "DEV-CONSTRAINT-03",
+      "DEV-CONSTRAINT-05",
+      "DEV-CONSTRAINT-06",
+      "DEV-ENTITY-04",
+      "DEV-MULTI-01",
+      "DEV-MULTI-04",
+      "DEV-MULTI-05",
+      "DEV-MULTI-10"
+    ]
+  },
+  "factual_answers": {
+    "accuracy_among_determinate": 0.0,
+    "correct": 0,
+    "determinate": 9,
+    "gold_fact_measured": 10,
+    "incorrect": 9,
+    "mean_gold_fact_coverage": 0.8,
+    "not_applicable": 1,
+    "uncertain": 0,
+    "uncertain_case_ids": [],
+    "unmeasured": 0
+  },
+  "latency_ms": {
+    "n": 10,
+    "p50": 32.631,
+    "p95": 40.662
+  },
+  "n": 10,
+  "over_refusal": {
+    "case_ids": [
+      "DEV-CONSTRAINT-01",
+      "DEV-CONSTRAINT-05"
+    ],
+    "count": 2
+  },
+  "retrieval": {
+    "measured": 10,
+    "r3": 2,
+    "r3_rate": 0.2,
+    "r5": 3,
+    "r5_rate": 0.3
+  },
+  "stop_reasons": {}
+}

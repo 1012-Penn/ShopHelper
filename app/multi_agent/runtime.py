@@ -141,6 +141,7 @@ class MultiAgentRunner:
     async def run_task(self, *, agent_name: str, task: AgentTask,
                        facts: dict[str, Any], evidence: dict[str, Any],
                        run_id: str, deadline: float,
+                       conversation_id: int | None = None,
                        context: _RunContext | None = None) -> AgentOutcome:
         context = context or self._context(run_id)
         child_deadline = min(deadline, time.monotonic() + self.limits.child_timeout_seconds)
@@ -188,7 +189,14 @@ class MultiAgentRunner:
                         raise PermissionError(
                             f"工具权限拒绝:{agent_name} 不可调用 {name or '<empty>'}"
                         )
-                    args = call.get("args") or {}
+                    args = dict(call.get("args") or {})
+                    registry = getattr(self.engine, "registry", None)
+                    record = registry.get(name) if registry is not None else None
+                    properties = (
+                        (getattr(record, "json_schema", None) or {}).get("properties") or {}
+                    )
+                    if conversation_id is not None and "conversation_id" in properties:
+                        args["conversation_id"] = conversation_id
                     tool_calls.append({"name": name, "arguments": args})
 
                     def intercept(record, values):
@@ -295,7 +303,8 @@ class MultiAgentRunner:
 
     async def execute_tasks(self, *, run_id: str, plan: AgentPlan,
                             facts: dict[str, Any], evidence: dict[str, Any],
-                            deadline: float) -> dict[str, Any]:
+                            deadline: float,
+                            conversation_id: int | None = None) -> dict[str, Any]:
         context = self._context(run_id)
         pending = {task.task_id: task for task in plan.tasks if task.task_id not in facts}
         completed = set(facts)
@@ -325,6 +334,7 @@ class MultiAgentRunner:
                 return await self.run_task(
                     agent_name=task.agent, task=task, facts=dict(facts),
                     evidence=dict(evidence), run_id=run_id, deadline=deadline,
+                    conversation_id=conversation_id,
                     context=context,
                 )
 
@@ -441,6 +451,7 @@ def build_multi_agent_graph(runner: MultiAgentRunner):
             facts=dict(state.get("facts") or {}),
             evidence=dict(state.get("evidence") or {}),
             deadline=float(state.get("deadline") or time.monotonic() + runner.limits.max_seconds),
+            conversation_id=state.get("conversation_id"),
         )
         updates["needs_replan"] = bool(updates["errors"]) and \
             int(state.get("replan_count", 0)) < runner.limits.max_replans

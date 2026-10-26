@@ -3,7 +3,7 @@ import json
 
 from app.graph.agent import make_agent_node
 from app.answer_verifier import VerificationResult
-from tests.helpers import GraphChatModel, graph_state
+from tests.helpers import ChunkStub, GraphChatModel, graph_state
 
 
 def _state(**kw):
@@ -158,6 +158,34 @@ async def test_answer_verification_off_preserves_token_streaming_contract():
                      writer=frames.append)
     assert [f["content"] for f in frames if f["type"] == "token"] == ["这一", "单可以退。"]
     assert out["final_reply"] == "这一单可以退。"
+
+
+async def test_cutoff_does_not_persist_existing_assistant_text_twice():
+    class TextAndToolModel(GraphChatModel):
+        async def astream(self, messages, config=None, **kwargs):
+            self.prompts.append(list(messages))
+            yield ChunkStub(
+                text="正在查询订单。",
+                tool_call_chunks=[{
+                    "name": "query_order",
+                    "args": '{"order_id": "1001"}',
+                    "id": "cutoff-tool",
+                    "index": 0,
+                }],
+            )
+
+    model = TextAndToolModel()
+    settings = _settings()
+    settings.max_agent_steps = 1
+    node = make_agent_node(
+        model, _Registry(), settings, pool=None)
+    out = await node(_state(refund_flow=False, intent="商品咨询"), writer=None)
+
+    assert out["final_reply"] == "正在查询订单。"
+    assert [
+        message.content for message in out["messages"]
+        if message.__class__.__name__ == "AIMessage" and message.content
+    ] == ["正在查询订单。"]
 
 
 async def test_answer_verification_buffers_bad_candidate_until_checked():

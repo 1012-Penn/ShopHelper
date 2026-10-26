@@ -7,6 +7,7 @@
 -- ch07 新建:conversation_summaries;conversations 加三列(summary / summary_upto_msg_id / layer1_from_msg_id)
 -- ch12 新建:rag_loop_steps;tickets 加一列 confirm_key(幂等键)
 -- ch14 新建:admin_users / admin_audit_logs(后台管理员与操作审计)
+-- CH11 reliability 新建:chat_runs / chat_run_events / chat_session_leases / chat_tool_attempts
 -- 商品、订单、物流走工具内 mock,不建表
 -- 全库统一 ENGINE=InnoDB、CHARSET=utf8mb4
 -- 建表顺序:先 conversations,再依赖它的 messages / tickets / low_confidence_questions
@@ -343,3 +344,79 @@ CREATE TABLE rag_loop_steps (
   KEY idx_rag_turn (conversation_id, turn_user_msg_id),
   KEY idx_rag_stop (stop_reason)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='ch12 受控 Agentic 检索步骤审计(仅可审计,不支持断点续跑)';
+
+-- =============================================================
+-- CH11 · 同会话可靠执行 · 持久 run、SSE 重放与租约
+-- 与 db/ch11-reliability-execution.sql 保持一致；新表只追加，不修改业务表。
+-- =============================================================
+
+CREATE TABLE chat_runs (
+  run_id            VARCHAR(36)     NOT NULL,
+  conversation_id   BIGINT UNSIGNED NOT NULL,
+  client_request_id VARCHAR(128)    NULL,
+  request_hash      CHAR(64)        NOT NULL,
+  request_json      JSON            NOT NULL,
+  status            VARCHAR(24)     NOT NULL DEFAULT 'queued',
+  result_json       JSON            NULL,
+  error_message     TEXT            NULL,
+  write_state       VARCHAR(24)     NOT NULL DEFAULT 'none',
+  owner_token       VARCHAR(64)     NOT NULL,
+  attempt           INT UNSIGNED    NOT NULL DEFAULT 1,
+  last_event_seq    INT UNSIGNED    NOT NULL DEFAULT 0,
+  input_tokens      INT UNSIGNED    NOT NULL DEFAULT 0,
+  output_tokens     INT UNSIGNED    NOT NULL DEFAULT 0,
+  total_tokens      INT UNSIGNED    NOT NULL DEFAULT 0,
+  duration_ms       INT UNSIGNED    NOT NULL DEFAULT 0,
+  created_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  started_at        DATETIME        NULL,
+  finished_at       DATETIME        NULL,
+  updated_at        DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                     ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (run_id),
+  UNIQUE KEY uk_chat_run_client_request (conversation_id, client_request_id),
+  KEY idx_chat_run_conversation (conversation_id, created_at),
+  KEY idx_chat_run_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='聊天执行 run 的持久状态与用量';
+
+CREATE TABLE chat_run_events (
+  id         BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  run_id     VARCHAR(36)     NOT NULL,
+  seq        INT UNSIGNED    NOT NULL,
+  event_type VARCHAR(64)     NOT NULL,
+  payload    JSON            NOT NULL,
+  created_at DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_chat_run_event_seq (run_id, seq),
+  KEY idx_chat_event_replay (run_id, id),
+  CONSTRAINT fk_chat_event_run FOREIGN KEY (run_id)
+    REFERENCES chat_runs (run_id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='SSE 持久事件；id 为 Last-Event-ID 游标';
+
+CREATE TABLE chat_session_leases (
+  conversation_id BIGINT UNSIGNED NOT NULL,
+  run_id          VARCHAR(36)     NOT NULL,
+  owner_token     VARCHAR(64)     NOT NULL,
+  lease_expires_at DATETIME       NOT NULL,
+  updated_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP
+                                  ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (conversation_id),
+  UNIQUE KEY uk_chat_lease_run (run_id),
+  KEY idx_chat_lease_expiry (lease_expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='同会话单执行者租约；过期可恢复';
+
+CREATE TABLE chat_tool_attempts (
+  id              BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  run_id          VARCHAR(36)     NOT NULL,
+  tool_call_id    VARCHAR(64)     NOT NULL,
+  tool_name       VARCHAR(128)    NOT NULL,
+  access          VARCHAR(8)      NOT NULL,
+  status          VARCHAR(24)     NOT NULL,
+  idempotency_key VARCHAR(128)    NULL,
+  arguments       JSON            NULL,
+  result_text     TEXT            NULL,
+  created_at      DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  finished_at     DATETIME        NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY uk_chat_tool_call (run_id, tool_call_id),
+  KEY idx_chat_tool_status (run_id, status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='工具开始/成功/未知状态，写前留痕';

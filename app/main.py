@@ -176,6 +176,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.include_router(topics.router)
     from app.routers import admin as admin_router
     app.include_router(admin_router.router)
+    # Optional multi-Agent route shares the existing engine/model/session store;
+    # `POST /api/chat` remains the default single-Agent path.
+    from app.multi_agent.api import create_multi_agent_router
+    from app.multi_agent.runtime import build_multi_agent_runtime
+    app.state.multi_agent = build_multi_agent_runtime(
+        engine=app.state.engine,
+        model=app.state.chat_model,
+        limits=None,
+    )
+    app.include_router(create_multi_agent_router())
 
     @app.get("/")
     async def index() -> FileResponse:
