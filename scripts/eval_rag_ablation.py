@@ -984,6 +984,13 @@ def _scoring_code_hashes() -> dict[str, str]:
     }
 
 
+def _scoring_worktree_dirty() -> bool:
+    sources = list(_scoring_code_hashes())
+    return bool(subprocess.check_output(
+        ["git", "status", "--porcelain", "--", *sources], cwd=ROOT, text=True
+    ).strip())
+
+
 def _rescore_existing(args) -> dict:
     """Recompute deterministic answer checks over saved traces without model calls."""
     from scripts.ch11_harness import rescore_answer_trace
@@ -1049,9 +1056,7 @@ def _rescore_existing(args) -> dict:
     current_commit = subprocess.check_output(
         ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True
     ).strip()
-    working_tree_dirty = bool(subprocess.check_output(
-        ["git", "status", "--porcelain"], cwd=ROOT, text=True
-    ).strip())
+    working_tree_dirty = _scoring_worktree_dirty()
     report["posthoc_rescore"] = {
         "scoring_version": "ch16-rescore-1",
         "model_calls": 0,

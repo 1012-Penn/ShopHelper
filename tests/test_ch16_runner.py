@@ -250,6 +250,20 @@ def test_scoring_code_hashes_cover_reproduction_sources():
     ).hexdigest()
 
 
+def test_scoring_worktree_dirty_checks_only_code_sources(monkeypatch):
+    captured = {}
+
+    def fake_check_output(command, **kwargs):
+        captured["command"] = command
+        captured["kwargs"] = kwargs
+        return " M scripts/eval_checks.py\n"
+
+    monkeypatch.setattr(ch16.subprocess, "check_output", fake_check_output)
+
+    assert ch16._scoring_worktree_dirty() is True
+    assert "tests/eval/rag_ablation/runs" not in " ".join(captured["command"])
+
+
 def test_snapshot_identity_accepts_only_matching_sha256(tmp_path):
     snapshot = tmp_path / "snapshot.db"
     snapshot.write_bytes(b"canonical snapshot fixture")
