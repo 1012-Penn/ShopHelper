@@ -1,0 +1,12 @@
+{
+  "benchmark": "rules-only local CPU",
+  "paid_calls": 0,
+  "decision_count": 38,
+  "iterations_per_decision": 5000,
+  "sample_count": 190000,
+  "p50_us": 23.967,
+  "p95_us": 51.291,
+  "p99_us": 79.702,
+  "mean_us": 28.379,
+  "scope": "Python feature extraction and RoutingDecision construction only; does not include model or tool execution."
+}

@@ -1,0 +1,956 @@
+{
+  "scenario_count": 10,
+  "result_count": 30,
+  "model": "deepseek-flash",
+  "policy_version": "adaptive-routing-r2-v1",
+  "policy_sha256": "9c052168d81ea901e9849210bfb1ee6a2eba9dfe78213b7d8a1da51371942a5e",
+  "scenario_sha256": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+  "rubric_sha256": "7b5985969f0620eaf9b8683dec9258f2fbd0e3adcc9653b0be221734728d1a07",
+  "budget": {
+    "model": "deepseek-flash",
+    "experiment_id": "adaptive-routing-r2-20261027",
+    "config_hash": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+    "allow_paid": true,
+    "pricing_verified": true,
+    "run_cap_usd": 2.0,
+    "charged_upper_bound_usd": 0.04643872,
+    "usage_cost_at_pinned_peak_rates_usd": 0.04643872,
+    "stop_reason": null,
+    "reserved_usd": 0,
+    "max_call_cost_usd": 0.0024,
+    "max_input_tokens": 6000,
+    "max_output_tokens": 500,
+    "arms": {
+      "fixed_single": {
+        "generations": 16,
+        "max_generations": 150,
+        "cap_usd": 0.45,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.00209034,
+        "charged_upper_bound_usd": 0.00209034,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "fixed_multi": {
+        "generations": 119,
+        "max_generations": 300,
+        "cap_usd": 0.75,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.03332054,
+        "charged_upper_bound_usd": 0.03332054,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "adaptive_single": {
+        "generations": 12,
+        "max_generations": 150,
+        "cap_usd": 0.4,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.00150934,
+        "charged_upper_bound_usd": 0.00150934,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "adaptive_multi": {
+        "generations": 31,
+        "max_generations": 166,
+        "cap_usd": 0.4,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.0095185,
+        "charged_upper_bound_usd": 0.0095185,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      }
+    }
+  },
+  "arms": {
+    "fixed_single": {
+      "task_success": {
+        "numerator": 5,
+        "denominator": 10,
+        "rate": 0.5
+      },
+      "p50_ms": 1869,
+      "p95_ms": 2189,
+      "model_calls": 16,
+      "input_tokens": 16735,
+      "output_tokens": 851,
+      "cost_usd": 0.00209034,
+      "cost_per_success_usd": 0.000418068,
+      "routing_ms_total": 0,
+      "routing_ms_p95": 0,
+      "multi_route_turn_share": 0.0,
+      "multi_route_turns": 0,
+      "route_turns": 8,
+      "multi_route_scenario_share": 0.0,
+      "failed_case_ids": [
+        "AR2-DEV-003",
+        "AR2-DEV-005",
+        "AR2-DEV-006",
+        "AR2-DEV-009",
+        "AR2-DEV-010"
+      ]
+    },
+    "fixed_multi": {
+      "task_success": {
+        "numerator": 7,
+        "denominator": 10,
+        "rate": 0.7
+      },
+      "p50_ms": 6586,
+      "p95_ms": 16731,
+      "model_calls": 119,
+      "input_tokens": 82852,
+      "output_tokens": 18281,
+      "cost_usd": 0.033320544,
+      "cost_per_success_usd": 0.0047600777,
+      "routing_ms_total": 0,
+      "routing_ms_p95": 0,
+      "multi_route_turn_share": 1.0,
+      "multi_route_turns": 11,
+      "route_turns": 11,
+      "multi_route_scenario_share": 1.0,
+      "failed_case_ids": [
+        "AR2-DEV-006",
+        "AR2-DEV-009",
+        "AR2-DEV-010"
+      ]
+    },
+    "adaptive": {
+      "task_success": {
+        "numerator": 5,
+        "denominator": 10,
+        "rate": 0.5
+      },
+      "p50_ms": 1494,
+      "p95_ms": 11864,
+      "model_calls": 43,
+      "input_tokens": 36322,
+      "output_tokens": 5566,
+      "cost_usd": 0.011027832,
+      "cost_per_success_usd": 0.0022055664,
+      "routing_ms_total": 0,
+      "routing_ms_p95": 0,
+      "multi_route_turn_share": 0.2,
+      "multi_route_turns": 2,
+      "route_turns": 10,
+      "multi_route_scenario_share": 0.2,
+      "failed_case_ids": [
+        "AR2-DEV-003",
+        "AR2-DEV-006",
+        "AR2-DEV-007",
+        "AR2-DEV-009",
+        "AR2-DEV-010"
+      ]
+    }
+  },
+  "route_diagnostics": {
+    "adaptive_vs_single": {
+      "wins": 1,
+      "losses": 1,
+      "ties": 8
+    },
+    "adaptive_vs_multi": {
+      "wins": 0,
+      "losses": 2,
+      "ties": 8
+    },
+    "false_upgrade_ids": [],
+    "missed_upgrade_ids": [
+      "AR2-DEV-003"
+    ],
+    "selected_multi_ids": [
+      "AR2-DEV-004",
+      "AR2-DEV-005"
+    ],
+    "selected_single_ids": [
+      "AR2-DEV-001",
+      "AR2-DEV-002",
+      "AR2-DEV-003",
+      "AR2-DEV-006",
+      "AR2-DEV-007",
+      "AR2-DEV-008",
+      "AR2-DEV-009",
+      "AR2-DEV-010"
+    ]
+  },
+  "route_reason_counts": {
+    "cross_order_comparison": 2,
+    "missing_slot_clarify": 1,
+    "simple_policy": 3,
+    "single_order_lookup": 1,
+    "single_order_policy_lookup": 4,
+    "write_requires_confirmation": 2
+  },
+  "buckets": {
+    "missing_slot": {
+      "fixed_single": {
+        "numerator": 1,
+        "denominator": 1,
+        "rate": 1.0
+      },
+      "fixed_multi": {
+        "numerator": 1,
+        "denominator": 1,
+        "rate": 1.0
+      },
+      "adaptive": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      }
+    },
+    "multi_entity": {
+      "fixed_single": {
+        "numerator": 1,
+        "denominator": 2,
+        "rate": 0.5
+      },
+      "fixed_multi": {
+        "numerator": 2,
+        "denominator": 2,
+        "rate": 1.0
+      },
+      "adaptive": {
+        "numerator": 2,
+        "denominator": 2,
+        "rate": 1.0
+      }
+    },
+    "refusal": {
+      "fixed_single": {
+        "numerator": 1,
+        "denominator": 1,
+        "rate": 1.0
+      },
+      "fixed_multi": {
+        "numerator": 1,
+        "denominator": 1,
+        "rate": 1.0
+      },
+      "adaptive": {
+        "numerator": 1,
+        "denominator": 1,
+        "rate": 1.0
+      }
+    },
+    "revision": {
+      "fixed_single": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "fixed_multi": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "adaptive": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      }
+    },
+    "simple": {
+      "fixed_single": {
+        "numerator": 2,
+        "denominator": 3,
+        "rate": 0.6667
+      },
+      "fixed_multi": {
+        "numerator": 3,
+        "denominator": 3,
+        "rate": 1.0
+      },
+      "adaptive": {
+        "numerator": 2,
+        "denominator": 3,
+        "rate": 0.6667
+      }
+    },
+    "write_cancel": {
+      "fixed_single": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "fixed_multi": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "adaptive": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      }
+    },
+    "write_preview": {
+      "fixed_single": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "fixed_multi": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      },
+      "adaptive": {
+        "numerator": 0,
+        "denominator": 1,
+        "rate": 0.0
+      }
+    }
+  },
+  "failed_cases": [
+    {
+      "scenario_id": "AR2-DEV-003",
+      "arm": "fixed_single",
+      "errors": [
+        "harness:BudgetExceeded:request input limit: 6227 > 6000"
+      ],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 2,
+        "entity_error_count": 1,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "1002",
+          "不能直接取消"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [
+          "1002"
+        ],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-003",
+      "arm": "adaptive",
+      "errors": [
+        "routing_executor:BudgetExceeded:request input limit: 6246 > 6000"
+      ],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 2,
+        "entity_error_count": 1,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "1002",
+          "不能直接取消"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [
+          "1002"
+        ],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-005",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "query_faq"
+        ],
+        "required_tools_correct": false,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-006",
+      "arm": "fixed_single",
+      "errors": [
+        "harness:BudgetExceeded:request input limit: 6188 > 6000"
+      ],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 2,
+        "entity_error_count": 2,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "1003",
+          "待发货"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [
+          "1003",
+          "1003"
+        ],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-006",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq",
+          "query_order",
+          "query_faq",
+          "query_faq",
+          "query_order",
+          "query_faq",
+          "create_ticket"
+        ],
+        "preview_count": 1,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-006",
+      "arm": "adaptive",
+      "errors": [
+        "routing_executor:BudgetExceeded:request input limit: 6188 > 6000"
+      ],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 2,
+        "entity_error_count": 2,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "1003",
+          "待发货"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [
+          "1003",
+          "1003"
+        ],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-007",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-009",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "预览"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-009",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-009",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "预览"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-010",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "不会提交"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-010",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-010",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "不会提交"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v1"
+      }
+    }
+  ],
+  "requested_split": "dev",
+  "manifest": {
+    "experiment_id": "adaptive-routing-r2-20261027",
+    "status": "frozen-before-heldout",
+    "frozen_on": "2026-10-27",
+    "split_protocol": "business facts and question templates assigned by source_group",
+    "splits": {
+      "dev": 10,
+      "held-out": 24
+    },
+    "source_groups": [
+      {
+        "split": "dev",
+        "source_group": "dev-missing-slot"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-order-cancel-1002"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-order-status-1001"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-refusal-medical"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-return-window"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-revision-orders"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-two-order-cancel"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-two-order-status"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-write-cancel"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-write-confirm"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-activated-digital"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-custom-item"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-insufficient-evidence"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-missing-slot-a"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-missing-slot-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-nonquality-shipping"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-cancel-1001"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-cancel-1002"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-cancel-1003"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-status-1003"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-ordinary-shipping"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-quality-shipping"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-refund-timing"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-return-condition"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-revision-a"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-revision-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-revision-cancel"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-cancel-c"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-handling"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-routing"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-status-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-status-c"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-write-cancel-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-write-confirm-b"
+      }
+    ],
+    "source_groups_cross_splits": [],
+    "scenario_sha256": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+    "rubric_sha256": "7b5985969f0620eaf9b8683dec9258f2fbd0e3adcc9653b0be221734728d1a07",
+    "harness_sha256": "77a897a03c6fd04f49deba3a152b9a56b0a0e442a3a6628baf07a07fd5fcb2f0",
+    "router_policy_version": "adaptive-routing-r2-v1",
+    "router_policy_sha256": "9c052168d81ea901e9849210bfb1ee6a2eba9dfe78213b7d8a1da51371942a5e",
+    "router_policy_mode": "rules-only",
+    "model": "deepseek-flash",
+    "model_version": "DeepSeek-V4.1-Flash-1017",
+    "model_settings": {
+      "temperature": 0,
+      "max_output_tokens": 500,
+      "thinking": "disabled",
+      "max_retries": 0,
+      "rate_limit_retries": 2
+    },
+    "fixtures": {
+      "policies_sha256": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
+      "orders_sha256": "2db8a201f1eb9f9d13ab4ad9b3a1ec2f52ab4f81662bac5975d2ba2d428e5247"
+    },
+    "evidence_sources": {
+      "orders": "app/orders.py fixed simulated catalog",
+      "policies": "tests/eval/tasks/fixtures/policies.json CH15 simulated policy snapshot",
+      "milvus_snapshot_manifest": "read-only snapshot ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+      "milvus_snapshot_version": 3,
+      "milvus_snapshot_data_files": [
+        "data/data_000004_000133.parquet"
+      ]
+    },
+    "executor_config": {
+      "baseline_commit": "446fbb7f9972875b7649555cb9b4b19e402cea29",
+      "model": "deepseek-flash",
+      "model_version": "DeepSeek-V4.1-Flash-1017",
+      "model_settings": {
+        "temperature": 0,
+        "max_output_tokens": 500,
+        "thinking": "disabled",
+        "max_retries": 0,
+        "rate_limit_retries": 2
+      },
+      "max_input_tokens": 6000,
+      "arm_limits": {
+        "fixed_single": {
+          "max_generations": 150,
+          "cap_usd": 0.45
+        },
+        "fixed_multi": {
+          "max_generations": 300,
+          "cap_usd": 0.75
+        },
+        "adaptive_single": {
+          "max_generations": 150,
+          "cap_usd": 0.4
+        },
+        "adaptive_multi": {
+          "max_generations": 166,
+          "cap_usd": 0.4
+        }
+      },
+      "evidence_sources": {
+        "orders": "app/orders.py fixed simulated catalog",
+        "policies": "tests/eval/tasks/fixtures/policies.json CH15 simulated policy snapshot",
+        "milvus_snapshot_manifest": "read-only snapshot ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+        "milvus_snapshot_version": 3,
+        "milvus_snapshot_data_files": [
+          "data/data_000004_000133.parquet"
+        ]
+      }
+    },
+    "executor_config_sha256": "51122b52523042eb34b5fad733268873478b166f1ae04042a3ed9e9f66fd1c34",
+    "pricing": {
+      "verified_on": "2026-10-27",
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "rate_basis": "peak prices, conservative upper bound",
+      "input_per_million": 0.3,
+      "input_cache_hit_per_million": 0.006,
+      "output_per_million": 1.2
+    },
+    "run_cap_usd": 2.0,
+    "stop_rule": {
+      "heldout_run_count": 1,
+      "heldout_retuning": false,
+      "dev_before_heldout": true,
+      "infrastructure_retry_limit": 2,
+      "preserve_failed_attempts": true,
+      "selective_success_rerun": false
+    },
+    "metrics": [
+      "task success",
+      "paired wins/losses/ties",
+      "false/missed upgrades",
+      "bucket success",
+      "cold-path P50/P95",
+      "provider calls and tokens",
+      "total cost and cost per success",
+      "multi-Agent share and routing time"
+    ]
+  }
+}

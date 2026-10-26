@@ -1,0 +1,14 @@
+{
+  "version": "adaptive_routing_r2_scorer_v3",
+  "include_any": {
+    "不能直接取消": ["不能直接取消", "无法直接取消", "不能取消", "无法取消"],
+    "可以取消": ["可以取消", "可以申请取消"],
+    "不会": ["不会", "不办理", "没有创建", "未创建", "不退货", "不建工单", "不再处理", "不执行任何操作"],
+    "不会提交": ["不会提交", "不提交", "未提交"]
+  },
+  "negative_context_exceptions": {
+    "商家承担": ["质量问题由商家承担", "质量问题退货的运费由商家承担"],
+    "合同合法": ["合同合法性"]
+  },
+  "note": "Frozen before real-model execution. Gold is available only to this scorer and the evaluator's isolated confirmation action."
+}

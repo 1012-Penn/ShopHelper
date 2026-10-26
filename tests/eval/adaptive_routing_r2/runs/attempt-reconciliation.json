@@ -1,0 +1,78 @@
+{
+  "session_cap_usd": 2.0,
+  "all_attempt_calls": 674,
+  "total_charged_usd": 0.17100027,
+  "remaining_usd": 1.82899973,
+  "within_session_cap": true,
+  "pending_calls": 0,
+  "stop_reasons": [],
+  "ledgers": [
+    {
+      "ledger": "adaptive_routing_r2_paid_run.sqlite3",
+      "calls": 288,
+      "pending_calls": 0,
+      "charged_usd": 0.07220916,
+      "input_tokens": 230095,
+      "output_tokens": 37835,
+      "stop_reason": null,
+      "arms": [
+        {
+          "arm": "adaptive_multi",
+          "calls": 51,
+          "charged_usd": 0.015351606
+        },
+        {
+          "arm": "adaptive_single",
+          "calls": 26,
+          "charged_usd": 0.00327756
+        },
+        {
+          "arm": "fixed_multi",
+          "calls": 174,
+          "charged_usd": 0.048803262
+        },
+        {
+          "arm": "fixed_single",
+          "calls": 37,
+          "charged_usd": 0.004776732
+        }
+      ]
+    },
+    {
+      "ledger": "adaptive_routing_r2_paid_run_final.sqlite3",
+      "calls": 386,
+      "pending_calls": 0,
+      "charged_usd": 0.09879111,
+      "input_tokens": 344919,
+      "output_tokens": 48498,
+      "stop_reason": null,
+      "arms": [
+        {
+          "arm": "adaptive_multi",
+          "calls": 56,
+          "charged_usd": 0.019663122
+        },
+        {
+          "arm": "adaptive_single",
+          "calls": 55,
+          "charged_usd": 0.007035504
+        },
+        {
+          "arm": "fixed_multi",
+          "calls": 203,
+          "charged_usd": 0.062674884
+        },
+        {
+          "arm": "fixed_single",
+          "calls": 72,
+          "charged_usd": 0.0094176
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "The first ledger contains three dev infrastructure attempts; all are retained.",
+    "The final ledger contains one frozen 34-case three-arm execution.",
+    "No provider usage was inferred from response text; charged amounts come from ledger rows."
+  ]
+}

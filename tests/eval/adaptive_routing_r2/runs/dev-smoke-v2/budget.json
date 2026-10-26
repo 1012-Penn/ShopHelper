@@ -1,0 +1,57 @@
+{
+  "model": "deepseek-flash",
+  "experiment_id": "adaptive-routing-r2-20261027",
+  "config_hash": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+  "allow_paid": true,
+  "pricing_verified": true,
+  "run_cap_usd": 2.0,
+  "charged_upper_bound_usd": 0.04643872,
+  "usage_cost_at_pinned_peak_rates_usd": 0.04643872,
+  "stop_reason": null,
+  "reserved_usd": 0,
+  "max_call_cost_usd": 0.0024,
+  "max_input_tokens": 6000,
+  "max_output_tokens": 500,
+  "arms": {
+    "fixed_single": {
+      "generations": 16,
+      "max_generations": 150,
+      "cap_usd": 0.45,
+      "reserved_usd": 0,
+      "usage_cost_at_pinned_peak_rates_usd": 0.00209034,
+      "charged_upper_bound_usd": 0.00209034,
+      "pending_calls": 0,
+      "upper_bound_or_unknown_cost_calls": 0
+    },
+    "fixed_multi": {
+      "generations": 119,
+      "max_generations": 300,
+      "cap_usd": 0.75,
+      "reserved_usd": 0,
+      "usage_cost_at_pinned_peak_rates_usd": 0.03332054,
+      "charged_upper_bound_usd": 0.03332054,
+      "pending_calls": 0,
+      "upper_bound_or_unknown_cost_calls": 0
+    },
+    "adaptive_single": {
+      "generations": 12,
+      "max_generations": 150,
+      "cap_usd": 0.4,
+      "reserved_usd": 0,
+      "usage_cost_at_pinned_peak_rates_usd": 0.00150934,
+      "charged_upper_bound_usd": 0.00150934,
+      "pending_calls": 0,
+      "upper_bound_or_unknown_cost_calls": 0
+    },
+    "adaptive_multi": {
+      "generations": 31,
+      "max_generations": 166,
+      "cap_usd": 0.4,
+      "reserved_usd": 0,
+      "usage_cost_at_pinned_peak_rates_usd": 0.0095185,
+      "charged_upper_bound_usd": 0.0095185,
+      "pending_calls": 0,
+      "upper_bound_or_unknown_cost_calls": 0
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "decision_count": 38,
+  "multi_scenario_count": 8,
+  "scenario_count": 34,
+  "selected_multi_ids": [
+    "AR2-DEV-004",
+    "AR2-DEV-005",
+    "AR2-DEV-006",
+    "AR2-HLD-012",
+    "AR2-HLD-013",
+    "AR2-HLD-014",
+    "AR2-HLD-015",
+    "AR2-HLD-017"
+  ],
+  "reason_counts": {
+    "cross_order_comparison": 6,
+    "missing_slot_clarify": 1,
+    "revision_with_order_dependency": 2,
+    "simple_policy": 12,
+    "single_order_lookup": 3,
+    "single_order_policy_lookup": 15,
+    "visible_revision": 2,
+    "write_requires_confirmation": 4
+  },
+  "integer_ms_counts": {
+    "0": 38
+  },
+  "routing_cost_usd": 0.0
+}

@@ -1,0 +1,701 @@
+{
+  "dev": {
+    "arms": {
+      "fixed_single": {
+        "task_success": {
+          "numerator": 7,
+          "denominator": 10,
+          "rate": 0.7
+        },
+        "model_calls": 21,
+        "input_tokens": 22726,
+        "output_tokens": 1086,
+        "cost_usd": 0.002701992,
+        "cost_per_success_usd": 0.0003859989
+      },
+      "fixed_multi": {
+        "task_success": {
+          "numerator": 8,
+          "denominator": 10,
+          "rate": 0.8
+        },
+        "model_calls": 60,
+        "input_tokens": 44918,
+        "output_tokens": 9487,
+        "cost_usd": 0.01789788,
+        "cost_per_success_usd": 0.002237235
+      },
+      "adaptive": {
+        "task_success": {
+          "numerator": 8,
+          "denominator": 10,
+          "rate": 0.8
+        },
+        "model_calls": 35,
+        "input_tokens": 32464,
+        "output_tokens": 3665,
+        "cost_usd": 0.007966434,
+        "cost_per_success_usd": 0.0009958042
+      }
+    },
+    "paired": {
+      "fixed_single": {
+        "wins": 1,
+        "losses": 0,
+        "ties": 9,
+        "ids": {
+          "wins": [
+            "AR2-DEV-005"
+          ],
+          "losses": [],
+          "ties": [
+            "AR2-DEV-001",
+            "AR2-DEV-002",
+            "AR2-DEV-003",
+            "AR2-DEV-004",
+            "AR2-DEV-006",
+            "AR2-DEV-007",
+            "AR2-DEV-008",
+            "AR2-DEV-009",
+            "AR2-DEV-010"
+          ]
+        }
+      },
+      "fixed_multi": {
+        "wins": 1,
+        "losses": 1,
+        "ties": 8,
+        "ids": {
+          "wins": [
+            "AR2-DEV-001"
+          ],
+          "losses": [
+            "AR2-DEV-009"
+          ],
+          "ties": [
+            "AR2-DEV-002",
+            "AR2-DEV-003",
+            "AR2-DEV-004",
+            "AR2-DEV-005",
+            "AR2-DEV-006",
+            "AR2-DEV-007",
+            "AR2-DEV-008",
+            "AR2-DEV-010"
+          ]
+        }
+      }
+    },
+    "buckets": {
+      "missing_slot": {
+        "fixed_single": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        }
+      },
+      "multi_entity": {
+        "fixed_single": {
+          "numerator": 1,
+          "denominator": 2,
+          "rate": 0.5
+        },
+        "fixed_multi": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        }
+      },
+      "refusal": {
+        "fixed_single": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        }
+      },
+      "revision": {
+        "fixed_single": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        }
+      },
+      "simple": {
+        "fixed_single": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 2,
+          "denominator": 3,
+          "rate": 0.6667
+        },
+        "adaptive": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        }
+      },
+      "write_cancel": {
+        "fixed_single": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "fixed_multi": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "adaptive": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        }
+      },
+      "write_preview": {
+        "fixed_single": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "fixed_multi": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        }
+      }
+    }
+  },
+  "held-out": {
+    "arms": {
+      "fixed_single": {
+        "task_success": {
+          "numerator": 20,
+          "denominator": 24,
+          "rate": 0.8333
+        },
+        "model_calls": 51,
+        "input_tokens": 56142,
+        "output_tokens": 2725,
+        "cost_usd": 0.006715608,
+        "cost_per_success_usd": 0.0003357804
+      },
+      "fixed_multi": {
+        "task_success": {
+          "numerator": 18,
+          "denominator": 24,
+          "rate": 0.75
+        },
+        "model_calls": 143,
+        "input_tokens": 112389,
+        "output_tokens": 22639,
+        "cost_usd": 0.044777004,
+        "cost_per_success_usd": 0.0024876113
+      },
+      "adaptive": {
+        "task_success": {
+          "numerator": 22,
+          "denominator": 24,
+          "rate": 0.9167
+        },
+        "model_calls": 76,
+        "input_tokens": 76280,
+        "output_tokens": 8896,
+        "cost_usd": 0.018732192,
+        "cost_per_success_usd": 0.0008514633
+      }
+    },
+    "paired": {
+      "fixed_single": {
+        "wins": 2,
+        "losses": 0,
+        "ties": 22,
+        "ids": {
+          "wins": [
+            "AR2-HLD-014",
+            "AR2-HLD-015"
+          ],
+          "losses": [],
+          "ties": [
+            "AR2-HLD-001",
+            "AR2-HLD-002",
+            "AR2-HLD-003",
+            "AR2-HLD-004",
+            "AR2-HLD-005",
+            "AR2-HLD-006",
+            "AR2-HLD-007",
+            "AR2-HLD-008",
+            "AR2-HLD-009",
+            "AR2-HLD-010",
+            "AR2-HLD-011",
+            "AR2-HLD-012",
+            "AR2-HLD-013",
+            "AR2-HLD-016",
+            "AR2-HLD-017",
+            "AR2-HLD-018",
+            "AR2-HLD-019",
+            "AR2-HLD-020",
+            "AR2-HLD-021",
+            "AR2-HLD-022",
+            "AR2-HLD-023",
+            "AR2-HLD-024"
+          ]
+        }
+      },
+      "fixed_multi": {
+        "wins": 4,
+        "losses": 0,
+        "ties": 20,
+        "ids": {
+          "wins": [
+            "AR2-HLD-001",
+            "AR2-HLD-011",
+            "AR2-HLD-015",
+            "AR2-HLD-022"
+          ],
+          "losses": [],
+          "ties": [
+            "AR2-HLD-002",
+            "AR2-HLD-003",
+            "AR2-HLD-004",
+            "AR2-HLD-005",
+            "AR2-HLD-006",
+            "AR2-HLD-007",
+            "AR2-HLD-008",
+            "AR2-HLD-009",
+            "AR2-HLD-010",
+            "AR2-HLD-012",
+            "AR2-HLD-013",
+            "AR2-HLD-014",
+            "AR2-HLD-016",
+            "AR2-HLD-017",
+            "AR2-HLD-018",
+            "AR2-HLD-019",
+            "AR2-HLD-020",
+            "AR2-HLD-021",
+            "AR2-HLD-023",
+            "AR2-HLD-024"
+          ]
+        }
+      }
+    },
+    "buckets": {
+      "missing_slot": {
+        "fixed_single": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        }
+      },
+      "multi_entity": {
+        "fixed_single": {
+          "numerator": 3,
+          "denominator": 5,
+          "rate": 0.6
+        },
+        "fixed_multi": {
+          "numerator": 4,
+          "denominator": 5,
+          "rate": 0.8
+        },
+        "adaptive": {
+          "numerator": 5,
+          "denominator": 5,
+          "rate": 1.0
+        }
+      },
+      "refusal": {
+        "fixed_single": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "adaptive": {
+          "numerator": 1,
+          "denominator": 1,
+          "rate": 1.0
+        }
+      },
+      "revision": {
+        "fixed_single": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        }
+      },
+      "simple": {
+        "fixed_single": {
+          "numerator": 11,
+          "denominator": 11,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 9,
+          "denominator": 11,
+          "rate": 0.8182
+        },
+        "adaptive": {
+          "numerator": 11,
+          "denominator": 11,
+          "rate": 1.0
+        }
+      },
+      "write_cancel": {
+        "fixed_single": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "fixed_multi": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "adaptive": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        }
+      },
+      "write_preview": {
+        "fixed_single": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "fixed_multi": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        },
+        "adaptive": {
+          "numerator": 0,
+          "denominator": 1,
+          "rate": 0.0
+        }
+      }
+    }
+  },
+  "all": {
+    "arms": {
+      "fixed_single": {
+        "task_success": {
+          "numerator": 27,
+          "denominator": 34,
+          "rate": 0.7941
+        },
+        "model_calls": 72,
+        "input_tokens": 78868,
+        "output_tokens": 3811,
+        "cost_usd": 0.0094176,
+        "cost_per_success_usd": 0.0003488
+      },
+      "fixed_multi": {
+        "task_success": {
+          "numerator": 26,
+          "denominator": 34,
+          "rate": 0.7647
+        },
+        "model_calls": 203,
+        "input_tokens": 157307,
+        "output_tokens": 32126,
+        "cost_usd": 0.062674884,
+        "cost_per_success_usd": 0.0024105725
+      },
+      "adaptive": {
+        "task_success": {
+          "numerator": 30,
+          "denominator": 34,
+          "rate": 0.8824
+        },
+        "model_calls": 111,
+        "input_tokens": 108744,
+        "output_tokens": 12561,
+        "cost_usd": 0.026698626,
+        "cost_per_success_usd": 0.0008899542
+      }
+    },
+    "paired": {
+      "fixed_single": {
+        "wins": 3,
+        "losses": 0,
+        "ties": 31,
+        "ids": {
+          "wins": [
+            "AR2-DEV-005",
+            "AR2-HLD-014",
+            "AR2-HLD-015"
+          ],
+          "losses": [],
+          "ties": [
+            "AR2-DEV-001",
+            "AR2-DEV-002",
+            "AR2-DEV-003",
+            "AR2-DEV-004",
+            "AR2-DEV-006",
+            "AR2-DEV-007",
+            "AR2-DEV-008",
+            "AR2-DEV-009",
+            "AR2-DEV-010",
+            "AR2-HLD-001",
+            "AR2-HLD-002",
+            "AR2-HLD-003",
+            "AR2-HLD-004",
+            "AR2-HLD-005",
+            "AR2-HLD-006",
+            "AR2-HLD-007",
+            "AR2-HLD-008",
+            "AR2-HLD-009",
+            "AR2-HLD-010",
+            "AR2-HLD-011",
+            "AR2-HLD-012",
+            "AR2-HLD-013",
+            "AR2-HLD-016",
+            "AR2-HLD-017",
+            "AR2-HLD-018",
+            "AR2-HLD-019",
+            "AR2-HLD-020",
+            "AR2-HLD-021",
+            "AR2-HLD-022",
+            "AR2-HLD-023",
+            "AR2-HLD-024"
+          ]
+        }
+      },
+      "fixed_multi": {
+        "wins": 5,
+        "losses": 1,
+        "ties": 28,
+        "ids": {
+          "wins": [
+            "AR2-DEV-001",
+            "AR2-HLD-001",
+            "AR2-HLD-011",
+            "AR2-HLD-015",
+            "AR2-HLD-022"
+          ],
+          "losses": [
+            "AR2-DEV-009"
+          ],
+          "ties": [
+            "AR2-DEV-002",
+            "AR2-DEV-003",
+            "AR2-DEV-004",
+            "AR2-DEV-005",
+            "AR2-DEV-006",
+            "AR2-DEV-007",
+            "AR2-DEV-008",
+            "AR2-DEV-010",
+            "AR2-HLD-002",
+            "AR2-HLD-003",
+            "AR2-HLD-004",
+            "AR2-HLD-005",
+            "AR2-HLD-006",
+            "AR2-HLD-007",
+            "AR2-HLD-008",
+            "AR2-HLD-009",
+            "AR2-HLD-010",
+            "AR2-HLD-012",
+            "AR2-HLD-013",
+            "AR2-HLD-014",
+            "AR2-HLD-016",
+            "AR2-HLD-017",
+            "AR2-HLD-018",
+            "AR2-HLD-019",
+            "AR2-HLD-020",
+            "AR2-HLD-021",
+            "AR2-HLD-023",
+            "AR2-HLD-024"
+          ]
+        }
+      }
+    },
+    "buckets": {
+      "missing_slot": {
+        "fixed_single": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 3,
+          "denominator": 3,
+          "rate": 1.0
+        }
+      },
+      "multi_entity": {
+        "fixed_single": {
+          "numerator": 4,
+          "denominator": 7,
+          "rate": 0.5714
+        },
+        "fixed_multi": {
+          "numerator": 6,
+          "denominator": 7,
+          "rate": 0.8571
+        },
+        "adaptive": {
+          "numerator": 7,
+          "denominator": 7,
+          "rate": 1.0
+        }
+      },
+      "refusal": {
+        "fixed_single": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 1,
+          "denominator": 2,
+          "rate": 0.5
+        },
+        "adaptive": {
+          "numerator": 2,
+          "denominator": 2,
+          "rate": 1.0
+        }
+      },
+      "revision": {
+        "fixed_single": {
+          "numerator": 4,
+          "denominator": 4,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 4,
+          "denominator": 4,
+          "rate": 1.0
+        },
+        "adaptive": {
+          "numerator": 4,
+          "denominator": 4,
+          "rate": 1.0
+        }
+      },
+      "simple": {
+        "fixed_single": {
+          "numerator": 14,
+          "denominator": 14,
+          "rate": 1.0
+        },
+        "fixed_multi": {
+          "numerator": 11,
+          "denominator": 14,
+          "rate": 0.7857
+        },
+        "adaptive": {
+          "numerator": 14,
+          "denominator": 14,
+          "rate": 1.0
+        }
+      },
+      "write_cancel": {
+        "fixed_single": {
+          "numerator": 0,
+          "denominator": 2,
+          "rate": 0.0
+        },
+        "fixed_multi": {
+          "numerator": 0,
+          "denominator": 2,
+          "rate": 0.0
+        },
+        "adaptive": {
+          "numerator": 0,
+          "denominator": 2,
+          "rate": 0.0
+        }
+      },
+      "write_preview": {
+        "fixed_single": {
+          "numerator": 0,
+          "denominator": 2,
+          "rate": 0.0
+        },
+        "fixed_multi": {
+          "numerator": 1,
+          "denominator": 2,
+          "rate": 0.5
+        },
+        "adaptive": {
+          "numerator": 0,
+          "denominator": 2,
+          "rate": 0.0
+        }
+      }
+    }
+  }
+}

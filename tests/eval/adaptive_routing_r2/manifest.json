@@ -1,0 +1,247 @@
+{
+  "experiment_id": "adaptive-routing-r2-20261027",
+  "status": "frozen-before-heldout",
+  "frozen_on": "2026-10-27",
+  "split_protocol": "business facts and question templates assigned by source_group",
+  "splits": {
+    "dev": 10,
+    "held-out": 24
+  },
+  "source_groups": [
+    {
+      "split": "dev",
+      "source_group": "dev-missing-slot"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-order-cancel-1002"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-order-status-1001"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-refusal-medical"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-return-window"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-revision-orders"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-two-order-cancel"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-two-order-status"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-write-cancel"
+    },
+    {
+      "split": "dev",
+      "source_group": "dev-write-confirm"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-activated-digital"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-custom-item"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-insufficient-evidence"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-missing-slot-a"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-missing-slot-b"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-nonquality-shipping"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-order-cancel-1001"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-order-cancel-1002"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-order-cancel-1003"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-order-status-1003"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-ordinary-shipping"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-quality-shipping"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-refund-timing"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-return-condition"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-revision-a"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-revision-b"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-revision-cancel"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-two-order-cancel-c"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-two-order-handling"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-two-order-routing"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-two-order-status-b"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-two-order-status-c"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-write-cancel-b"
+    },
+    {
+      "split": "held-out",
+      "source_group": "hld-write-confirm-b"
+    }
+  ],
+  "source_groups_cross_splits": [],
+  "scenario_sha256": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+  "rubric_sha256": "aee593286c4c9857cd3be809e1f743b72bc369879e06b7c6d8bc23bac0af2c59",
+  "harness_sha256": "8c8283a4a6323c8ef4f238e27db7fd3c9470a16b7658b2fc713d41607ddcfb32",
+  "router_policy_version": "adaptive-routing-r2-v1",
+  "router_policy_sha256": "9c052168d81ea901e9849210bfb1ee6a2eba9dfe78213b7d8a1da51371942a5e",
+  "router_policy_mode": "rules-only",
+  "model": "deepseek-flash",
+  "model_version": "DeepSeek-V4.1-Flash-1017",
+  "model_settings": {
+    "temperature": 0,
+    "max_output_tokens": 500,
+    "thinking": "disabled",
+    "max_retries": 0,
+    "rate_limit_retries": 2
+  },
+  "fixtures": {
+    "policies_sha256": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
+    "orders_sha256": "2db8a201f1eb9f9d13ab4ad9b3a1ec2f52ab4f81662bac5975d2ba2d428e5247"
+  },
+  "evidence_sources": {
+    "orders": "app/orders.py fixed simulated catalog",
+    "policies": "tests/eval/tasks/fixtures/policies.json CH15 simulated policy snapshot",
+    "milvus_snapshot_manifest": "read-only snapshot ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+    "milvus_snapshot_version": 3,
+    "milvus_snapshot_data_files": [
+      "data/data_000004_000133.parquet"
+    ]
+  },
+  "executor_config": {
+    "baseline_commit": "446fbb7f9972875b7649555cb9b4b19e402cea29",
+    "model": "deepseek-flash",
+    "model_version": "DeepSeek-V4.1-Flash-1017",
+    "model_settings": {
+      "temperature": 0,
+      "max_output_tokens": 500,
+      "thinking": "disabled",
+      "max_retries": 0,
+      "rate_limit_retries": 2
+    },
+    "max_input_tokens": 7000,
+    "arm_limits": {
+      "fixed_single": {
+        "max_generations": 100,
+        "cap_usd": 0.27
+      },
+      "fixed_multi": {
+        "max_generations": 400,
+        "cap_usd": 1.08
+      },
+      "adaptive_single": {
+        "max_generations": 80,
+        "cap_usd": 0.216
+      },
+      "adaptive_multi": {
+        "max_generations": 130,
+        "cap_usd": 0.351
+      }
+    },
+    "evidence_sources": {
+      "orders": "app/orders.py fixed simulated catalog",
+      "policies": "tests/eval/tasks/fixtures/policies.json CH15 simulated policy snapshot",
+      "milvus_snapshot_manifest": "read-only snapshot ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+      "milvus_snapshot_version": 3,
+      "milvus_snapshot_data_files": [
+        "data/data_000004_000133.parquet"
+      ]
+    }
+  },
+  "executor_config_sha256": "b2d317c67dd5669f63897d67acfcf18cbccc01301831846061de409131206830",
+  "pricing": {
+    "verified_on": "2026-10-27",
+    "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+    "rate_basis": "peak prices, conservative upper bound",
+    "input_per_million": 0.3,
+    "input_cache_hit_per_million": 0.006,
+    "output_per_million": 1.2
+  },
+  "run_cap_usd": 2.0,
+  "pre_final_attempt_charged_usd": 0.07220916,
+  "final_ledger_cap_usd": 1.92779084,
+  "stop_rule": {
+    "heldout_run_count": 1,
+    "heldout_retuning": false,
+    "dev_before_heldout": true,
+    "infrastructure_retry_limit": 2,
+    "preserve_failed_attempts": true,
+    "selective_success_rerun": false
+  },
+  "metrics": [
+    "task success",
+    "paired wins/losses/ties",
+    "false/missed upgrades",
+    "bucket success",
+    "cold-path P50/P95",
+    "provider calls and tokens",
+    "total cost and cost per success",
+    "multi-Agent share and routing time"
+  ]
+}

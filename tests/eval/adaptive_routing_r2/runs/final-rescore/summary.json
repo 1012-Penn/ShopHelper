@@ -1,0 +1,1330 @@
+{
+  "scenario_count": 34,
+  "result_count": 102,
+  "model": "deepseek-flash",
+  "policy_version": "adaptive-routing-r2-v1",
+  "policy_sha256": "9c052168d81ea901e9849210bfb1ee6a2eba9dfe78213b7d8a1da51371942a5e",
+  "scenario_sha256": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+  "rubric_sha256": "816cf52d771452fd354c35cf79cd17e2798bd16f01a34a65401b4fec2e39874f",
+  "budget": {
+    "model": "deepseek-flash",
+    "experiment_id": "adaptive-routing-r2-20261027",
+    "config_hash": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+    "allow_paid": true,
+    "pricing_verified": true,
+    "run_cap_usd": 1.92779084,
+    "charged_upper_bound_usd": 0.0987911,
+    "usage_cost_at_pinned_peak_rates_usd": 0.09879111,
+    "stop_reason": null,
+    "reserved_usd": 0,
+    "max_call_cost_usd": 0.0027,
+    "max_input_tokens": 7000,
+    "max_output_tokens": 500,
+    "arms": {
+      "fixed_single": {
+        "generations": 72,
+        "max_generations": 100,
+        "cap_usd": 0.27,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.0094176,
+        "charged_upper_bound_usd": 0.0094176,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "fixed_multi": {
+        "generations": 203,
+        "max_generations": 400,
+        "cap_usd": 1.08,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.06267488,
+        "charged_upper_bound_usd": 0.06267488,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "adaptive_single": {
+        "generations": 55,
+        "max_generations": 80,
+        "cap_usd": 0.216,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.0070355,
+        "charged_upper_bound_usd": 0.0070355,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      },
+      "adaptive_multi": {
+        "generations": 56,
+        "max_generations": 130,
+        "cap_usd": 0.351,
+        "reserved_usd": 0,
+        "usage_cost_at_pinned_peak_rates_usd": 0.01966312,
+        "charged_upper_bound_usd": 0.01966312,
+        "pending_calls": 0,
+        "upper_bound_or_unknown_cost_calls": 0
+      }
+    }
+  },
+  "arms": {
+    "fixed_single": {
+      "task_success": {
+        "numerator": 24,
+        "denominator": 34,
+        "rate": 0.7059
+      },
+      "p50_ms": 1912,
+      "p95_ms": 4407,
+      "model_calls": 72,
+      "input_tokens": 78868,
+      "output_tokens": 3811,
+      "cost_usd": 0.0094176,
+      "cost_per_success_usd": 0.0003924,
+      "routing_ms_total": 0,
+      "routing_ms_p95": 0,
+      "multi_route_turn_share": 0.0,
+      "multi_route_turns": 0,
+      "route_turns": 37,
+      "multi_route_scenario_share": 0.0,
+      "failed_case_ids": [
+        "AR2-DEV-005",
+        "AR2-DEV-009",
+        "AR2-DEV-010",
+        "AR2-HLD-002",
+        "AR2-HLD-012",
+        "AR2-HLD-013",
+        "AR2-HLD-014",
+        "AR2-HLD-015",
+        "AR2-HLD-023",
+        "AR2-HLD-024"
+      ]
+    },
+    "fixed_multi": {
+      "task_success": {
+        "numerator": 24,
+        "denominator": 34,
+        "rate": 0.7059
+      },
+      "p50_ms": 6851,
+      "p95_ms": 16061,
+      "model_calls": 203,
+      "input_tokens": 157307,
+      "output_tokens": 32126,
+      "cost_usd": 0.062674884,
+      "cost_per_success_usd": 0.0026114535,
+      "routing_ms_total": 0,
+      "routing_ms_p95": 0,
+      "multi_route_turn_share": 1.0,
+      "multi_route_turns": 38,
+      "route_turns": 38,
+      "multi_route_scenario_share": 1.0,
+      "failed_case_ids": [
+        "AR2-DEV-001",
+        "AR2-DEV-010",
+        "AR2-HLD-001",
+        "AR2-HLD-003",
+        "AR2-HLD-011",
+        "AR2-HLD-012",
+        "AR2-HLD-015",
+        "AR2-HLD-022",
+        "AR2-HLD-023",
+        "AR2-HLD-024"
+      ]
+    },
+    "adaptive": {
+      "task_success": {
+        "numerator": 29,
+        "denominator": 34,
+        "rate": 0.8529
+      },
+      "p50_ms": 2054,
+      "p95_ms": 10654,
+      "model_calls": 111,
+      "input_tokens": 108744,
+      "output_tokens": 12561,
+      "cost_usd": 0.026698626,
+      "cost_per_success_usd": 0.0009206423,
+      "routing_ms_total": 0,
+      "routing_ms_p95": 0,
+      "multi_route_turn_share": 0.2105,
+      "multi_route_turns": 8,
+      "route_turns": 38,
+      "multi_route_scenario_share": 0.2353,
+      "failed_case_ids": [
+        "AR2-DEV-009",
+        "AR2-DEV-010",
+        "AR2-HLD-002",
+        "AR2-HLD-023",
+        "AR2-HLD-024"
+      ]
+    }
+  },
+  "route_diagnostics": {
+    "adaptive_vs_single": {
+      "wins": 5,
+      "losses": 0,
+      "ties": 29
+    },
+    "adaptive_vs_multi": {
+      "wins": 7,
+      "losses": 2,
+      "ties": 25
+    },
+    "false_upgrade_ids": [],
+    "missed_upgrade_ids": [
+      "AR2-DEV-009",
+      "AR2-HLD-002"
+    ],
+    "selected_multi_ids": [
+      "AR2-DEV-004",
+      "AR2-DEV-005",
+      "AR2-DEV-006",
+      "AR2-HLD-012",
+      "AR2-HLD-013",
+      "AR2-HLD-014",
+      "AR2-HLD-015",
+      "AR2-HLD-017"
+    ],
+    "selected_single_ids": [
+      "AR2-DEV-001",
+      "AR2-DEV-002",
+      "AR2-DEV-003",
+      "AR2-DEV-007",
+      "AR2-DEV-008",
+      "AR2-DEV-009",
+      "AR2-DEV-010",
+      "AR2-HLD-001",
+      "AR2-HLD-002",
+      "AR2-HLD-003",
+      "AR2-HLD-004",
+      "AR2-HLD-005",
+      "AR2-HLD-006",
+      "AR2-HLD-007",
+      "AR2-HLD-008",
+      "AR2-HLD-009",
+      "AR2-HLD-010",
+      "AR2-HLD-011",
+      "AR2-HLD-016",
+      "AR2-HLD-018",
+      "AR2-HLD-019",
+      "AR2-HLD-020",
+      "AR2-HLD-021",
+      "AR2-HLD-022",
+      "AR2-HLD-023",
+      "AR2-HLD-024"
+    ]
+  },
+  "route_reason_counts": {
+    "cross_order_comparison": 6,
+    "missing_slot_clarify": 1,
+    "revision_with_order_dependency": 2,
+    "simple_policy": 12,
+    "single_order_lookup": 3,
+    "single_order_policy_lookup": 15,
+    "visible_revision": 2,
+    "write_requires_confirmation": 4
+  },
+  "buckets": {
+    "missing_slot": {
+      "fixed_single": {
+        "numerator": 3,
+        "denominator": 3,
+        "rate": 1.0
+      },
+      "fixed_multi": {
+        "numerator": 3,
+        "denominator": 3,
+        "rate": 1.0
+      },
+      "adaptive": {
+        "numerator": 3,
+        "denominator": 3,
+        "rate": 1.0
+      }
+    },
+    "multi_entity": {
+      "fixed_single": {
+        "numerator": 2,
+        "denominator": 7,
+        "rate": 0.2857
+      },
+      "fixed_multi": {
+        "numerator": 5,
+        "denominator": 7,
+        "rate": 0.7143
+      },
+      "adaptive": {
+        "numerator": 7,
+        "denominator": 7,
+        "rate": 1.0
+      }
+    },
+    "refusal": {
+      "fixed_single": {
+        "numerator": 2,
+        "denominator": 2,
+        "rate": 1.0
+      },
+      "fixed_multi": {
+        "numerator": 1,
+        "denominator": 2,
+        "rate": 0.5
+      },
+      "adaptive": {
+        "numerator": 2,
+        "denominator": 2,
+        "rate": 1.0
+      }
+    },
+    "revision": {
+      "fixed_single": {
+        "numerator": 4,
+        "denominator": 4,
+        "rate": 1.0
+      },
+      "fixed_multi": {
+        "numerator": 4,
+        "denominator": 4,
+        "rate": 1.0
+      },
+      "adaptive": {
+        "numerator": 4,
+        "denominator": 4,
+        "rate": 1.0
+      }
+    },
+    "simple": {
+      "fixed_single": {
+        "numerator": 13,
+        "denominator": 14,
+        "rate": 0.9286
+      },
+      "fixed_multi": {
+        "numerator": 10,
+        "denominator": 14,
+        "rate": 0.7143
+      },
+      "adaptive": {
+        "numerator": 13,
+        "denominator": 14,
+        "rate": 0.9286
+      }
+    },
+    "write_cancel": {
+      "fixed_single": {
+        "numerator": 0,
+        "denominator": 2,
+        "rate": 0.0
+      },
+      "fixed_multi": {
+        "numerator": 0,
+        "denominator": 2,
+        "rate": 0.0
+      },
+      "adaptive": {
+        "numerator": 0,
+        "denominator": 2,
+        "rate": 0.0
+      }
+    },
+    "write_preview": {
+      "fixed_single": {
+        "numerator": 0,
+        "denominator": 2,
+        "rate": 0.0
+      },
+      "fixed_multi": {
+        "numerator": 1,
+        "denominator": 2,
+        "rate": 0.5
+      },
+      "adaptive": {
+        "numerator": 0,
+        "denominator": 2,
+        "rate": 0.0
+      }
+    }
+  },
+  "failed_cases": [
+    {
+      "scenario_id": "AR2-DEV-001",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-005",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "query_faq"
+        ],
+        "required_tools_correct": false,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-009",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "预览"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-009",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "预览"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-010",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "不会提交"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-010",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-DEV-010",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "不会提交"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-001",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 2,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "吊牌",
+          "二次销售"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_faq",
+          "query_faq",
+          "query_faq",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-002",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-002",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-003",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-011",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": false,
+        "missing_conditions": [
+          "可以取消"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq",
+          "create_ticket"
+        ],
+        "preview_count": 1,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-012",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq",
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-012",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "clarify",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-013",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "refuse",
+        "outcome_correct": false,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-014",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "query_faq"
+        ],
+        "required_tools_correct": false,
+        "write_correct": true,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-015",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "refuse",
+        "outcome_correct": false,
+        "condition_error_count": 3,
+        "entity_error_count": 2,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "1002",
+          "1003",
+          "拒收"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [
+          "1002",
+          "1003"
+        ],
+        "tool_sequence": [
+          "query_order",
+          "query_faq",
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-015",
+      "arm": "fixed_single",
+      "errors": [
+        "harness:BudgetExceeded:request input limit: 7208 > 7000"
+      ],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 3,
+        "entity_error_count": 2,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "1002",
+          "1003",
+          "拒收"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [
+          "1002",
+          "1003"
+        ],
+        "tool_sequence": [
+          "query_order",
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-022",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": false,
+        "condition_error_count": 2,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [],
+        "required_tools_correct": true,
+        "write_correct": true,
+        "missing_conditions": [
+          "无法回答"
+        ],
+        "forbidden_conditions": [
+          "15天"
+        ],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_faq",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-023",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-023",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-023",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-024",
+      "arm": "adaptive",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "不会提交"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-024",
+      "arm": "fixed_multi",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 0,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order",
+          "query_faq"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    },
+    {
+      "scenario_id": "AR2-HLD-024",
+      "arm": "fixed_single",
+      "errors": [],
+      "score": {
+        "task_success": false,
+        "actual_outcome": "answer",
+        "outcome_correct": true,
+        "condition_error_count": 1,
+        "entity_error_count": 0,
+        "parameter_error_count": 0,
+        "missing_tools": [
+          "create_ticket"
+        ],
+        "required_tools_correct": false,
+        "write_correct": false,
+        "missing_conditions": [
+          "不会提交"
+        ],
+        "forbidden_conditions": [],
+        "entity_errors": [],
+        "tool_sequence": [
+          "query_order"
+        ],
+        "preview_count": 0,
+        "confirmed_write_count": 0,
+        "unconfirmed_write_count": 0,
+        "scoring_version": "adaptive_routing_r2_scorer_v2"
+      }
+    }
+  ],
+  "manifest": {
+    "experiment_id": "adaptive-routing-r2-20261027",
+    "status": "frozen-before-heldout",
+    "frozen_on": "2026-10-27",
+    "split_protocol": "business facts and question templates assigned by source_group",
+    "splits": {
+      "dev": 10,
+      "held-out": 24
+    },
+    "source_groups": [
+      {
+        "split": "dev",
+        "source_group": "dev-missing-slot"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-order-cancel-1002"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-order-status-1001"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-refusal-medical"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-return-window"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-revision-orders"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-two-order-cancel"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-two-order-status"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-write-cancel"
+      },
+      {
+        "split": "dev",
+        "source_group": "dev-write-confirm"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-activated-digital"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-custom-item"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-insufficient-evidence"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-missing-slot-a"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-missing-slot-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-nonquality-shipping"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-cancel-1001"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-cancel-1002"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-cancel-1003"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-order-status-1003"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-ordinary-shipping"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-quality-shipping"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-refund-timing"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-return-condition"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-revision-a"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-revision-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-revision-cancel"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-cancel-c"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-handling"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-routing"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-status-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-two-order-status-c"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-write-cancel-b"
+      },
+      {
+        "split": "held-out",
+        "source_group": "hld-write-confirm-b"
+      }
+    ],
+    "source_groups_cross_splits": [],
+    "scenario_sha256": "7ac7550c254864afc082297dd6394f143c72fecd77067834216cd58ac633c382",
+    "rubric_sha256": "816cf52d771452fd354c35cf79cd17e2798bd16f01a34a65401b4fec2e39874f",
+    "harness_sha256": "cc91666bf69c99b9a10f5766f5a8a7cd379eea0e31f21a070a4d1f2509141710",
+    "router_policy_version": "adaptive-routing-r2-v1",
+    "router_policy_sha256": "9c052168d81ea901e9849210bfb1ee6a2eba9dfe78213b7d8a1da51371942a5e",
+    "router_policy_mode": "rules-only",
+    "model": "deepseek-flash",
+    "model_version": "DeepSeek-V4.1-Flash-1017",
+    "model_settings": {
+      "temperature": 0,
+      "max_output_tokens": 500,
+      "thinking": "disabled",
+      "max_retries": 0,
+      "rate_limit_retries": 2
+    },
+    "fixtures": {
+      "policies_sha256": "8662efccd3340447702d695e3b0c27ae2e732b461f8b1d357f3d944de2bd5289",
+      "orders_sha256": "2db8a201f1eb9f9d13ab4ad9b3a1ec2f52ab4f81662bac5975d2ba2d428e5247"
+    },
+    "evidence_sources": {
+      "orders": "app/orders.py fixed simulated catalog",
+      "policies": "tests/eval/tasks/fixtures/policies.json CH15 simulated policy snapshot",
+      "milvus_snapshot_manifest": "read-only snapshot ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+      "milvus_snapshot_version": 3,
+      "milvus_snapshot_data_files": [
+        "data/data_000004_000133.parquet"
+      ]
+    },
+    "executor_config": {
+      "baseline_commit": "446fbb7f9972875b7649555cb9b4b19e402cea29",
+      "model": "deepseek-flash",
+      "model_version": "DeepSeek-V4.1-Flash-1017",
+      "model_settings": {
+        "temperature": 0,
+        "max_output_tokens": 500,
+        "thinking": "disabled",
+        "max_retries": 0,
+        "rate_limit_retries": 2
+      },
+      "max_input_tokens": 7000,
+      "arm_limits": {
+        "fixed_single": {
+          "max_generations": 100,
+          "cap_usd": 0.27
+        },
+        "fixed_multi": {
+          "max_generations": 400,
+          "cap_usd": 1.08
+        },
+        "adaptive_single": {
+          "max_generations": 80,
+          "cap_usd": 0.216
+        },
+        "adaptive_multi": {
+          "max_generations": 130,
+          "cap_usd": 0.351
+        }
+      },
+      "evidence_sources": {
+        "orders": "app/orders.py fixed simulated catalog",
+        "policies": "tests/eval/tasks/fixtures/policies.json CH15 simulated policy snapshot",
+        "milvus_snapshot_manifest": "read-only snapshot ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+        "milvus_snapshot_version": 3,
+        "milvus_snapshot_data_files": [
+          "data/data_000004_000133.parquet"
+        ]
+      }
+    },
+    "executor_config_sha256": "b2d317c67dd5669f63897d67acfcf18cbccc01301831846061de409131206830",
+    "pricing": {
+      "verified_on": "2026-10-27",
+      "source_url": "https://api-docs.deepseek.com/quick_start/pricing/",
+      "rate_basis": "peak prices, conservative upper bound",
+      "input_per_million": 0.3,
+      "input_cache_hit_per_million": 0.006,
+      "output_per_million": 1.2
+    },
+    "run_cap_usd": 2.0,
+    "pre_final_attempt_charged_usd": 0.07220916,
+    "final_ledger_cap_usd": 1.92779084,
+    "stop_rule": {
+      "heldout_run_count": 1,
+      "heldout_retuning": false,
+      "dev_before_heldout": true,
+      "infrastructure_retry_limit": 2,
+      "preserve_failed_attempts": true,
+      "selective_success_rerun": false
+    },
+    "metrics": [
+      "task success",
+      "paired wins/losses/ties",
+      "false/missed upgrades",
+      "bucket success",
+      "cold-path P50/P95",
+      "provider calls and tokens",
+      "total cost and cost per success",
+      "multi-Agent share and routing time"
+    ]
+  },
+  "rescore_only": true,
+  "paid_calls_during_rescore": 0
+}
