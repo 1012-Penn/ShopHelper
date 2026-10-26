@@ -3,11 +3,9 @@ from datetime import datetime
 
 from sqlalchemy import (JSON, BigInteger, Boolean, DateTime, Enum, ForeignKey, Integer,
                         String, Text, UniqueConstraint, func)
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
-
-class Base(DeclarativeBase):
-    pass
+from app.orm import Base
 
 
 class Conversation(Base):
@@ -381,3 +379,12 @@ class AdminAuditLog(Base):
     ip: Mapped[str | None] = mapped_column(String(64), nullable=True)
     user_agent: Mapped[str | None] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+# 执行可靠性模型独立定义在 app/execution/models.py；这里只导出，保证共享同一个 metadata。
+from app.execution.models import (  # noqa: E402
+    ChatRun,
+    ChatRunEvent,
+    ChatSessionLease,
+    ChatToolAttempt,
+)

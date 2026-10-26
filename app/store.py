@@ -2,6 +2,8 @@
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import sessionmaker
 
+from app.execution.context import current_lease_guard
+from app.execution.locks import write_lock_for
 from app.models import Conversation, ConversationSummary, Message, RequestUsage
 from app.topic_taxonomy import TOPIC_LABELS
 
@@ -12,16 +14,24 @@ class UsageStore:
     def __init__(self, session_factory: sessionmaker) -> None:
         self._factory = session_factory
 
-    async def record(self, *, conversation_id: int, trace_id: str | None, intent: str,
-                     input_tokens: int, output_tokens: int, total_tokens: int,
-                     duration_ms: int) -> None:
-        with self._factory() as session:
+    def record_sync(self, *, conversation_id: int, trace_id: str | None, intent: str,
+                    input_tokens: int, output_tokens: int, total_tokens: int,
+                    duration_ms: int) -> None:
+        with write_lock_for(self._factory), self._factory() as session:
             session.add(RequestUsage(
                 conversation_id=conversation_id, trace_id=trace_id, intent=intent,
                 input_tokens=input_tokens, output_tokens=output_tokens,
                 total_tokens=total_tokens, duration_ms=duration_ms,
             ))
             session.commit()
+
+    async def record(self, *, conversation_id: int, trace_id: str | None, intent: str,
+                     input_tokens: int, output_tokens: int, total_tokens: int,
+                     duration_ms: int) -> None:
+        self.record_sync(
+            conversation_id=conversation_id, trace_id=trace_id, intent=intent,
+            input_tokens=input_tokens, output_tokens=output_tokens,
+            total_tokens=total_tokens, duration_ms=duration_ms)
 
     async def aggregate_by_intent(self) -> list[dict]:
         with self._factory() as session:
@@ -71,7 +81,10 @@ class ConversationStore:
             ]
 
     async def append(self, conversation_id: int, msgs: list[dict]) -> None:
-        with self._factory() as session:
+        guard = current_lease_guard.get()
+        if guard is not None and not guard():
+            raise RuntimeError("chat run lease lost before message persistence")
+        with write_lock_for(self._factory), self._factory() as session:
             for m in msgs:
                 session.add(Message(
                     conversation_id=conversation_id,

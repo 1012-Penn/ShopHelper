@@ -126,6 +126,16 @@ class RequestTrace:
             return
         usage = self.usage_callback.snapshot()
         try:
+            record_sync = getattr(self._service.usage_store, "record_sync", None)
+            if record_sync is not None:
+                record_sync(
+                    conversation_id=self._conversation_id,
+                    trace_id=getattr(self._observation, "trace_id", None),
+                    intent=intent,
+                    duration_ms=duration_ms,
+                    **usage,
+                )
+                return
             recorded = self._service.usage_store.record(
                 conversation_id=self._conversation_id,
                 trace_id=getattr(self._observation, "trace_id", None),
@@ -137,6 +147,18 @@ class RequestTrace:
                 asyncio.get_running_loop().create_task(recorded)
         except Exception:
             logger.warning("[observability] 写入本地用量失败", exc_info=True)
+
+    def fail(self, *, error: str, duration_ms: int) -> None:
+        """失败/取消也收口 observation 与本地 usage，不向聊天异常路径抛错。"""
+        metadata = self.metadata()
+        if self._observation is not None:
+            try:
+                self._observation.update(
+                    metadata=metadata, output={"error": error, "status": "failed"})
+            except Exception:
+                logger.warning("[observability] 更新 Langfuse 失败 observation 失败", exc_info=True)
+        self._record_usage(intent="", duration_ms=duration_ms)
+        self._service.flush()
 
 
 class ObservabilityService:

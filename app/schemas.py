@@ -16,6 +16,10 @@ class OrderResume(BaseModel):
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, description="用户本轮输入")
     session_id: int | None = Field(default=None, description="会话 id,缺省则服务端新建")
+    client_request_id: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9_-]{8,128}$",
+        description="可选客户端请求键;同会话同键只创建一个 run,异载荷返回 409",
+    )
     resume: OrderResume | None = Field(default=None,
                                        description="订单选择器点选回传,非空走子流程旁路")
 

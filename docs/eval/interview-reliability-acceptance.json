@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-10-27T00:41:26+0800",
+  "same_session_race": {
+    "created": 1,
+    "busy": 1,
+    "threads_finished": 2
+  },
+  "duplicate_request": {
+    "same_run": true,
+    "second_was_created": false,
+    "changed_payload_conflict": true
+  },
+  "restart": {
+    "completed_child_replay": {
+      "parent_status": "completed",
+      "answer": "完成",
+      "events": [
+        "session",
+        "token",
+        "done"
+      ],
+      "child_exit": 0
+    },
+    "crash_before_event": {
+      "recovered_status": "interrupted",
+      "resume_child_exit": 0,
+      "final_status": "completed",
+      "attempt": 2
+    },
+    "crash_after_event": {
+      "recovered_status": "interrupted",
+      "events": [
+        "session",
+        "interrupted"
+      ]
+    },
+    "crash_after_write_start": {
+      "status": "interrupted",
+      "write_state": "unknown",
+      "auto_resume_blocked": true
+    }
+  },
+  "dbfault_and_write_response_loss": {
+    "db_failure_recovered": true,
+    "event_after_retry": true,
+    "event_sequences": [
+      1
+    ],
+    "lost_response_same_ticket": true,
+    "lost_response_deduplicated": true,
+    "ticket_count": 1
+  },
+  "benchmark": {
+    "backend": "isolated_file_sqlite",
+    "configured_workers": 8,
+    "hardware_logical_cpus": 16,
+    "runs": 32,
+    "success_rate": 1.0,
+    "wall_s": 1.2124360230009188,
+    "throughput_runs_per_s": 26.39314519936179,
+    "run_p50_ms": 128.05899899831275,
+    "run_p95_ms": 828.048048002529,
+    "first_persisted_event_p50_ms": 32.965198006422725,
+    "first_persisted_event_p95_ms": 666.0106160052237,
+    "mean_run_ms": 208.3290600626242
+  },
+  "model_calls": 0,
+  "paid_calls": 0
+}

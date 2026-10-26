@@ -200,7 +200,8 @@ def test_trimmed_history_text_matches_kept_messages_with_skipped_rows():
     assert "工具结果已省略" not in layered["history_text"]
     assert "原始工具JSON" not in layered["history_text"]
     assert "客服:保留的回复" in layered["history_text"]
-    assert "【早期对话梗概】已有摘要" in layered["history_text"]
+    assert layered["tokens_summary"] == 0
+    assert "已有摘要" not in layered["history_text"]
 
 
 def test_history_text_keeps_tool_placeholder_when_it_survives_trimming():

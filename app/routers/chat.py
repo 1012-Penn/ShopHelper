@@ -12,6 +12,9 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 
 from app.context import build_layered, cascade_layer1, layer2_tokens, split_layers
+from app.execution.store import (RequestConflict, ResumeConflict, SessionBusy,
+                                 UnsafeResume)
+from app.execution.context import current_lease_guard, current_run_id, current_run_owner
 from app.graph.builder import initial_state
 from app.history import estimate_tokens
 from app.schemas import ChatRequest
@@ -21,10 +24,16 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 _QUEUE_DONE = object()  # 队列终结哨兵:图任务结束(含异常)后补投,排空循环据此收尾
+_TERMINAL_STATUSES = {"completed", "failed", "cancelled", "interrupted"}
 
 
 def sse_frame(event: dict) -> str:
     return f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
+
+
+def persisted_sse_frame(event_id: int, event: dict) -> str:
+    """可重放 SSE 帧:id 用于 Last-Event-ID,data 与旧客户端 JSON 契约兼容。"""
+    return f"id: {event_id}\n{sse_frame(event)}"
 
 
 def _anchor_str(v: int | None) -> str:
@@ -69,78 +78,331 @@ async def prepare_turn(request: Request, session_id: int) -> tuple[dict, list, d
     return layered, rows, anchors
 
 
-@router.post("/api/chat")
-async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
-    settings = request.app.state.settings
-    store = request.app.state.store
-    graph = request.app.state.graph
-    observability = request.app.state.observability
+async def _persisted_event_stream(run_id: str, after_id: int, service):
+    """只读持久事件。断连时本生成器停止,图任务与服务持有引用不随之取消。"""
+    cursor = after_id
+    while True:
+        events = await service.events_after(run_id, cursor)
+        for item in events:
+            cursor = item.id
+            yield persisted_sse_frame(item.id, item.event)
+        status = await service.status(run_id)
+        if status["status"] in _TERMINAL_STATUSES:
+            # terminal 状态提交后可能还有最后一个 done/error 事件要读一次。
+            final_events = await service.events_after(run_id, cursor)
+            for item in final_events:
+                cursor = item.id
+                yield persisted_sse_frame(item.id, item.event)
+            return
+        if status["status"] in {"queued", "running", "cancelling"}:
+            recovered = await asyncio.to_thread(
+                service.store.recover_expired_lease, status["conversation_id"])
+            if recovered:
+                status = await service.status(run_id)
+                if status["status"] in _TERMINAL_STATUSES:
+                    continue
+        await asyncio.sleep(service.policy.poll_seconds)
 
-    if estimate_tokens(body.message) > settings.max_user_input_tokens:
-        raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
 
-    # MCP 现问现拿:每轮聊天前 diff 同步一次(TTL 防抖),Server 侧新工具不重启即用
-    await request.app.state.mcp_service.sync()
+async def _execute_chat_run(request: Request, run_id: str, session_id: int,
+                            body: ChatRequest) -> None:
+    app = request.app
+    api = app.state
+    execution = api.execution_service
+    started_at = time.perf_counter()
+    trace = None
+    queue: asyncio.Queue = asyncio.Queue()
+    lease_lost = False
 
-    session_id = await store.resolve(body.session_id)
-    layered, rows, _anchors = await prepare_turn(request, session_id)
+    async def renew_lease() -> None:
+        nonlocal lease_lost
+        interval = max(execution.policy.lease_seconds / 3, 0.1)
+        while True:
+            await asyncio.sleep(interval)
+            renewed = await asyncio.to_thread(
+                api.execution_store.renew_lease,
+                run_id,
+                execution.owner_token,
+                lease_seconds=execution.policy.lease_seconds,
+            )
+            if not renewed:
+                lease_lost = True
+                logger.error("chat run=%s lost session lease; refusing further execution", run_id)
+                return
 
-    # 完整历史回灌:checkpoint 为空(进程重启/首 touch)时从 MySQL 灌一次,add_messages 按 id 去重
-    hydrated = session_id in request.app.state.hydrated_threads
-    if not hydrated:
-        request.app.state.hydrated_threads.add(session_id)
+    async def persist_frames() -> None:
+        while True:
+            frame = await queue.get()
+            if frame is _QUEUE_DONE:
+                return
+            await execution.persist_event(run_id, frame)
 
-    async def event_stream():
-        yield sse_frame({"type": "session", "session_id": session_id})
-        queue: asyncio.Queue = asyncio.Queue()
-        trace = observability.start_request(session_id, body.message)
+    pump = asyncio.create_task(persist_frames())
+    heartbeat = asyncio.create_task(renew_lease())
+    try:
+        await execution.mark_running(run_id)
+        await api.mcp_service.sync()
+        layered, rows, _anchors = await prepare_turn(request, session_id)
+        hydrated = session_id in api.hydrated_threads
+        if not hydrated:
+            api.hydrated_threads.add(session_id)
+
+        trace = api.observability.start_request(session_id, body.message)
         config = {
             "configurable": {"thread_id": str(session_id), "sink": queue},
             "metadata": trace.metadata(),
             "callbacks": [trace.usage_callback],
         }
-
-        async def run_graph():
-            started_at = time.perf_counter()
-            try:
-                with trace.activate():
-                    result = await graph.ainvoke(
+        token = current_run_id.set(run_id)
+        owner_token = current_run_owner.set(execution.owner_token)
+        guard_token = current_lease_guard.set(
+            lambda: api.execution_store.lease_owned_by(
+                run_id, execution.owner_token))
+        try:
+            with trace.activate():
+                result = await asyncio.wait_for(
+                    api.graph.ainvoke(
                         initial_state(session_id, body.message, resume=body.resume,
                                       history_rows=None if hydrated else rows, layered=layered),
-                        config)
-                    # ch09 回捞底座:记录本轮原话与召回快照(闲聊轮记空,供 👎 事后区分)
-                    request.app.state.round_capture.record(
-                        session_id, body.message, result.get("retrieved_chunks") or [])
-                    trace.finish(
-                        intent=result.get("intent", ""), answer=result.get("final_reply", ""),
-                        duration_ms=int((time.perf_counter() - started_at) * 1000),
-                    )
-            finally:
-                await queue.put(_QUEUE_DONE)  # 先冲刷已产帧再终结,异常也不丢序
-
-        task = asyncio.create_task(run_graph())
-        try:
-            while True:
-                frame = await queue.get()
-                if frame is _QUEUE_DONE:
-                    break
-                yield sse_frame(frame)
-            await task  # 传播图内异常
-            yield sse_frame({"type": "done"})
-        except Exception as exc:  # 图内节点异常:下发 error 后收流,本轮不落库(log 未达)
-            yield sse_frame({"type": "error", "message": str(exc)})
+                        config,
+                    ),
+                    timeout=execution.policy.max_run_seconds,
+                )
         finally:
-            # 客户端提前断开(GeneratorExit/CancelledError)时取消孤儿图任务:
-            # 不再烧 token,也保证未达 log 节点的回合绝不落库
-            if not task.done():
-                task.cancel()
-            try:
-                await task
-            except (asyncio.CancelledError, Exception):
-                pass
+            current_lease_guard.reset(guard_token)
+            current_run_owner.reset(owner_token)
+            current_run_id.reset(token)
+        api.round_capture.record(
+            session_id, body.message, result.get("retrieved_chunks") or [])
+        if lease_lost:
+            raise RuntimeError("session lease lost during execution")
+        duration_ms = int((time.perf_counter() - started_at) * 1000)
+        trace.finish(
+            intent=result.get("intent", ""), answer=result.get("final_reply", ""),
+            duration_ms=duration_ms,
+        )
+        await queue.put(_QUEUE_DONE)
+        await pump
+        await execution.persist_event(run_id, {"type": "done", "run_id": run_id})
+        await execution.finish(
+            run_id, status="completed",
+            result={
+                "answer": result.get("final_reply", ""),
+                "intent": result.get("intent", ""),
+                "session_id": session_id,
+            },
+            usage=trace.usage_callback.snapshot(),
+            duration_ms=duration_ms,
+        )
+        heartbeat.cancel()
+        await asyncio.gather(heartbeat, return_exceptions=True)
+    except asyncio.CancelledError:
+        heartbeat.cancel()
+        await asyncio.gather(heartbeat, return_exceptions=True)
+        await queue.put(_QUEUE_DONE)
+        await asyncio.gather(pump, return_exceptions=True)
+        duration_ms = int((time.perf_counter() - started_at) * 1000)
+        if trace is not None:
+            trace.fail(error="run cancelled", duration_ms=duration_ms)
+        await execution.persist_event(run_id, {
+            "type": "error", "message": "run cancelled", "reason": "cancelled"})
+        try:
+            current = await execution.status(run_id)
+            terminal_status = ("interrupted"
+                               if current["write_state"] != "none" else "cancelled")
+        except Exception:
+            terminal_status = "interrupted"
+        await execution.finish(
+            run_id, status=terminal_status, error="run cancelled",
+            usage=trace.usage_callback.snapshot() if trace is not None else {},
+            duration_ms=duration_ms,
+        )
+        raise
+    except Exception as exc:
+        heartbeat.cancel()
+        await asyncio.gather(heartbeat, return_exceptions=True)
+        await queue.put(_QUEUE_DONE)
+        await asyncio.gather(pump, return_exceptions=True)
+        duration_ms = int((time.perf_counter() - started_at) * 1000)
+        if trace is not None:
+            trace.fail(error=str(exc), duration_ms=duration_ms)
+        await execution.persist_event(run_id, {"type": "error", "message": str(exc)})
+        try:
+            current = await execution.status(run_id)
+            terminal_status = ("interrupted"
+                               if current["write_state"] != "none" else "failed")
+        except Exception:
+            terminal_status = "interrupted"
+        await execution.finish(
+            run_id, status=terminal_status, error=str(exc),
+            usage=trace.usage_callback.snapshot() if trace is not None else {},
+            duration_ms=duration_ms,
+        )
+        logger.warning("chat run=%s failed: %s", run_id, exc, exc_info=True)
+
+
+@router.post("/api/chat")
+async def chat(body: ChatRequest, request: Request) -> StreamingResponse:
+    settings = request.app.state.settings
+    store = request.app.state.store
+    execution_store = request.app.state.execution_store
+    execution = request.app.state.execution_service
+
+    if estimate_tokens(body.message) > settings.max_user_input_tokens:
+        raise HTTPException(status_code=400, detail="消息过长,超出单条输入预算")
+
+    session_id = await store.resolve(body.session_id)
+    payload = {
+        "message": body.message,
+        "session_id": session_id,
+        "resume": body.resume.model_dump(mode="json") if body.resume else None,
+    }
+    try:
+        reserved = await asyncio.to_thread(
+            execution_store.reserve_run,
+            conversation_id=session_id,
+            client_request_id=body.client_request_id,
+            request_payload=payload,
+            owner_token=execution.owner_token,
+            lease_seconds=execution.policy.lease_seconds,
+        )
+    except RequestConflict as exc:
+        raise HTTPException(status_code=409, detail="client_request_id 对应不同请求") from exc
+    except SessionBusy as exc:
+        raise HTTPException(
+            status_code=409,
+            detail={"message": "会话已有执行中的 run", "run_id": exc.run_id},
+        ) from exc
+
+    if reserved.created:
+        await execution.persist_event(reserved.run_id, {
+            "type": "session",
+            "session_id": session_id,
+            "run_id": reserved.run_id,
+            "client_request_id": body.client_request_id,
+        })
+        task = asyncio.create_task(
+            _execute_chat_run(request, reserved.run_id, session_id, body))
+        execution.track(reserved.run_id, task)
 
     return StreamingResponse(
-        event_stream(),
+        _persisted_event_stream(reserved.run_id, 0, execution),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+            "X-Run-ID": reserved.run_id,
+        },
+    )
+
+
+@router.get("/api/chat/runs/{run_id}")
+async def get_chat_run(run_id: str, request: Request):
+    try:
+        execution = request.app.state.execution_service
+        status = await execution.status(run_id)
+        if status["status"] in {"queued", "running", "cancelling"}:
+            recovered = await asyncio.to_thread(
+                request.app.state.execution_store.recover_expired_lease,
+                status["conversation_id"],
+            )
+            if recovered:
+                status = await execution.status(run_id)
+        return status
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="run 不存在") from exc
+
+
+@router.get("/api/chat/runs/{run_id}/events")
+async def replay_chat_events(run_id: str, request: Request) -> StreamingResponse:
+    raw_cursor = (request.headers.get("Last-Event-ID")
+                  or request.query_params.get("cursor") or "0")
+    try:
+        cursor = int(raw_cursor)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="cursor 必须是整数") from exc
+    if cursor < 0:
+        raise HTTPException(status_code=400, detail="cursor 不能为负数")
+    try:
+        await request.app.state.execution_service.status(run_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="run 不存在") from exc
+    return StreamingResponse(
+        _persisted_event_stream(run_id, cursor, request.app.state.execution_service),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+@router.post("/api/chat/runs/{run_id}/resume")
+async def resume_chat_run(run_id: str, request: Request) -> StreamingResponse:
+    execution = request.app.state.execution_service
+    try:
+        status = await execution.status(run_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="run 不存在") from exc
+    if status["status"] in {"queued", "running", "cancelling"}:
+        await asyncio.to_thread(
+            request.app.state.execution_store.recover_expired_lease,
+            status["conversation_id"],
+        )
+        status = await execution.status(run_id)
+    if status["status"] == "completed":
+        return StreamingResponse(
+            _persisted_event_stream(run_id, 0, execution),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+    if status["status"] != "interrupted":
+        raise HTTPException(status_code=409, detail=f"run 状态不可恢复: {status['status']}")
+    if status["write_state"] != "none":
+        raise HTTPException(
+            status_code=409,
+            detail="写工具结果未知，禁止自动恢复；请先按确认幂等键核对业务结果",
+        )
+    try:
+        reserved = await asyncio.to_thread(
+            request.app.state.execution_store.resume_run,
+            run_id,
+            owner_token=execution.owner_token,
+            lease_seconds=execution.policy.lease_seconds,
+        )
+    except UnsafeResume as exc:
+        raise HTTPException(status_code=409, detail="写工具结果未知，禁止自动恢复") from exc
+    except ResumeConflict as exc:
+        raise HTTPException(status_code=409, detail=f"run 状态不可恢复: {exc}") from exc
+    except SessionBusy as exc:
+        raise HTTPException(status_code=409, detail={
+            "message": "会话已有执行中的 run", "run_id": exc.run_id}) from exc
+
+    body = ChatRequest.model_validate(status["request"])
+    task = asyncio.create_task(
+        _execute_chat_run(request, reserved.run_id, status["conversation_id"], body))
+    execution.track(reserved.run_id, task)
+    return StreamingResponse(
+        _persisted_event_stream(run_id, 0, execution),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
+@router.post("/api/chat/runs/{run_id}/cancel", status_code=202)
+async def cancel_chat_run(run_id: str, request: Request):
+    execution = request.app.state.execution_service
+    try:
+        status = await execution.status(run_id)
+    except KeyError as exc:
+        raise HTTPException(status_code=404, detail="run 不存在") from exc
+    if status["write_state"] in {"started", "submitted", "unknown"}:
+        raise HTTPException(
+            status_code=409,
+            detail="写工具已开始或结果未知，不能宣称已取消；请核对幂等结果",
+        )
+    if status["status"] in _TERMINAL_STATUSES:
+        return {"cancel_requested": False, "status": status["status"], "run_id": run_id}
+    if not execution.cancel(run_id):
+        raise HTTPException(
+            status_code=409,
+            detail="run 不在本进程执行器中；跨进程取消仅支持租约过期恢复",
+        )
+    return {"cancel_requested": True, "status": "cancelling", "run_id": run_id}

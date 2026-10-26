@@ -14,9 +14,11 @@ def _plain(turns):
 async def test_stream_event_sequence(make_client):
     client, _ = await make_client(_plain(["你好 欢迎 光临"]))
     events = await post_chat_sse(client, {"message": "在吗"})
-    assert events[0] == {"type": "session", "session_id": events[0]["session_id"]}
+    assert events[0]["type"] == "session"
+    assert events[0]["session_id"] >= 1
+    assert events[0]["run_id"]
     assert all(e["type"] == "token" for e in events[1:-1])
-    assert events[-1] == {"type": "done"}
+    assert events[-1]["type"] == "done"
     assert "".join(e["content"] for e in events[1:-1]) == "你好 欢迎 光临"
 
 

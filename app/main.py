@@ -19,6 +19,8 @@ from app.store import ConversationStore, UsageStore
 from app.flywheel import (DedupDecisionOutput, FlywheelService, NormalizedQuestion,
                           NormalizedQuestionOutput)
 from app.evaluation import EvalRunStore
+from app.execution.service import ExecutionService
+from app.execution.store import ExecutionStore
 from app.summarizer import SummaryService
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s %(levelname)s %(message)s")
@@ -60,6 +62,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.store = ConversationStore(session_factory)
     app.state.usage_store = UsageStore(session_factory)
     app.state.eval_store = EvalRunStore(session_factory)
+    app.state.execution_store = ExecutionStore(session_factory)
+    app.state.execution_service = ExecutionService(app.state.execution_store)
     app.state.pool = LowConfidencePool(session_factory)
     # ch09 回捞底座:👎 反馈按会话回查当轮召回片段快照(进程内,重启即失走 NULL)
     app.state.round_capture = RoundCapture()
@@ -85,6 +89,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     from app.tools.engine import ToolEngine
     from app.tools.mcp_client import McpService
     from app.tools.plugins import load_plugins
+    from app.execution.tool_engine import ExecutionToolEngine
 
     service, kb = make_retrieval_chain(session_factory, settings)
     normalize_model = make_extract_model(settings).with_structured_output(
@@ -125,6 +130,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.engine = ToolEngine(registry, tool_audit_store,
                                   timeout_seconds=settings.tool_timeout_seconds,
                                   retry_attempts=settings.tool_retry_attempts)
+    app.state.engine = ExecutionToolEngine(app.state.engine, app.state.execution_store)
     app.state.mcp_service = McpService(registry, {
         "logistics": settings.mcp_logistics_url,
         "aftersales": settings.mcp_aftersales_url,
@@ -134,9 +140,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         AfterSaleExtraction, method="function_calling"
     )
     # ch05:LangGraph 图骨架(检索链与工具检索生产分支同构,各自持有真实现)
+    from app.rag_steps import RagLoopStepStore
+    rag_steps_store = RagLoopStepStore(session_factory)
+    app.state.rag_steps_store = rag_steps_store
     compiled_graph = build_graph(
         app.state.chat_model, app.state.engine, settings,
         app.state.store, app.state.pool, service, kb,
+        rag_steps_store=rag_steps_store,
     )
     from app.observability import ObservabilityService
     app.state.observability = ObservabilityService(settings, app.state.usage_store)

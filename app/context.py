@@ -109,6 +109,24 @@ def _list_tokens(msgs: list) -> int:
     return sum(_msg_tokens(m) for m in msgs)
 
 
+def _truncate_to_tokens(text: str, budget: int) -> str:
+    """按与预算相同的估算尺截取注入投影；只返回副本，不修改原始摘要。"""
+    if estimate_tokens(text) <= budget:
+        return text
+    if budget <= 0:
+        return ""
+    marker = L2_ELLIPSIS
+    keep_budget = max(budget - estimate_tokens(marker), 0)
+    lo, hi = 0, len(text)
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        if estimate_tokens(text[:mid]) <= keep_budget:
+            lo = mid
+        else:
+            hi = mid - 1
+    return text[:lo] + marker
+
+
 def cascade_layer1(rows: list[dict], layer1_from: int | None,
                    budget: int) -> tuple[int | None, int, int]:
     """层 1 超预算:重切层 1,返回 (新锚点, 降级前 token, 降级后 token);未超返回 (原锚点, t, t)。
@@ -134,26 +152,44 @@ def cascade_layer1(rows: list[dict], layer1_from: int | None,
 
 def build_layered(l1_rows: list[dict], l2_rows: list[dict], summary_text: str | None,
                   head_chars: int, sliding: int) -> dict:
-    """组装模型面上下文素材;层 2 渲染总量超滑窗时从最老端丢弃(仅本轮,不动锚点)。"""
+    """组装模型面上下文素材。
+
+    摘要只以本轮投影计入 sliding；层 2 再从最老端让位。原始消息、
+    原始历史摘要和锚点均不动。层 1 是最近原文，优先于摘要与层 2 保留。
+    """
     # 每个渲染块保留来源行:空助手行不产消息,不能用原始行号推算裁剪边界。
     l2_blocks = [(row, msg) for row in l2_rows
                  for msg in render_layer2([row], head_chars)]
     l1_msgs = rows_to_messages(l1_rows)
+    l1_tokens = _list_tokens(l1_msgs)
+    full_summary = summary_text or ""
+    full_summary_tokens = estimate_tokens(full_summary)
+    l2_budget = max(sliding - l1_tokens, 0)
     dropped = 0
-    window_tokens = sum(_msg_tokens(msg) for _, msg in l2_blocks) + _list_tokens(l1_msgs)
-    while l2_blocks and window_tokens > sliding:
+    l2_tokens = sum(_msg_tokens(msg) for _, msg in l2_blocks)
+    while l2_blocks and l2_tokens > l2_budget:
         _, msg = l2_blocks.pop(0)
-        window_tokens -= _msg_tokens(msg)
+        l2_tokens -= _msg_tokens(msg)
         dropped += 1
+    summary_budget = max(sliding - l1_tokens - l2_tokens, 0)
+    projected_summary = _truncate_to_tokens(full_summary, summary_budget)
+    projected_summary_tokens = estimate_tokens(projected_summary)
     if dropped:
         logger.warning("层2 渲染超滑窗,丢弃最老 %d 条(仅本轮,不动锚点)", dropped)
     kept_l2_rows = [row for row, _ in l2_blocks]
     l2_msgs = [msg for _, msg in l2_blocks]
+    total_tokens = projected_summary_tokens + _list_tokens(l2_msgs) + l1_tokens
     return {"layer2_msgs": l2_msgs, "layer1_msgs": l1_msgs,
-            "summary_text": summary_text or "",
-            "history_text": render_history_text(summary_text, kept_l2_rows, l1_rows, head_chars),
+            "summary_text": projected_summary,
+            "history_text": render_history_text(
+                projected_summary, kept_l2_rows, l1_rows, head_chars),
             "n_window": len(l2_msgs) + len(l1_msgs),
-            "tokens_l1": _list_tokens(l1_msgs), "tokens_l2": _list_tokens(l2_msgs),
+            "tokens_l1": l1_tokens, "tokens_l2": _list_tokens(l2_msgs),
+            "tokens_summary": projected_summary_tokens,
+            "tokens_summary_full": full_summary_tokens,
+            "total_injected_tokens": total_tokens,
+            "summary_truncated": projected_summary != full_summary,
+            "budget_exceeded": total_tokens > sliding,
             "dropped": dropped}
 
 

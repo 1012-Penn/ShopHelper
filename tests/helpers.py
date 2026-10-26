@@ -3,6 +3,7 @@ import hashlib
 import json
 import math
 import re
+from typing import Any
 
 from app.embedding import cosine  # 公共余弦工具,生产/测试同源
 from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
@@ -55,11 +56,13 @@ class StubExtractModel:
 
 
 def parse_sse(raw: str) -> list[dict]:
-    return [
-        json.loads(line[len("data: "):])
-        for line in raw.split("\n\n")
-        if line.startswith("data: ")
-    ]
+    events = []
+    for block in raw.split("\n\n"):
+        data = next((line[len("data: "):] for line in block.splitlines()
+                     if line.startswith("data: ")), None)
+        if data is not None:
+            events.append(json.loads(data))
+    return events
 
 
 async def post_chat_sse(client, payload: dict) -> list[dict]:
@@ -298,9 +301,13 @@ class GraphChatModel(FakeChatWithTools):
     turns: list = Field(default_factory=list)
     prompts: list = Field(default_factory=list)
     bind_calls: int = 0
+    started: Any = Field(default=None, exclude=True)
+    release: Any = Field(default=None, exclude=True)
 
-    def __init__(self, intent_reply="{}", turns=()):
+    def __init__(self, intent_reply="{}", turns=(), *, started=None, release=None):
         super().__init__(messages=iter([AIMessage(content=intent_reply)]))
+        self.started = started
+        self.release = release
         self.intent_reply = intent_reply
         self.turns = list(turns)
 
@@ -314,6 +321,10 @@ class GraphChatModel(FakeChatWithTools):
 
     async def astream(self, messages, config=None, **kwargs):
         self.prompts.append(list(messages))
+        if self.started is not None:
+            self.started.set()
+        if self.release is not None:
+            await self.release.wait()
         kind, payload = self.turns.pop(0) if self.turns else ("text", "默认回答。")
         if kind == "tools":
             yield ChunkStub(tool_call_chunks=payload)
