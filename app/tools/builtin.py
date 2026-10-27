@@ -243,6 +243,10 @@ def build_default_registry(session_factory, embedder=None, vectors=None, top_k=N
         rerank_score_floor=settings.rerank_score_floor if production else 0.30,
         evidence_judge=evidence_judge,
         evidence_top_n=settings.evidence_entailment_top_n if production else 3,
+        evidence_slate_enabled=(
+            settings.retrieval_evidence_slate_enabled if production else False
+        ),
+        rerank_pool_k=settings.retrieval_rerank_pool_k if production else None,
     )
     registry = ToolRegistryV2()
     register_builtin(registry, ToolContext(

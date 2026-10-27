@@ -282,6 +282,8 @@ def _build_context(config, args, cases):
         evidence_calibration=_load_evidence_calibration(settings),
         evidence_judge=evidence_judge,
         evidence_top_n=settings.evidence_entailment_top_n,
+        evidence_slate_enabled=settings.retrieval_evidence_slate_enabled,
+        rerank_pool_k=settings.retrieval_rerank_pool_k,
     )
 
     chat = (

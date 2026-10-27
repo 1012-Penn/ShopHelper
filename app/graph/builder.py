@@ -246,5 +246,7 @@ def make_retrieval_chain(session_factory, settings):
         evidence_judge=(make_evidence_judge(settings)
                         if settings.evidence_entailment_enabled else None),
         evidence_top_n=settings.evidence_entailment_top_n,
+        evidence_slate_enabled=settings.retrieval_evidence_slate_enabled,
+        rerank_pool_k=settings.retrieval_rerank_pool_k,
     )
     return service, kb

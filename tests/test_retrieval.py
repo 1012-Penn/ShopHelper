@@ -68,6 +68,37 @@ def test_hybrid_rerank_ranks_model_first(service):
     assert len(r.items) <= 10
 
 
+def test_hybrid_rerank_slate_requests_full_pool_and_keeps_small_context(service):
+    class RecordingReranker:
+        def __init__(self):
+            self.top_n = None
+
+        def rerank(self, query, documents, top_n=None):
+            self.top_n = top_n
+            return [(index, 1.0 - index / 100) for index in range(len(documents))]
+
+    reranker = RecordingReranker()
+    slate_service = RetrievalService(
+        service._embedder,
+        service._vectors,
+        service._kb,
+        rewriter=service._rewriter,
+        reranker=reranker,
+        candidates=50,
+        final_top_k=10,
+        evidence_slate_enabled=True,
+        rerank_pool_k=50,
+    )
+
+    result = slate_service.retrieve("SH-E300 降噪耳机", strategy="hybrid_rerank")
+
+    assert reranker.top_n == 50
+    assert len(result.items) <= 10
+    assert len(result.rerank_candidates) == len(service._kb.doc_chunk_ids_all())
+    assert result.selection_facets == ["product_entry"]
+    assert result.selection_latency_ms >= 0
+
+
 def test_rewrite_applies(service):
     r = service.retrieve("东西坏了想退", strategy="bm25", use_rewrite=True)
     assert r.rewritten == "质量问题怎么退货"

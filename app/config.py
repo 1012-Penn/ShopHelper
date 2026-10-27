@@ -53,6 +53,8 @@ class Settings(BaseSettings):
     rerank_score_floor: float = 0.03
     hybrid_candidates: int = 50       # dense/BM25 各自召回数(hybrid_search limit)
     rerank_top_k: int = 10            # 精排后进入 prompt 的条数(ch07 由 retrieval_final_top_k 改名,env RERANK_TOP_K)
+    retrieval_evidence_slate_enabled: bool = False
+    retrieval_rerank_pool_k: int = 50
     query_rewrite_enabled: bool = True
 
     # ch05:ReAct 主力 Agent 停止条件

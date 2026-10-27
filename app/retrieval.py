@@ -7,10 +7,12 @@
 import hashlib
 import logging
 import re
+import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import date
 
+from app.evidence_slate import EvidenceDocument, select_evidence_slate
 from app.kb import KnowledgeBaseStore, vector_text
 from app.rewrite import QueryRewrite, bm25_query_text
 
@@ -211,6 +213,9 @@ class RetrievalResult:
     scope_excluded: list[dict] = field(default_factory=list)
     scope_unknown_ids: list[int] = field(default_factory=list)
     scope_matched_ids: list[int] = field(default_factory=list)
+    selection_facets: list[str] = field(default_factory=list)
+    rerank_candidates: list[Retrieved] = field(default_factory=list)
+    selection_latency_ms: float = 0.0
 
     def snapshot(self, top_k: int = 3) -> list[dict]:
         """保留入池时可供人工审核的 Top-K 原始 chunk id 与精排分数。"""
@@ -459,7 +464,9 @@ class RetrievalService:
                  rerank_score_floor: float = 0.30,
                  evidence_calibration: EvidenceCalibration | None = None,
                  evidence_judge=None, evidence_top_n: int = 3,
-                 policy_windows: tuple[PolicyWindow, ...] | None = None) -> None:
+                 policy_windows: tuple[PolicyWindow, ...] | None = None,
+                 evidence_slate_enabled: bool = False,
+                 rerank_pool_k: int | None = None) -> None:
         self._embedder = embedder
         self._vectors = vectors
         self._kb = kb
@@ -474,6 +481,12 @@ class RetrievalService:
         self._evidence_judge = evidence_judge
         self._evidence_top_n = max(1, int(evidence_top_n))
         self._policy_windows = policy_windows
+        self._evidence_slate_enabled = bool(evidence_slate_enabled)
+        self._rerank_pool_k = (
+            min(self._candidates, max(self._final_top_k, int(rerank_pool_k)))
+            if rerank_pool_k is not None
+            else self._final_top_k
+        )
 
     def prepare_query(self, query: str, use_rewrite: bool = True) -> PreparedQuery:
         """一次性改写;评估脚本可先缓存再让四策略共用。"""
@@ -632,10 +645,16 @@ class RetrievalService:
             return RetrievalResult(cand[: self._final_top_k], True,
                                    "重排不可用,证据闸无法判定,候选仅供诊断", fallback, rewritten,
                                    search_text, degraded=True, **scope_fields(filtered))
-        texts = self._chunk_texts([r.chunk_id for r in cand])
+        candidate_ids = [item.chunk_id for item in cand]
+        rows = {row.id: row for row in self._kb.get_chunks(candidate_ids)}
+        texts = {
+            chunk_id: vector_text(row.category, row.questions, row.answer)
+            for chunk_id, row in rows.items()
+        }
+        requested_pool = self._rerank_pool_k if self._evidence_slate_enabled else self._final_top_k
         try:
             ranked = self._reranker.rerank(rewritten, [texts.get(r.chunk_id, "") for r in cand],
-                                           top_n=self._final_top_k)
+                                           top_n=requested_pool)
         except Exception as exc:
             if exc.__class__.__name__ == "BudgetExceeded":
                 raise
@@ -643,8 +662,11 @@ class RetrievalService:
             return RetrievalResult(cand[: self._final_top_k], True,
                                    "重排不可用,证据闸无法判定,候选仅供诊断", fallback, rewritten,
                                    search_text, degraded=True, **scope_fields(filtered))
-        items = [Retrieved(chunk_id=cand[idx].chunk_id, score=score) for idx, score in ranked]
-        if not items:
+        ranked_items = [
+            Retrieved(chunk_id=cand[idx].chunk_id, score=score)
+            for idx, score in ranked
+        ]
+        if not ranked_items:
             return RetrievalResult(
                 [],
                 True,
@@ -654,6 +676,29 @@ class RetrievalService:
                 search_text,
                 **scope_fields(filtered),
             )
+        selection_facets: list[str] = []
+        if self._evidence_slate_enabled:
+            selection_started = time.perf_counter()
+            slate = select_evidence_slate(
+                rewritten,
+                ranked_ids=[item.chunk_id for item in ranked_items],
+                documents={
+                    chunk_id: EvidenceDocument(
+                        chunk_id=chunk_id,
+                        section_path=str(rows[chunk_id].section_path or ""),
+                        text=texts.get(chunk_id, ""),
+                    )
+                    for chunk_id in texts
+                },
+                top_k=self._final_top_k,
+            )
+            by_id = {item.chunk_id: item for item in ranked_items}
+            items = [by_id[chunk_id] for chunk_id in slate.ordered_ids]
+            selection_facets = slate.facets
+            selection_latency_ms = round((time.perf_counter() - selection_started) * 1000, 3)
+        else:
+            items = ranked_items[: self._final_top_k]
+            selection_latency_ms = 0.0
         confidence = evidence_confidence(items, self._evidence_calibration)
 
         # v2:语义层优先。判断器说“证据真的回答了”就放行(即使分数低);
@@ -675,10 +720,18 @@ class RetrievalService:
                 reason = f"证据未直接回答问题:{verdict.reason or '判断器未给出理由'}"
                 return RetrievalResult(items, True, reason, fallback, rewritten, search_text,
                                        evidence_confidence=confidence,
-                                       evidence_entailment=False, **scope_fields(filtered))
+                                       evidence_entailment=False,
+                                       selection_facets=selection_facets,
+                                       rerank_candidates=ranked_items,
+                                       selection_latency_ms=selection_latency_ms,
+                                       **scope_fields(filtered))
             return RetrievalResult(items, False, "", fallback, rewritten, search_text,
                                    evidence_confidence=confidence,
-                                   evidence_entailment=True, **scope_fields(filtered))
+                                   evidence_entailment=True,
+                                   selection_facets=selection_facets,
+                                   rerank_candidates=ranked_items,
+                                   selection_latency_ms=selection_latency_ms,
+                                   **scope_fields(filtered))
 
         if not confidence.passed:
             # 低置信不进 Agent,但保留候选快照给问题池和人工审核。
@@ -686,9 +739,17 @@ class RetrievalService:
                       f"有效证据={confidence.effective_count}, "
                       f"Top1/Top2差={confidence.top1_top2_margin:.2f})")
             return RetrievalResult(items, True, reason, fallback, rewritten, search_text,
-                                   evidence_confidence=confidence, **scope_fields(filtered))
+                                   evidence_confidence=confidence,
+                                   selection_facets=selection_facets,
+                                   rerank_candidates=ranked_items,
+                                   selection_latency_ms=selection_latency_ms,
+                                   **scope_fields(filtered))
         return RetrievalResult(items, False, "", fallback, rewritten, search_text,
-                               evidence_confidence=confidence, **scope_fields(filtered))
+                               evidence_confidence=confidence,
+                               selection_facets=selection_facets,
+                               rerank_candidates=ranked_items,
+                               selection_latency_ms=selection_latency_ms,
+                               **scope_fields(filtered))
 
     # ---- 单路封装 ----
 
