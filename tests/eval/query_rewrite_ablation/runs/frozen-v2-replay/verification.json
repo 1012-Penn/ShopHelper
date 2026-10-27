@@ -1,0 +1,8 @@
+{
+  "ok": true,
+  "baseline_traces": 180,
+  "replay_traces": 180,
+  "mismatches": [],
+  "aggregate_changed": [],
+  "summary_equal": true
+}

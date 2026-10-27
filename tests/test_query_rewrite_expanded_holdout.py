@@ -238,6 +238,28 @@ def test_retrieval_failure_keeps_applicable_trace_with_error():
     assert trace["gate"]["degraded"] is True
 
 
+def test_committed_expanded_run_matches_frozen_contract_and_denominators():
+    run = BASE / "runs" / "frozen-v2"
+    contract = json.loads((run / "run-contract.json").read_text(encoding="utf-8"))
+    summary = json.loads((run / "summary.json").read_text(encoding="utf-8"))
+    responses = [
+        json.loads(line)
+        for line in (run / "responses.jsonl").read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+    assert contract["dataset_sha256"] == dataset_sha256(BASE / NEW_SEEDS)
+    assert contract["split_sha256"] == split_sha256(
+        _load(NEW_SEEDS, "frozen-v2")
+    )
+    assert len(responses) == 180
+    for variant in ("raw", "legacy", "safe"):
+        assert summary["variants"][variant]["cases"] == 60
+        assert summary["variants"][variant]["coverage_cases"] == 52
+        assert summary["variants"][variant]["failures"] == 0
+    assert summary["budget"]["run_spent_usd"] <= 2.0
+
+
 def _trace(case_id: str, variant: str, *, coverage: bool, applicable: bool) -> dict:
     return {
         "case_id": case_id,
