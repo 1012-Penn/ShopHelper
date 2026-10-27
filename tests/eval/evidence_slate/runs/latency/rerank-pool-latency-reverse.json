@@ -1,0 +1,67 @@
+{
+  "pairs": [
+    {
+      "case_id": "FRZ-CONSTRAINT-02",
+      "top_n": 50,
+      "elapsed_ms": 1020.466
+    },
+    {
+      "case_id": "FRZ-CONSTRAINT-02",
+      "top_n": 10,
+      "elapsed_ms": 743.681
+    },
+    {
+      "case_id": "FRZ-CONSTRAINT-11",
+      "top_n": 50,
+      "elapsed_ms": 609.802
+    },
+    {
+      "case_id": "FRZ-CONSTRAINT-11",
+      "top_n": 10,
+      "elapsed_ms": 586.244
+    },
+    {
+      "case_id": "FRZ-CONFLICT-03",
+      "top_n": 50,
+      "elapsed_ms": 607.837
+    },
+    {
+      "case_id": "FRZ-CONFLICT-03",
+      "top_n": 10,
+      "elapsed_ms": 587.875
+    },
+    {
+      "case_id": "FRZ-CONFLICT-05",
+      "top_n": 50,
+      "elapsed_ms": 724.926
+    },
+    {
+      "case_id": "FRZ-CONFLICT-05",
+      "top_n": 10,
+      "elapsed_ms": 620.479
+    },
+    {
+      "case_id": "FRZ-CONFLICT-08",
+      "top_n": 50,
+      "elapsed_ms": 618.844
+    },
+    {
+      "case_id": "FRZ-CONFLICT-08",
+      "top_n": 10,
+      "elapsed_ms": 581.443
+    }
+  ],
+  "cost": {
+    "allow_paid": true,
+    "pricing_verified": true,
+    "pricing_version": "2026-10-26",
+    "pricing_currency": "USD",
+    "run_spent_usd": 0.0,
+    "run_limit_usd": 2.0,
+    "ledger_total_usd": 0.0,
+    "ledger_limit_usd": 2.0,
+    "calls": 10,
+    "api_attempts": 10,
+    "paid_api_attempts": 0
+  }
+}

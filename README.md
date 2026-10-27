@@ -298,6 +298,17 @@ mysql ... < db/ch12-controlled-rag.sql
 - 台账 `flock` 只保证写入互斥，不保证 guard→调用→add 整段互斥；付费并跑前需整轮互斥或原子预留（ADR-4）。
 - 质量三组对比指标在付费实测前标「未实测」；付费预估见 `docs/eval/ch12-agentic-rag-report.md` §4。
 
+## 检索证据面重排（可选）
+
+`docs/eval/retrieval-evidence-slate-report.md` 记录了同一 RRF+reranker 候选池上的实体/条件/政策版本证据选择。默认关闭；当前语料下建议显式 opt-in：
+
+```bash
+RETRIEVAL_EVIDENCE_SLATE_ENABLED=true
+RETRIEVAL_RERANK_POOL_K=50
+```
+
+它保持一次 rerank 与最终 Top-10 上下文不变，只把 Top-5 选择从纯单条相关性改为多个显式证据面组合。dev 为 `42/43`（基线 `26/43`），独立 20 题为 `18/20`（基线 `13/20`，6 增 1 失）；这是检索覆盖，不是答案正确率。
+
 ## 已知边界
 
 - 评估 C04「这个东西能便宜点不」四策略均未命中(「便宜」与「95 折」语义/词面都跳距),需知识侧补「优惠」问法别名或改写增强,留后续。

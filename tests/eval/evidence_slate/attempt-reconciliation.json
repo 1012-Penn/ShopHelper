@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-27",
+  "pricing_snapshot": {
+    "version": "2026-10-26",
+    "currency": "USD",
+    "embedding_model": "BAAI/bge-m3",
+    "rerank_model": "BAAI/bge-reranker-v2-m3"
+  },
+  "runs": [
+    {
+      "name": "dev-candidate-pool",
+      "calls": 60,
+      "by_kind": {"rerank": 60},
+      "failed": 0,
+      "retries": 0,
+      "cost_usd": 0.0
+    },
+    {
+      "name": "dev-formal-cache-warmup",
+      "calls": 47,
+      "by_kind": {"embedding": 43, "rerank": 4},
+      "failed": 0,
+      "retries": 0,
+      "cost_usd": 0.0
+    },
+    {
+      "name": "frozen-regression-cold",
+      "calls": 65,
+      "by_kind": {"rerank": 65},
+      "failed": 0,
+      "retries": 0,
+      "cost_usd": 0.0
+    },
+    {
+      "name": "independent-holdout",
+      "calls": 39,
+      "by_kind": {"embedding": 19, "rerank": 20},
+      "failed": 0,
+      "retries": 0,
+      "cost_usd": 0.0
+    },
+    {
+      "name": "rerank-pool-latency-probes",
+      "calls": 20,
+      "by_kind": {"rerank": 20},
+      "failed": 0,
+      "retries": 0,
+      "cost_usd": 0.0
+    }
+  ],
+  "totals": {
+    "calls": 231,
+    "by_kind": {"embedding": 62, "rerank": 169},
+    "failed": 0,
+    "retries": 0,
+    "estimated_cost_usd": 0.0,
+    "rewrite_calls": 0,
+    "judge_calls": 0,
+    "generation_calls": 0,
+    "budget_limit_usd": 2.0
+  },
+  "notes": [
+    "Credentials were read only from a read-only environment file and are not included.",
+    "All costs use the saved 2026-10-26 price snapshot; embedding and rerank standard endpoints were listed as free.",
+    "One parallel local launch was rejected before any API call because the Milvus Lite snapshot was locked; it is an execution error, not a retrieval result.",
+    "Cached formal dev/frozen replay runs add no external API calls."
+  ]
+}

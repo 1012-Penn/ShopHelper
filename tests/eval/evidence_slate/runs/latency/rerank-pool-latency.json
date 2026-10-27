@@ -1,0 +1,67 @@
+{
+  "pairs": [
+    {
+      "case_id": "FRZ-MULTI-02",
+      "top_n": 10,
+      "elapsed_ms": 767.27
+    },
+    {
+      "case_id": "FRZ-MULTI-02",
+      "top_n": 50,
+      "elapsed_ms": 588.283
+    },
+    {
+      "case_id": "FRZ-MULTI-05",
+      "top_n": 10,
+      "elapsed_ms": 659.533
+    },
+    {
+      "case_id": "FRZ-MULTI-05",
+      "top_n": 50,
+      "elapsed_ms": 627.245
+    },
+    {
+      "case_id": "FRZ-MULTI-07",
+      "top_n": 10,
+      "elapsed_ms": 591.409
+    },
+    {
+      "case_id": "FRZ-MULTI-07",
+      "top_n": 50,
+      "elapsed_ms": 583.357
+    },
+    {
+      "case_id": "FRZ-MULTI-08",
+      "top_n": 10,
+      "elapsed_ms": 641.283
+    },
+    {
+      "case_id": "FRZ-MULTI-08",
+      "top_n": 50,
+      "elapsed_ms": 604.597
+    },
+    {
+      "case_id": "FRZ-MULTI-09",
+      "top_n": 10,
+      "elapsed_ms": 627.303
+    },
+    {
+      "case_id": "FRZ-MULTI-09",
+      "top_n": 50,
+      "elapsed_ms": 591.248
+    }
+  ],
+  "cost": {
+    "allow_paid": true,
+    "pricing_verified": true,
+    "pricing_version": "2026-10-26",
+    "pricing_currency": "USD",
+    "run_spent_usd": 0.0,
+    "run_limit_usd": 2.0,
+    "ledger_total_usd": 0.0,
+    "ledger_limit_usd": 2.0,
+    "calls": 10,
+    "api_attempts": 10,
+    "paid_api_attempts": 0
+  }
+}

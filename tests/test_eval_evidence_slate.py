@@ -1,3 +1,6 @@
+import hashlib
+from pathlib import Path
+
 from scripts.eval_evidence_slate import summarize_rows
 
 
@@ -46,3 +49,15 @@ def test_summarize_rows_reports_paired_wins_losses_and_bucket_counts():
     assert summary["mcnemar"]["c"] == 1
     assert summary["by_bucket"]["multi_hop"]["wins"] == ["A"]
     assert summary["by_bucket"]["multi_hop"]["losses"] == []
+
+
+def test_independent_holdout_is_frozen():
+    path = (
+        Path(__file__).resolve().parent
+        / "eval"
+        / "splits"
+        / "retrieval-slate-holdout-v1.jsonl"
+    )
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == (
+        "630e69734eea4aa59823826c91b4456d331768e6097eb03c1aa9fc00d90f8325"
+    )

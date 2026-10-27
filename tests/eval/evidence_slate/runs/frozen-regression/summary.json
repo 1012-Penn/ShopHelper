@@ -1,0 +1,128 @@
+{
+  "n": 65,
+  "technical_errors": 0,
+  "baseline_hits": 49,
+  "slate_hits": 65,
+  "wins": [
+    "FRZ-MULTI-02",
+    "FRZ-MULTI-05",
+    "FRZ-MULTI-06",
+    "FRZ-MULTI-07",
+    "FRZ-MULTI-08",
+    "FRZ-MULTI-09",
+    "FRZ-MULTI-14",
+    "FRZ-MULTI-15",
+    "FRZ-CONSTRAINT-02",
+    "FRZ-CONSTRAINT-03",
+    "FRZ-CONSTRAINT-11",
+    "FRZ-CONSTRAINT-14",
+    "FRZ-CONFLICT-03",
+    "FRZ-CONFLICT-05",
+    "FRZ-CONFLICT-06",
+    "FRZ-CONFLICT-08"
+  ],
+  "losses": [],
+  "mcnemar": {
+    "b": 16,
+    "c": 0,
+    "n": 16,
+    "statistic": 0,
+    "p_value": 3.0517578125e-05
+  },
+  "baseline_mrr_at_10": 0.512839,
+  "slate_mrr_at_10": 0.680513,
+  "baseline_group_recall_at_5": 0.85641,
+  "slate_group_recall_at_5": 1.0,
+  "pool_complete": 65,
+  "latency_ms": {
+    "p50": 26.133,
+    "p95": 38.599
+  },
+  "selection_latency_ms": {
+    "p50": 0.319,
+    "p95": 0.816
+  },
+  "by_bucket": {
+    "entity_mismatch": {
+      "n": 9,
+      "baseline_hits": 9,
+      "slate_hits": 9,
+      "wins": [],
+      "losses": []
+    },
+    "multi_constraint": {
+      "n": 14,
+      "baseline_hits": 10,
+      "slate_hits": 14,
+      "wins": [
+        "FRZ-CONSTRAINT-02",
+        "FRZ-CONSTRAINT-03",
+        "FRZ-CONSTRAINT-11",
+        "FRZ-CONSTRAINT-14"
+      ],
+      "losses": []
+    },
+    "multi_hop": {
+      "n": 16,
+      "baseline_hits": 8,
+      "slate_hits": 16,
+      "wins": [
+        "FRZ-MULTI-02",
+        "FRZ-MULTI-05",
+        "FRZ-MULTI-06",
+        "FRZ-MULTI-07",
+        "FRZ-MULTI-08",
+        "FRZ-MULTI-09",
+        "FRZ-MULTI-14",
+        "FRZ-MULTI-15"
+      ],
+      "losses": []
+    },
+    "policy_conflict": {
+      "n": 8,
+      "baseline_hits": 4,
+      "slate_hits": 8,
+      "wins": [
+        "FRZ-CONFLICT-03",
+        "FRZ-CONFLICT-05",
+        "FRZ-CONFLICT-06",
+        "FRZ-CONFLICT-08"
+      ],
+      "losses": []
+    },
+    "single_hop": {
+      "n": 18,
+      "baseline_hits": 18,
+      "slate_hits": 18,
+      "wins": [],
+      "losses": []
+    }
+  },
+  "split": "frozen-v1",
+  "selection_version": "evidence-slate-v1",
+  "cost": {
+    "allow_paid": true,
+    "pricing_verified": true,
+    "pricing_version": "2026-10-26",
+    "pricing_currency": "USD",
+    "run_spent_usd": 0.0,
+    "run_limit_usd": 2.0,
+    "ledger_total_usd": 0,
+    "ledger_limit_usd": 10.0,
+    "calls": 0,
+    "api_attempts": 0,
+    "paid_api_attempts": 0
+  },
+  "cache": {
+    "embedding": {
+      "hits": 65,
+      "misses": 0,
+      "entries": 252
+    },
+    "rerank": {
+      "hits": 65,
+      "misses": 0,
+      "entries": 370
+    }
+  }
+}

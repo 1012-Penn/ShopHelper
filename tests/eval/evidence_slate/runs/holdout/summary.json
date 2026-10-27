@@ -1,0 +1,112 @@
+{
+  "n": 20,
+  "technical_errors": 0,
+  "baseline_hits": 13,
+  "slate_hits": 18,
+  "wins": [
+    "SLATE-H10",
+    "SLATE-H13",
+    "SLATE-H14",
+    "SLATE-H15",
+    "SLATE-H16",
+    "SLATE-H17"
+  ],
+  "losses": [
+    "SLATE-H20"
+  ],
+  "mcnemar": {
+    "b": 6,
+    "c": 1,
+    "n": 7,
+    "statistic": 1,
+    "p_value": 0.125
+  },
+  "baseline_mrr_at_10": 0.350139,
+  "slate_mrr_at_10": 0.478333,
+  "baseline_group_recall_at_5": 0.841667,
+  "slate_group_recall_at_5": 0.958333,
+  "pool_complete": 20,
+  "latency_ms": {
+    "p50": 877.991,
+    "p95": 1021.623
+  },
+  "selection_latency_ms": {
+    "p50": 0.232,
+    "p95": 0.319
+  },
+  "by_bucket": {
+    "entity_mismatch": {
+      "n": 1,
+      "baseline_hits": 1,
+      "slate_hits": 1,
+      "wins": [],
+      "losses": []
+    },
+    "multi_constraint": {
+      "n": 4,
+      "baseline_hits": 0,
+      "slate_hits": 3,
+      "wins": [
+        "SLATE-H13",
+        "SLATE-H14",
+        "SLATE-H15"
+      ],
+      "losses": []
+    },
+    "multi_hop": {
+      "n": 10,
+      "baseline_hits": 9,
+      "slate_hits": 9,
+      "wins": [
+        "SLATE-H10"
+      ],
+      "losses": [
+        "SLATE-H20"
+      ]
+    },
+    "policy_conflict": {
+      "n": 2,
+      "baseline_hits": 0,
+      "slate_hits": 2,
+      "wins": [
+        "SLATE-H16",
+        "SLATE-H17"
+      ],
+      "losses": []
+    },
+    "single_hop": {
+      "n": 3,
+      "baseline_hits": 3,
+      "slate_hits": 3,
+      "wins": [],
+      "losses": []
+    }
+  },
+  "split": "retrieval-slate-holdout-v1",
+  "selection_version": "evidence-slate-v1",
+  "cost": {
+    "allow_paid": true,
+    "pricing_verified": true,
+    "pricing_version": "2026-10-26",
+    "pricing_currency": "USD",
+    "run_spent_usd": 0.0,
+    "run_limit_usd": 2.0,
+    "ledger_total_usd": 0.0,
+    "ledger_limit_usd": 10.0,
+    "calls": 39,
+    "api_attempts": 39,
+    "paid_api_attempts": 0
+  },
+  "cache": {
+    "embedding": {
+      "hits": 1,
+      "misses": 19,
+      "entries": 271
+    },
+    "rerank": {
+      "hits": 0,
+      "misses": 20,
+      "entries": 390
+    }
+  }
+}

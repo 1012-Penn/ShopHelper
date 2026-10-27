@@ -196,6 +196,8 @@ def run(args) -> dict:
     except BudgetExceeded:
         raise
     ctx.cost.attempt_ledger = AttemptLedger(args.attempt_ledger)
+    ctx.cost.max_cost_usd = args.max_cost_usd
+    ctx.cost.ledger.total_limit_usd = args.max_cost_usd
 
     contract = {
         "schema_version": 1,

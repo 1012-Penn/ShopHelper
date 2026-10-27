@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "experiment": "query_conditioned_evidence_slate",
+  "selection_version": "evidence-slate-v1",
+  "split": "retrieval-slate-holdout-v1",
+  "dataset": {
+    "path": "tests/eval/splits/retrieval-slate-holdout-v1.jsonl",
+    "sha256": "630e69734eea4aa59823826c91b4456d331768e6097eb03c1aa9fc00d90f8325",
+    "n": 20,
+    "evidence_cases": 20
+  },
+  "code_sha256": {
+    "app/config.py": "5a19ec93941e8e809d39afffb7d9c14df9252cd3e79feb7bcdd9c288ca835adf",
+    "app/evidence_slate.py": "cda5733b877a40a74f06e52fcc236b96d4aed64715f4064520905b05d740f910",
+    "app/retrieval.py": "ce36403702d8c2531b69e4b50255bee5ecbd56c3cfc4d21c7016fe4b00295d6f"
+  },
+  "selection_config": {
+    "rerank_pool_k": 50,
+    "final_top_k": 10,
+    "uses_gold": false
+  },
+  "source_contract": {
+    "contract_version": 1,
+    "dataset": {
+      "split": "retrieval-slate-holdout-v1",
+      "sha256": "fc529b2147dd9d8e5d90970fc1f97859d5fdc6734de3422cb491cb2ca90274a2",
+      "file_sha256": "630e69734eea4aa59823826c91b4456d331768e6097eb03c1aa9fc00d90f8325",
+      "label_version": "v2",
+      "n": 20,
+      "buckets": {
+        "single_hop": 3,
+        "multi_hop": 10,
+        "multi_constraint": 4,
+        "policy_conflict": 2,
+        "entity_mismatch": 1
+      }
+    },
+    "corpus": {
+      "manifest_sha256": "c605628ef443db75c4250f6dd291f015eba3fbb861d1c6b7d9ee7ddc68c8256a",
+      "docs_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+      "facts_sha256": "07ffaa92aad72336443a31b3f7dd26ca381eef8b23a0f86e8f3f0efa44fcbb24",
+      "doc_count": 8,
+      "chunk_count": 130,
+      "chunk_max_chars": 500,
+      "overlap_chars": 80
+    },
+    "index": {
+      "backend": "milvus-lite",
+      "build_id": "ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba",
+      "collection": "knowledge",
+      "embedding_model": "BAAI/bge-m3",
+      "dim": 1024,
+      "snapshot_path": "/root/.codex/worktrees/retrieval-evidence-coverage/ShopHelper/data/eval-snapshots/ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+      "snapshot_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+      "consistency": {
+        "ok": true,
+        "mysql_chunks": 130,
+        "milvus_chunks": 130,
+        "pending": 0,
+        "missing_ids": [],
+        "extra_ids": [],
+        "text_mismatch_ids": [],
+        "category_mismatch_ids": [],
+        "excluded_runtime_ids": [
+          28
+        ],
+        "build_id": "ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba",
+        "corpus_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+        "chunk_set_sha256": "d3f522c23c397491e132d79c6632e4ed05e38bcb2f9c04da2cd124afda730772"
+      }
+    },
+    "retrieval": {
+      "strategy": "hybrid_rerank",
+      "candidates": 50,
+      "top_k": 10,
+      "rerank_score_floor": 0.03,
+      "calibration_sha256": "45e71739f73dd4d028176d01081ecc167590730b40f2828187c4dc57321a143c",
+      "calibration_status": "stale"
+    },
+    "rewrite": {
+      "enabled": true,
+      "model": "deepseek-flash",
+      "mode": "identity",
+      "cache_sha256": ""
+    },
+    "llm": {
+      "model": "deepseek-flash",
+      "temperature": 0.0,
+      "prompt_sha256": "a98ec0e6894bc148a08bdf933bf3ea8efc7583850dd382bb5578ac7fa5aaf861"
+    },
+    "judge": {
+      "model": "deepseek-flash",
+      "temperature": 0,
+      "prompt_sha256": "96e3115282c3d446cc1818af51436fa64e7284af4bba240cf653842690d627f9",
+      "enabled": false,
+      "evidence_model": "deepseek-flash",
+      "evidence_temperature": 0,
+      "evidence_prompt_sha256": "84eded4d03eb758b03fafc2bd563ea05a264266a676dd0812ada5d977c4b5e81",
+      "evidence_enabled": false
+    },
+    "pricing": {
+      "version": "2026-10-26",
+      "currency": "USD",
+      "verified": true,
+      "sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478"
+    },
+    "run": {
+      "git_commit": "aeab239",
+      "git_dirty": false,
+      "seed": 20261024,
+      "python": "3.10.12",
+      "host": "",
+      "started_at": "2026-10-27T04:25:37.562964+00:00"
+    },
+    "harness": {
+      "version": "ch11-harness-1",
+      "mode": "retrieval",
+      "allow_paid": true,
+      "use_judge": false,
+      "rag_mode": "baseline"
+    },
+    "rag": {
+      "mode": "baseline",
+      "max_rounds": 3,
+      "token_budget": 3000,
+      "time_budget_s": 45.0,
+      "call_timeout_s": 20.0,
+      "max_sub_queries": 3,
+      "analyzer_enabled": false,
+      "analyzer_model": "",
+      "analyzer_temperature": 0,
+      "analyzer_prompt_sha256": "d4fee1662404b787c7a595fb21489c83c999b357e8b74a8b8ed432a02125c8f4"
+    },
+    "_sha": "4ee13af1031beb8780bba0faee43f59fd4630bca0a8f8546883e745b135a17ee"
+  },
+  "budget": {
+    "max_cost_usd": 2.0,
+    "allow_paid": true,
+    "ledger": "data/evidence-slate-holdout-1/cost-ledger.json",
+    "attempt_ledger": "data/evidence-slate-holdout-1/attempts.jsonl"
+  },
+  "git": {
+    "commit": "aeab2394571761782484bf2c4489e061e17b569f",
+    "dirty": false
+  }
+}
