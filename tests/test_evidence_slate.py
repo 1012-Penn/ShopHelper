@@ -27,6 +27,27 @@ def test_product_and_shipping_query_reserves_entity_and_policy_evidence():
     assert slate.facets == ["product_entry", "free_shipping"]
 
 
+def test_product_price_plus_shipping_question_uses_threshold_rule_not_generic_fee():
+    documents = {
+        1: _doc(1, "商品目录.md > 商品目录 > 商品条目 > SH-E200 耳机",
+                "SH-E200 售价 159 元。"),
+        2: _doc(2, "退货政策.md > 退货政策 > 邮费与运费",
+                "普通订单邮费 8 元,单笔满 99 元包邮。"),
+        3: _doc(3, "会员与优惠.md > 会员与优惠 > 包邮门槛与合并订单",
+                "单笔订单商品金额满 99 元包邮。"),
+    }
+
+    slate = select_evidence_slate(
+        "SH-E200 售价 159 元，这一单需要付运费吗？",
+        ranked_ids=[2, 1, 3],
+        documents=documents,
+        top_k=2,
+    )
+
+    assert set(slate.ordered_ids) == {1, 3}
+    assert slate.facets == ["product_entry", "free_shipping"]
+
+
 def test_refund_query_reserves_order_summary_payment_and_refund_rule():
     documents = {
         10: _doc(10, "订单与支付.md > 订单与支付 > 订单状态总览",
@@ -90,6 +111,51 @@ def test_return_condition_and_shipping_are_selected_from_different_sections():
 
     assert set(slate.ordered_ids) == {30, 32}
     assert slate.facets == ["shipping", "return_condition"]
+
+
+def test_quality_return_after_deadline_adds_policy_and_detection_rule():
+    documents = {
+        1: _doc(1, "商品目录.md > 商品目录 > 商品条目 > SH-K104 键盘",
+                "SH-K104 机械键盘。"),
+        2: _doc(2, "政策版本说明.md > 政策版本说明 > v2 版十五天无理由",
+                "签收 15 天内支持无理由退货。"),
+        3: _doc(3, "政策版本说明.md > 政策版本说明 > v1 版七天无理由",
+                "签收 7 天内支持无理由退货。"),
+        4: _doc(4, "售后核验指引.md > 售后核验指引 > 质量问题认定原则",
+                "是否质量问题以检测结果为准。"),
+    }
+
+    slate = select_evidence_slate(
+        "SH-K104 签收 20 天后发现质量问题，还能退吗？",
+        ranked_ids=[1, 2, 3, 4],
+        documents=documents,
+        top_k=4,
+    )
+
+    assert set(slate.ordered_ids) == {1, 2, 3, 4}
+    assert "quality_rule" in slate.facets
+
+
+def test_version_choice_question_includes_both_concrete_windows():
+    documents = {
+        1: _doc(1, "政策版本说明.md > 政策版本说明 > 新旧版本适用判定",
+                "按签收日期选择 v1 或 v2。"),
+        2: _doc(2, "政策版本说明.md > 政策版本说明 > 冲突处理",
+                "同一订单只适用一个版本。"),
+        3: _doc(3, "政策版本说明.md > 政策版本说明 > v2 版十五天无理由",
+                "v2 支持 15 天无理由退货。"),
+        4: _doc(4, "政策版本说明.md > 政策版本说明 > v1 版七天无理由",
+                "v1 支持 7 天无理由退货。"),
+    }
+
+    slate = select_evidence_slate(
+        "ORD-1008 签收后适用哪版无理由退货窗口？",
+        ranked_ids=[3, 4, 1, 2],
+        documents=documents,
+        top_k=4,
+    )
+
+    assert set(slate.ordered_ids) == {1, 2, 3, 4}
 
 
 def test_unstructured_query_keeps_rerank_order():

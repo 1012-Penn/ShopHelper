@@ -17,6 +17,7 @@ _IDENTIFIER = re.compile(
     r"(?<![A-Z0-9])(?:ORD-\d{4,6}|SH-[A-Z0-9]+)(?![A-Z0-9])",
     re.IGNORECASE,
 )
+_AMOUNT_YUAN = re.compile(r"(?<!\d)(\d+(?:\.\d+)?)\s*元")
 _MEMBER_TIERS = ("普通会员", "银卡会员", "金卡会员", "钻石会员")
 
 
@@ -81,6 +82,7 @@ def select_evidence_slate(
     order_id = next((value for value in identifiers if value.startswith("ORD-")), None)
     product_id = next((value for value in identifiers if value.startswith("SH-")), None)
     asks_coupon = any(term in lower for term in ("满减", "优惠券", "券", "叠加"))
+    quoted_amounts = [float(value) for value in _AMOUNT_YUAN.findall(query)]
 
     if order_id:
         add(
@@ -154,7 +156,14 @@ def select_evidence_slate(
             ),
         )
 
+    price_reaches_shipping_threshold = (
+        product_id is not None
+        and any(amount >= 99 for amount in quoted_amounts)
+        and any(term in lower for term in ("运费", "邮费", "包邮"))
+    )
     if "包邮" in lower and not asks_coupon:
+        add("free_shipping", best(in_section("包邮门槛与合并订单")))
+    elif price_reaches_shipping_threshold and not asks_coupon:
         add("free_shipping", best(in_section("包邮门槛与合并订单")))
     elif any(term in lower for term in ("偏远", "补运", "西藏")):
         add("remote_shipping", best(in_section("偏远地区补运")))
@@ -187,6 +196,9 @@ def select_evidence_slate(
         if any(term in lower for term in ("人为", "进水", "摔", "拆机", "过保")):
             add("warranty_damage", best(in_section("人为损坏与过保")))
 
+    if "质量问题" in lower and "天" in lower and "退" in lower:
+        add("quality_rule", best(in_section("质量问题认定原则")))
+
     policy_query = any(
         term in lower
         for term in ("无理由", "退货窗口", "v1", "v2", "生效", "15 天", "7 天", "15天", "7天")
@@ -194,6 +206,8 @@ def select_evidence_slate(
     if "不知道签收日期" in lower or "哪个版本" in lower or "哪版" in lower:
         add("version_decision", best(in_section("新旧版本适用判定")))
         add("conflict_rule", best(in_section("冲突处理")))
+        add("v2_window", best(in_section("v2 版十五天无理由")))
+        add("v1_window", best(in_section("v1 版七天无理由")))
     elif "v2" in lower and any(term in lower for term in ("延长", "补到", "生效后")):
         add("v1_window", best(in_section("v1 版七天无理由")))
         add("supersedes", best(in_section("替代关系")))
@@ -201,6 +215,10 @@ def select_evidence_slate(
         policy_query and any(term in lower for term in ("签收", "无理由", "退货窗口"))
     ) or (
         any(term in lower for term in ("签收第", "用了"))
+        and "天" in lower
+        and "退" in lower
+    ) or (
+        "质量问题" in lower
         and "天" in lower
         and "退" in lower
     ):
