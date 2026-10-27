@@ -1,336 +1,140 @@
-# ShopHelper
+<p align="center">
+  <img src="docs/assets/shophelper-banner.svg" alt="ShopHelper：面向电商售后的 Agent 与 RAG 项目" width="100%">
+</p>
 
-电商智能客服系统。ch01 纯对话:FastAPI + LangChain 1.x 的 SSE 流式聊天 + 售后信息结构化抽取;ch02 叠加 Function Calling 工具链:模型自主选工具 → 执行 → 结果回灌 → 单轮流式收敛,会话与工具轨迹全量落 MySQL;ch03 叠加 RAG 基础:`query_faq` 从关键词查表升级为 BGE-M3 + Milvus 向量语义检索(契约不变),配套离线建库(结构感知切分 + MySQL/Milvus 双写幂等)与历史对话挖知识两条管道;ch04 叠加 RAG 进阶:Milvus 原生 BM25(dense+BM25 各召回 Top-50,hybrid_search RRF 融合)+ bge-reranker-v2-m3 精排 Top-10 + query 改写归一,回答带可点引用编号(角标 → 来源 chunk 章节路径与原文),检索低置信/生成自评不足显式拒答并落低置信度问题池,四策略评估体系(Recall@K / MRR / Faithfulness 分桶报告 + 编造个案台账),聊天页满意度反馈(纯前端采集);ch05 叠加 Workflow 确定性编排:LangGraph 图骨架(指代消解→意图识别→写死分流→知识检索→置信度闸→ReAct 主力 Agent→日志落库),七类意图分流四出口(知识类强制 RAG+置信度闸/业务数据类 Agent 自调工具/投诉安抚+自选按钮/闲聊固定话术),前端「转人工」「建工单」独立按钮自选互不绑定,checkpointer 会话态 + MySQL 双写;ch06 分流器正式版:LLM 指代消解+Query 改写(已完整原样透传)、意图识别四件套(七类+其他枚举/JSON intent+confidence/边界 few-shot/置信度与可选小→大降级路)、退款售后确定性子流程(槽位检查→订单数据→Query 扩写→多路政策检索去重合并→窄化「这一单能不能退」交主力 Agent)、订单选择器(SSE 帧下发可点订单卡,点选无状态回传续走)与退款单表单(固定原因类目,复用工单链路);ch07 会话上下文管理:三层历史(层 1 原文/层 2 渲染截短/早期异步分段摘要,锚点 id 划界降级只挪 id)、token 预算从模型窗口倒推(滑窗=窗口−输出−单轮峰值−固定开销,层 1 七成层 2 三成,启动自检装不下一轮报警)、摘要走后台任务不阻塞回复(旧梗概只作背景不回炉)、State.messages 挂 add_messages 承载图内完整轨迹(与模型面精简版各走各的)、每轮上下文原样落 logs/app.log(model_ctx/history_ctx)、messages 表只落 user/assistant 文本(工具轨迹活在当轮)、前端会话侧栏(新在前/首问预览/已摘要标记/切换回载续聊);ch08 即插即用工具系统:统一注册中心(内置插件化+MCP 动态发现,langchain-mcp-adapters 多 Server 接入)、JSON Schema 参数校验(拦下回灌)、读写权限把门(create_ticket 须前端确认,模型直调一律拒绝)、统一执行引擎(超时/分类重试/错误三档分诊/结果格式化)、tool_audit_logs 全量审计、自建物流/售后双 MCP Server(FastMCP Streamable HTTP,mock 数据,独立进程)、建工单确认流(预览卡片→确认落表/取消记拒);ch09 可观测性与数据飞轮:Langfuse 自部署(v3,数据不出本机)全链路 tracing(每请求一棵 trace 树:图节点/LLM 生成层/工具调用/检索快照/token/耗时,意图识别结果写进 trace 元数据)、request_usage 本地台账按意图汇总 token 花销、正式证据置信度闸(Top1/有效证据数/Top1-Top2 分差合成,阈值由 ch04 评估集+junk 集校准入库)、低置信三入口(检索闸/生成自评/👎反馈)统一落池并带当轮召回片段快照(👎 事后回捞)、飞轮流水线(LLM 标准化成 FAQ 式问题+语义查重合并 occurrence_count)、review_queue 待审队列后台审核页(通过即走 ch03 双写流程回写知识库)、自动化评估流水线落 eval_runs 出趋势页;ch14 后台管理鉴权:DB 管理员/角色/签名 Cookie 会话/CSRF/审计,保护 3 个后台页与 9 个管理接口（含索引重试）。
+<p align="center">
+  <strong>一个能查资料、调用工具，并可追踪与评估的电商售后 Agent 原型</strong>
+</p>
 
-## 环境要求
+<p align="center">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white">
+  <img alt="LangGraph" src="https://img.shields.io/badge/Orchestration-LangGraph-204B63?style=flat-square">
+  <img alt="FastAPI" src="https://img.shields.io/badge/API-FastAPI-009688?style=flat-square&amp;logo=fastapi&amp;logoColor=white">
+  <img alt="Hybrid RAG" src="https://img.shields.io/badge/Retrieval-Hybrid%20RAG-376AA2?style=flat-square">
+  <img alt="MCP" src="https://img.shields.io/badge/Tools-MCP-735BC4?style=flat-square">
+</p>
 
-- Python 3.10+
-- Docker(起 MySQL 8;向量库用 Milvus Lite 内嵌文件,无需容器)
+<p align="center">
+  <a href="#项目概览">项目概览</a> ·
+  <a href="#系统架构">系统架构</a> ·
+  <a href="#评测结果">评测结果</a> ·
+  <a href="#快速开始">快速开始</a> ·
+  <a href="#项目文档">项目文档</a>
+</p>
 
-## 安装
+---
 
-```bash
-pip install virtualenv && python3 -m virtualenv .venv
-.venv/bin/pip install fastapi==0.141.1 uvicorn==0.52.4 langchain==1.4.0 langchain-openai==1.6.0 pydantic-settings==2.15.0 httpx==0.28.1 "pymilvus[milvus-lite]==3.0.1" jieba==0.42.1 mcp==1.30.0 langchain-mcp-adapters==0.3.2 jsonschema==4.26.0 "sqlalchemy>=2.0" pymysql cryptography "langfuse>=3.8,<5" pytest==9.1.1 pytest-asyncio==1.4.0
-# ch10 训练/推理额外依赖(CPU 版 torch,避免拉 2GB 的 CUDA 包):
-.venv/bin/pip install --index-url https://download.pytorch.org/whl/cpu torch
-.venv/bin/pip install transformers onnxruntime scikit-learn
+## 项目概览
+
+ShopHelper 面向**模拟电商售后**：用户可以询问商品与政策、查询订单与物流，或发起退款和工单。系统将知识检索、业务工具与 Agent 决策组合起来，并保留可追溯的证据和评测记录。
+
+| 能力 | 实现方式 |
+| --- | --- |
+| **任务编排** | LangGraph 串联意图识别、固定退款流程与 ReAct 工具调用；另提供可选的 Supervisor 多 Agent 和单 / 多 Agent 路由。 |
+| **知识检索** | 多轮指代补全与受护 Query 改写 → BGE-M3 稠密向量 + Milvus BM25 → RRF → Cross-Encoder 重排 → 引用与证据判断。 |
+| **工具执行** | 内置工具与 MCP 统一注册；参数校验、超时与重试；工单写入先经用户确认，并支持确认键幂等。 |
+| **上下文与可观测性** | 分层历史和摘要预算、SSE 流式响应；Langfuse 追踪、调用与费用台账，以及低置信问题回流。 |
+| **质量评测** | 保存题集、逐题轨迹、失败与配对结果；分别检查检索覆盖、答案、澄清和拒答。 |
+
+> 项目使用自建模拟商品、订单和售后资料，真实模型调用用于实验；结果不代表线上客服效果。
+
+## 系统架构
+
+```mermaid
+flowchart LR
+    U["用户问题"] --> I["上下文补全<br/>意图识别"]
+    I -->|商品咨询| R["混合检索<br/>BGE-M3 + BM25"]
+    R --> E["RRF + 重排<br/>证据判断"]
+    E -->|证据充分| A["单 Agent<br/>工具决策与回答"]
+    E -->|证据不足| F["澄清 / 拒答<br/>转人工提示"]
+    I -->|退款售后| W["固定退款流程"]
+    I -->|订单 / 物流| A
+    W --> A
+    A --> T["工具执行<br/>确认后写入"]
+    U -.->|可选入口| S["Supervisor<br/>检索 / 行动 Agent"]
+    S -.-> T
+    A --> O["回答、引用与轨迹"]
 ```
 
-## 配置
+默认聊天入口为 `POST /api/chat`。Supervisor 多 Agent 使用独立的 `POST /api/multi-agent/chat`；单 / 多 Agent 自适应路由需显式开启。知识检索使用混合检索与重排；受控多轮 RAG、证据面选择和缓存均可按配置开启，见[功能开关](#功能开关与边界)。
 
-`cp .env.example .env` 后填入:
+## 评测结果
 
-- `OPENAI_API_KEY`(必填,对话/抽取/挖知识/query 改写/忠实度裁判的上游模型 key)、`OPENAI_BASE_URL`(默认 DeepSeek)、`OPENAI_MODEL`(默认 deepseek-chat)
-- `EMBEDDING_API_KEY`(必填,BGE-M3 嵌入,硅基流动申请)、`EMBEDDING_API_BASE` / `EMBEDDING_MODEL`(默认 BAAI/bge-m3)
-- `RERANK_API_KEY`(ch04 重排,留空复用 EMBEDDING_API_KEY)、`RERANK_API_BASE` / `RERANK_MODEL`(默认 BAAI/bge-reranker-v2-m3)
-- `DATABASE_URL`(默认指向本机 3306 的 Docker MySQL)、`MILVUS_DB_PATH`(默认 `./data/milvus_knowledge.db`)
-- ch09 可观测性(全部可选,缺 key/SDK/服务自动 no-op 不影响聊天):`LANGFUSE_ENABLED` / `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY` / `LANGFUSE_HOST`(自部署栈地址);`EVIDENCE_CALIBRATION_PATH`(证据闸校准产物,默认 `config/evidence_calibration.json`);`LLM_MAX_RETRIES`(上游 429 波动重试,默认 6)
-- `CHAT_TEMPERATURE` / `EXTRACT_TEMPERATURE` / `RETRIEVAL_TOP_K` / `CHUNK_MAX_CHARS` / `CHUNK_OVERLAP_CHARS` / `DEDUP_THRESHOLD` / `RERANK_SCORE_FLOOR` / `HYBRID_CANDIDATES` 均有默认值
-- ch07 上下文预算(均有默认值,见 spec「预算推导」):`MODEL_CONTEXT_WINDOW` / `MAX_OUTPUT_TOKENS` / `MAX_USER_INPUT_TOKENS` / `MAX_AGENT_STEPS` / `TOOL_RESULT_MAX_TOKENS` / `RERANK_TOP_K`(顶替旧 RETRIEVAL_FINAL_TOP_K)及 `CTX_*` 固定开销组件;只调 `MODEL_CONTEXT_WINDOW` 不够——其余项按默认值算,窗口过小会滑窗归零并在启动时报「上下文预算不足」
-- ch14 后台鉴权(先 apply `db/ch14-admin-auth.sql`):`ADMIN_SESSION_SECRET`(必填,为空时后台登录 503)、`ADMIN_SESSION_TTL_SECONDS` / `ADMIN_COOKIE_SECURE` / `ADMIN_LOGIN_MAX_FAILURES` / `ADMIN_LOGIN_LOCK_SECONDS` / `ADMIN_PASSWORD_ITERATIONS`(均有默认值)
+以下为**模拟场景的小规模同题对照**。表中分母、开发 / 留出来源及费用口径均可在报告中追溯。
 
-## 数据库
+| 方向 | 基线 | 方案 | 结果说明 |
+| --- | --- | --- | --- |
+| **单 / 多 Agent 路由** | 固定单 Agent `20/24`；固定多 Agent `18/24` | 自适应 `22/24` | 留出 24 题；模型费用较固定多 Agent 降低 `58.2%`。评分经事后修订并统一重评。 |
+| **完整证据覆盖** | `13/20` | `18/20` | 新增 20 题，前五条须覆盖全部必需证据组；配对 `6` 增 `1` 失。 |
+| **答案质量** | `94/126` | `102/126` | 126 道证据答案题，同模型生成、规则检查与匿名模型裁判；包含开发及已见题，评分经事后统一修订。 |
+| **重复查询缓存** | 检索阶段冷 P50 `739.8 ms` | 热 P50 `35.8 ms` | 8 轮重复请求；不含 Query 改写、答案生成或进程冷启动。 |
 
-首次启动先建库灌数据(init.sql 建 16 张表:faq/conversations/messages/tickets/knowledge_chunks/qa_extraction_staging/low_confidence_questions/faith_cases/conversation_summaries/tool_audit_logs/request_usage/review_queue/eval_runs/topic_classifications/admin_users/admin_audit_logs,seed 灌 8 条 FAQ 与 4 通历史对话):
+检索覆盖表示“是否找齐资料”，**不等于最终答案正确率**。新增 20 题仍是小样本；证据面规则依赖当前语料结构。完整报告保留分桶、逐题结果、代价和失败案例：
+
+- [自适应路由对照](docs/eval/adaptive-routing-r2-report.md)
+- [证据面检索实验](docs/eval/retrieval-evidence-slate-report.md)
+- [答案质量与评分修订](docs/eval/answer-quality-depth-report.md)
+- [RAG 深度补强集成验收](docs/eval/rag-depth-final-acceptance.md)
+
+## 快速开始
+
+**环境：**Python 3.10+、Docker、可用的对话模型与 BGE 嵌入服务。MySQL 使用 Docker；Milvus Lite 使用本地文件。下面以 Linux / WSL 为例。
 
 ```bash
-docker compose up -d        # 等约 30 秒初始化
-# 本次可靠性升级必需,新库和已完成 ch09 的旧库均执行一次;升级旧库时先停止旧服务。
-docker exec -i shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper < db/reliability-review-index.sql
+git clone https://github.com/1012-Penn/ShopHelper.git
+cd ShopHelper
+python3 -m venv .venv
+
+# 安装主链路依赖；主题分类器训练另需 PyTorch / Transformers
+.venv/bin/pip install fastapi==0.141.1 uvicorn==0.52.4 \
+  langchain==1.4.0 langchain-openai==1.6.0 'langgraph>=1.2.11,<2' \
+  pydantic-settings==2.15.0 pyyaml==6.0.3 httpx==0.28.1 \
+  'pymilvus[milvus-lite]==3.0.1' jieba==0.42.1 mcp==1.30.0 \
+  langchain-mcp-adapters==0.3.2 jsonschema==4.26.0 \
+  'sqlalchemy>=2.0' pymysql cryptography 'langfuse>=3.8,<5' \
+  pytest==9.1.1 pytest-asyncio==1.4.0
+
+cp .env.example .env
+# 编辑 .env：填写对话模型及嵌入服务的 API 配置；不要提交密钥
+docker compose up -d
+# 等待 MySQL 就绪；执行可靠性索引迁移
+# 以下账号为 docker-compose.yml 中的本地演示账号
+docker exec -i shophelper-mysql mysql -ushophelper -pshophelper \
+  --default-character-set=utf8mb4 shophelper < db/reliability-review-index.sql
 .venv/bin/python -m db.seed
 .venv/bin/python -m db.seed_conversations
-```
-
-> 已有旧数据卷时需 `docker compose down -v` 重建,ch04 新表(low_confidence_questions / faith_cases)才会由 init.sql 创建;旧库增量迁移另 apply `db/ch09.sql`(request_usage)与 `db/ch09-observability-flywheel.sql`(review_queue / eval_runs + low_confidence_questions 加 matched_review_id、retrieved_chunks 两列);ch10 另 apply `db/ch10-topic-classifier.sql`(topic_classifications);ch14 另 apply `db/ch14-admin-auth.sql`(admin_users / admin_audit_logs);首次 `build_kb` 会检测到 ch03 旧 Milvus 集合并自动重建为 v2(dense+BM25+category)。
-
-## 知识库建库与挖知识
-
-```bash
-.venv/bin/python -m scripts.build_kb               # knowledge/*.md 切分 → MySQL(pending)→ Milvus → done
-.venv/bin/python -m scripts.build_kb --max-chunks 5   # 演示中断:只向量化 5 块
-.venv/bin/python -m scripts.build_kb --resume-only    # 中断续跑:只补 pending,漏多少补多少
-.venv/bin/python -m scripts.mine_qa                # 历史对话 → LLM 抽 QA → 暂存 → 去重 → 入库向量化
-```
-
-挖知识定时化(示例,每小时一批):
-
-```cron
-0 * * * * cd /path/to/ShopHelper && mkdir -p logs && .venv/bin/python -m scripts.mine_qa >> logs/mine_qa.log 2>&1
-```
-
-## 跑测试
-
-无需真实 key、MySQL 与嵌入 API(替身模型 + FakeEmbedding + SQLite 内存库 + 内存向量库):
-
-```bash
-.venv/bin/pytest
-```
-
-审核可靠性升级将“审核已保存”和“已写入知识库”分开显示。`POST /api/review-queue/{id}/approve`
-保留原响应字段,新增 `index_status` (`done` / `pending`);向量化失败仍返回审核成功及 `pending`。
-同一审核重复提交相同答案复用原知识,不同答案返回 409。后台切换到“已通过”可找到待索引条目,
-点击重试或调用 `POST /api/review-queue/{id}/retry-index`。待索引状态保存在 SQL,服务重启后仍可重试,
-不需要后台任务服务。新迁移只关联历史最小 ID 的知识块,不会删除已有重复内容。
-
-真实 MySQL 迁移及并发回归可显式指定独立测试库后执行
-`SHOPHELPER_TEST_MYSQL_URL='mysql+pymysql://用户名:密码@地址/shophelper_test_reliability?charset=utf8mb4' .venv/bin/python -m pytest tests/test_review_mysql.py -q`。
-该测试会清空指定库,仅接受 `shophelper_test_` 前缀;默认测试不连接真实 MySQL。
-审核页面的 DOM 行为测试使用 Node.js,未安装时跳过。
-
-重排服务缺失或故障时,知识与退款路径不再采用未经置信度判定的候选生成答案;
-候选保留供问题池诊断,对话给出确定性兜底。
-
-## 跑评估
-
-- 抽取质量(ch01):`.venv/bin/python scripts/eval_extract.py`
-- 检索质量(ch03 基线集):`.venv/bin/python scripts/eval_retrieval.py --set tests/eval/retrieval_samples.jsonl --strategy dense`(基线 hit@3 = 12/12)
-- **检索四策略对比(ch04,需已建库)**:`.venv/bin/python scripts/eval_retrieval.py`——dense / bm25 / hybrid / hybrid_rerank 四策略 × Recall@3/5/10 + MRR@10,按 A_policy / B_model / C_colloquial / E_multi 四桶分列,报告落 `reports/ch04-retrieval-report.md`(`--strategy bm25` 单策略、`--no-rewrite` 关改写对照)。真跑基线(ch04 校准后):hybrid_rerank R@10 A=1.00 / B=1.00 / C=0.88 / E=1.00,C 桶 MRR@10=0.875 四策略最高;唯一漏网 C04「这个东西能便宜点不」(四策略共用硬题)
-- **生成忠实度(ch04)**:`.venv/bin/python scripts/eval_faithfulness.py`——hybrid_rerank 生成带引用答案 → LLM 裁判判编造 → Faithfulness 分桶报告 + 编造个案进 faith_cases 台账(真跑 31/32,A 桶 0.88)
-
-## 训练主题分类器(ch10)
-
-微调 `hfl/chinese-roberta-wwm-ext`(全参,17 类多标签),把飞轮低置信度问题按主题批量归类,好决定先补哪块知识。17 类权威术语表在 `app/topic_taxonomy.py`(修归保修维修、退归退换货;运费管钱、物流管货;价保是补差价、优惠活动是券和满减),训练/预标/落库/前端共用这一份。
-
-```bash
-.venv/bin/python -m scripts.build_topic_dataset        # ① 捞池+清洗+LLM 造数预标+分层 80/10/10+增强(约 5 分钟,需 OPENAI key)
-.venv/bin/python -m scripts.build_topic_dataset --demo-only   #    只补验收用演示问题(demo_pool.jsonl,不进训练)
-.venv/bin/python -m scripts.train_topic_classifier     # ② 全参微调:weight_decay+warmup 正则,验证集微 F1 早停(CPU 约 20-40 分钟)
-.venv/bin/python -m scripts.eval_topic_classifier      # ③ 留出测试集:各类目 P/R/F1+混淆矩阵+错例清单 → reports/ch10-*.md
-.venv/bin/python -m scripts.export_topic_onnx          # ④ 导出 ONNX(带 torch/ORT 对齐校验)
-.venv/bin/python -m scripts.classify_topics            # ⑤ 旁路批量归类:捞池里未归类问题→落 topic_classifications
-```
-
-- 语料(train 1558/val 163/test 163,含池内真实问题纠错预标)与训练指标在 `tests/eval/topic_dataset/` 与 `reports/ch10-training-metrics.json` 进 git;模型 checkpoint/ONNX(~400MB)在 `models/topic_classifier/` 不进 git,按上面命令重建。
-- 首次下载基座模型若卡住:新版 huggingface_hub 的 Xet 通道经常连不通,可用 `HF_HUB_DISABLE_XET=1 HF_ENDPOINT=https://hf-mirror.com` 重试,或直接 curl 断点续传 `hf-mirror.com/hfl/chinese-roberta-wwm-ext/resolve/main/pytorch_model.bin` 到本地目录后 `--base-model` 指过去。
-- 真机验收:`.venv/bin/python scripts/acceptance_ch10.py --scenario all`(评测报告/灌池批量归类/多标签三场景)。
-- 后台主题分布页 <http://127.0.0.1:8000/admin/topics>:17 类问题量条形图 + 「归类一批」按钮;实时对话主链路不调分类器,接口模型缺失时 503。
-
-## 启动
-
-```bash
+.venv/bin/python -m scripts.build_kb
 .venv/bin/uvicorn app.main:app --port 8000
 ```
 
-## 验收
+启动后打开 <http://127.0.0.1:8000/>；接口文档位于 <http://127.0.0.1:8000/docs>。建库和真实对话会调用外部模型服务，请按所用供应商的价格与配额配置。
 
-聊天页入口:浏览器打开 <http://127.0.0.1:8000/>。模型调用工具时,回答气泡顶部会出现工具轨迹小徽章(执行中闪烁,完成后转绿);ch04 起答案中的 [n] 角标可点击,展开来源卡(章节路径 + chunk 原文),气泡左下角 👍/👎 满意度反馈点击即点亮并锁定(纯前端采集)。
+更完整的环境变量、数据库迁移、MCP 服务及故障排查见[详细技术手册](docs/technical-reference.md)。
 
-ch04 四条验收(先 `docker compose down -v && up -d` → seed → `build_kb` → 启动服务):
+## 功能开关与边界
 
-1. **四策略对比报告有数字**:`.venv/bin/python scripts/eval_retrieval.py`,四策略 × 四桶 Recall@K / MRR@10 表落 `reports/`;
-2. **带型号的问题 BM25 命中**:页面问「SH-E300 多少钱」→ 答 299 且带 [1] 角标;评估 B 桶 bm25 R@10 = 1.00;
-3. **引用可点回原文**:页面问「邮费是多少」→ 点答案里的 [1] 角标,展开来源卡显示 `mined:1` / `退货政策.md > 邮费与运费` 等章节路径与原文,再点收起;
-4. **库外问题明确拒答 + 落池**:问「会飞的手机怎么买」/「量子力学怎么退货」→ 回答以 `【无法回答】` 开头,`low_confidence_questions` 表落行(检索低置信 source=retrieval_low_conf,自评拒答 source=self_check):
+| 能力 | 默认状态 | 使用方式 / 边界 |
+| --- | --- | --- |
+| 单 Agent 聊天 | 默认入口 | `POST /api/chat`，包含持久 run、SSE 重放及只读任务恢复。 |
+| Supervisor 多 Agent | 独立可选入口 | `POST /api/multi-agent/chat`；与默认聊天入口的恢复、用量持久化语义不同。 |
+| 自适应单 / 多 Agent 路由 | 关闭 | `ADAPTIVE_ROUTING_ENABLED=true` 后使用 `POST /api/adaptive-routing/chat`。 |
+| 受控多轮 RAG | 关闭 | `RETRIEVAL_ROUTE=decompose_once` 或 `controlled_loop`；当前需按语料重新校准。 |
+| 证据面选择 | 关闭 | `RETRIEVAL_EVIDENCE_SLATE_ENABLED=true`；按当前语料验证，换语料应重评。 |
+| 静态检索缓存 | 关闭 | `RETRIEVAL_CACHE_ENABLED=true`，必须设置 `RETRIEVAL_CACHE_CORPUS_VERSION`，语料更新时同步更换版本；不缓存订单状态或生成答案。 |
+| 受护 Query 改写 | 开启 | `QUERY_GUARD_ENABLED=false` 可回滚；不安全改写回退原句。 |
 
-```bash
-docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper \
-  -e "SELECT id, source, raw_question, reason FROM low_confidence_questions"
-```
+当前完整业务链仍是演示原型。外部物流 / 售后 MCP 为模拟服务；跨会话长期记忆、真实生产效果和大规模并发能力不在已验证结论内。真实应用组合冒烟中仍发现引用支持待复核的案例，具体见[验收报告](docs/eval/rag-depth-final-acceptance.md)。
 
-ch05 五条验收(服务启动后逐条打):
+## 项目文档
 
-1. **知识类强制检索**:问「你们的退货政策是怎样的」→ 气泡出现「知识检索」徽章,服务日志见 `node=retrieve strategy=hybrid_rerank top1=...`;
-2. **Agent 自调工具**:问「订单1001的物流到哪了」→ 回答气泡带「物流查询」徽章;
-3. **投诉自选按钮**:说「我要投诉」→ 安抚话术下出现「转人工」「建工单」两个独立按钮;点「转人工」本地展示「已转接人工客服」并蹦客服小猫问候(纯前端);点「建工单」确认后才 `POST /api/tickets` 写 tickets 表;都不点就当普通对话继续;
-4. **闲聊固定话术**:说「你好呀」→ 固定回复,零工具徽章;
-5. **ReAct 多步**:问「先帮我查一下订单1001,然后告诉我它的物流到哪了」→ 依次出现「订单查询」「物流查询」两个徽章,日志 `node=agent steps=2`。
+- **运行与迁移**：[详细技术手册](docs/technical-reference.md) · [环境变量模板](.env.example)
+- **系统与评测**：[集成验收](docs/eval/rag-depth-final-acceptance.md) · [逐题评测目录](tests/eval/) · [知识库](knowledge/)
+- **主要代码**：[Agent 编排](app/graph/) · [多 Agent](app/multi_agent/) · [检索](app/retrieval.py) · [工具](app/tools/)
 
-```bash
-docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper \
-  -e "SELECT ticket_no, ticket_type, description FROM tickets"
-```
-
-祛魅热身(不依赖 LangGraph 的裸 Agent 循环):`.venv/bin/python -m scripts.naive_agent "订单1001的物流到哪了"`。
-
-ch06 四条验收(服务启动后逐条打;路由评估:`.venv/bin/python scripts/eval_router.py` 真模型跑,报告落 `reports/ch06-router-report.md`):
-
-1. **多轮来回切意图全对、指代全补对**:评估报告——意图准确率 21/22(95.5%),多轮切换桶 6/6(物流→退款退货→物流逐轮全对),指代消解关键词口径 5/5;
-2. **意图 JSON 稳定可解析、怪问题落「其他」**:畸形率 0/22(宽松解析+兜底类单测 7 个);「量子力学怎么解释」「明天股票会涨吗」→其他(「你会写诗吗」→闲聊,非业务出口口径边缘个案,记档);
-3. **「这个能退吗」先补全指代、再走子流程**:先问「SH-E300 多少钱」再问「这个能退吗」→ 气泡灰字「已理解:SH-E300…能退吗」(resolved 帧)→ 因无订单号弹**订单选择器** → 点选订单卡后子流程续走:徽章链 订单查询→查询扩写→政策检索,答案带 [n] 角标;服务日志 `node=resolve changed=True → node=intent intent=退款退货 → node=prepare_order → node=fetch_order → node=expand → node=policy_retrieve → node=agent`;
-4. **不带订单号问退款弹选择器、点选走完 + 退款单**:新会话直接问「这个能退吗」→ 三张订单卡(单号/商品/金额/状态),点选后自动回填、流程接着走;判定可退后点「申请退款」→ 表单(原因固定六类下拉+备注)→ 提交写 tickets 表:
+运行测试：
 
 ```bash
-docker exec shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper \
-  -e "SELECT ticket_no, ticket_type, description FROM tickets ORDER BY created_at DESC LIMIT 1"
+.venv/bin/python -m pytest -q
 ```
 
-真机验收证据:`reports/ch06-acceptance.md`。
-
-ch07 五条验收(先 `docker compose down -v && up -d` → seed → `build_kb` → 启动服务;老库需另 apply `db/ch07-summary.sql` 与 `db/ch07-layers.sql`):
-
-1. **默认配置连聊 20+ 轮不爆不崩、且不触发任何压缩(装得下就不压)**:`.venv/bin/python scripts/acceptance_ch07.py --scenario a`(23 轮,断言无 `层1 降级`/`summary trigger`、无错误轮,启动行见 `[ctx] budget 窗口=…`);
-2. **演示配置完整级联 + 梗概召回**:演示配置 `MODEL_CONTEXT_WINDOW=18000 MAX_OUTPUT_TOKENS=2000 MAX_USER_INPUT_TOKENS=2000 MAX_AGENT_STEPS=3 TOOL_RESULT_MAX_TOKENS=1200 RERANK_TOP_K=5` 起服务(算出滑窗 5650/层1 3954/层2 1695),`.venv/bin/python scripts/acceptance_ch07.py --scenario b`——日志完整链:`层1 降级 …→…` → `summary trigger 层2 约 N token > 预算 1695` → `[summary] … done 第1段`;此时问「最开始那个订单后来怎么说?」能靠梗概里的订单号与诉求答对;
-3. **陷阱复核**:只设 `MODEL_CONTEXT_WINDOW=18000` 起服务 → 启动即报 `[ctx] 上下文预算不足:滑窗 0 …`(`--scenario trap`);
-4. **后台摘要不阻塞 + 每轮上下文可观测**:`grep model_ctx logs/app.log`(摘要全文+滑窗逐条+条数+tokens)、`grep history_ctx logs/app.log`(每轮必打,闲聊轮也有);场景 B 报告附触发轮耗时与摘要完成时间戳(并行完成);
-5. **多会话侧栏**:`--scenario s`(HTTP 级:新在前/首问预览/回载/切回续聊/已摘要标记);浏览器操作:聊天页左侧栏点「会话」项切换回载、可接着聊;「新对话」开新会话,旧会话仍在侧栏可切回;侧栏加载失败自动隐藏不影响聊天。
-
-真机验收证据:`reports/ch07-acceptance.md`。
-
-ch08 六条验收(主服务启动后;先另起两个 MCP Server:`.venv/bin/python -m uvicorn app.mcp_servers.logistics:app --port 8001` 与 `aftersales:app --port 8002`,都从仓库根目录运行):
-
-1. **新工具即插即用**:示范插件 `app/tools/plugins/demo_time.py` 即「只做注册动作」的新工具,问「现在服务器时间几点」Agent 即调用(审计落 query_server_time 成功);
-2. **MCP 接管物流**:`.venv/bin/python scripts/acceptance_ch08.py --scenario mcp`——问物流轨迹由 MCP 的 logistics_tracker 应答(审计 tool_source=mcp,成功);
-3. **Server 侧加工具不重启客户端**:重启售后 Server 时加 `AFTERSALES_EXTRA_TOOLS=true`,`.venv/bin/python scripts/acceptance_ch08.py --scenario mcp-add`——query_repair_shop 现问现拿;
-4. **建工单确认流**:`--scenario ticket`——「帮我建个工单」Agent 先追问描述;补齐后推预览卡;确认后 tickets 表落新工单且回复工单号;
-5. **取消**:预览卡点「取消」→ 工单未建,tool_audit_logs 该 create_ticket 状态=「权限拒绝」;
-6. **人为超时**:主服务加 `TOOLS_DEBUG=true TOOL_TIMEOUT_SECONDS=2` 重启,`--scenario timeout`——读 debug_slow_query:超时+重试 1 次;写 debug_slow_write:超时+retry_count=0。
-
-真机验收证据:`reports/ch08-acceptance.md`。
-
-## ch09 · Langfuse 可观测性 + 数据飞轮
-
-### Langfuse 自部署(链路数据不出本机)
-
-```bash
-docker compose -f docker-compose.langfuse.yml up -d   # web:3000,worker/clickhouse/minio/redis/postgres 内部服务不对宿主暴露
-# 首次启动 LANGFUSE_INIT_* 无头建组织/项目/用户/开发 key(compose 内固定值,生产务必更换)
-```
-
-`.env` 打开 `LANGFUSE_ENABLED=true` + `LANGFUSE_PUBLIC_KEY` / `LANGFUSE_SECRET_KEY`(`pk-lf-…` / `sk-lf-…`,首次启动日志或 UI Setting 里取)后重启主服务。每轮聊天一棵 trace:`http://127.0.0.1:3000/project/dev/traces`,树里看得到 resolve/intent/route/retrieve/gate/agent/log 节点、LLM 生成层(token/耗时/模型)、工具调用;意图识别完成后补写进 trace 元数据。
-
-### 证据置信度闸校准(阈值不拍脑袋)
-
-```bash
-.venv/bin/python scripts/gen_evidence_signals.py --calibrate --artifact-config config/evidence_calibration.json
-```
-
-对 ch04 评估集(32 题)+ `tests/eval/ch09_junk_set.jsonl`(8 题)逐题真检索产信号:Top1 相关性分、有效证据数、Top1/Top2 分差合成置信度;校准取「正样本全放行」的最大阈值下界,产物入库 `config/evidence_calibration.json`(当前:31 正样本全放行,9 junk 全拦)。
-
-### 飞轮与后台管理页
-
-- 聊天页 👎 → `POST /api/feedback` → 回捞当轮召回片段快照落池(user_feedback 入口);
-- 检索闸/生成自评落池时同步带 Top-K 原文+得分快照;LLM 标准化成 FAQ 式问题 + 语义查重(同义合并 occurrence_count);
-- 后台审核页 <http://127.0.0.1:8000/admin/review>:列出标准化问题/出现次数/示例答案,行详情看归并的用户原话与当轮召回片段;「通过并写入知识库」即走 ch03 双写(pending→向量化→done),同题再问即答对;
-- 评估趋势页 <http://127.0.0.1:8000/admin/evals>:每轮 Recall@K / MRR / Faithfulness,较上轮下滑红色 ↓;
-- 按意图 token 花销:`GET /api/usage/by-intent`(request_usage 本地台账,Langfuse 不可用时统计不断)。
-
-### 后台管理鉴权(ch14)
-
-后台 3 个页面与 9 个管理接口（含索引重试）需要管理员登录;角色分 `viewer`(只读)/`operator`(审核、归类)/`admin`(全部 + 审计)。
-
-```bash
-# 旧库 apply;全新库已由 init.sql 建好
-docker exec -i shophelper-mysql mysql -ushophelper -pshophelper --default-character-set=utf8mb4 shophelper < db/ch14-admin-auth.sql
-
-# 生成会话密钥,写入 .env 的 ADMIN_SESSION_SECRET
-python -c 'import secrets; print(secrets.token_urlsafe(48))'
-
-# 创建第一个管理员(交互输入口令,至少 12 位)
-.venv/bin/python -m scripts.adminctl create --username admin --role admin
-```
-
-登录入口 <http://127.0.0.1:8000/admin/login>。会话是 HttpOnly + SameSite=Lax 的签名 Cookie;写接口要求 `X-CSRF-Token`;审计落 `admin_audit_logs`,管理员可查 `GET /api/admin/audit`。生产必须设置 `ADMIN_COOKIE_SECURE=true` 并走 HTTPS。测试:`PYTHONPATH=. .venv/bin/pytest tests/test_ch14_admin_auth.py -q`。
-
-### ch09 六条验收
-
-```bash
-.venv/bin/python scripts/acceptance_ch09.py --scenario trace      # 验收1 trace 树/GENERATION/token/意图元数据
-.venv/bin/python scripts/acceptance_ch09.py --scenario flywheel   # 验收2+3 兜底→待审队列→审核通过→同题答对
-.venv/bin/python scripts/acceptance_ch09.py --scenario feedback   # 验收4 👎落池→标准化查重→待审队列
-.venv/bin/python scripts/acceptance_ch09.py --scenario cost       # 验收5 按意图 token 花销
-ACCEPT_EVAL_LIMIT=8 .venv/bin/python scripts/acceptance_ch09.py --scenario eval  # 验收6 评估两轮趋势
-```
-
-真机验收证据:`reports/ch09-acceptance.md`(Langfuse v3.225.7 真栈全过)。
-
-ch03 验收(换说法召回/中断续跑/挖知识增量)与 ch02、ch01 验收继续有效。ch04 评估脚本继续可用(注意 ch05 图内检索与 query_faq 工具同链)。
-
-## ch11 · 评测与语料基线
-
-```bash
-# 1. 校验语料/数据集/泄漏（无需模型）
-.venv/bin/python -m scripts.corpus_lint --check
-.venv/bin/python -m scripts.validate_eval_data --split all --check-evidence --check-facts --check-buckets
-.venv/bin/python -m scripts.leakage_scan --split all
-
-# 2. 离线 harness（不构造 Settings/DB/模型）
-.venv/bin/python -m scripts.eval_ch11 --mode offline --split dev,frozen-v1,regression-v1
-
-# 3. 真机建库 + 停写快照
-.venv/bin/python -m scripts.build_kb --manifest-out data/build_manifest.json
-# 停 uvicorn/其他写进程后：
-.venv/bin/python -m scripts.eval_snapshot --copy \
-  --source data/milvus_knowledge.db --out data/eval-snapshots/<build_id>.db \
-  --confirmed-writers-stopped
-.venv/bin/python -m scripts.eval_snapshot --verify-only --snapshot data/eval-snapshots/<build_id>.db
-
-# 4. 付费模式（默认只读缓存；首次需 --allow-paid 填缓存）
-.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode retrieval --allow-paid --max-cost-usd 2
-.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode evidence --allow-paid --max-cost-usd 2
-.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode full --allow-paid --max-cost-usd 5
-
-# 5. 验收
-.venv/bin/python -m scripts.acceptance_ch11 --snapshot data/eval-snapshots/<build_id>.db
-```
-
-- 报告与逐题 trace 写 `reports/ch11/`（gitignored）；聚合结论在 `docs/eval/ch11-baseline-report.md`，历史数字单独在 `docs/eval/ch11-historical-baseline.md`。
-- `config/pricing.yaml` 未核实（`verified=false`）时 harness 拒绝付费调用；总额台账在 `data/ch11_budget.json`，上限 $10。
-- 评测回答 prompt 是 `scripts/eval_prompts.py` 的独立 prompt，不是线上 system prompt；工具题只记录 fixture，L4 剔除。
-- 新语料使旧 `config/evidence_calibration.json` 过期；本轮 contract 标 `calibration_status=stale`，不覆盖生产配置。
-- 2026-10-25 起官方模型列表已无 `deepseek-chat`，示例与实际 harness 使用 `deepseek-flash`。
-
-## ch12 · 受控 Agentic RAG
-
-设计稿 `docs/superpowers/specs/2026-10-25-ch12-controlled-agentic-rag-design.md`（含 ADR-1~5）；聚合结论在 `docs/eval/ch12-agentic-rag-report.md`。
-
-```bash
-# 数据库迁移（新库由 init.sql 建好；存量库 apply 一次：tickets.confirm_key + rag_loop_steps）
-mysql ... < db/ch12-controlled-rag.sql
-
-# 离线验收（无需模型；含冻结不动/默认路由零变化/循环界限/幂等/三组契约/缓存重放/台账零扣减/闸未放宽）
-.venv/bin/python -m scripts.acceptance_ch12
-
-# 三组对比评测（默认只读缓存；decompose_once/controlled_loop 的缺口分析是新 prompt，无历史缓存，
-# 未 --allow-paid 时任何 miss 会在 guard 处安全中止；--ledger 指向全局台账共享余额）
-.venv/bin/python -m scripts.eval_ch11 --split frozen-v1 --mode full --allow-paid \
-  --rag-mode baseline          --out reports/ch12 --snapshot data/eval-snapshots/<build_id>.db \
-  --ledger <全局 data/ch11_budget.json>
-.venv/bin/python -m scripts.eval_ch11 ... --rag-mode decompose_once  ...
-.venv/bin/python -m scripts.eval_ch11 ... --rag-mode controlled_loop ...
-```
-
-- 线上开关 `RETRIEVAL_ROUTE=hybrid_rerank|decompose_once|controlled_loop`（默认 hybrid_rerank，图结构与行为零变化）；新路由在新语料重新校准并验证前**不切默认、不宣称生产可用**（ADR-5）。
-- 受控循环核心在 `app/rag_loop.py`，线上图（`app/graph/agentic.py`）与评测 harness 调**同一实现**；首轮即充分时零额外 LLM 调用，行为与基线一致。
-- 预算：`RAG_TIME_BUDGET_S` 是循环墙钟护栏，**不是硬上限**——每次检索/判断/分析都以 `min(RAG_CALL_TIMEOUT_S, 剩余时间)` 设超时，但底层 I/O 线程无法被取消，超时后可能仍完成并计费；`RAG_TOKEN_BUDGET` 计入循环内判断+分析的输入（含提示词模板）与输出估算。
-- 每轮查询/子问题/证据ID/判定/停止原因落 `rag_loop_steps`（**仅可审计**，不支持断点续跑/回放，ADR-1）。
-- 工单确认幂等：`/api/tickets` 与 `/api/tickets/confirm` 支持 `confirm_key`（一次用户确认一键一单；预览帧下发、前端原样回传，双击/超时重试返回同一工单）。同键但会话/描述/类型不一致返回 **409**，不返回旧工单（ADR-3）。
-- 台账 `flock` 只保证写入互斥，不保证 guard→调用→add 整段互斥；付费并跑前需整轮互斥或原子预留（ADR-4）。
-- 质量三组对比指标在付费实测前标「未实测」；付费预估见 `docs/eval/ch12-agentic-rag-report.md` §4。
-
-## 检索证据面重排（可选）
-
-`docs/eval/retrieval-evidence-slate-report.md` 记录了同一 RRF+reranker 候选池上的实体/条件/政策版本证据选择。默认关闭；当前语料下建议显式 opt-in：
-
-```bash
-RETRIEVAL_EVIDENCE_SLATE_ENABLED=true
-RETRIEVAL_RERANK_POOL_K=50
-```
-
-它保持一次 rerank 与最终 Top-10 上下文不变，只把 Top-5 选择从纯单条相关性改为多个显式证据面组合。dev 为 `42/43`（基线 `26/43`），独立 20 题为 `18/20`（基线 `13/20`，6 增 1 失）；这是检索覆盖，不是答案正确率。
-
-最终集成验收见 `docs/eval/rag-depth-final-acceptance.md`：证据面与精确缓存默认关闭，受护改写默认开启；170 题同模型答案对照、缓存实测与 3 题真实应用组合冒烟的口径和边界均在该报告中。简历安全表述见 `docs/eval/rag-depth-final-resume-evidence.md`。
-
-## 已知边界
-
-- 评估 C04「这个东西能便宜点不」四策略均未命中(「便宜」与「95 折」语义/词面都跳距),需知识侧补「优惠」问法别名或改写增强,留后续。
-- 词面重叠的库外题(如「量子力学怎么退货」带「退货」二字)检索闸挡不住,靠生成自评拒答兜底——prompt 服从非 100%,偶有软拒答不带标记进不了池。
-- 忠实度裁判是 LLM,存在误判可能;个案走 faith_cases 台账人工处置(误判标「无需解决」)。
-- milvus-lite 库文件单进程锁:服务运行时勿并行跑建库/评估。
-- ~~满意度反馈纯前端内存采集,刷新即失~~ ch09 已接后端:👎 落池带当轮召回片段回捞;👍 仍为纯前端展示。
-- query_order / query_product / query_logistics 为工具内 mock 随机数据,不接真实电商/物流 API。
-- 多轮 Agent Loop、终端用户体系不做(ch02 边界延续);ch14 只做后台管理员鉴权。
-- ch05:意图识别/指代消解是最简版(简单 prompt / 原样透传),判错意图即走错出口(如「发货时间」被判「订单」),正式版后置;InMemorySaver 进程内无界增长,重启即清;同一会话并发请求共用 thread,无会话锁;ReAct 中间思考文本对用户可见(祛魅主题下如实呈现);沙箱无浏览器后端,前端按钮视觉终验由用户本地点开页面确认(SSE 帧/工单接口已 curl 验证)。
-- ch06:订单为固定 mock 三单(`app/orders.py`,未知单号走「未找到」话术);被搁置的选择器旧卡片仍可点,点选视作对该订单重新发起退款咨询(语义合理不设过期);意图降级路(小→大)已实现默认关(`INTENT_ESCALATION_ENABLED=true` 开启,需配 `INTENT_SMALL_MODEL`);评估怪问题桶 2/3(「你会写诗吗」判闲聊,未硬塞业务意图,口径边缘);商品名(如 SH-E300)不绑定具体订单,退款一律经订单选择器确认。
-- ch07:checkpointer 仍为 InMemorySaver(进程内无界增长,重启即清)——持久真源在 MySQL,重启后按会话从 messages 表回灌 State,轮内工具轨迹不跨重启存活(事实靠摘要延续);messages 表只落 user 与最终 assistant 文本(ch02「全量落库」契约收窄),ReAct 中间文本碎片不落库;层 2 的「截短」是渲染规则,存储保持原文;摘要质量依赖模型(prompt 禁编造+超 300 字硬截断,无事后校验);层 2 超预算到摘要完成之间当轮以半压渲染顶住,必要时组装端丢弃最老层 2 块(仅当轮);崩溃在 log 节点前的回合 checkpoint 有而 MySQL 无,模型输入以 MySQL 为准(该轮视作未发生);跨会话记忆/用户画像不做;多进程多 worker 部署不在本章范围(InMemorySaver/hydrated_threads/摘要 seq 均为单进程假设,多 worker 下摘要任务可能撞 uk_conv_seq 记 fail 后下轮重试,无数据损坏)。
-- ch09:RoundCapture 回捞缓存为进程内(Map,重启即失),重启后 👎 回捞不到按「尽力回捞」落 NULL;标准化/语义查重内联在落池时执行(LLM 两次调用,已放线程池不阻塞事件循环,但兜底轮会略慢);ch14 起审核/趋势/主题页与对应接口需管理员登录(角色 viewer/operator/admin),终端用户接口仍无认证;飞轮审核通过立即向量化单条,批量重建仍走 `scripts.build_kb`;Langfuse trace 元数据值为短字符串,长 prompt/原文在 observation input/output;评估流水线整跑 32 题 ≈ 数十次 LLM 调用,定时化走外部 cron(`scripts/run_eval.py --triggered-by 定时`)。
-- ch08:MCP Server 为 mock 随机数据,不接真实系统;MCP 工具一律只读(我侧规则,不看 Server 声明);工具调用审计 arguments/result_summary 截断存储,非全量;引擎超时/重试按工具粒度,MCP 网络抖动的重试计入 retry_count;确认载荷未签名(演示系统);Skill 机制不落代码。
-- ch14:后台鉴权为 DB 管理员 + 签名 Cookie;仅账号级失败锁定,无 IP 限流/MFA/SSO;登出只清 Cookie,改密/禁用通过 `session_version` 吊销旧会话;审计为路由层 best-effort,与业务提交非同事务;终端用户 API 仍未鉴权。
-- ch12:受控 Agentic 检索的缺口分析器是新 prompt 无历史缓存,付费实测前三组质量指标均未实测;`rag_loop_steps` 仅可审计,不做断点续跑/回放;新路由未在新语料上重新校准,不切默认(ADR-5);合并证据跨查询 max-score 融合,分数可比性弱于单查询内排序(refund 同语义先例);台账 flock 不覆盖 guard→调用→add 整段(ADR-4),付费并跑前需另做整轮互斥;时间预算不是硬上限(底层 I/O 无法取消,超时后可能仍计费);工单幂等依赖前端为「一次确认」复用同一 confirm_key,无键旧路径不设防,匿名会话的同键重试按跨会话一致性返回 409。
-
-API 契约细节见
-`docs/superpowers/specs/2026-09-04-ch01-pure-chat-design.md`、
-`docs/superpowers/specs/2026-09-04-ch02-function-calling-design.md`、
-`docs/superpowers/specs/2026-09-05-ch03-rag-knowledge-base-design.md` 与
-`docs/superpowers/specs/2026-09-06-ch04-rag-advanced-design.md`、
-`docs/superpowers/specs/2026-09-09-ch09-observability-flywheel-design.md`。
+最近一次集成回归为 `1213 passed, 2 skipped, 1 xfailed`；具体环境和限制见[集成验收](docs/eval/rag-depth-final-acceptance.md)。
