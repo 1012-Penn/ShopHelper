@@ -99,4 +99,4 @@ def bm25_query_text(qr: QueryRewrite) -> str:
 
 def make_rewriter(settings: Settings) -> QueryRewriter:
     llm = make_structured_extractor(settings, QueryRewrite)
-    return QueryRewriter(llm)
+    return QueryRewriter(llm, protect=settings.query_guard_enabled)

@@ -116,7 +116,7 @@ def build_graph(model, engine, settings, store, pool, retrieval_service, kb, *,
         # spec 定稿:意图默认温度 0(extract 口径)——传入的 model 是 chat 温度(0.7),不能直接当分类器
         _intent = make_intent_node(intent_model or make_extract_model(settings))
 
-    _resolve = make_resolve_node(resolver)
+    _resolve = make_resolve_node(resolver, protect=settings.query_guard_enabled)
     prep, ask, fetch, expand, policy = make_refund_nodes(
         expander, retrieval_service, kb, pool, top_k=settings.rerank_top_k)
 

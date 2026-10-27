@@ -62,6 +62,7 @@ class Settings(BaseSettings):
     retrieval_cache_embedding_capacity: int = 512
     retrieval_cache_rerank_capacity: int = 256
     query_rewrite_enabled: bool = True
+    query_guard_enabled: bool = True
 
     # ch05:ReAct 主力 Agent 停止条件
     max_agent_steps: int = 6        # 单轮最多工具交互步数,超限强制收敛(ch07 由 agent_max_steps 改名)
