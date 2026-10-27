@@ -229,16 +229,47 @@ def make_retrieval_chain(session_factory, settings):
     from app.kb import KnowledgeBaseStore
     from app.rerank import make_reranker
     from app.retrieval import RetrievalService
+    from app.retrieval_cache import (
+        CachedEmbedder,
+        CachedReranker,
+        retrieval_cache_config_version,
+    )
     from app.rewrite import make_rewriter
     from app.vector_store import KnowledgeVectorStore
 
     kb = KnowledgeBaseStore(session_factory)
+    embedder = make_embedder(settings)
+    reranker = make_reranker(settings)
+    if settings.retrieval_cache_enabled:
+        corpus_version = settings.retrieval_cache_corpus_version.strip()
+        if not corpus_version:
+            raise ValueError(
+                "retrieval_cache_corpus_version is required when retrieval cache is enabled"
+            )
+        config_version = retrieval_cache_config_version(settings)
+        embedder = CachedEmbedder(
+            embedder,
+            model=settings.embedding_model,
+            corpus_version=corpus_version,
+            config_version=config_version,
+            max_entries=settings.retrieval_cache_embedding_capacity,
+            ttl_seconds=settings.retrieval_cache_ttl_seconds,
+        )
+        if reranker is not None:
+            reranker = CachedReranker(
+                reranker,
+                model=settings.rerank_model,
+                corpus_version=corpus_version,
+                config_version=config_version,
+                max_entries=settings.retrieval_cache_rerank_capacity,
+                ttl_seconds=settings.retrieval_cache_ttl_seconds,
+            )
     service = RetrievalService(
-        make_embedder(settings),
+        embedder,
         KnowledgeVectorStore(settings.milvus_db_path, dim=settings.embedding_dim),
         kb,
         rewriter=make_rewriter(settings) if settings.query_rewrite_enabled else None,
-        reranker=make_reranker(settings),
+        reranker=reranker,
         candidates=settings.hybrid_candidates,
         final_top_k=settings.rerank_top_k,
         rerank_score_floor=settings.rerank_score_floor,

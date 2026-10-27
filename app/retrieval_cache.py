@@ -17,6 +17,33 @@ from dataclasses import dataclass
 from typing import Any, Callable
 
 
+def retrieval_cache_config_version(settings) -> str:
+    """Hash retrieval behavior that changes cached provider requests or meaning."""
+    material = {
+        "schema": "retrieval-cache-config-v1",
+        "embedding_api_base": settings.embedding_api_base,
+        "embedding_model": settings.embedding_model,
+        "embedding_dim": settings.embedding_dim,
+        "rerank_api_base": settings.rerank_api_base,
+        "rerank_model": settings.rerank_model,
+        "retrieval_route": settings.retrieval_route,
+        "hybrid_candidates": settings.hybrid_candidates,
+        "rerank_top_k": settings.rerank_top_k,
+        "rerank_score_floor": settings.rerank_score_floor,
+        "evidence_entailment_enabled": settings.evidence_entailment_enabled,
+        "evidence_entailment_top_n": settings.evidence_entailment_top_n,
+        "evidence_slate_enabled": settings.retrieval_evidence_slate_enabled,
+        "evidence_slate_pool_k": settings.retrieval_rerank_pool_k,
+    }
+    encoded = json.dumps(
+        material,
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
 @dataclass(frozen=True)
 class _KeyConfig:
     model: str

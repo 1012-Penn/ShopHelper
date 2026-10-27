@@ -55,6 +55,12 @@ class Settings(BaseSettings):
     rerank_top_k: int = 10            # 精排后进入 prompt 的条数(ch07 由 retrieval_final_top_k 改名,env RERANK_TOP_K)
     retrieval_evidence_slate_enabled: bool = False
     retrieval_rerank_pool_k: int = 50
+    # 精确静态检索缓存默认关闭；开启时必须由部署提供真实语料版本。
+    retrieval_cache_enabled: bool = False
+    retrieval_cache_corpus_version: str = ""
+    retrieval_cache_ttl_seconds: float = 3600.0
+    retrieval_cache_embedding_capacity: int = 512
+    retrieval_cache_rerank_capacity: int = 256
     query_rewrite_enabled: bool = True
 
     # ch05:ReAct 主力 Agent 停止条件
