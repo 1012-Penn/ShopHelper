@@ -1,0 +1,2908 @@
+{
+  "answer_cost_usd": 0.49985978,
+  "config": {
+    "budget": {
+      "hard_limit_usd": 2.0,
+      "ledger_scope": "one independent SQLite ledger for this experiment",
+      "provider_retries_max": 2
+    },
+    "dataset_sha256": {
+      "dev": "851fe9a88d40763b67da2dfe28868ad11f81e3b697d811f11a137d1a62ac380f",
+      "frozen-v1": "2f684ba273952a0147b16ae866a22058f81190b16c439d15ad029ad5cb637b44",
+      "retrieval-slate-holdout-v1": "630e69734eea4aa59823826c91b4456d331768e6097eb03c1aa9fc00d90f8325"
+    },
+    "experiment": "answer_quality_depth_20261027",
+    "frozen_at": "2026-10-27T05:47:49.821085+00:00",
+    "prompt_hashes": {
+      "generation_system": "0c90bd8fb6659eb53c3dacf885946c95c325b7f9e4c2b2ad6011b25fa7b12e79",
+      "judge_system": "3cb4244754315d306fbad6bb8673548cd9e2ffac608518e65dc5bbc7709b4a74"
+    },
+    "run_config": {
+      "answer_max_tokens": 800,
+      "code_sha256": {
+        "app/config.py": "5a19ec93941e8e809d39afffb7d9c14df9252cd3e79feb7bcdd9c288ca835adf",
+        "app/evidence_slate.py": "cda5733b877a40a74f06e52fcc236b96d4aed64715f4064520905b05d740f910",
+        "app/retrieval.py": "ce36403702d8c2531b69e4b50255bee5ecbd56c3cfc4d21c7016fe4b00295d6f",
+        "scripts/answer_quality_depth/budget.py": "a5b7a4acedacbfe21ad325add5fd887e73a14260bfa0b2fff8284160c4ffe07a",
+        "scripts/answer_quality_depth/data.py": "4990af2001da8be2d0c8810d25bc8b74862455298928b662becf6ae4ec1296f3",
+        "scripts/answer_quality_depth/evidence.py": "81d63dea12604ef529c93bde06f40a0cc0d8564a2c572e4f1a12204e8d4a4cd0",
+        "scripts/answer_quality_depth/runner.py": "23dff78cc063b18c94c10aabe21aeebdb53b9567aa0cca08d41dd20bd499733c",
+        "scripts/answer_quality_depth/scoring.py": "fe473ac5fdca41b14a9fda944ba3e0057443f1d1b699adec941afbc6705112ca",
+        "scripts/eval_answer_quality_depth.py": "8e93336e0bea5e09d0531df218c8ae91e32f5af4e4c84ca3a485098afec2ee9c"
+      },
+      "experiment": "answer_quality_depth_v1",
+      "generation_prompt_sha256": "0c90bd8fb6659eb53c3dacf885946c95c325b7f9e4c2b2ad6011b25fa7b12e79",
+      "generation_thinking": "enabled",
+      "judge_max_tokens": 1600,
+      "judge_prompt_sha256": "3cb4244754315d306fbad6bb8673548cd9e2ffac608518e65dc5bbc7709b4a74",
+      "judge_thinking": "disabled",
+      "max_cost_usd": 2.0,
+      "max_retries": 2,
+      "model": "deepseek-flash",
+      "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+      "scoring_overlay_sha256": "3a58648d064574c96c7c507d221c072b6a9e3e5eba9c5aad92b64ce7a12d54b4",
+      "scoring_version": "answer-quality-depth-score-v2",
+      "temperature": 0,
+      "top_k": 10
+    },
+    "schema_version": 1,
+    "scoring": {
+      "overlay_path": "tests/eval/overlays/rag-quality-v3.1.json",
+      "overlay_sha256": "3a58648d064574c96c7c507d221c072b6a9e3e5eba9c5aad92b64ce7a12d54b4",
+      "policy": "uncertain remains a separate denominator; no label enters generation or judge",
+      "version": "answer-quality-depth-score-v2"
+    }
+  },
+  "coverage": {
+    "baseline_complete": 111,
+    "baseline_top5_complete": 88,
+    "eligible": 128,
+    "slate_complete": 128,
+    "slate_top5_complete": 125
+  },
+  "coverage_attribution": {
+    "baseline_complete_slate_missing": {
+      "answer_cases": 0,
+      "cases": 0,
+      "outcomes": {}
+    },
+    "baseline_missing_slate_complete": {
+      "answer_cases": 16,
+      "cases": 17,
+      "outcomes": {
+        "correct->correct": 8,
+        "incorrect->correct": 2,
+        "incorrect->incorrect": 5,
+        "incorrect->uncertain": 1
+      }
+    },
+    "both_complete": {
+      "answer_cases": 110,
+      "cases": 111,
+      "outcomes": {
+        "correct->correct": 85,
+        "correct->incorrect": 1,
+        "incorrect->correct": 6,
+        "incorrect->incorrect": 16,
+        "uncertain->correct": 1,
+        "uncertain->uncertain": 1
+      }
+    },
+    "both_missing": {
+      "answer_cases": 0,
+      "cases": 42,
+      "outcomes": {}
+    }
+  },
+  "dataset": {
+    "questions": 170,
+    "reasoning_responses": 340,
+    "responses": 340,
+    "technical_failures": 0
+  },
+  "ledger": {
+    "by_kind_and_state": [
+      {
+        "calls": 2,
+        "kind": "answer",
+        "state": "pending",
+        "usd": 0.0027954
+      },
+      {
+        "calls": 398,
+        "kind": "answer",
+        "state": "settled",
+        "usd": 0.29602621
+      },
+      {
+        "calls": 42,
+        "kind": "answer_repair",
+        "state": "settled",
+        "usd": 0.05031993
+      },
+      {
+        "calls": 1,
+        "kind": "judge",
+        "state": "pending",
+        "usd": 0.0016932
+      },
+      {
+        "calls": 602,
+        "kind": "judge",
+        "state": "settled",
+        "usd": 0.46283684
+      },
+      {
+        "calls": 30,
+        "kind": "judge_repair",
+        "state": "settled",
+        "usd": 0.05319971
+      }
+    ],
+    "conservative_total_usd": 0.86687129,
+    "limit_usd": 2.0
+  },
+  "overall": {
+    "by_bucket": {
+      "clarify": {
+        "baseline": {
+          "behavior_passed": 12,
+          "citation_status": {
+            "not_applicable": 13
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 12,
+          "cost_usd": 0.02215045,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 4470.967,
+            "p95": 16443.714
+          },
+          "n": 13,
+          "strict_accuracy": 0.9230769230769231,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.07692307692307693
+        },
+        "slate": {
+          "behavior_passed": 12,
+          "citation_status": {
+            "not_applicable": 13
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 12,
+          "cost_usd": 0.0153329,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 5429.854,
+            "p95": 13843.394
+          },
+          "n": 13,
+          "strict_accuracy": 0.9230769230769231,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.07692307692307693
+        }
+      },
+      "entity_mismatch": {
+        "baseline": {
+          "behavior_passed": 18,
+          "citation_status": {
+            "not_applicable": 2,
+            "uncertain": 8,
+            "unsupported": 8
+          },
+          "conditions_measured": 2,
+          "conditions_passed": 0,
+          "correct": 16,
+          "cost_usd": 0.0264507,
+          "facts_measured": 15,
+          "facts_passed": 15,
+          "incorrect": 2,
+          "latency_ms": {
+            "p50": 2249.753,
+            "p95": 5713.697
+          },
+          "n": 18,
+          "strict_accuracy": 0.8888888888888888,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 18,
+          "citation_status": {
+            "not_applicable": 2,
+            "uncertain": 5,
+            "unsupported": 11
+          },
+          "conditions_measured": 2,
+          "conditions_passed": 1,
+          "correct": 16,
+          "cost_usd": 0.02062963,
+          "facts_measured": 15,
+          "facts_passed": 15,
+          "incorrect": 2,
+          "latency_ms": {
+            "p50": 2454.035,
+            "p95": 4072.076
+          },
+          "n": 18,
+          "strict_accuracy": 0.8888888888888888,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      },
+      "hard_negative": {
+        "baseline": {
+          "behavior_passed": 17,
+          "citation_status": {
+            "not_applicable": 17
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 17,
+          "cost_usd": 0.02653525,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 4210.537,
+            "p95": 9946.925
+          },
+          "n": 17,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 17,
+          "citation_status": {
+            "not_applicable": 17
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 17,
+          "cost_usd": 0.01812431,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 4043.979,
+            "p95": 13464.077
+          },
+          "n": 17,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      },
+      "multi_constraint": {
+        "baseline": {
+          "behavior_passed": 27,
+          "citation_status": {
+            "uncertain": 14,
+            "unsupported": 13
+          },
+          "conditions_measured": 21,
+          "conditions_passed": 16,
+          "correct": 16,
+          "cost_usd": 0.05189636,
+          "facts_measured": 22,
+          "facts_passed": 15,
+          "incorrect": 11,
+          "latency_ms": {
+            "p50": 4714.493,
+            "p95": 21827.835
+          },
+          "n": 27,
+          "strict_accuracy": 0.5925925925925926,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 27,
+          "citation_status": {
+            "uncertain": 11,
+            "unsupported": 16
+          },
+          "conditions_measured": 21,
+          "conditions_passed": 18,
+          "correct": 17,
+          "cost_usd": 0.04864994,
+          "facts_measured": 22,
+          "facts_passed": 15,
+          "incorrect": 9,
+          "latency_ms": {
+            "p50": 5241.336,
+            "p95": 17374.849
+          },
+          "n": 27,
+          "strict_accuracy": 0.6296296296296297,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.037037037037037035
+        }
+      },
+      "multi_hop": {
+        "baseline": {
+          "behavior_passed": 37,
+          "citation_status": {
+            "supported": 1,
+            "uncertain": 20,
+            "unsupported": 16
+          },
+          "conditions_measured": 24,
+          "conditions_passed": 18,
+          "correct": 24,
+          "cost_usd": 0.06506829,
+          "facts_measured": 27,
+          "facts_passed": 24,
+          "incorrect": 11,
+          "latency_ms": {
+            "p50": 4602.2,
+            "p95": 13820.864
+          },
+          "n": 37,
+          "strict_accuracy": 0.6486486486486487,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 2,
+          "uncertainty_rate": 0.05405405405405406
+        },
+        "slate": {
+          "behavior_passed": 37,
+          "citation_status": {
+            "uncertain": 20,
+            "unsupported": 17
+          },
+          "conditions_measured": 24,
+          "conditions_passed": 18,
+          "correct": 29,
+          "cost_usd": 0.06649886,
+          "facts_measured": 27,
+          "facts_passed": 27,
+          "incorrect": 7,
+          "latency_ms": {
+            "p50": 4833.668,
+            "p95": 19184.621
+          },
+          "n": 37,
+          "strict_accuracy": 0.7837837837837838,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.02702702702702703
+        }
+      },
+      "ood": {
+        "baseline": {
+          "behavior_passed": 10,
+          "citation_status": {
+            "not_applicable": 10
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 10,
+          "cost_usd": 0.015066,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3224.488,
+            "p95": 4432.437
+          },
+          "n": 10,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 10,
+          "citation_status": {
+            "not_applicable": 10
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 10,
+          "cost_usd": 0.00642042,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3795.108,
+            "p95": 5691.862
+          },
+          "n": 10,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      },
+      "policy_conflict": {
+        "baseline": {
+          "behavior_passed": 15,
+          "citation_status": {
+            "not_applicable": 2,
+            "unsupported": 13
+          },
+          "conditions_measured": 8,
+          "conditions_passed": 4,
+          "correct": 9,
+          "cost_usd": 0.0234681,
+          "facts_measured": 13,
+          "facts_passed": 11,
+          "incorrect": 6,
+          "latency_ms": {
+            "p50": 4280.247,
+            "p95": 6295.921
+          },
+          "n": 15,
+          "strict_accuracy": 0.6,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 15,
+          "citation_status": {
+            "not_applicable": 2,
+            "unsupported": 13
+          },
+          "conditions_measured": 8,
+          "conditions_passed": 6,
+          "correct": 11,
+          "cost_usd": 0.02505188,
+          "facts_measured": 13,
+          "facts_passed": 12,
+          "incorrect": 4,
+          "latency_ms": {
+            "p50": 4131.189,
+            "p95": 14370.15
+          },
+          "n": 15,
+          "strict_accuracy": 0.7333333333333333,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      },
+      "single_hop": {
+        "baseline": {
+          "behavior_passed": 33,
+          "citation_status": {
+            "uncertain": 25,
+            "unsupported": 8
+          },
+          "conditions_measured": 4,
+          "conditions_passed": 4,
+          "correct": 33,
+          "cost_usd": 0.04194177,
+          "facts_measured": 30,
+          "facts_passed": 30,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 2689.017,
+            "p95": 6492.958
+          },
+          "n": 33,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 33,
+          "citation_status": {
+            "uncertain": 24,
+            "unsupported": 9
+          },
+          "conditions_measured": 4,
+          "conditions_passed": 4,
+          "correct": 33,
+          "cost_usd": 0.02657492,
+          "facts_measured": 30,
+          "facts_passed": 30,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 2848.803,
+            "p95": 5504.977
+          },
+          "n": 33,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      }
+    },
+    "by_denominator": {
+      "clarify": {
+        "baseline": {
+          "behavior_passed": 16,
+          "citation_status": {
+            "not_applicable": 17
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 16,
+          "cost_usd": 0.02893975,
+          "facts_measured": 2,
+          "facts_passed": 1,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 4470.967,
+            "p95": 16443.714
+          },
+          "n": 17,
+          "strict_accuracy": 0.9411764705882353,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.058823529411764705
+        },
+        "slate": {
+          "behavior_passed": 16,
+          "citation_status": {
+            "not_applicable": 17
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 16,
+          "cost_usd": 0.02057243,
+          "facts_measured": 2,
+          "facts_passed": 2,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3591.366,
+            "p95": 13843.394
+          },
+          "n": 17,
+          "strict_accuracy": 0.9411764705882353,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.058823529411764705
+        }
+      },
+      "evidence_answer": {
+        "baseline": {
+          "behavior_passed": 126,
+          "citation_status": {
+            "supported": 1,
+            "uncertain": 67,
+            "unsupported": 58
+          },
+          "conditions_measured": 59,
+          "conditions_passed": 42,
+          "correct": 94,
+          "cost_usd": 0.20203592,
+          "facts_measured": 105,
+          "facts_passed": 94,
+          "incorrect": 30,
+          "latency_ms": {
+            "p50": 3839.861,
+            "p95": 13820.864
+          },
+          "n": 126,
+          "strict_accuracy": 0.746031746031746,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 2,
+          "uncertainty_rate": 0.015873015873015872
+        },
+        "slate": {
+          "behavior_passed": 126,
+          "citation_status": {
+            "uncertain": 60,
+            "unsupported": 66
+          },
+          "conditions_measured": 59,
+          "conditions_passed": 47,
+          "correct": 102,
+          "cost_usd": 0.1821657,
+          "facts_measured": 105,
+          "facts_passed": 97,
+          "incorrect": 22,
+          "latency_ms": {
+            "p50": 3795.714,
+            "p95": 14370.15
+          },
+          "n": 126,
+          "strict_accuracy": 0.8095238095238095,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 2,
+          "uncertainty_rate": 0.015873015873015872
+        }
+      },
+      "refusal": {
+        "baseline": {
+          "behavior_passed": 27,
+          "citation_status": {
+            "not_applicable": 27
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 27,
+          "cost_usd": 0.04160125,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3884.03,
+            "p95": 5200.277
+          },
+          "n": 27,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 27,
+          "citation_status": {
+            "not_applicable": 27
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 27,
+          "cost_usd": 0.02454473,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3987.984,
+            "p95": 5891.474
+          },
+          "n": 27,
+          "strict_accuracy": 1.0,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      }
+    },
+    "by_evidence_state": {
+      "conflicting": {
+        "baseline": {
+          "behavior_passed": 17,
+          "citation_status": {
+            "not_applicable": 2,
+            "unsupported": 15
+          },
+          "conditions_measured": 10,
+          "conditions_passed": 6,
+          "correct": 11,
+          "cost_usd": 0.0269835,
+          "facts_measured": 15,
+          "facts_passed": 13,
+          "incorrect": 6,
+          "latency_ms": {
+            "p50": 4334.512,
+            "p95": 6295.921
+          },
+          "n": 17,
+          "strict_accuracy": 0.6470588235294118,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 17,
+          "citation_status": {
+            "not_applicable": 2,
+            "unsupported": 15
+          },
+          "conditions_measured": 10,
+          "conditions_passed": 8,
+          "correct": 13,
+          "cost_usd": 0.02877008,
+          "facts_measured": 15,
+          "facts_passed": 14,
+          "incorrect": 4,
+          "latency_ms": {
+            "p50": 4307.835,
+            "p95": 14370.15
+          },
+          "n": 17,
+          "strict_accuracy": 0.7647058823529411,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        }
+      },
+      "insufficient": {
+        "baseline": {
+          "behavior_passed": 41,
+          "citation_status": {
+            "not_applicable": 42
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 41,
+          "cost_usd": 0.0671015,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3910.206,
+            "p95": 10777.474
+          },
+          "n": 42,
+          "strict_accuracy": 0.9761904761904762,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.023809523809523808
+        },
+        "slate": {
+          "behavior_passed": 41,
+          "citation_status": {
+            "not_applicable": 42
+          },
+          "conditions_measured": 0,
+          "conditions_passed": 0,
+          "correct": 41,
+          "cost_usd": 0.04221416,
+          "facts_measured": 0,
+          "facts_passed": 0,
+          "incorrect": 0,
+          "latency_ms": {
+            "p50": 3885.736,
+            "p95": 11806.011
+          },
+          "n": 42,
+          "strict_accuracy": 0.9761904761904762,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.023809523809523808
+        }
+      },
+      "partial": {
+        "baseline": {
+          "behavior_passed": 4,
+          "citation_status": {
+            "uncertain": 1,
+            "unsupported": 3
+          },
+          "conditions_measured": 4,
+          "conditions_passed": 3,
+          "correct": 1,
+          "cost_usd": 0.01004229,
+          "facts_measured": 4,
+          "facts_passed": 2,
+          "incorrect": 3,
+          "latency_ms": {
+            "p50": 11715.591,
+            "p95": 19527.622
+          },
+          "n": 4,
+          "strict_accuracy": 0.25,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 0,
+          "uncertainty_rate": 0.0
+        },
+        "slate": {
+          "behavior_passed": 4,
+          "citation_status": {
+            "unsupported": 4
+          },
+          "conditions_measured": 4,
+          "conditions_passed": 4,
+          "correct": 1,
+          "cost_usd": 0.00771442,
+          "facts_measured": 4,
+          "facts_passed": 2,
+          "incorrect": 2,
+          "latency_ms": {
+            "p50": 6681.976,
+            "p95": 13157.755
+          },
+          "n": 4,
+          "strict_accuracy": 0.25,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.25
+        }
+      },
+      "sufficient": {
+        "baseline": {
+          "behavior_passed": 107,
+          "citation_status": {
+            "supported": 1,
+            "uncertain": 66,
+            "unsupported": 40
+          },
+          "conditions_measured": 45,
+          "conditions_passed": 33,
+          "correct": 84,
+          "cost_usd": 0.16844963,
+          "facts_measured": 88,
+          "facts_passed": 80,
+          "incorrect": 21,
+          "latency_ms": {
+            "p50": 3574.33,
+            "p95": 13820.864
+          },
+          "n": 107,
+          "strict_accuracy": 0.7850467289719626,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 2,
+          "uncertainty_rate": 0.018691588785046728
+        },
+        "slate": {
+          "behavior_passed": 107,
+          "citation_status": {
+            "uncertain": 60,
+            "unsupported": 47
+          },
+          "conditions_measured": 45,
+          "conditions_passed": 35,
+          "correct": 90,
+          "cost_usd": 0.1485842,
+          "facts_measured": 88,
+          "facts_passed": 83,
+          "incorrect": 16,
+          "latency_ms": {
+            "p50": 3567.936,
+            "p95": 14946.64
+          },
+          "n": 107,
+          "strict_accuracy": 0.8411214953271028,
+          "technical_failure": 0,
+          "technical_failure_rate": 0.0,
+          "uncertain": 1,
+          "uncertainty_rate": 0.009345794392523364
+        }
+      }
+    },
+    "judge": {
+      "baseline": {
+        "answer_status": {
+          "correct": 119,
+          "not_answerable": 2,
+          "partial": 5
+        },
+        "citation_support": {
+          "supported": 126
+        },
+        "grounding": {
+          "partly_supported": 4,
+          "supported": 122
+        },
+        "rows_with_unsupported_claims": 0,
+        "unsupported_claim_count": 0
+      },
+      "slate": {
+        "answer_status": {
+          "correct": 121,
+          "incorrect": 2,
+          "partial": 3
+        },
+        "citation_support": {
+          "partial": 3,
+          "supported": 123
+        },
+        "grounding": {
+          "partly_supported": 5,
+          "supported": 121
+        },
+        "rows_with_unsupported_claims": 3,
+        "unsupported_claim_count": 5
+      }
+    },
+    "pairwise": {
+      "slate_vs_baseline": {
+        "losses": 1,
+        "ties": 160,
+        "wins": 9
+      }
+    }
+  },
+  "splits": {
+    "dev": {
+      "by_bucket": {
+        "clarify": {
+          "baseline": {
+            "behavior_passed": 5,
+            "citation_status": {
+              "not_applicable": 5
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 5,
+            "cost_usd": 0.0067911,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3868.337,
+              "p95": 4557.915
+            },
+            "n": 5,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 5,
+            "citation_status": {
+              "not_applicable": 5
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 5,
+            "cost_usd": 0.00336202,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3004.498,
+              "p95": 5429.854
+            },
+            "n": 5,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "entity_mismatch": {
+          "baseline": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 1,
+              "uncertain": 3,
+              "unsupported": 3
+            },
+            "conditions_measured": 1,
+            "conditions_passed": 0,
+            "correct": 6,
+            "cost_usd": 0.010587,
+            "facts_measured": 6,
+            "facts_passed": 6,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 2855.039,
+              "p95": 5713.697
+            },
+            "n": 7,
+            "strict_accuracy": 0.8571428571428571,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 1,
+              "uncertain": 1,
+              "unsupported": 5
+            },
+            "conditions_measured": 1,
+            "conditions_passed": 0,
+            "correct": 6,
+            "cost_usd": 0.00920653,
+            "facts_measured": 6,
+            "facts_passed": 6,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 2454.035,
+              "p95": 3241.605
+            },
+            "n": 7,
+            "strict_accuracy": 0.8571428571428571,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "hard_negative": {
+          "baseline": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 7
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 7,
+            "cost_usd": 0.01123675,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4210.537,
+              "p95": 9946.925
+            },
+            "n": 7,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 7
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 7,
+            "cost_usd": 0.00686504,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4198.794,
+              "p95": 5891.474
+            },
+            "n": 7,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "multi_constraint": {
+          "baseline": {
+            "behavior_passed": 9,
+            "citation_status": {
+              "uncertain": 3,
+              "unsupported": 6
+            },
+            "conditions_measured": 8,
+            "conditions_passed": 5,
+            "correct": 4,
+            "cost_usd": 0.01505168,
+            "facts_measured": 8,
+            "facts_passed": 5,
+            "incorrect": 5,
+            "latency_ms": {
+              "p50": 4112.364,
+              "p95": 21827.835
+            },
+            "n": 9,
+            "strict_accuracy": 0.4444444444444444,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 9,
+            "citation_status": {
+              "uncertain": 3,
+              "unsupported": 6
+            },
+            "conditions_measured": 8,
+            "conditions_passed": 5,
+            "correct": 4,
+            "cost_usd": 0.0143786,
+            "facts_measured": 8,
+            "facts_passed": 5,
+            "incorrect": 5,
+            "latency_ms": {
+              "p50": 4825.655,
+              "p95": 17374.849
+            },
+            "n": 9,
+            "strict_accuracy": 0.4444444444444444,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "multi_hop": {
+          "baseline": {
+            "behavior_passed": 11,
+            "citation_status": {
+              "supported": 1,
+              "uncertain": 7,
+              "unsupported": 3
+            },
+            "conditions_measured": 10,
+            "conditions_passed": 8,
+            "correct": 6,
+            "cost_usd": 0.01832636,
+            "facts_measured": 11,
+            "facts_passed": 8,
+            "incorrect": 5,
+            "latency_ms": {
+              "p50": 4199.246,
+              "p95": 13449.198
+            },
+            "n": 11,
+            "strict_accuracy": 0.5454545454545454,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 11,
+            "citation_status": {
+              "uncertain": 6,
+              "unsupported": 5
+            },
+            "conditions_measured": 10,
+            "conditions_passed": 7,
+            "correct": 8,
+            "cost_usd": 0.01835564,
+            "facts_measured": 11,
+            "facts_passed": 11,
+            "incorrect": 3,
+            "latency_ms": {
+              "p50": 4289.707,
+              "p95": 14946.64
+            },
+            "n": 11,
+            "strict_accuracy": 0.7272727272727273,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "ood": {
+          "baseline": {
+            "behavior_passed": 4,
+            "citation_status": {
+              "not_applicable": 4
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 4,
+            "cost_usd": 0.0061329,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2967.284,
+              "p95": 3220.998
+            },
+            "n": 4,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 4,
+            "citation_status": {
+              "not_applicable": 4
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 4,
+            "cost_usd": 0.00217977,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2885.378,
+              "p95": 4438.763
+            },
+            "n": 4,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "policy_conflict": {
+          "baseline": {
+            "behavior_passed": 5,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 4
+            },
+            "conditions_measured": 3,
+            "conditions_passed": 1,
+            "correct": 1,
+            "cost_usd": 0.0083151,
+            "facts_measured": 5,
+            "facts_passed": 3,
+            "incorrect": 4,
+            "latency_ms": {
+              "p50": 4280.247,
+              "p95": 6295.921
+            },
+            "n": 5,
+            "strict_accuracy": 0.2,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 5,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 4
+            },
+            "conditions_measured": 3,
+            "conditions_passed": 2,
+            "correct": 2,
+            "cost_usd": 0.0084708,
+            "facts_measured": 5,
+            "facts_passed": 4,
+            "incorrect": 3,
+            "latency_ms": {
+              "p50": 5127.856,
+              "p95": 5790.676
+            },
+            "n": 5,
+            "strict_accuracy": 0.4,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "single_hop": {
+          "baseline": {
+            "behavior_passed": 12,
+            "citation_status": {
+              "uncertain": 10,
+              "unsupported": 2
+            },
+            "conditions_measured": 2,
+            "conditions_passed": 2,
+            "correct": 12,
+            "cost_usd": 0.01260147,
+            "facts_measured": 12,
+            "facts_passed": 12,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2450.652,
+              "p95": 6768.573
+            },
+            "n": 12,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 12,
+            "citation_status": {
+              "uncertain": 9,
+              "unsupported": 3
+            },
+            "conditions_measured": 2,
+            "conditions_passed": 2,
+            "correct": 12,
+            "cost_usd": 0.00903511,
+            "facts_measured": 12,
+            "facts_passed": 12,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2848.803,
+              "p95": 5339.791
+            },
+            "n": 12,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "by_denominator": {
+        "clarify": {
+          "baseline": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 7
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 7,
+            "cost_usd": 0.0101364,
+            "facts_measured": 1,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3868.337,
+              "p95": 5096.84
+            },
+            "n": 7,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 7
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 7,
+            "cost_usd": 0.00567575,
+            "facts_measured": 1,
+            "facts_passed": 1,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3029.978,
+              "p95": 5429.854
+            },
+            "n": 7,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "evidence_answer": {
+          "baseline": {
+            "behavior_passed": 42,
+            "citation_status": {
+              "supported": 1,
+              "uncertain": 23,
+              "unsupported": 18
+            },
+            "conditions_measured": 24,
+            "conditions_passed": 16,
+            "correct": 27,
+            "cost_usd": 0.06153631,
+            "facts_measured": 41,
+            "facts_passed": 34,
+            "incorrect": 15,
+            "latency_ms": {
+              "p50": 3722.919,
+              "p95": 13392.22
+            },
+            "n": 42,
+            "strict_accuracy": 0.6428571428571429,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 42,
+            "citation_status": {
+              "uncertain": 19,
+              "unsupported": 23
+            },
+            "conditions_measured": 24,
+            "conditions_passed": 16,
+            "correct": 30,
+            "cost_usd": 0.05713295,
+            "facts_measured": 41,
+            "facts_passed": 37,
+            "incorrect": 12,
+            "latency_ms": {
+              "p50": 3389.49,
+              "p95": 12203.666
+            },
+            "n": 42,
+            "strict_accuracy": 0.7142857142857143,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "refusal": {
+          "baseline": {
+            "behavior_passed": 11,
+            "citation_status": {
+              "not_applicable": 11
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 11,
+            "cost_usd": 0.01736965,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3601.947,
+              "p95": 9946.925
+            },
+            "n": 11,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 11,
+            "citation_status": {
+              "not_applicable": 11
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 11,
+            "cost_usd": 0.00904481,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3679.844,
+              "p95": 5891.474
+            },
+            "n": 11,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "by_evidence_state": {
+        "conflicting": {
+          "baseline": {
+            "behavior_passed": 6,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 5
+            },
+            "conditions_measured": 4,
+            "conditions_passed": 2,
+            "correct": 2,
+            "cost_usd": 0.0101943,
+            "facts_measured": 6,
+            "facts_passed": 4,
+            "incorrect": 4,
+            "latency_ms": {
+              "p50": 4280.247,
+              "p95": 6295.921
+            },
+            "n": 6,
+            "strict_accuracy": 0.3333333333333333,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 6,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 5
+            },
+            "conditions_measured": 4,
+            "conditions_passed": 3,
+            "correct": 3,
+            "cost_usd": 0.0102732,
+            "facts_measured": 6,
+            "facts_passed": 5,
+            "incorrect": 3,
+            "latency_ms": {
+              "p50": 4882.036,
+              "p95": 5790.676
+            },
+            "n": 6,
+            "strict_accuracy": 0.5,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "insufficient": {
+          "baseline": {
+            "behavior_passed": 17,
+            "citation_status": {
+              "not_applicable": 17
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 17,
+            "cost_usd": 0.02570965,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3601.947,
+              "p95": 9946.925
+            },
+            "n": 17,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 17,
+            "citation_status": {
+              "not_applicable": 17
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 17,
+            "cost_usd": 0.01299616,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3514.277,
+              "p95": 5891.474
+            },
+            "n": 17,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "sufficient": {
+          "baseline": {
+            "behavior_passed": 37,
+            "citation_status": {
+              "supported": 1,
+              "uncertain": 23,
+              "unsupported": 13
+            },
+            "conditions_measured": 20,
+            "conditions_passed": 14,
+            "correct": 26,
+            "cost_usd": 0.05313841,
+            "facts_measured": 36,
+            "facts_passed": 30,
+            "incorrect": 11,
+            "latency_ms": {
+              "p50": 3045.444,
+              "p95": 13449.198
+            },
+            "n": 37,
+            "strict_accuracy": 0.7027027027027027,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 37,
+            "citation_status": {
+              "uncertain": 19,
+              "unsupported": 18
+            },
+            "conditions_measured": 20,
+            "conditions_passed": 13,
+            "correct": 28,
+            "cost_usd": 0.04858415,
+            "facts_measured": 36,
+            "facts_passed": 33,
+            "incorrect": 9,
+            "latency_ms": {
+              "p50": 3247.02,
+              "p95": 14946.64
+            },
+            "n": 37,
+            "strict_accuracy": 0.7567567567567568,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "judge": {
+        "baseline": {
+          "answer_status": {
+            "correct": 39,
+            "not_answerable": 2,
+            "partial": 1
+          },
+          "citation_support": {
+            "supported": 42
+          },
+          "grounding": {
+            "partly_supported": 1,
+            "supported": 41
+          },
+          "rows_with_unsupported_claims": 0,
+          "unsupported_claim_count": 0
+        },
+        "slate": {
+          "answer_status": {
+            "correct": 39,
+            "incorrect": 2,
+            "partial": 1
+          },
+          "citation_support": {
+            "partial": 2,
+            "supported": 40
+          },
+          "grounding": {
+            "partly_supported": 3,
+            "supported": 39
+          },
+          "rows_with_unsupported_claims": 2,
+          "unsupported_claim_count": 3
+        }
+      },
+      "pairwise": {
+        "slate_vs_baseline": {
+          "losses": 0,
+          "ties": 57,
+          "wins": 3
+        }
+      }
+    },
+    "frozen-v1": {
+      "by_bucket": {
+        "clarify": {
+          "baseline": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 8
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 7,
+            "cost_usd": 0.01535935,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4804.455,
+              "p95": 16443.714
+            },
+            "n": 8,
+            "strict_accuracy": 0.875,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.125
+          },
+          "slate": {
+            "behavior_passed": 7,
+            "citation_status": {
+              "not_applicable": 8
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 7,
+            "cost_usd": 0.01197088,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 6098.314,
+              "p95": 13843.394
+            },
+            "n": 8,
+            "strict_accuracy": 0.875,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.125
+          }
+        },
+        "entity_mismatch": {
+          "baseline": {
+            "behavior_passed": 10,
+            "citation_status": {
+              "not_applicable": 1,
+              "uncertain": 4,
+              "unsupported": 5
+            },
+            "conditions_measured": 1,
+            "conditions_passed": 0,
+            "correct": 9,
+            "cost_usd": 0.0144747,
+            "facts_measured": 9,
+            "facts_passed": 9,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 2176.094,
+              "p95": 4264.711
+            },
+            "n": 10,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 10,
+            "citation_status": {
+              "not_applicable": 1,
+              "uncertain": 4,
+              "unsupported": 5
+            },
+            "conditions_measured": 1,
+            "conditions_passed": 1,
+            "correct": 9,
+            "cost_usd": 0.01097306,
+            "facts_measured": 9,
+            "facts_passed": 9,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 2570.198,
+              "p95": 4072.076
+            },
+            "n": 10,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "hard_negative": {
+          "baseline": {
+            "behavior_passed": 10,
+            "citation_status": {
+              "not_applicable": 10
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 10,
+            "cost_usd": 0.0152985,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3853.201,
+              "p95": 5200.277
+            },
+            "n": 10,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 10,
+            "citation_status": {
+              "not_applicable": 10
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 10,
+            "cost_usd": 0.01125927,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3987.984,
+              "p95": 13464.077
+            },
+            "n": 10,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "multi_constraint": {
+          "baseline": {
+            "behavior_passed": 14,
+            "citation_status": {
+              "uncertain": 9,
+              "unsupported": 5
+            },
+            "conditions_measured": 13,
+            "conditions_passed": 11,
+            "correct": 8,
+            "cost_usd": 0.02701471,
+            "facts_measured": 14,
+            "facts_passed": 10,
+            "incorrect": 6,
+            "latency_ms": {
+              "p50": 4714.493,
+              "p95": 19527.622
+            },
+            "n": 14,
+            "strict_accuracy": 0.5714285714285714,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 14,
+            "citation_status": {
+              "uncertain": 7,
+              "unsupported": 7
+            },
+            "conditions_measured": 13,
+            "conditions_passed": 13,
+            "correct": 9,
+            "cost_usd": 0.02402857,
+            "facts_measured": 14,
+            "facts_passed": 10,
+            "incorrect": 4,
+            "latency_ms": {
+              "p50": 4678.002,
+              "p95": 17267.222
+            },
+            "n": 14,
+            "strict_accuracy": 0.6428571428571429,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.07142857142857142
+          }
+        },
+        "multi_hop": {
+          "baseline": {
+            "behavior_passed": 16,
+            "citation_status": {
+              "uncertain": 6,
+              "unsupported": 10
+            },
+            "conditions_measured": 14,
+            "conditions_passed": 10,
+            "correct": 10,
+            "cost_usd": 0.02971653,
+            "facts_measured": 16,
+            "facts_passed": 16,
+            "incorrect": 5,
+            "latency_ms": {
+              "p50": 4736.44,
+              "p95": 14134.49
+            },
+            "n": 16,
+            "strict_accuracy": 0.625,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.0625
+          },
+          "slate": {
+            "behavior_passed": 16,
+            "citation_status": {
+              "uncertain": 9,
+              "unsupported": 7
+            },
+            "conditions_measured": 14,
+            "conditions_passed": 11,
+            "correct": 12,
+            "cost_usd": 0.0314605,
+            "facts_measured": 16,
+            "facts_passed": 16,
+            "incorrect": 4,
+            "latency_ms": {
+              "p50": 5365.728,
+              "p95": 20415.861
+            },
+            "n": 16,
+            "strict_accuracy": 0.75,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "ood": {
+          "baseline": {
+            "behavior_passed": 6,
+            "citation_status": {
+              "not_applicable": 6
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 6,
+            "cost_usd": 0.0089331,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3884.03,
+              "p95": 4432.437
+            },
+            "n": 6,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 6,
+            "citation_status": {
+              "not_applicable": 6
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 6,
+            "cost_usd": 0.00424065,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3885.736,
+              "p95": 5691.862
+            },
+            "n": 6,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "policy_conflict": {
+          "baseline": {
+            "behavior_passed": 8,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 7
+            },
+            "conditions_measured": 5,
+            "conditions_passed": 3,
+            "correct": 6,
+            "cost_usd": 0.0122853,
+            "facts_measured": 8,
+            "facts_passed": 8,
+            "incorrect": 2,
+            "latency_ms": {
+              "p50": 4334.512,
+              "p95": 5919.44
+            },
+            "n": 8,
+            "strict_accuracy": 0.75,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 8,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 7
+            },
+            "conditions_measured": 5,
+            "conditions_passed": 4,
+            "correct": 7,
+            "cost_usd": 0.01290756,
+            "facts_measured": 8,
+            "facts_passed": 8,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 3591.366,
+              "p95": 14370.15
+            },
+            "n": 8,
+            "strict_accuracy": 0.875,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "single_hop": {
+          "baseline": {
+            "behavior_passed": 18,
+            "citation_status": {
+              "uncertain": 13,
+              "unsupported": 5
+            },
+            "conditions_measured": 2,
+            "conditions_passed": 2,
+            "correct": 18,
+            "cost_usd": 0.0253272,
+            "facts_measured": 18,
+            "facts_passed": 18,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2700.051,
+              "p95": 6109.554
+            },
+            "n": 18,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 18,
+            "citation_status": {
+              "uncertain": 14,
+              "unsupported": 4
+            },
+            "conditions_measured": 2,
+            "conditions_passed": 2,
+            "correct": 18,
+            "cost_usd": 0.01523904,
+            "facts_measured": 18,
+            "facts_passed": 18,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2479.247,
+              "p95": 13100.556
+            },
+            "n": 18,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "by_denominator": {
+        "clarify": {
+          "baseline": {
+            "behavior_passed": 9,
+            "citation_status": {
+              "not_applicable": 10
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 9,
+            "cost_usd": 0.01880335,
+            "facts_measured": 1,
+            "facts_passed": 1,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4506.019,
+              "p95": 16443.714
+            },
+            "n": 10,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.1
+          },
+          "slate": {
+            "behavior_passed": 9,
+            "citation_status": {
+              "not_applicable": 10
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 9,
+            "cost_usd": 0.01489668,
+            "facts_measured": 1,
+            "facts_passed": 1,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 5891.404,
+              "p95": 13843.394
+            },
+            "n": 10,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.1
+          }
+        },
+        "evidence_answer": {
+          "baseline": {
+            "behavior_passed": 64,
+            "citation_status": {
+              "uncertain": 32,
+              "unsupported": 32
+            },
+            "conditions_measured": 35,
+            "conditions_passed": 26,
+            "correct": 49,
+            "cost_usd": 0.10537444,
+            "facts_measured": 64,
+            "facts_passed": 60,
+            "incorrect": 14,
+            "latency_ms": {
+              "p50": 3748.335,
+              "p95": 13573.28
+            },
+            "n": 64,
+            "strict_accuracy": 0.765625,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.015625
+          },
+          "slate": {
+            "behavior_passed": 64,
+            "citation_status": {
+              "uncertain": 34,
+              "unsupported": 30
+            },
+            "conditions_measured": 35,
+            "conditions_passed": 31,
+            "correct": 53,
+            "cost_usd": 0.09168293,
+            "facts_measured": 64,
+            "facts_passed": 60,
+            "incorrect": 10,
+            "latency_ms": {
+              "p50": 3603.53,
+              "p95": 14370.15
+            },
+            "n": 64,
+            "strict_accuracy": 0.828125,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.015625
+          }
+        },
+        "refusal": {
+          "baseline": {
+            "behavior_passed": 16,
+            "citation_status": {
+              "not_applicable": 16
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 16,
+            "cost_usd": 0.0242316,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3884.03,
+              "p95": 5200.277
+            },
+            "n": 16,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 16,
+            "citation_status": {
+              "not_applicable": 16
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 16,
+            "cost_usd": 0.01549992,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3987.984,
+              "p95": 13464.077
+            },
+            "n": 16,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "by_evidence_state": {
+        "conflicting": {
+          "baseline": {
+            "behavior_passed": 9,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 8
+            },
+            "conditions_measured": 6,
+            "conditions_passed": 4,
+            "correct": 7,
+            "cost_usd": 0.0139215,
+            "facts_measured": 9,
+            "facts_passed": 9,
+            "incorrect": 2,
+            "latency_ms": {
+              "p50": 4506.019,
+              "p95": 5919.44
+            },
+            "n": 9,
+            "strict_accuracy": 0.7777777777777778,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 9,
+            "citation_status": {
+              "not_applicable": 1,
+              "unsupported": 8
+            },
+            "conditions_measured": 6,
+            "conditions_passed": 5,
+            "correct": 8,
+            "cost_usd": 0.01482336,
+            "facts_measured": 9,
+            "facts_passed": 9,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 3795.714,
+              "p95": 14370.15
+            },
+            "n": 9,
+            "strict_accuracy": 0.8888888888888888,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "insufficient": {
+          "baseline": {
+            "behavior_passed": 24,
+            "citation_status": {
+              "not_applicable": 25
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 24,
+            "cost_usd": 0.04139185,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4264.711,
+              "p95": 13507.646
+            },
+            "n": 25,
+            "strict_accuracy": 0.96,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.04
+          },
+          "slate": {
+            "behavior_passed": 24,
+            "citation_status": {
+              "not_applicable": 25
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 24,
+            "cost_usd": 0.029218,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4624.195,
+              "p95": 13464.077
+            },
+            "n": 25,
+            "strict_accuracy": 0.96,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.04
+          }
+        },
+        "partial": {
+          "baseline": {
+            "behavior_passed": 4,
+            "citation_status": {
+              "uncertain": 1,
+              "unsupported": 3
+            },
+            "conditions_measured": 4,
+            "conditions_passed": 3,
+            "correct": 1,
+            "cost_usd": 0.01004229,
+            "facts_measured": 4,
+            "facts_passed": 2,
+            "incorrect": 3,
+            "latency_ms": {
+              "p50": 11715.591,
+              "p95": 19527.622
+            },
+            "n": 4,
+            "strict_accuracy": 0.25,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 4,
+            "citation_status": {
+              "unsupported": 4
+            },
+            "conditions_measured": 4,
+            "conditions_passed": 4,
+            "correct": 1,
+            "cost_usd": 0.00771442,
+            "facts_measured": 4,
+            "facts_passed": 2,
+            "incorrect": 2,
+            "latency_ms": {
+              "p50": 6681.976,
+              "p95": 13157.755
+            },
+            "n": 4,
+            "strict_accuracy": 0.25,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.25
+          }
+        },
+        "sufficient": {
+          "baseline": {
+            "behavior_passed": 52,
+            "citation_status": {
+              "uncertain": 31,
+              "unsupported": 21
+            },
+            "conditions_measured": 25,
+            "conditions_passed": 19,
+            "correct": 42,
+            "cost_usd": 0.08305375,
+            "facts_measured": 52,
+            "facts_passed": 50,
+            "incorrect": 9,
+            "latency_ms": {
+              "p50": 3331.463,
+              "p95": 13573.28
+            },
+            "n": 52,
+            "strict_accuracy": 0.8076923076923077,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.019230769230769232
+          },
+          "slate": {
+            "behavior_passed": 52,
+            "citation_status": {
+              "uncertain": 34,
+              "unsupported": 18
+            },
+            "conditions_measured": 25,
+            "conditions_passed": 22,
+            "correct": 45,
+            "cost_usd": 0.07032375,
+            "facts_measured": 52,
+            "facts_passed": 50,
+            "incorrect": 7,
+            "latency_ms": {
+              "p50": 3317.579,
+              "p95": 17267.222
+            },
+            "n": 52,
+            "strict_accuracy": 0.8653846153846154,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "judge": {
+        "baseline": {
+          "answer_status": {
+            "correct": 61,
+            "partial": 3
+          },
+          "citation_support": {
+            "supported": 64
+          },
+          "grounding": {
+            "partly_supported": 2,
+            "supported": 62
+          },
+          "rows_with_unsupported_claims": 0,
+          "unsupported_claim_count": 0
+        },
+        "slate": {
+          "answer_status": {
+            "correct": 62,
+            "partial": 2
+          },
+          "citation_support": {
+            "partial": 1,
+            "supported": 63
+          },
+          "grounding": {
+            "partly_supported": 2,
+            "supported": 62
+          },
+          "rows_with_unsupported_claims": 1,
+          "unsupported_claim_count": 2
+        }
+      },
+      "pairwise": {
+        "slate_vs_baseline": {
+          "losses": 1,
+          "ties": 84,
+          "wins": 5
+        }
+      }
+    },
+    "retrieval-slate-holdout-v1": {
+      "by_bucket": {
+        "entity_mismatch": {
+          "baseline": {
+            "behavior_passed": 1,
+            "citation_status": {
+              "uncertain": 1
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 1,
+            "cost_usd": 0.001389,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2188.34,
+              "p95": 2188.34
+            },
+            "n": 1,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 1,
+            "citation_status": {
+              "unsupported": 1
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 1,
+            "cost_usd": 0.00045004,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2376.029,
+              "p95": 2376.029
+            },
+            "n": 1,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "multi_constraint": {
+          "baseline": {
+            "behavior_passed": 4,
+            "citation_status": {
+              "uncertain": 2,
+              "unsupported": 2
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 4,
+            "cost_usd": 0.00982997,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 5261.935,
+              "p95": 24599.06
+            },
+            "n": 4,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 4,
+            "citation_status": {
+              "uncertain": 1,
+              "unsupported": 3
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 4,
+            "cost_usd": 0.01024277,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 5846.781,
+              "p95": 24240.89
+            },
+            "n": 4,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "multi_hop": {
+          "baseline": {
+            "behavior_passed": 10,
+            "citation_status": {
+              "uncertain": 7,
+              "unsupported": 3
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 8,
+            "cost_usd": 0.0170254,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 4228.122,
+              "p95": 13820.864
+            },
+            "n": 10,
+            "strict_accuracy": 0.8,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.1
+          },
+          "slate": {
+            "behavior_passed": 10,
+            "citation_status": {
+              "uncertain": 5,
+              "unsupported": 5
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 9,
+            "cost_usd": 0.01668272,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3815.6,
+              "p95": 14023.753
+            },
+            "n": 10,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.1
+          }
+        },
+        "policy_conflict": {
+          "baseline": {
+            "behavior_passed": 2,
+            "citation_status": {
+              "unsupported": 2
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 2,
+            "cost_usd": 0.0028677,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3986.961,
+              "p95": 4077.796
+            },
+            "n": 2,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 2,
+            "citation_status": {
+              "unsupported": 2
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 2,
+            "cost_usd": 0.00367352,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4307.835,
+              "p95": 9729.522
+            },
+            "n": 2,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "single_hop": {
+          "baseline": {
+            "behavior_passed": 3,
+            "citation_status": {
+              "uncertain": 2,
+              "unsupported": 1
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 3,
+            "cost_usd": 0.0040131,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2391.04,
+              "p95": 3574.33
+            },
+            "n": 3,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 3,
+            "citation_status": {
+              "uncertain": 1,
+              "unsupported": 2
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 3,
+            "cost_usd": 0.00230077,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 2644.704,
+              "p95": 4139.685
+            },
+            "n": 3,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "by_denominator": {
+        "evidence_answer": {
+          "baseline": {
+            "behavior_passed": 20,
+            "citation_status": {
+              "uncertain": 12,
+              "unsupported": 8
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 18,
+            "cost_usd": 0.03512517,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 4184.679,
+              "p95": 14485.63
+            },
+            "n": 20,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.05
+          },
+          "slate": {
+            "behavior_passed": 20,
+            "citation_status": {
+              "uncertain": 7,
+              "unsupported": 13
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 19,
+            "cost_usd": 0.03334982,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4307.835,
+              "p95": 14023.753
+            },
+            "n": 20,
+            "strict_accuracy": 0.95,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.05
+          }
+        }
+      },
+      "by_evidence_state": {
+        "conflicting": {
+          "baseline": {
+            "behavior_passed": 2,
+            "citation_status": {
+              "unsupported": 2
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 2,
+            "cost_usd": 0.0028677,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3986.961,
+              "p95": 4077.796
+            },
+            "n": 2,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "behavior_passed": 2,
+            "citation_status": {
+              "unsupported": 2
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 2,
+            "cost_usd": 0.00367352,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4307.835,
+              "p95": 9729.522
+            },
+            "n": 2,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        },
+        "sufficient": {
+          "baseline": {
+            "behavior_passed": 18,
+            "citation_status": {
+              "uncertain": 12,
+              "unsupported": 6
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 16,
+            "cost_usd": 0.03225747,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 1,
+            "latency_ms": {
+              "p50": 4228.122,
+              "p95": 24599.06
+            },
+            "n": 18,
+            "strict_accuracy": 0.8888888888888888,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.05555555555555555
+          },
+          "slate": {
+            "behavior_passed": 18,
+            "citation_status": {
+              "uncertain": 7,
+              "unsupported": 11
+            },
+            "conditions_measured": 0,
+            "conditions_passed": 0,
+            "correct": 17,
+            "cost_usd": 0.0296763,
+            "facts_measured": 0,
+            "facts_passed": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4139.685,
+              "p95": 24240.89
+            },
+            "n": 18,
+            "strict_accuracy": 0.9444444444444444,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.05555555555555555
+          }
+        }
+      },
+      "judge": {
+        "baseline": {
+          "answer_status": {
+            "correct": 19,
+            "partial": 1
+          },
+          "citation_support": {
+            "supported": 20
+          },
+          "grounding": {
+            "partly_supported": 1,
+            "supported": 19
+          },
+          "rows_with_unsupported_claims": 0,
+          "unsupported_claim_count": 0
+        },
+        "slate": {
+          "answer_status": {
+            "correct": 20
+          },
+          "citation_support": {
+            "supported": 20
+          },
+          "grounding": {
+            "supported": 20
+          },
+          "rows_with_unsupported_claims": 0,
+          "unsupported_claim_count": 0
+        }
+      },
+      "pairwise": {
+        "slate_vs_baseline": {
+          "losses": 0,
+          "ties": 19,
+          "wins": 1
+        }
+      }
+    }
+  }
+}

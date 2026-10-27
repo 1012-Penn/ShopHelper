@@ -1,0 +1,285 @@
+{
+  "scoring_version": "answer-quality-depth-score-v7",
+  "splits": {
+    "frozen-v1": {
+      "by_bucket": {
+        "clarify": {
+          "baseline": {
+            "correct": 7,
+            "incorrect": 0,
+            "n": 8,
+            "technical_failure": 0,
+            "uncertain": 1
+          },
+          "slate": {
+            "correct": 7,
+            "incorrect": 0,
+            "n": 8,
+            "technical_failure": 0,
+            "uncertain": 1
+          }
+        },
+        "entity_mismatch": {
+          "baseline": {
+            "correct": 9,
+            "incorrect": 1,
+            "n": 10,
+            "technical_failure": 0,
+            "uncertain": 0
+          },
+          "slate": {
+            "correct": 9,
+            "incorrect": 1,
+            "n": 10,
+            "technical_failure": 0,
+            "uncertain": 0
+          }
+        },
+        "hard_negative": {
+          "baseline": {
+            "correct": 10,
+            "incorrect": 0,
+            "n": 10,
+            "technical_failure": 0,
+            "uncertain": 0
+          },
+          "slate": {
+            "correct": 10,
+            "incorrect": 0,
+            "n": 10,
+            "technical_failure": 0,
+            "uncertain": 0
+          }
+        },
+        "multi_constraint": {
+          "baseline": {
+            "correct": 8,
+            "incorrect": 6,
+            "n": 14,
+            "technical_failure": 0,
+            "uncertain": 0
+          },
+          "slate": {
+            "correct": 9,
+            "incorrect": 4,
+            "n": 14,
+            "technical_failure": 0,
+            "uncertain": 1
+          }
+        },
+        "multi_hop": {
+          "baseline": {
+            "correct": 10,
+            "incorrect": 5,
+            "n": 16,
+            "technical_failure": 0,
+            "uncertain": 1
+          },
+          "slate": {
+            "correct": 12,
+            "incorrect": 4,
+            "n": 16,
+            "technical_failure": 0,
+            "uncertain": 0
+          }
+        },
+        "ood": {
+          "baseline": {
+            "correct": 6,
+            "incorrect": 0,
+            "n": 6,
+            "technical_failure": 0,
+            "uncertain": 0
+          },
+          "slate": {
+            "correct": 6,
+            "incorrect": 0,
+            "n": 6,
+            "technical_failure": 0,
+            "uncertain": 0
+          }
+        },
+        "policy_conflict": {
+          "baseline": {
+            "correct": 6,
+            "incorrect": 2,
+            "n": 8,
+            "technical_failure": 0,
+            "uncertain": 0
+          },
+          "slate": {
+            "correct": 7,
+            "incorrect": 1,
+            "n": 8,
+            "technical_failure": 0,
+            "uncertain": 0
+          }
+        },
+        "single_hop": {
+          "baseline": {
+            "correct": 18,
+            "incorrect": 0,
+            "n": 18,
+            "technical_failure": 0,
+            "uncertain": 0
+          },
+          "slate": {
+            "correct": 18,
+            "incorrect": 0,
+            "n": 18,
+            "technical_failure": 0,
+            "uncertain": 0
+          }
+        }
+      },
+      "by_denominator": {
+        "clarify": {
+          "baseline": {
+            "accuracy_among_determinate": 1.0,
+            "correct": 9,
+            "cost_usd": 0.01880335,
+            "determinate": 9,
+            "determinate_accuracy": null,
+            "grounded_correct": 0,
+            "grounded_incorrect": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4804.455,
+              "p95": 16443.714
+            },
+            "n": 10,
+            "semantic_correct": 0,
+            "semantic_incorrect": 0,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.1
+          },
+          "slate": {
+            "accuracy_among_determinate": 1.0,
+            "correct": 9,
+            "cost_usd": 0.01489668,
+            "determinate": 9,
+            "determinate_accuracy": null,
+            "grounded_correct": 0,
+            "grounded_incorrect": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 6098.314,
+              "p95": 13843.394
+            },
+            "n": 10,
+            "semantic_correct": 0,
+            "semantic_incorrect": 0,
+            "strict_accuracy": 0.9,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.1
+          }
+        },
+        "evidence_answer": {
+          "baseline": {
+            "accuracy_among_determinate": 0.7777777777777778,
+            "correct": 49,
+            "cost_usd": 0.10537444,
+            "determinate": 63,
+            "determinate_accuracy": null,
+            "grounded_correct": 49,
+            "grounded_incorrect": 15,
+            "incorrect": 14,
+            "latency_ms": {
+              "p50": 3857.104,
+              "p95": 13573.28
+            },
+            "n": 64,
+            "semantic_correct": 49,
+            "semantic_incorrect": 14,
+            "strict_accuracy": 0.765625,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.015625
+          },
+          "slate": {
+            "accuracy_among_determinate": 0.8412698412698413,
+            "correct": 53,
+            "cost_usd": 0.09168293,
+            "determinate": 63,
+            "determinate_accuracy": null,
+            "grounded_correct": 53,
+            "grounded_incorrect": 11,
+            "incorrect": 10,
+            "latency_ms": {
+              "p50": 3609.544,
+              "p95": 14370.15
+            },
+            "n": 64,
+            "semantic_correct": 53,
+            "semantic_incorrect": 10,
+            "strict_accuracy": 0.828125,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 1,
+            "uncertainty_rate": 0.015625
+          }
+        },
+        "refusal": {
+          "baseline": {
+            "accuracy_among_determinate": 1.0,
+            "correct": 16,
+            "cost_usd": 0.0242316,
+            "determinate": 16,
+            "determinate_accuracy": null,
+            "grounded_correct": 0,
+            "grounded_incorrect": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 3910.206,
+              "p95": 5200.277
+            },
+            "n": 16,
+            "semantic_correct": 0,
+            "semantic_incorrect": 0,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          },
+          "slate": {
+            "accuracy_among_determinate": 1.0,
+            "correct": 16,
+            "cost_usd": 0.01549992,
+            "determinate": 16,
+            "determinate_accuracy": null,
+            "grounded_correct": 0,
+            "grounded_incorrect": 0,
+            "incorrect": 0,
+            "latency_ms": {
+              "p50": 4043.979,
+              "p95": 13464.077
+            },
+            "n": 16,
+            "semantic_correct": 0,
+            "semantic_incorrect": 0,
+            "strict_accuracy": 1.0,
+            "technical_failure": 0,
+            "technical_failure_rate": 0.0,
+            "uncertain": 0,
+            "uncertainty_rate": 0.0
+          }
+        }
+      },
+      "pairwise": {
+        "slate_vs_baseline": {
+          "losses": 1,
+          "ties": 84,
+          "wins": 5
+        }
+      }
+    }
+  },
+  "total_cost_usd": 0.27048892
+}

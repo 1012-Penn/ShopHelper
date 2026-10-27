@@ -1,0 +1,43 @@
+{
+  "answer_max_tokens": 800,
+  "code_sha256": {
+    "app/config.py": "5a19ec93941e8e809d39afffb7d9c14df9252cd3e79feb7bcdd9c288ca835adf",
+    "app/evidence_slate.py": "cda5733b877a40a74f06e52fcc236b96d4aed64715f4064520905b05d740f910",
+    "app/retrieval.py": "ce36403702d8c2531b69e4b50255bee5ecbd56c3cfc4d21c7016fe4b00295d6f",
+    "scripts/answer_quality_depth/budget.py": "a5b7a4acedacbfe21ad325add5fd887e73a14260bfa0b2fff8284160c4ffe07a",
+    "scripts/answer_quality_depth/data.py": "4990af2001da8be2d0c8810d25bc8b74862455298928b662becf6ae4ec1296f3",
+    "scripts/answer_quality_depth/evidence.py": "81d63dea12604ef529c93bde06f40a0cc0d8564a2c572e4f1a12204e8d4a4cd0",
+    "scripts/answer_quality_depth/runner.py": "71ae7b09b20d62cab9d5d1d150fa72120ab9363f0641124e2ae433845310c8f9",
+    "scripts/answer_quality_depth/scoring.py": "1515a9239429b03c8e59df4834567b679d05fb9a96e23d9c9fa84999b485b257",
+    "scripts/eval_answer_quality_depth.py": "ec304a40b10e4f382f03e014362c5c40d87711aef0166486779872ef35197147"
+  },
+  "completed_at": "2026-10-27T06:12:28.983267+00:00",
+  "config_sha256": "d9daac67b7c7a0f1d899aee31d6e2e3b18271d9cb5fce06f94e3e31c5a99f5c3",
+  "evidence_sha256": "a524a9bdf54ee8a70a08b0176da7321bbdcd740fb1af83da7810d3da2c1fc281",
+  "experiment": "answer_quality_depth_v1",
+  "generation_prompt_sha256": "0c90bd8fb6659eb53c3dacf885946c95c325b7f9e4c2b2ad6011b25fa7b12e79",
+  "generation_repaired": 3,
+  "generation_thinking": "enabled",
+  "judge_max_tokens": 1600,
+  "judge_prompt_sha256": "3cb4244754315d306fbad6bb8673548cd9e2ffac608518e65dc5bbc7709b4a74",
+  "judge_thinking": "disabled",
+  "max_cost_usd": 2.0,
+  "max_retries": 2,
+  "model": "deepseek-flash",
+  "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+  "repair": {
+    "max_attempts": 2,
+    "max_output_tokens": 2400,
+    "nonempty_answers_preserved": true,
+    "trigger": "finish_reason=length, including non-empty partial text"
+  },
+  "scoring_overlay_sha256": "3a58648d064574c96c7c507d221c072b6a9e3e5eba9c5aad92b64ce7a12d54b4",
+  "scoring_version": "answer-quality-depth-score-v3",
+  "source_results_sha256": "9a19faa1b82b09625a236cf4c4394e6a21939ffe88c2a123fb0070c1dbb29511",
+  "split": "dev",
+  "started_at": "2026-10-27T06:12:08.584301+00:00",
+  "status": "completed",
+  "technical_failures": 0,
+  "temperature": 0,
+  "top_k": 10
+}

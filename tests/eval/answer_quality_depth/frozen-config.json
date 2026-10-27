@@ -1,0 +1,53 @@
+{
+  "budget": {
+    "hard_limit_usd": 2.0,
+    "ledger_scope": "one independent SQLite ledger for this experiment",
+    "provider_retries_max": 2
+  },
+  "dataset_sha256": {
+    "dev": "851fe9a88d40763b67da2dfe28868ad11f81e3b697d811f11a137d1a62ac380f",
+    "frozen-v1": "2f684ba273952a0147b16ae866a22058f81190b16c439d15ad029ad5cb637b44",
+    "retrieval-slate-holdout-v1": "630e69734eea4aa59823826c91b4456d331768e6097eb03c1aa9fc00d90f8325"
+  },
+  "experiment": "answer_quality_depth_20261027",
+  "frozen_at": "2026-10-27T05:47:49.821085+00:00",
+  "prompt_hashes": {
+    "generation_system": "0c90bd8fb6659eb53c3dacf885946c95c325b7f9e4c2b2ad6011b25fa7b12e79",
+    "judge_system": "3cb4244754315d306fbad6bb8673548cd9e2ffac608518e65dc5bbc7709b4a74"
+  },
+  "run_config": {
+    "answer_max_tokens": 800,
+    "code_sha256": {
+      "app/config.py": "5a19ec93941e8e809d39afffb7d9c14df9252cd3e79feb7bcdd9c288ca835adf",
+      "app/evidence_slate.py": "cda5733b877a40a74f06e52fcc236b96d4aed64715f4064520905b05d740f910",
+      "app/retrieval.py": "ce36403702d8c2531b69e4b50255bee5ecbd56c3cfc4d21c7016fe4b00295d6f",
+      "scripts/answer_quality_depth/budget.py": "a5b7a4acedacbfe21ad325add5fd887e73a14260bfa0b2fff8284160c4ffe07a",
+      "scripts/answer_quality_depth/data.py": "4990af2001da8be2d0c8810d25bc8b74862455298928b662becf6ae4ec1296f3",
+      "scripts/answer_quality_depth/evidence.py": "81d63dea12604ef529c93bde06f40a0cc0d8564a2c572e4f1a12204e8d4a4cd0",
+      "scripts/answer_quality_depth/runner.py": "23dff78cc063b18c94c10aabe21aeebdb53b9567aa0cca08d41dd20bd499733c",
+      "scripts/answer_quality_depth/scoring.py": "fe473ac5fdca41b14a9fda944ba3e0057443f1d1b699adec941afbc6705112ca",
+      "scripts/eval_answer_quality_depth.py": "8e93336e0bea5e09d0531df218c8ae91e32f5af4e4c84ca3a485098afec2ee9c"
+    },
+    "experiment": "answer_quality_depth_v1",
+    "generation_prompt_sha256": "0c90bd8fb6659eb53c3dacf885946c95c325b7f9e4c2b2ad6011b25fa7b12e79",
+    "generation_thinking": "enabled",
+    "judge_max_tokens": 1600,
+    "judge_prompt_sha256": "3cb4244754315d306fbad6bb8673548cd9e2ffac608518e65dc5bbc7709b4a74",
+    "judge_thinking": "disabled",
+    "max_cost_usd": 2.0,
+    "max_retries": 2,
+    "model": "deepseek-flash",
+    "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+    "scoring_overlay_sha256": "3a58648d064574c96c7c507d221c072b6a9e3e5eba9c5aad92b64ce7a12d54b4",
+    "scoring_version": "answer-quality-depth-score-v2",
+    "temperature": 0,
+    "top_k": 10
+  },
+  "schema_version": 1,
+  "scoring": {
+    "overlay_path": "tests/eval/overlays/rag-quality-v3.1.json",
+    "overlay_sha256": "3a58648d064574c96c7c507d221c072b6a9e3e5eba9c5aad92b64ce7a12d54b4",
+    "policy": "uncertain remains a separate denominator; no label enters generation or judge",
+    "version": "answer-quality-depth-score-v2"
+  }
+}
