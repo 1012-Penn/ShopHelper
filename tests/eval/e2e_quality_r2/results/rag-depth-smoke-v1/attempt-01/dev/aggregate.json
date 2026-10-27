@@ -1,0 +1,68 @@
+{
+  "case_ids": [
+    "DEV-DIRECT-E300",
+    "DEV-SHIP-REMOTE",
+    "DEV-POLICY-V2"
+  ],
+  "citations": {
+    "uncertain": 2,
+    "unsupported": 1
+  },
+  "clarify": 0,
+  "conditions": {
+    "measured": 2,
+    "passed": 2
+  },
+  "embedding_cost_usd": 0.0,
+  "empty_answers": 0,
+  "entities": {
+    "measured": 1,
+    "passed": 1
+  },
+  "expected_actual_behavior": {
+    "answer->answer": 1,
+    "answer_with_conditions->answer": 2
+  },
+  "facts": {
+    "measured": 3,
+    "passed": 3
+  },
+  "failure_labels": {
+    "citation_uncertain": 2,
+    "citation_unsupported": 1
+  },
+  "generation_cost_usd": 0.00554424,
+  "input_tokens": 30785,
+  "judge_cost_usd": 0.00271842,
+  "model_calls": {
+    "by_kind": {
+      "answer": 4,
+      "embedding": 3,
+      "evidence_judge": 3,
+      "intent": 3,
+      "llm": 3,
+      "rerank": 3,
+      "resolve": 3
+    },
+    "cache_hits": 0,
+    "calls": 22
+  },
+  "n": 3,
+  "other_cost_usd": 0.0,
+  "output_tokens": 3692,
+  "p50_latency_ms": 14543.082,
+  "p95_latency_ms": 17040.11,
+  "refusal": 0,
+  "rerank_cost_usd": 0.0,
+  "review_required": 2,
+  "routes": {
+    "measured": 0,
+    "passed": 0
+  },
+  "success": 0,
+  "technical_failures": 0,
+  "tools": {
+    "measured": 0,
+    "passed": 0
+  }
+}

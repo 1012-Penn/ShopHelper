@@ -141,7 +141,7 @@ def test_concurrent_embedding_misses_coalesce_to_one_provider_batch():
         try:
             barrier.wait(timeout=2)
             results.append(cache.embed(["same"]))
-        except BaseException as exc:  # surfaced below
+        except BaseException as exc:  # noqa: BLE001 - surfaced below.
             errors.append(exc)
 
     threads = [threading.Thread(target=worker) for _ in range(8)]

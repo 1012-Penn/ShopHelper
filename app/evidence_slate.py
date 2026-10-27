@@ -9,9 +9,8 @@ they never inspect evaluation labels.
 from __future__ import annotations
 
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
-
 
 _IDENTIFIER = re.compile(
     r"(?<![A-Z0-9])(?:ORD-\d{4,6}|SH-[A-Z0-9]+)(?![A-Z0-9])",
@@ -55,7 +54,6 @@ def select_evidence_slate(
     if not ordered:
         return EvidenceSlate([], [])
 
-    rank_by_id = {chunk_id: rank for rank, chunk_id in enumerate(ordered)}
     selected: list[int] = []
     facets: list[str] = []
     lower = query.casefold()
@@ -171,11 +169,9 @@ def select_evidence_slate(
                 and "| 区域 | 首重运费 |" in document.text
             ),
         )
-    elif "包邮" in lower and not asks_coupon:
-        add("free_shipping", best(in_section("包邮门槛与合并订单")))
-        if asks_remote_shipping:
-            add("remote_shipping", best(in_section("偏远地区补运")))
-    elif price_reaches_shipping_threshold and not asks_coupon:
+    elif (
+        "包邮" in lower or price_reaches_shipping_threshold
+    ) and not asks_coupon:
         add("free_shipping", best(in_section("包邮门槛与合并订单")))
         if asks_remote_shipping:
             add("remote_shipping", best(in_section("偏远地区补运")))

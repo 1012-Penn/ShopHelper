@@ -21,7 +21,6 @@ from scripts.ch11_harness import (
     dump_traces,
     run_split,
 )
-from scripts.eval_checks import check_case_deterministic
 from scripts.eval_contract import build_contract, write_contract
 from scripts.eval_cost import BudgetExceeded
 from scripts.eval_dataset import (
@@ -32,16 +31,15 @@ from scripts.eval_dataset import (
     validate_cases,
 )
 from scripts.eval_metrics import resolve_gold_chunks
-from scripts.eval_snapshot import acquire_eval_lock
 from scripts.eval_prompts import (
     EVAL_ANSWER_PROMPT,
-    EVAL_JUDGE_PROMPT,
     JsonEvidenceJudge,
     JsonFaithfulnessJudge,
     JsonGapAnalyzer,
     prompt_sha256,
 )
 from scripts.eval_report import aggregate_traces, write_report
+from scripts.eval_snapshot import acquire_eval_lock
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "reports" / "ch11"
@@ -61,15 +59,15 @@ def _git_commit() -> str:
         return subprocess.check_output(
             ["git", "rev-parse", "--short", "HEAD"], cwd=ROOT, text=True
         ).strip()
-    except Exception:
+    except Exception:  # noqa: BLE001 - git metadata is optional.
         return ""
 
 
 def _offline(split: str, out: Path, limit: int) -> int:
     from scripts.corpus_facts import load_factbook
     from scripts.corpus_manifest import DOCS_DIR
-    from scripts.leakage_scan import scan_split
     from scripts.eval_dataset import load_registry, split_entries
+    from scripts.leakage_scan import scan_split
 
     cases = load_split(split)
     if limit:
@@ -148,6 +146,10 @@ def _prepare_queries(cases, args, settings, rewriter, split: str, cost=None):
 
 
 def _build_context(config, args, cases):
+    # pymilvus 在导入时会 load_dotenv(),可能把外部 .env 的值带进 os.environ;
+    # 以当前工作目录的 .env 为准,避免 worktree 跑出主仓库的旧模型名。
+    from dotenv import dotenv_values
+
     from app.config import Settings
     from app.db import make_engine, make_session_factory
     from app.graph.builder import _load_evidence_calibration
@@ -158,7 +160,7 @@ def _build_context(config, args, cases):
     from app.rewrite import make_rewriter
     from app.vector_store import KnowledgeVectorStore
     from scripts.corpus_manifest import DOCS_DIR, corpus_sha256, load_manifest
-    from scripts.eval_cache import EmbeddingCache, ResponseCache, RerankCache
+    from scripts.eval_cache import EmbeddingCache, RerankCache, ResponseCache
     from scripts.eval_contract import contract_sha256
     from scripts.eval_cost import (
         DEFAULT_PRICING_PATH,
@@ -177,10 +179,6 @@ def _build_context(config, args, cases):
         tree_sha256,
         verify_consistency,
     )
-
-    # pymilvus 在导入时会 load_dotenv(),可能把外部 .env 的值带进 os.environ;
-    # 以当前工作目录的 .env 为准,避免 worktree 跑出主仓库的旧模型名。
-    from dotenv import dotenv_values
 
     local_env = dotenv_values(Path(".env"))
     for key, value in local_env.items():
@@ -303,6 +301,7 @@ def _build_context(config, args, cases):
         )
 
     from datetime import datetime, timezone
+
     from app.evidence import EVIDENCE_JUDGE_PROMPT
     from app.prompts import FAITHFULNESS_JUDGE_PROMPT, GAP_ANALYZER_PROMPT
     from scripts.eval_dataset import load_registry, split_entries

@@ -30,3 +30,6 @@ models/
 tests/eval/rag_ablation/runs/live-*
 # 检索缓存私有索引、逐请求原始账本和语料副本保留在本地;汇总结果另行提交
 tests/eval/retrieval_cache/runs/live-*
+# RAG 深度组合冒烟的私有运行时与锁文件保留在本地;逐题结果和预算汇总提交
+tests/eval/e2e_quality_r2/results/rag-depth-smoke-v1/runtime/
+tests/eval/e2e_quality_r2/results/rag-depth-smoke-v1/session-budget.json.lock

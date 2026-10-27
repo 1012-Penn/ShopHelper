@@ -8,6 +8,8 @@ import inspect
 import json
 import os
 import sqlite3
+import threading
+import time
 from collections import Counter
 from pathlib import Path
 
@@ -47,6 +49,28 @@ EXPECTED_SNAPSHOT_SHA256 = (
 )
 PRICING = ROOT / "tests" / "eval" / "rag_ablation" / "pricing-snapshot-2026-10-26.yaml"
 DEFAULT_RESULTS = CASES_ROOT / "results" / "baseline-v1"
+DEFAULT_SESSION_BUDGET = ROOT / "data" / "e2e-quality-r2" / "session-budget.json"
+
+
+class _CallCappedBudget(R2Budget):
+    """Cap calls for this run; the ledger's USD cap remains shared.
+
+    Separate processes using the same ledger have separate call caps. They
+    must not interpret ``max_calls`` as a ledger-wide concurrent-call limit.
+    """
+    def __init__(self, path: Path, *, limit_usd: float, max_calls: int) -> None:
+        super().__init__(path, limit_usd=limit_usd)
+        self.max_calls = int(max_calls)
+        self._new_calls = 0
+        self._call_lock = threading.Lock()
+
+    def reserve(self, context: dict, estimated_usd: float) -> str:
+        with self._call_lock:
+            if self._new_calls >= self.max_calls:
+                raise RuntimeError(f"provider-call stop rule reached: {self.max_calls}")
+            attempt_id = super().reserve(context, estimated_usd)
+            self._new_calls += 1
+            return attempt_id
 
 
 def _write_json(path: Path, payload: dict) -> None:
@@ -242,6 +266,11 @@ def _run_contract(
     arm: str,
     answer_verification_enabled: bool,
     structured_mode: str,
+    budget_limit_usd: float = 2.0,
+    case_ids: list[str] | None = None,
+    max_provider_calls: int | None = None,
+    max_wall_seconds: float | None = None,
+    session_budget: Path | None = None,
 ) -> dict:
     case_manifest = json.loads((CASES_ROOT / "manifest.json").read_text(encoding="utf-8"))
     pricing = PricingTable.load(PRICING)
@@ -270,7 +299,11 @@ def _run_contract(
             "verified": pricing.verified,
         },
         "snapshot_expected_sha256": EXPECTED_SNAPSHOT_SHA256,
-        "budget_limit_usd": 2.0,
+        "budget_limit_usd": budget_limit_usd,
+        "case_ids": case_ids,
+        "max_provider_calls": max_provider_calls,
+        "max_wall_seconds": max_wall_seconds,
+        "session_budget_path": str(session_budget) if session_budget else None,
         "heldout_policy": "run once after freeze; no held-out-driven tuning",
     }
 
@@ -287,6 +320,24 @@ async def _paid_run(args) -> dict:
     if not splits or any(split not in {"dev", "heldout"} for split in splits):
         raise RuntimeError("splits must be dev, heldout, or dev,heldout")
     cases = load_frozen_cases(CASES_ROOT)
+    requested_ids = [
+        part.strip() for part in str(args.case_ids or "").split(",") if part.strip()
+    ]
+    if requested_ids:
+        available_ids = {
+            str(case["id"])
+            for split_cases in cases.values()
+            for case in split_cases
+        }
+        unknown = [case_id for case_id in requested_ids if case_id not in available_ids]
+        if unknown:
+            raise RuntimeError(f"unknown case ids: {','.join(unknown)}")
+        for split in splits:
+            cases[split] = [
+                case for case in cases[split] if str(case["id"]) in requested_ids
+            ]
+        if not any(cases[split] for split in splits):
+            raise RuntimeError("selected case ids do not belong to selected splits")
     output = Path(args.output)
     runtime_root = (
         Path(args.runtime_root)
@@ -304,6 +355,11 @@ async def _paid_run(args) -> dict:
         arm=args.arm,
         answer_verification_enabled=args.arm == "answer-verification",
         structured_mode=structured_mode,
+        budget_limit_usd=args.max_cost_usd,
+        case_ids=requested_ids,
+        max_provider_calls=int(args.max_provider_calls),
+        max_wall_seconds=float(args.max_wall_seconds),
+        session_budget=Path(args.session_budget),
     )
     _write_json(attempt_root / "run-contract.json", contract)
     if not (output / "run-contract.json").exists():
@@ -316,8 +372,11 @@ async def _paid_run(args) -> dict:
         destination=runtime_root / "private-runtime",
         source_cache_dir=Path(args.source_cache_dir),
     )
-    session_budget = ROOT / "data" / "e2e-quality-r2" / "session-budget.json"
-    budget = R2Budget(session_budget, limit_usd=args.max_cost_usd)
+    budget = _CallCappedBudget(
+        Path(args.session_budget),
+        limit_usd=args.max_cost_usd,
+        max_calls=int(args.max_provider_calls),
+    )
     budget.assert_no_pending()
     exact_cache = ExactCallCache(runtime_root / "exact-calls.json")
     pricing = PricingTable.load(PRICING)
@@ -342,15 +401,43 @@ async def _paid_run(args) -> dict:
         answer_verification_enabled=args.arm == "answer-verification",
         structured_mode=structured_mode,
     )
+    retrieval_integration = {
+        "evidence_slate_enabled": settings.retrieval_evidence_slate_enabled,
+        "rerank_pool_k": settings.retrieval_rerank_pool_k,
+        "retrieval_cache_enabled": settings.retrieval_cache_enabled,
+        "retrieval_cache_corpus_version": settings.retrieval_cache_corpus_version,
+        "query_rewrite_enabled": settings.query_rewrite_enabled,
+        "query_guard_enabled": settings.query_guard_enabled,
+    }
+    if args.require_rag_depth_integration and not all((
+        settings.retrieval_evidence_slate_enabled,
+        settings.retrieval_cache_enabled,
+        bool(settings.retrieval_cache_corpus_version.strip()),
+        settings.query_rewrite_enabled,
+        settings.query_guard_enabled,
+    )):
+        raise RuntimeError("RAG-depth smoke requires slate/cache/rewrite-guard wiring")
+    contract["retrieval_integration"] = retrieval_integration
+    _write_json(attempt_root / "run-contract.json", contract)
+    _write_json(output / "run-contract.json", contract)
 
     split_results = {}
+    run_started = time.monotonic()
     for split in splits:
-        results = await run_split(
-            cases[split],
-            app=app,
-            capture=capture,
-            budget=budget,
-            output_root=attempt_root / split,
+        remaining_seconds = float(args.max_wall_seconds) - (
+            time.monotonic() - run_started
+        )
+        if remaining_seconds <= 0:
+            raise RuntimeError(f"wall-clock stop rule reached: {args.max_wall_seconds}s")
+        results = await asyncio.wait_for(
+            run_split(
+                cases[split],
+                app=app,
+                capture=capture,
+                budget=budget,
+                output_root=attempt_root / split,
+            ),
+            timeout=remaining_seconds,
         )
         summary = summarize_results(results)
         summary["model_calls"] = {
@@ -374,6 +461,7 @@ async def _paid_run(args) -> dict:
         "model": settings.openai_model,
         "answer_verification_enabled": settings.answer_verification_enabled,
         "retrieval_route": settings.retrieval_route,
+        "retrieval_integration": retrieval_integration,
     }
     _write_json(attempt_root / "aggregate.json", aggregate)
     return aggregate
@@ -447,7 +535,7 @@ def rescore(args) -> dict:
     return summary
 
 
-def main(argv: list[str] | None = None) -> int:
+def _build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="ShopHelper E2E quality baseline R2")
     parser.add_argument("--diagnose-history", action="store_true")
     parser.add_argument("--run", action="store_true")
@@ -464,8 +552,21 @@ def main(argv: list[str] | None = None) -> int:
                         default="baseline")
     parser.add_argument("--attempt", type=int, default=1)
     parser.add_argument("--max-cost-usd", type=float, default=2.0)
+    parser.add_argument("--session-budget", type=Path, default=DEFAULT_SESSION_BUDGET)
+    parser.add_argument("--case-ids", default=None,
+                        help="comma-separated fixed case ids for a bounded smoke")
+    parser.add_argument("--max-provider-calls", type=int, default=1000,
+                        help="maximum calls in this run, not across concurrent processes")
+    parser.add_argument("--max-wall-seconds", type=float, default=1800.0)
+    parser.add_argument("--require-rag-depth-integration", action="store_true",
+                        help="require the opt-in RAG depth features for integration smoke")
     parser.add_argument("--allow-paid", action="store_true")
     parser.add_argument("--results", type=Path)
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = _build_parser()
     args = parser.parse_args(argv)
 
     if args.diagnose_history:

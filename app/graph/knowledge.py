@@ -59,6 +59,11 @@ def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
             f" rerank_pool={rerank_pool_size}"
             f" select_ms={selection_latency_ms:.3f}"
         )
+        retrieval_trace = (
+            f"node=retrieve strategy=hybrid_rerank top1={top1} "
+            f"low_confidence={result.low_confidence} "
+            f"n={len(evidence)}{selection_trace}"
+        )
         return {"evidence": evidence, "low_confidence": result.low_confidence,
                 "low_reason": result.reason,
                 "retrieved_chunks": snapshot,
@@ -66,9 +71,7 @@ def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
                 "selection_facets": selection_facets,
                 "selection_latency_ms": selection_latency_ms,
                 "rerank_pool_size": rerank_pool_size,
-                "trace": [*state["trace"], f"node=retrieve strategy=hybrid_rerank top1={top1} "
-                                           f"low_confidence={result.low_confidence} "
-                                           f"n={len(evidence)}{selection_trace}"]}
+                "trace": [*state["trace"], retrieval_trace]}
 
     async def gate_node(state, writer=None, config=None) -> dict:
         if state["low_confidence"]:

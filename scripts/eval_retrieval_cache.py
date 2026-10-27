@@ -13,7 +13,7 @@ import json
 import math
 import shutil
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from sqlalchemy import create_engine
@@ -47,7 +47,7 @@ QUERIES = {
 
 
 class _CountingHttpClient:
-    def __init__(self, inner, counter: "_HttpCounter", kind: str) -> None:
+    def __init__(self, inner, counter: _HttpCounter, kind: str) -> None:
         self.inner = inner
         self.counter = counter
         self.kind = kind
@@ -457,7 +457,7 @@ def run(args) -> dict:
     if not settings.embedding_api_key:
         raise RuntimeError("EMBEDDING_API_KEY 未配置")
 
-    stamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
     run_dir = Path(args.run_dir) if args.run_dir else DEFAULT_OUTPUT / f"live-{stamp}"
     if args.resume:
         if args.run_dir is None or not run_dir.is_dir():

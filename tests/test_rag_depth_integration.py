@@ -6,8 +6,6 @@ import asyncio
 import json
 from types import SimpleNamespace
 
-import pytest
-
 from app.graph.knowledge import make_knowledge_nodes
 from app.retrieval import RetrievalResult, Retrieved
 from app.tools.base import ToolContext, ToolRegistryV2

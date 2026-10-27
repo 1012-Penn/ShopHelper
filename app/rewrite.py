@@ -85,7 +85,7 @@ class QueryRewriter:
                 normalized_audit,
                 tuple(dropped_synonyms),
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 - rewrite is an enhancement; preserve the query.
             audit = QueryGuardDecision(
                 False, query, ("upstream_error",), (), ()
             )

@@ -25,7 +25,6 @@ from scripts.eval_cost import (
     AttemptLedger,
     AuditedChat,
     BudgetExceeded,
-    BudgetLedger,
     CallResultJournal,
     CostTracker,
     PricingTable,
@@ -144,7 +143,7 @@ class RetryingStructured:
                 return result
             except BudgetExceeded:
                 raise
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - bounded retries record all failures.
                 self.failures += 1
                 self.latency_ms += (time.perf_counter() - started) * 1000
                 self.cost_usd += float(self.cost.spent_usd) - before_cost
@@ -193,7 +192,7 @@ def _git_state() -> dict:
             ["git", "status", "--porcelain"], cwd=ROOT, text=True
         ).strip())
         return {"commit": commit, "dirty": dirty}
-    except Exception:
+    except Exception:  # noqa: BLE001 - dirty state is the safe fallback.
         return {"commit": "", "dirty": True}
 
 
@@ -408,7 +407,7 @@ def run(args) -> int:
     os.environ["DATABASE_URL"] = f"sqlite:///{args.sqlite_db.resolve()}"
     if not os.environ.get("OPENAI_API_KEY"):
         raise RuntimeError("缺少 OPENAI_API_KEY(未打印凭据)")
-    ctx, harness_config, source_contract = _build_runner_context(cases, args)
+    ctx, _, source_contract = _build_runner_context(cases, args)
     model = Settings().openai_model
     journal = CallResultJournal(args.call_cache)
     legacy_resolve = _structured(
@@ -472,15 +471,16 @@ def run(args) -> int:
             "safe_rewrite": safe_rewrite.snapshot(),
         }
 
-        def delta(name: str) -> dict:
-            before = stage_before[name]
-            after = stage_after[name]
+        def delta(name: str, before: dict, after: dict) -> dict:
             return {key: round(after[key] - before[key], 8)
                     if isinstance(after[key], float)
                     else after[key] - before[key]
                     for key in after}
 
-        deltas = {name: delta(name) for name in stage_after}
+        deltas = {
+            name: delta(name, stage_before[name], stage_after[name])
+            for name in stage_after
+        }
         for name in ("raw", "legacy", "safe"):
             stage_stats = {} if name == "raw" else {
                 key: value for key, value in deltas.items()

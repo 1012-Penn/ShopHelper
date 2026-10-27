@@ -1,0 +1,141 @@
+{
+  "answer_verification_enabled": false,
+  "budget": {
+    "calls": 22,
+    "limit_usd": 2.0,
+    "pending_usd": 0,
+    "settled_usd": 0.00826266
+  },
+  "contract": {
+    "answer_verification_enabled": false,
+    "arm": "baseline",
+    "budget_limit_usd": 2.0,
+    "case_counts": {
+      "dev": 3
+    },
+    "case_files": {
+      "dev": "06ad620f92803b4adb9231288d93ef98f33185162f4a1cbec65fcb9c44418029",
+      "heldout": "0e133a917088fb5be585eb37f031cf507b6875535926c0b8b16097380f542919"
+    },
+    "case_ids": [
+      "DEV-DIRECT-E300",
+      "DEV-POLICY-V2",
+      "DEV-SHIP-REMOTE"
+    ],
+    "case_manifest": "tests/eval/e2e_quality_r2/manifest.json",
+    "case_manifest_sha256": "41e17bc316b88f2cbeb74ae421118ee2edaa5bd57d42014e4f9e449cc95c0e62",
+    "harness_sha256": "7b548e53495750775fcfa691bfd2deb6118f4a6fb6f931d8df2b4d38961896de",
+    "heldout_policy": "run once after freeze; no held-out-driven tuning",
+    "history_sha256": "e5205d1d41c96181b4f6a46340d0a77325df78a2762a10062b29981f3be9e8a7",
+    "max_provider_calls": 40,
+    "max_wall_seconds": 600.0,
+    "model": "deepseek-flash",
+    "model_temperature": "production default",
+    "pricing": {
+      "path": "tests/eval/rag_ablation/pricing-snapshot-2026-10-26.yaml",
+      "sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+      "verified": true,
+      "version": "2026-10-26"
+    },
+    "rag_gap_trigger_enabled": false,
+    "retrieval_integration": {
+      "evidence_slate_enabled": true,
+      "query_guard_enabled": true,
+      "query_rewrite_enabled": true,
+      "rerank_pool_k": 50,
+      "retrieval_cache_corpus_version": "rag-depth-smoke-20261027-v1",
+      "retrieval_cache_enabled": true
+    },
+    "retrieval_route": "hybrid_rerank",
+    "run_version": "e2e-quality-r2-v1",
+    "schema_version": 1,
+    "scorer_sha256": "fe9999044dd5ff88fff579e79017cb08d328ecae27455b3da3480b4cdd43d679",
+    "session_budget_path": "tests/eval/e2e_quality_r2/results/rag-depth-smoke-v1/session-budget.json",
+    "snapshot_expected_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+    "splits": [
+      "dev"
+    ],
+    "structured_output_mode": "production"
+  },
+  "model": "deepseek-flash",
+  "retrieval_integration": {
+    "evidence_slate_enabled": true,
+    "query_guard_enabled": true,
+    "query_rewrite_enabled": true,
+    "rerank_pool_k": 50,
+    "retrieval_cache_corpus_version": "rag-depth-smoke-20261027-v1",
+    "retrieval_cache_enabled": true
+  },
+  "retrieval_route": "hybrid_rerank",
+  "schema_version": 1,
+  "splits": {
+    "dev": {
+      "case_ids": [
+        "DEV-DIRECT-E300",
+        "DEV-SHIP-REMOTE",
+        "DEV-POLICY-V2"
+      ],
+      "citations": {
+        "uncertain": 2,
+        "unsupported": 1
+      },
+      "clarify": 0,
+      "conditions": {
+        "measured": 2,
+        "passed": 2
+      },
+      "embedding_cost_usd": 0.0,
+      "empty_answers": 0,
+      "entities": {
+        "measured": 1,
+        "passed": 1
+      },
+      "expected_actual_behavior": {
+        "answer->answer": 1,
+        "answer_with_conditions->answer": 2
+      },
+      "facts": {
+        "measured": 3,
+        "passed": 3
+      },
+      "failure_labels": {
+        "citation_uncertain": 2,
+        "citation_unsupported": 1
+      },
+      "generation_cost_usd": 0.00554424,
+      "input_tokens": 30785,
+      "judge_cost_usd": 0.00271842,
+      "model_calls": {
+        "by_kind": {
+          "answer": 4,
+          "embedding": 3,
+          "evidence_judge": 3,
+          "intent": 3,
+          "llm": 3,
+          "rerank": 3,
+          "resolve": 3
+        },
+        "cache_hits": 0,
+        "calls": 22
+      },
+      "n": 3,
+      "other_cost_usd": 0.0,
+      "output_tokens": 3692,
+      "p50_latency_ms": 14543.082,
+      "p95_latency_ms": 17040.11,
+      "refusal": 0,
+      "rerank_cost_usd": 0.0,
+      "review_required": 2,
+      "routes": {
+        "measured": 0,
+        "passed": 0
+      },
+      "success": 0,
+      "technical_failures": 0,
+      "tools": {
+        "measured": 0,
+        "passed": 0
+      }
+    }
+  }
+}

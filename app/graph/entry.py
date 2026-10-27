@@ -108,10 +108,11 @@ def make_resolve_node(resolver, *, protect: bool = True):
             guard_line = " guard=pass" if guard.accepted else " guard=fallback"
             if guard.violations:
                 guard_line += f" violations={','.join(guard.violations)}"
+        resolve_trace = (
+            f"node=resolve changed={changed}{guard_line} q={_one_line(resolved)}"
+        )
         return {"resolved_message": resolved,
-                "trace": [*state["trace"],
-                          f"node=resolve changed={changed}{guard_line} "
-                          f"q={_one_line(resolved)}"]}
+                "trace": [*state["trace"], resolve_trace]}
 
     return resolve_node
 

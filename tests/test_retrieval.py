@@ -1,9 +1,8 @@
 """检索策略模块:四策略同一真库(milvus-lite tmp),反漏斗纯函数,低置信与过滤回退。"""
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
-
-import pytest
 
 from app.chunking import Chunk
 from app.kb import KnowledgeBaseStore, vectorize_pending

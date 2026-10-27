@@ -161,7 +161,7 @@ def _load_cases(path: Path) -> list[dict]:
 
 def run(args) -> dict:
     from scripts.eval_ch11 import _build_context
-    from scripts.eval_cost import AttemptLedger, BudgetExceeded
+    from scripts.eval_cost import AttemptLedger
 
     split_path = args.cases or ROOT / "tests" / "eval" / "splits" / f"{args.split}.jsonl"
     cases = _load_cases(split_path)
@@ -191,10 +191,7 @@ def run(args) -> dict:
         rewrite_cache=args.rewrite_cache,
         rewrite_cache_mode="read",
     )
-    try:
-        ctx, _, source_contract = _build_context(config, context_args, cases)
-    except BudgetExceeded:
-        raise
+    ctx, _, source_contract = _build_context(config, context_args, cases)
     ctx.cost.attempt_ledger = AttemptLedger(args.attempt_ledger)
     ctx.cost.max_cost_usd = args.max_cost_usd
     ctx.cost.ledger.total_limit_usd = args.max_cost_usd
@@ -300,7 +297,7 @@ def run(args) -> dict:
                     ),
                     "technical_error": None,
                 }
-            except Exception as exc:  # keep every failed case auditable
+            except Exception as exc:  # noqa: BLE001 - persist every failed case.
                 row = {
                     "case_id": case_id,
                     "bucket": case.get("bucket", ""),
@@ -367,7 +364,7 @@ def main(argv: list[str] | None = None) -> int:
         args.attempt_ledger = args.out / "attempts.jsonl"
     try:
         summary = run(args)
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - CLI boundary reports cleanly.
         print(f"评测中止:{type(exc).__name__}: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(summary, ensure_ascii=False, indent=2))

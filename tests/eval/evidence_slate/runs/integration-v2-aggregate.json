@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "metric": "Top-5 complete required-evidence coverage",
+  "provider_calls": 0,
+  "posthoc_after_holdout": true,
+  "splits": {
+    "dev": {
+      "cases": 43,
+      "baseline_hits": 26,
+      "candidate_hits": 42,
+      "wins": 16,
+      "losses": 0,
+      "source": "integration-v2-dev/summary.json"
+    },
+    "frozen-v1": {
+      "cases": 65,
+      "baseline_hits": 49,
+      "candidate_hits": 65,
+      "wins": 16,
+      "losses": 0,
+      "source": "integration-v2-frozen/summary.json"
+    },
+    "retrieval-slate-holdout-v1": {
+      "cases": 20,
+      "baseline_hits": 13,
+      "candidate_hits": 20,
+      "wins": 7,
+      "losses": 0,
+      "source": "integration-v2-holdout/summary.json",
+      "original_frozen_run": {
+        "candidate_hits": 18,
+        "wins": 6,
+        "losses": 1
+      }
+    }
+  },
+  "combined_eligible": {
+    "cases": 128,
+    "baseline_hits": 88,
+    "candidate_hits_original": 125,
+    "candidate_hits_posthoc": 127,
+    "wins_original": 38,
+    "losses_original": 1,
+    "wins_posthoc": 39,
+    "losses_posthoc": 0,
+    "baseline_group_recall_at_5": 0.820312,
+    "candidate_group_recall_at_5": 0.996094,
+    "baseline_mrr_at_10": 0.460888,
+    "candidate_mrr_at_10": 0.658408
+  },
+  "boundaries": [
+    "Includes dev and previously inspected regression questions; not an independent generalization estimate.",
+    "The 20-item holdout was originally run once at 13/20 baseline and 18/20 candidate.",
+    "The post-hoc regional-rate and damage-definition fixes raised saved-candidate holdout replay to 20/20 with zero provider calls.",
+    "This metric is evidence coverage, not final-answer correctness."
+  ]
+}

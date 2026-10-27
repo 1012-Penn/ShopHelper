@@ -7,11 +7,29 @@ from tests.helpers import EchoResolver, fake_chat
 
 
 def _state(**kw):
-    base = dict(session_id=1, user_message="它能退吗", resolved_message="", intent="",
-                intent_confidence=0.0, evidence=[], low_confidence=False, low_reason="",
-                gate_passed=False, agent_steps=0, final_reply="", suggested_actions=[],
-                trace=[], messages=[], history=[], order={}, expand_queries=[],
-                refund_flow=False, pending_order_id="", resume_order_id="", resume_question="")
+    base = {
+        "session_id": 1,
+        "user_message": "它能退吗",
+        "resolved_message": "",
+        "intent": "",
+        "intent_confidence": 0.0,
+        "evidence": [],
+        "low_confidence": False,
+        "low_reason": "",
+        "gate_passed": False,
+        "agent_steps": 0,
+        "final_reply": "",
+        "suggested_actions": [],
+        "trace": [],
+        "messages": [],
+        "history": [],
+        "order": {},
+        "expand_queries": [],
+        "refund_flow": False,
+        "pending_order_id": "",
+        "resume_order_id": "",
+        "resume_question": "",
+    }
     base.update(kw)
     return base
 

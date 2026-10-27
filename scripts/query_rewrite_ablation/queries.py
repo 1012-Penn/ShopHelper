@@ -10,7 +10,7 @@ from app.query_guard import (
     audit_query_rewrite,
     safe_resolve_prompt,
 )
-from app.rewrite import QueryRewrite, REWRITE_PROMPT, SAFE_REWRITE_PROMPT
+from app.rewrite import REWRITE_PROMPT, SAFE_REWRITE_PROMPT, QueryRewrite
 
 
 @dataclass(frozen=True)
@@ -74,7 +74,7 @@ def build_query_variants(
         legacy_resolved, _ = _resolved_text(
             legacy_resolve(RESOLVE_PROMPT.format(history=history or "(无)", query=current))
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - model failures become trace data.
         errors.append(f"legacy_resolve:{_safe_error(exc)}")
         legacy_resolved = current
     legacy_resolved = legacy_resolved or current
@@ -88,7 +88,7 @@ def build_query_variants(
             item.strip() for item in legacy_rewrite_result.synonyms
             if item and item.strip()
         )[:3]
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - model failures become trace data.
         errors.append(f"legacy_rewrite:{_safe_error(exc)}")
         legacy_normalized, legacy_synonyms = legacy_resolved, ()
     rewrite_audit = audit_query_rewrite(legacy_resolved, legacy_normalized)
@@ -107,7 +107,7 @@ def build_query_variants(
         safe_resolved, _ = _resolved_text(
             safe_resolve(safe_resolve_prompt(current, history or "(无)"))
         )
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - model failures become trace data.
         errors.append(f"safe_resolve:{_safe_error(exc)}")
         safe_resolved = current
     safe_resolved = safe_resolved or current
@@ -122,7 +122,7 @@ def build_query_variants(
             item.strip() for item in safe_rewrite_result.synonyms
             if item and item.strip()
         ][:3]
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - model failures become trace data.
         errors.append(f"safe_rewrite:{_safe_error(exc)}")
         candidate, candidates = safe_resolved, []
     rewrite_audit = audit_query_rewrite(safe_resolved, candidate)
