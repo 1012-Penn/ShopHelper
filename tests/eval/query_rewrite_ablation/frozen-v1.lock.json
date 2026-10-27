@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "split": "frozen-v1",
+  "case_count": 20,
+  "seed_sha256": "41357c479b54260425609d26708721d5f7ae6c96ff998554d7f0b2522667c6f9",
+  "split_sha256": "640083f1147aef2a58912cede7abff77413f3d0adb4ecea35beb82b420013f1b",
+  "frozen_from_commit": "4ab7b32661448cfb93b5750115e31706b1225b1e",
+  "frozen_at": "2026-10-27",
+  "isolation": {
+    "gold_fact_overlap_with_dev": 0,
+    "template_overlap_with_dev": 0,
+    "synonym_variants_counted_as_cases": false
+  }
+}

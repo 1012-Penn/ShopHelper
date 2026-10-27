@@ -8,6 +8,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 
 from app.orders import extract_order_id
 from app.prompts import INTENT_PROMPT, RESOLVE_PROMPT
+from app.query_guard import audit_history_resolution, safe_resolve_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +60,7 @@ def _one_line(text: str) -> str:
     return " ".join(str(text).split())
 
 
-def make_resolve_node(resolver):
+def make_resolve_node(resolver, *, protect: bool = True):
     """resolver = with_structured_output(ResolvedQuestion) 产物;resume 旁路不走 LLM;异常兜底透传。
 
     ch07:{history} 槽位改喂分层历史的文本渲染(摘要行+滑窗),由路由层预算好放进 layered。
@@ -72,11 +73,17 @@ def make_resolve_node(resolver):
             return {"resolved_message": q,
                     "trace": [*state["trace"], f"node=resolve resume_bypass q={_one_line(q)}"]}
         result = None
+        history_text = (state.get("layered") or {}).get("history_text") or "(无)"
         try:
+            prompt = (
+                safe_resolve_prompt(state["user_message"], history_text)
+                if protect
+                else RESOLVE_PROMPT.format(
+                    history=history_text, query=state["user_message"]
+                )
+            )
             result = await resolver.ainvoke(
-                RESOLVE_PROMPT.format(
-                    history=(state.get("layered") or {}).get("history_text") or "(无)",
-                    query=state["user_message"]), config)
+                prompt, config)
         except Exception:
             logger.warning("resolve 上游失败,原样透传", exc_info=True)
         if isinstance(result, dict):
@@ -87,12 +94,24 @@ def make_resolve_node(resolver):
             changed_raw = getattr(result, "changed", False)
         if not resolved:
             resolved = state["user_message"]
+        guard = None
+        if protect:
+            guard = audit_history_resolution(
+                state["user_message"], history_text, resolved
+            )
+            resolved = guard.text
         changed = bool(changed_raw) and resolved != state["user_message"]
         if changed:
             _emit(writer, {"type": "resolved", "changed": True, "question": resolved})
+        guard_line = ""
+        if guard is not None:
+            guard_line = " guard=pass" if guard.accepted else " guard=fallback"
+            if guard.violations:
+                guard_line += f" violations={','.join(guard.violations)}"
         return {"resolved_message": resolved,
                 "trace": [*state["trace"],
-                          f"node=resolve changed={changed} q={_one_line(resolved)}"]}
+                          f"node=resolve changed={changed}{guard_line} "
+                          f"q={_one_line(resolved)}"]}
 
     return resolve_node
 

@@ -1,0 +1,14 @@
+{
+  "case_count": 20,
+  "variants": [
+    "raw",
+    "legacy",
+    "safe"
+  ],
+  "max_logical_query_calls_before_retry": 80,
+  "max_attempts_with_one_repair": 160,
+  "estimate_usd": 0.20544,
+  "hard_limit_usd": 2.0,
+  "within_limit": true,
+  "notes": "upper-bound planning estimate; cache hits and actual token usage can lower it"
+}

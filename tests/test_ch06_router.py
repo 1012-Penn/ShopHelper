@@ -30,8 +30,14 @@ async def test_resolve_rewrites_with_history():
     resolver = EchoResolver({"它能退吗": ResolvedQuestion(resolved="订单1001的无线耳机能退吗", changed=True)})
     frames = []
     node = make_resolve_node(resolver)
-    out = await node(_state(history=[{"role": "user", "content": "SH-E300耳机多少钱"}]),
-                     writer=frames.append)
+    history = "用户：订单1001的无线耳机多少钱"
+    out = await node(
+        _state(
+            history=[{"role": "user", "content": "订单1001的无线耳机多少钱"}],
+            layered={"history_text": history},
+        ),
+        writer=frames.append,
+    )
     assert out["resolved_message"] == "订单1001的无线耳机能退吗"
     assert frames and frames[0]["type"] == "resolved" and frames[0]["changed"] is True
     assert "node=resolve changed=True" in out["trace"][-1]
@@ -176,5 +182,47 @@ async def test_resolve_dict_output_supported():
             return {"resolved": "订单1001的无线耳机能退吗", "changed": True}
 
     node = make_resolve_node(DictResolver())
-    out = await node(_state(), writer=None)
+    out = await node(
+        _state(layered={"history_text": "用户：订单1001的无线耳机能退吗"}),
+        writer=None,
+    )
     assert out["resolved_message"] == "订单1001的无线耳机能退吗"
+
+
+async def test_resolve_guard_keeps_latest_explicit_entity_on_swap():
+    resolver = EchoResolver({
+        "ORD-1003 能取消吗": ResolvedQuestion(
+            resolved="ORD-1002 能取消吗", changed=True
+        )
+    })
+    frames = []
+    node = make_resolve_node(resolver)
+
+    out = await node(
+        _state(user_message="ORD-1003 能取消吗", layered={
+            "history_text": "用户：ORD-1002 是什么状态？\n客服：已支付未发货。"
+        }),
+        writer=frames.append,
+    )
+
+    assert out["resolved_message"] == "ORD-1003 能取消吗"
+    assert frames == []
+    assert "guard=fallback" in out["trace"][-1]
+    assert "missing_anchor:ORD-1003" in out["trace"][-1]
+
+
+async def test_resolve_guard_accepts_history_grounded_entity():
+    resolver = EchoResolver({
+        "它续航多久": ResolvedQuestion(resolved="SH-E300 续航多久", changed=True)
+    })
+    node = make_resolve_node(resolver)
+
+    out = await node(
+        _state(user_message="它续航多久", layered={
+            "history_text": "用户：SH-E300 多少钱？\n客服：299 元。"
+        }),
+        writer=None,
+    )
+
+    assert out["resolved_message"] == "SH-E300 续航多久"
+    assert "guard=pass" in out["trace"][-1]
