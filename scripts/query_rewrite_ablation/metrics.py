@@ -20,6 +20,12 @@ def _percentile(values: list[float], quantile: float) -> float | None:
 
 def _paired(left: dict[str, dict], right: dict[str, dict], metric: str) -> dict:
     shared = sorted(set(left) & set(right))
+    if metric in {"complete_at_5", "complete_at_10"}:
+        shared = [
+            case_id for case_id in shared
+            if left[case_id]["metrics"].get("coverage_applicable", True)
+            and right[case_id]["metrics"].get("coverage_applicable", True)
+        ]
     gains = losses = ties = 0
     for case_id in shared:
         a = bool(left[case_id]["metrics"].get(metric))
@@ -30,7 +36,7 @@ def _paired(left: dict[str, dict], right: dict[str, dict], metric: str) -> dict:
             losses += 1
         else:
             ties += 1
-    return {"gains": gains, "losses": losses, "ties": ties}
+    return {"pairs": len(shared), "gains": gains, "losses": losses, "ties": ties}
 
 
 def summarize_variant_traces(traces: list[dict]) -> dict:
@@ -45,16 +51,25 @@ def summarize_variant_traces(traces: list[dict]) -> dict:
     variants: dict[str, dict] = {}
     for variant, rows in sorted(by_variant.items()):
         metrics = [row["metrics"] for row in rows]
+        coverage_metrics = [
+            metric for metric in metrics
+            if metric.get("coverage_applicable", True)
+        ]
         latencies = [float(row.get("latency_ms") or 0.0) for row in rows]
         costs = [float(row.get("cost_usd") or 0.0) for row in rows]
+        failures = sum(bool(row.get("error")) for row in rows)
+        query_errors = sum(bool(row.get("query_errors")) for row in rows)
         variants[variant] = {
             "cases": len(rows),
-            "complete_at_5": _ratio([m.get("complete_at_5") for m in metrics]),
-            "complete_at_10": _ratio([m.get("complete_at_10") for m in metrics]),
+            "coverage_cases": len(coverage_metrics),
+            "complete_at_5": _ratio([m.get("complete_at_5") for m in coverage_metrics]),
+            "complete_at_10": _ratio([m.get("complete_at_10") for m in coverage_metrics]),
             "mrr_at_10": round(
-                sum(float(m.get("mrr_at_10") or 0.0) for m in metrics) / len(metrics),
+                sum(float(m.get("mrr_at_10") or 0.0) for m in coverage_metrics)
+                / len(coverage_metrics),
                 6,
-            ) if metrics else 0.0,
+            ) if coverage_metrics else 0.0,
+            "anchors_complete": _ratio([m.get("anchors_complete") for m in metrics]),
             "intent_preserved": _ratio([m.get("intent_preserved") for m in metrics]),
             "wrong_entity": sum(bool(m.get("wrong_entity")) for m in metrics),
             "latency_ms": {
@@ -62,7 +77,12 @@ def summarize_variant_traces(traces: list[dict]) -> dict:
                 "p95": _percentile(latencies, 0.95),
             },
             "cost_estimate_usd": round(sum(costs), 8),
-            "failures": sum(bool(row.get("error")) for row in rows),
+            "failures": failures,
+            "failure_rate": _ratio([bool(row.get("error")) for row in rows]),
+            "query_errors": query_errors,
+            "query_error_rate": _ratio([
+                bool(row.get("query_errors")) for row in rows
+            ]),
         }
 
     comparisons = {}

@@ -117,11 +117,13 @@ def test_summarize_variant_traces_reports_denominators_and_paired_changes():
     assert summary["variants"]["safe"]["intent_preserved"] == {"numerator": 3, "denominator": 3}
     assert summary["variants"]["legacy"]["wrong_entity"] == 1
     assert summary["paired"]["safe_vs_raw"]["complete_at_5"] == {
+        "pairs": 3,
         "gains": 1,
         "losses": 0,
         "ties": 2,
     }
     assert summary["paired"]["safe_vs_legacy"]["complete_at_5"] == {
+        "pairs": 3,
         "gains": 1,
         "losses": 0,
         "ties": 2,

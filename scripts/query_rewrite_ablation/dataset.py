@@ -32,6 +32,7 @@ def build_cases(
     """Expand seeds and fail if a fact is not covered by a selected evidence unit."""
     cases: list[dict] = []
     seen_ids: set[str] = set()
+    expanded_metadata = split == "frozen-v2"
     for seed in seeds:
         case = copy.deepcopy(seed)
         case_id = str(case.get("id") or "").strip()
@@ -40,8 +41,13 @@ def build_cases(
         seen_ids.add(case_id)
         fact_ids = list(dict.fromkeys(case.pop("gold_fact_ids", [])))
         evidence_ids = list(dict.fromkeys(case.pop("evidence_ids", [])))
-        if not fact_ids or not evidence_ids:
-            raise ValueError(f"{case_id}: gold_fact_ids/evidence_ids 不能为空")
+        evaluation_mode = str(case.pop("evaluation_mode", "retrieval"))
+        if evaluation_mode not in {"retrieval", "intent_only"}:
+            raise ValueError(f"{case_id}: 未知 evaluation_mode:{evaluation_mode!r}")
+        if evaluation_mode == "retrieval" and (not fact_ids or not evidence_ids):
+            raise ValueError(f"{case_id}: retrieval 题 gold_fact_ids/evidence_ids 不能为空")
+        if evaluation_mode == "intent_only" and (fact_ids or evidence_ids):
+            raise ValueError(f"{case_id}: intent_only 题不应声明 gold/evidence")
         missing_facts = sorted(set(fact_ids) - set(factbook.facts))
         missing_evidence = sorted(set(evidence_ids) - set(factbook.evidence))
         if missing_facts:
@@ -57,6 +63,7 @@ def build_cases(
                 )
 
         source_refs: list[str] = []
+        expected_behavior = str(case.pop("expected_behavior", "answer"))
         full_case = {
             "schema_version": 2,
             "id": case_id,
@@ -65,7 +72,7 @@ def build_cases(
             "bucket": str(case.pop("bucket", "query_rewrite")),
             "query": str(case.pop("query", "")).strip(),
             "conversation_context": list(case.pop("conversation_context", [])),
-            "expected_behavior": str(case.pop("expected_behavior", "answer")),
+            "expected_behavior": expected_behavior,
             "answerable": True,
             "evidence_state": "sufficient",
             "required_slots": [],
@@ -84,8 +91,14 @@ def build_cases(
             "reviewer": "codex",
             "review_status": review_status,
         }
+        if expanded_metadata:
+            full_case["evaluation_mode"] = evaluation_mode
         if not full_case["query"]:
             raise ValueError(f"{case_id}: query 不能为空")
+        if evaluation_mode == "intent_only" and expected_behavior != "clarify":
+            raise ValueError(
+                f"{case_id}: intent_only 当前只允许 expected_behavior=clarify"
+            )
         full_case["gold_facts"] = [
             _gold_fact(factbook.fact(fact_id)) for fact_id in fact_ids
         ]
@@ -98,6 +111,10 @@ def build_cases(
             }
             for unit in selected_evidence
         ]
+        if expanded_metadata:
+            full_case["source_docs"] = list(dict.fromkeys(
+                unit.doc for unit in selected_evidence
+            ))
         for fact_id in fact_ids:
             source_refs.extend(
                 factbook.fact(fact_id).evidence_ids

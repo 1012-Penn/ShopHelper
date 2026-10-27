@@ -315,12 +315,20 @@ def _variant_trace(
             normalized=variant.normalized, synonyms=list(variant.synonyms)
         )),
     )
-    result = ctx.service.retrieve(
-        variant.text,
-        strategy=RETRIEVAL_STRATEGY,
-        prepared=prepared,
-    )
-    ranked = [item.chunk_id for item in result.items]
+    coverage_applicable = bool(gold)
+    result = None
+    error = None
+    if coverage_applicable:
+        try:
+            result = ctx.service.retrieve(
+                variant.text,
+                strategy=RETRIEVAL_STRATEGY,
+                prepared=prepared,
+            )
+        except Exception as exc:  # noqa: BLE001 - failures stay in the denominator.
+            error = f"{type(exc).__name__}: {exc}"[:500]
+    items = list(result.items) if result is not None else []
+    ranked = [item.chunk_id for item in items]
     rank = coverage_rank(ranked, gold, cap=10)
     rows = {row.id: row for row in ctx.all_rows.values() if row.id in ranked}
     return {
@@ -346,8 +354,9 @@ def _variant_trace(
         "metrics": {
             **query_intent_metrics(case, variant.text),
             "coverage_rank_at_10": rank,
-            "complete_at_5": rank is not None and rank <= 5,
-            "complete_at_10": rank is not None,
+            "coverage_applicable": coverage_applicable,
+            "complete_at_5": coverage_applicable and rank is not None and rank <= 5,
+            "complete_at_10": coverage_applicable and rank is not None,
             "mrr_at_10": mrr_at(ranked, gold, k=10) or 0.0,
             "evidence_group_recall_at_5":
                 evidence_group_recall(ranked, gold, cap=5),
@@ -359,16 +368,22 @@ def _variant_trace(
                 "score": item.score,
                 "section_path": getattr(rows.get(item.chunk_id), "section_path", ""),
             }
-            for index, item in enumerate(result.items, start=1)
+            for index, item in enumerate(items, start=1)
         ],
         "latency_ms": round(latency_ms, 3),
-        "retrieval_latency_ms": round(result.selection_latency_ms, 3),
+        "retrieval_latency_ms": round(
+            result.selection_latency_ms if result is not None else 0.0, 3
+        ),
         "cost_usd": round(query_cost_usd + retrieval_cost_usd, 8),
         "stage_stats": stage_stats,
+        "query_errors": list(variant.errors),
+        "error": error,
         "gate": {
-            "low_confidence": result.low_confidence,
-            "reason": result.reason,
-            "degraded": result.degraded,
+            "low_confidence": result.low_confidence if result is not None else False,
+            "reason": result.reason if result is not None else (error or ""),
+            "degraded": bool(error) or (
+                result.degraded if result is not None else False
+            ),
         },
     }
 

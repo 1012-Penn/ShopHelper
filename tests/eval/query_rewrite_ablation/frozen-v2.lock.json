@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "split": "frozen-v2",
+  "case_count": 60,
+  "dataset_sha256": "d5b007bd2946af8ea3c80779d3353a1960ee18a6f6efe36daaa3e38c3772720b",
+  "split_sha256": "aff680dfbfd9c2cfa38819bcd2d76386285b69333c2c40653fb29a9f9f038800",
+  "rubric_id": "query-rewrite-expanded-v1",
+  "rubric_sha256": "34390c25c499a7e691efafd826c03f94b7e4936d3f9c4d8023a1ccf8e20b63dc",
+  "frozen_from_commit": "1a0af586952121b829c7647cbb612abd255b9424",
+  "frozen_at": "2026-10-27",
+  "isolation": {
+    "gold_fact_overlap_with_dev_or_frozen_v1": 0,
+    "query_overlap_with_dev_or_frozen_v1": 0,
+    "template_overlap_with_dev_or_frozen_v1": 0,
+    "semantic_family_count": 60,
+    "synonym_variants_counted_as_cases": false
+  }
+}
