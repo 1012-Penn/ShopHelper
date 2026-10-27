@@ -63,6 +63,7 @@
   "notes": [
     "Credentials were read only from a read-only environment file and are not included.",
     "All costs use the saved 2026-10-26 price snapshot; embedding and rerank standard endpoints were listed as free.",
+    "The initial holdout process enforced the USD 2 per-run cap; the committed runner now also sets the cumulative ledger cap to USD 2.",
     "One parallel local launch was rejected before any API call because the Milvus Lite snapshot was locked; it is an execution error, not a retrieval result.",
     "Cached formal dev/frozen replay runs add no external API calls."
   ]
