@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "split": "frozen-v2",
+  "dataset_sha256": "d5b007bd2946af8ea3c80779d3353a1960ee18a6f6efe36daaa3e38c3772720b",
+  "split_sha256": "aff680dfbfd9c2cfa38819bcd2d76386285b69333c2c40653fb29a9f9f038800",
+  "snapshot_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+  "corpus_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+  "strategy": "hybrid_rerank",
+  "candidates": 50,
+  "final_top_k": 10,
+  "answer_generation_calls": 0,
+  "judge_calls": 0,
+  "query_model": "deepseek-flash",
+  "query_max_attempts": 2,
+  "budget_limit_usd": 2.0,
+  "pricing_sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478",
+  "git": {
+    "commit": "00ee14c5c89bcc718614649a73269a01d88b32f7",
+    "dirty": false
+  },
+  "estimate": {
+    "case_count": 60,
+    "variants": [
+      "raw",
+      "legacy",
+      "safe"
+    ],
+    "max_logical_query_calls_before_retry": 240,
+    "max_attempts_with_one_repair": 480,
+    "estimate_usd": 0.61632,
+    "hard_limit_usd": 2.0,
+    "within_limit": true,
+    "notes": "upper-bound planning estimate; cache hits and actual token usage can lower it"
+  },
+  "source_contract": {
+    "contract_version": 1,
+    "dataset": {
+      "split": "frozen-v2",
+      "sha256": "aff680dfbfd9c2cfa38819bcd2d76386285b69333c2c40653fb29a9f9f038800",
+      "file_sha256": "",
+      "label_version": "v2",
+      "n": 60,
+      "buckets": {
+        "multi_hop": 17,
+        "entity_mismatch": 3,
+        "multi_constraint": 22,
+        "clarify": 8,
+        "single_hop": 10
+      }
+    },
+    "corpus": {
+      "manifest_sha256": "c605628ef443db75c4250f6dd291f015eba3fbb861d1c6b7d9ee7ddc68c8256a",
+      "docs_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+      "facts_sha256": "07ffaa92aad72336443a31b3f7dd26ca381eef8b23a0f86e8f3f0efa44fcbb24",
+      "doc_count": 8,
+      "chunk_count": 130,
+      "chunk_max_chars": 500,
+      "overlap_chars": 80
+    },
+    "index": {
+      "backend": "milvus-lite",
+      "build_id": "ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba",
+      "collection": "knowledge",
+      "embedding_model": "BAAI/bge-m3",
+      "dim": 1024,
+      "snapshot_path": "data/eval-snapshots/ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba.db",
+      "snapshot_sha256": "b6b1fa237d03d2c0f8ddcfe8e003f13c4cb584f0764ac04c2d57ae834bbdca73",
+      "consistency": {
+        "ok": true,
+        "mysql_chunks": 130,
+        "milvus_chunks": 130,
+        "pending": 0,
+        "missing_ids": [],
+        "extra_ids": [],
+        "text_mismatch_ids": [],
+        "category_mismatch_ids": [],
+        "excluded_runtime_ids": [
+          28
+        ],
+        "build_id": "ebfd49478b37ef387c8b124319a450ed73a86ae2a4b9f4fc28d6a52b2ccaa0ba",
+        "corpus_sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+        "chunk_set_sha256": "d3f522c23c397491e132d79c6632e4ed05e38bcb2f9c04da2cd124afda730772"
+      }
+    },
+    "retrieval": {
+      "strategy": "hybrid_rerank",
+      "candidates": 50,
+      "top_k": 10,
+      "rerank_score_floor": 0.03,
+      "calibration_sha256": "45e71739f73dd4d028176d01081ecc167590730b40f2828187c4dc57321a143c",
+      "calibration_status": "stale"
+    },
+    "rewrite": {
+      "enabled": true,
+      "model": "deepseek-flash",
+      "mode": "identity",
+      "cache_sha256": ""
+    },
+    "llm": {
+      "model": "deepseek-flash",
+      "temperature": 0.0,
+      "prompt_sha256": "a98ec0e6894bc148a08bdf933bf3ea8efc7583850dd382bb5578ac7fa5aaf861"
+    },
+    "judge": {
+      "model": "deepseek-flash",
+      "temperature": 0,
+      "prompt_sha256": "96e3115282c3d446cc1818af51436fa64e7284af4bba240cf653842690d627f9",
+      "enabled": false,
+      "evidence_model": "deepseek-flash",
+      "evidence_temperature": 0,
+      "evidence_prompt_sha256": "84eded4d03eb758b03fafc2bd563ea05a264266a676dd0812ada5d977c4b5e81",
+      "evidence_enabled": false
+    },
+    "pricing": {
+      "version": "2026-10-26",
+      "currency": "USD",
+      "verified": true,
+      "sha256": "99261018b4e931a54f6b55f81eed1d413c38eacc8188d7f0723ac7c8e728e478"
+    },
+    "run": {
+      "git_commit": "00ee14c",
+      "git_dirty": false,
+      "seed": 20261024,
+      "python": "3.10.12",
+      "host": "",
+      "started_at": "2026-10-27T13:54:47.516362+00:00"
+    },
+    "harness": {
+      "version": "ch11-harness-1",
+      "mode": "retrieval",
+      "allow_paid": true,
+      "use_judge": false,
+      "rag_mode": "baseline"
+    },
+    "rag": {
+      "mode": "baseline",
+      "max_rounds": 3,
+      "token_budget": 3000,
+      "time_budget_s": 45.0,
+      "call_timeout_s": 20.0,
+      "max_sub_queries": 3,
+      "analyzer_enabled": false,
+      "analyzer_model": "",
+      "analyzer_temperature": 0,
+      "analyzer_prompt_sha256": "d4fee1662404b787c7a595fb21489c83c999b357e8b74a8b8ed432a02125c8f4"
+    },
+    "_sha": "46e00d40d48b6418e9f7e626c3aee9c60bf00a9ab2297ff2c9b3cfe4c2f4116d"
+  }
+}
