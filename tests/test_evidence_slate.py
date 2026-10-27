@@ -198,6 +198,40 @@ def test_quality_return_after_deadline_adds_policy_and_detection_rule():
     assert "quality_rule" in slate.facets
 
 
+def test_warranty_damage_question_adds_detection_definition():
+    documents = {
+        1: _doc(
+            1,
+            "售后手册.md > 售后手册 > 保修与维修 > 保修范围与期限",
+            "人为损坏或过保按检测结果收费。",
+        ),
+        2: _doc(
+            2,
+            "售后手册.md > 售后手册 > 保修与维修 > 人为损坏与过保",
+            "进水、摔损、私自拆机属于人为损坏。",
+        ),
+        3: _doc(
+            3,
+            "售后核验指引.md > 售后核验指引 > 质量问题认定原则",
+            "是否质量问题以检测结果为准。",
+        ),
+    }
+
+    slate = select_evidence_slate(
+        "保修期内进水，维修前要确认哪些费用和损坏判定？",
+        ranked_ids=[1, 2, 3],
+        documents=documents,
+        top_k=3,
+    )
+
+    assert slate.ordered_ids == [1, 2, 3]
+    assert slate.facets == [
+        "warranty_rule",
+        "warranty_damage",
+        "quality_rule",
+    ]
+
+
 def test_version_choice_question_includes_both_concrete_windows():
     documents = {
         1: _doc(1, "政策版本说明.md > 政策版本说明 > 新旧版本适用判定",

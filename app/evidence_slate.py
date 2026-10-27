@@ -207,10 +207,18 @@ def select_evidence_slate(
 
     if any(term in lower for term in ("保修", "质保", "维修")):
         add("warranty_rule", best(in_section("保修范围与期限")))
-        if any(term in lower for term in ("人为", "进水", "摔", "拆机", "过保")):
+        asks_damage = any(
+            term in lower for term in ("人为", "进水", "摔", "拆机", "过保", "损坏")
+        )
+        if asks_damage:
             add("warranty_damage", best(in_section("人为损坏与过保")))
+        if asks_damage and any(
+            term in lower for term in ("检测", "判定", "认定", "费用", "收费", "报价", "维修前")
+        ):
+            add("quality_rule", best(in_section("质量问题认定原则")))
 
-    if "质量问题" in lower and "天" in lower and "退" in lower:
+    if "质量问题" in lower and "天" in lower and "退" in lower \
+            and "quality_rule" not in facets:
         add("quality_rule", best(in_section("质量问题认定原则")))
 
     policy_query = any(
