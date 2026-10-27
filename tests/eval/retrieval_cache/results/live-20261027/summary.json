@@ -1,0 +1,187 @@
+{
+  "experiment": "retrieval-static-cache-cold-warm",
+  "generated_at": "2026-10-27T13:06:57.931159+08:00",
+  "elapsed_seconds": 47.122,
+  "scope": {
+    "chain": "RetrievalService.retrieve(strategy=hybrid_rerank)",
+    "query_rewrite": false,
+    "answer_generation": false,
+    "evidence_judge_calls": false,
+    "evidence_confidence_gate": true,
+    "provider": "SiliconFlow BGE-M3 embedding + BGE reranker",
+    "private_indexes_only": true,
+    "retry_policy": "max_attempts=2"
+  },
+  "settings": {
+    "embedding_model": "BAAI/bge-m3",
+    "rerank_model": "BAAI/bge-reranker-v2-m3",
+    "config_version": "3a9fe4a555dd25c42aabfd7c5e970ff03e170f1e56783f4e9caf0b018f5a1961",
+    "max_cost_usd": 2.0,
+    "iterations": 8
+  },
+  "corpus": {
+    "v1": {
+      "sha256": "52d1048465d0b842ab4165c851a47211d2e35ad6fd02ea68010a3fa5b0be7fa6",
+      "chunks": 130,
+      "build_id": "fcdb31812dc8ed32256ac9d18d93be5cb293c6f223517f6aa5164a393be7f82b"
+    },
+    "v2": {
+      "sha256": "edc5ec838819037ed3d81b0c1e69ac7b2b83fd9f130db016196322686ff94d93",
+      "chunks": 130,
+      "build_id": "37d0577cca5a12d9c8376c5bb4dbef50eec6da47f0d8f7033adfcb7ac5525e35"
+    }
+  },
+  "classes": [
+    {
+      "request_class": "repeated",
+      "queries": [
+        "SH-E300 无线降噪耳机怎么样?"
+      ],
+      "iterations": 8,
+      "cold": {
+        "requests": 8,
+        "p50_ms": 739.832,
+        "p95_ms": 2083.798,
+        "embedding_hits": 0,
+        "embedding_misses": 8,
+        "rerank_hits": 0,
+        "rerank_misses": 8,
+        "http_requests": 16,
+        "embedding_hit_rate": 0.0
+      },
+      "warm": {
+        "requests": 8,
+        "p50_ms": 35.833,
+        "p95_ms": 49.306,
+        "embedding_hits": 8,
+        "embedding_misses": 0,
+        "rerank_hits": 8,
+        "rerank_misses": 0,
+        "http_requests": 0,
+        "embedding_hit_rate": 1.0
+      },
+      "within_cache_replay_identical": true,
+      "cache": {
+        "embedding_capacity": 512,
+        "rerank_capacity": 256,
+        "embedding_entries": 1,
+        "rerank_entries": 1,
+        "ttl_seconds": 3600.0
+      }
+    },
+    {
+      "request_class": "non_repeated",
+      "queries": [
+        "退货申请提交后多久审核?",
+        "现货商品多久发货?",
+        "无线耳机保修期多久?",
+        "怎么申请保修?"
+      ],
+      "iterations": 8,
+      "cold": {
+        "requests": 32,
+        "p50_ms": 741.225,
+        "p95_ms": 1139.563,
+        "embedding_hits": 0,
+        "embedding_misses": 32,
+        "rerank_hits": 0,
+        "rerank_misses": 32,
+        "http_requests": 64,
+        "embedding_hit_rate": 0.0
+      },
+      "warm": {
+        "requests": 32,
+        "p50_ms": 27.84,
+        "p95_ms": 45.656,
+        "embedding_hits": 32,
+        "embedding_misses": 0,
+        "rerank_hits": 32,
+        "rerank_misses": 0,
+        "http_requests": 0,
+        "embedding_hit_rate": 1.0
+      },
+      "within_cache_replay_identical": true,
+      "cache": {
+        "embedding_capacity": 512,
+        "rerank_capacity": 256,
+        "embedding_entries": 4,
+        "rerank_entries": 4,
+        "ttl_seconds": 3600.0
+      }
+    },
+    {
+      "request_class": "updated",
+      "queries": [
+        "SH-E300 现在售价多少?"
+      ],
+      "iterations": 8,
+      "cold": {
+        "requests": 8,
+        "p50_ms": 761.14,
+        "p95_ms": 1077.968,
+        "embedding_hits": 0,
+        "embedding_misses": 8,
+        "rerank_hits": 0,
+        "rerank_misses": 8,
+        "http_requests": 16,
+        "embedding_hit_rate": 0.0
+      },
+      "warm": {
+        "requests": 8,
+        "p50_ms": 49.247,
+        "p95_ms": 80.245,
+        "embedding_hits": 8,
+        "embedding_misses": 0,
+        "rerank_hits": 8,
+        "rerank_misses": 0,
+        "http_requests": 0,
+        "embedding_hit_rate": 1.0
+      },
+      "within_cache_replay_identical": true,
+      "cache": {
+        "embedding_capacity": 512,
+        "rerank_capacity": 256,
+        "embedding_entries": 1,
+        "rerank_entries": 1,
+        "ttl_seconds": 3600.0
+      },
+      "reference": {
+        "v1_top_answer": "SH-E300 头戴式无线降噪耳机,售价 299 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。适合通勤与长时间办公使用,耳罩可更换。",
+        "v2_top_answer": "SH-E300 头戴式无线降噪耳机,售价 329 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。适合通勤与长时间办公使用,耳罩可更换。",
+        "corpus_changed": true,
+        "v1_contains_299": true,
+        "v2_contains_329": true,
+        "first_v2_request_was_miss": true,
+        "first_v2_warm_request_was_hit": true
+      }
+    }
+  ],
+  "update_invalidation": {
+    "v1_top_answer": "SH-E300 头戴式无线降噪耳机,售价 299 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。适合通勤与长时间办公使用,耳罩可更换。",
+    "v2_top_answer": "SH-E300 头戴式无线降噪耳机,售价 329 元,支持主动降噪,蓝牙 5.3,整机续航 30 小时,整机一年质保。适合通勤与长时间办公使用,耳罩可更换。",
+    "corpus_changed": true,
+    "v1_contains_299": true,
+    "v2_contains_329": true,
+    "first_v2_request_was_miss": true,
+    "first_v2_warm_request_was_hit": true
+  },
+  "provider_http": {
+    "embedding_http_requests": 55,
+    "rerank_http_requests": 55,
+    "total_http_requests": 110
+  },
+  "cost": {
+    "allow_paid": true,
+    "pricing_verified": true,
+    "pricing_version": "2026-10-25",
+    "pricing_currency": "USD",
+    "run_spent_usd": 0.001768,
+    "run_limit_usd": 2.0,
+    "ledger_total_usd": 0.003698,
+    "ledger_limit_usd": 2.0,
+    "calls": 110,
+    "api_attempts": 110,
+    "paid_api_attempts": 110
+  },
+  "price_boundary": "BAAI 标准版在价格页标注免费;账本仍按 $0.01/M 保守占位计费。因此不把缓存命中折算成金额节省。"
+}
