@@ -131,6 +131,11 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
                                  "text": f"{row.questions}\n{row.answer}"})
             from app.retrieval import lost_in_middle_order
 
+            selection_facets = list(getattr(result, "selection_facets", []) or [])
+            selection_latency_ms = float(
+                getattr(result, "selection_latency_ms", 0.0) or 0.0
+            )
+            rerank_pool_size = len(getattr(result, "rerank_candidates", []) or [])
             return json.dumps({
                 "items": lost_in_middle_order(evidence),
                 "retrieved_chunks": snapshot,
@@ -138,6 +143,9 @@ def register_builtin(registry: ToolRegistryV2, ctx: ToolContext) -> None:
                 "reason": result.reason,
                 "filter_fallback": result.filter_fallback,
                 "degraded": result.degraded,
+                "selection_facets": selection_facets,
+                "selection_latency_ms": selection_latency_ms,
+                "rerank_pool_size": rerank_pool_size,
                 "scope_filter": {
                     "status": result.scope_status,
                     "subject": subject,

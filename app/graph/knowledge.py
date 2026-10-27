@@ -49,12 +49,26 @@ def make_knowledge_nodes(service, kb, pool, snapshot_top_k: int = 3):
             confidence_payload = {**confidence.signals,
                                   "passed": confidence.passed,
                                   "calibration_source": confidence.calibration_source}
+        selection_facets = list(getattr(result, "selection_facets", []) or [])
+        selection_latency_ms = float(
+            getattr(result, "selection_latency_ms", 0.0) or 0.0
+        )
+        rerank_pool_size = len(getattr(result, "rerank_candidates", []) or [])
+        selection_trace = (
+            f" facets={','.join(selection_facets) or 'none'}"
+            f" rerank_pool={rerank_pool_size}"
+            f" select_ms={selection_latency_ms:.3f}"
+        )
         return {"evidence": evidence, "low_confidence": result.low_confidence,
                 "low_reason": result.reason,
                 "retrieved_chunks": snapshot,
                 "evidence_confidence": confidence_payload,
+                "selection_facets": selection_facets,
+                "selection_latency_ms": selection_latency_ms,
+                "rerank_pool_size": rerank_pool_size,
                 "trace": [*state["trace"], f"node=retrieve strategy=hybrid_rerank top1={top1} "
-                                           f"low_confidence={result.low_confidence} n={len(evidence)}"]}
+                                           f"low_confidence={result.low_confidence} "
+                                           f"n={len(evidence)}{selection_trace}"]}
 
     async def gate_node(state, writer=None, config=None) -> dict:
         if state["low_confidence"]:
