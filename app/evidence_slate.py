@@ -162,7 +162,16 @@ def select_evidence_slate(
         and any(term in lower for term in ("运费", "邮费", "包邮"))
     )
     asks_remote_shipping = any(term in lower for term in ("偏远", "补运", "西藏"))
-    if "包邮" in lower and not asks_coupon:
+    asks_regional_rate = any(term in lower for term in ("首重", "续重"))
+    if asks_regional_rate:
+        add(
+            "regional_shipping",
+            best(
+                lambda document: "运费标准" in document.section_path
+                and "| 区域 | 首重运费 |" in document.text
+            ),
+        )
+    elif "包邮" in lower and not asks_coupon:
         add("free_shipping", best(in_section("包邮门槛与合并订单")))
         if asks_remote_shipping:
             add("remote_shipping", best(in_section("偏远地区补运")))

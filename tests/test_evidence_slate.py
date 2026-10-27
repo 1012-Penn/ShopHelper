@@ -75,6 +75,41 @@ def test_remote_shipping_query_keeps_generic_threshold_and_regional_supplement()
     assert slate.facets == ["free_shipping", "remote_shipping"]
 
 
+def test_region_rate_query_prefers_region_table_over_generic_shipping_rule():
+    documents = {
+        1: _doc(
+            1,
+            "订单与支付.md > 订单与支付 > 订单状态总览",
+            "| ORD-1003 | 149 元 | 普通会员 | 华南-广州 | 已发货 |",
+        ),
+        2: _doc(
+            2,
+            "退货政策.md > 退货政策 > 邮费与运费",
+            "普通订单邮费 8 元，单笔满 99 元包邮。",
+        ),
+        3: _doc(
+            3,
+            "售后手册.md > 售后手册 > 运费标准",
+            "以下为各区域运费标准明细，首重按 1kg 计。",
+        ),
+        4: _doc(
+            4,
+            "售后手册.md > 售后手册 > 运费标准",
+            "| 区域 | 首重运费 | 续重运费 |\n| 华南 | 8 元 | 2 元/kg |",
+        ),
+    }
+
+    slate = select_evidence_slate(
+        "ORD-1003 在广东，普通快递首重运费多少？",
+        ranked_ids=[1, 2, 3, 4],
+        documents=documents,
+        top_k=2,
+    )
+
+    assert slate.ordered_ids == [1, 4]
+    assert slate.facets == ["order_summary", "regional_shipping"]
+
+
 def test_refund_query_reserves_order_summary_payment_and_refund_rule():
     documents = {
         10: _doc(10, "订单与支付.md > 订单与支付 > 订单状态总览",
