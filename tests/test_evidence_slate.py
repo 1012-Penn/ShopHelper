@@ -48,6 +48,33 @@ def test_product_price_plus_shipping_question_uses_threshold_rule_not_generic_fe
     assert slate.facets == ["product_entry", "free_shipping"]
 
 
+def test_remote_shipping_query_keeps_generic_threshold_and_regional_supplement():
+    documents = {
+        1: _doc(
+            1,
+            "会员与优惠.md > 会员与优惠 > 包邮门槛与合并订单",
+            "单笔订单商品金额满 99 元包邮。",
+        ),
+        2: _doc(
+            2,
+            "会员与优惠.md > 会员与优惠 > 偏远地区补运",
+            "西藏等偏远地区即使满足包邮门槛，仍需补 5 元运费。",
+        ),
+        3: _doc(3, "商品FAQ.md > 商品FAQ > 物流时效", "现货 48 小时内发出。"),
+        4: _doc(4, "退货政策.md > 退货政策 > 邮费与运费", "普通退货运费由买家承担。"),
+    }
+
+    slate = select_evidence_slate(
+        "西藏订单满 99 元包邮后，还要补运费吗？",
+        ranked_ids=[3, 1, 2, 4],
+        documents=documents,
+        top_k=3,
+    )
+
+    assert slate.ordered_ids == [1, 2, 3]
+    assert slate.facets == ["free_shipping", "remote_shipping"]
+
+
 def test_refund_query_reserves_order_summary_payment_and_refund_rule():
     documents = {
         10: _doc(10, "订单与支付.md > 订单与支付 > 订单状态总览",

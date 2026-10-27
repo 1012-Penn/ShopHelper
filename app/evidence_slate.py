@@ -161,11 +161,16 @@ def select_evidence_slate(
         and any(amount >= 99 for amount in quoted_amounts)
         and any(term in lower for term in ("运费", "邮费", "包邮"))
     )
+    asks_remote_shipping = any(term in lower for term in ("偏远", "补运", "西藏"))
     if "包邮" in lower and not asks_coupon:
         add("free_shipping", best(in_section("包邮门槛与合并订单")))
+        if asks_remote_shipping:
+            add("remote_shipping", best(in_section("偏远地区补运")))
     elif price_reaches_shipping_threshold and not asks_coupon:
         add("free_shipping", best(in_section("包邮门槛与合并订单")))
-    elif any(term in lower for term in ("偏远", "补运", "西藏")):
+        if asks_remote_shipping:
+            add("remote_shipping", best(in_section("偏远地区补运")))
+    elif asks_remote_shipping:
         add("remote_shipping", best(in_section("偏远地区补运")))
     elif any(term in lower for term in ("运费", "邮费", "快递")):
         add(
