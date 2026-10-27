@@ -5,6 +5,7 @@ from scripts.query_rewrite_ablation.dataset import build_cases
 from scripts.query_rewrite_ablation.metrics import summarize_variant_traces
 from scripts.query_rewrite_ablation.queries import build_query_variants
 from scripts.query_rewrite_ablation.runner import query_intent_metrics
+from scripts.query_rewrite_ablation.verify import compare_run_files
 
 
 def test_build_cases_resolves_fact_and_evidence_gold_from_seed():
@@ -219,3 +220,24 @@ def test_query_intent_metrics_do_not_flag_explicitly_rejected_entity_as_wrong():
 
     assert metrics["wrong_entity"] is False
     assert metrics["intent_preserved"] is True
+
+
+def test_compare_run_files_detects_constructed_query_drift(tmp_path):
+    baseline = tmp_path / "baseline.jsonl"
+    replay = tmp_path / "replay.jsonl"
+    row = _variant("A", "safe", coverage5=True, coverage10=True)
+    row["constructed_query"] = {"text": "SH-E300 续航多久？"}
+    baseline.write_text(json.dumps(row, ensure_ascii=False) + "\n", encoding="utf-8")
+    replay.write_text(json.dumps({
+        **row,
+        "constructed_query": {"text": "SH-E120 续航多久？"},
+    }, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    result = compare_run_files(baseline, replay)
+
+    assert result["ok"] is False
+    assert result["mismatches"] == [{
+        "case_id": "A",
+        "variant": "safe",
+        "fields": ["constructed_query"],
+    }]
