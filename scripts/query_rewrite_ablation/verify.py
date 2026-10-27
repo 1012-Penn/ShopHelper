@@ -8,6 +8,15 @@ from pathlib import Path
 from scripts.query_rewrite_ablation.metrics import summarize_variant_traces
 
 COMPARE_FIELDS = ("constructed_query", "metrics", "retrieved")
+STABLE_VARIANT_FIELDS = (
+    "cases",
+    "complete_at_5",
+    "complete_at_10",
+    "mrr_at_10",
+    "intent_preserved",
+    "wrong_entity",
+    "failures",
+)
 
 
 def _read(path: Path) -> list[dict]:
@@ -46,10 +55,26 @@ def compare_run_files(baseline: Path, replay: Path) -> dict:
             })
     baseline_summary = summarize_variant_traces(list(left.values()))
     replay_summary = summarize_variant_traces(list(right.values()))
+    baseline_stable = {
+        "variants": {
+            name: {field: row.get(field) for field in STABLE_VARIANT_FIELDS}
+            for name, row in baseline_summary["variants"].items()
+        },
+        "paired": baseline_summary["paired"],
+        "bucket_counts": baseline_summary["bucket_counts"],
+    }
+    replay_stable = {
+        "variants": {
+            name: {field: row.get(field) for field in STABLE_VARIANT_FIELDS}
+            for name, row in replay_summary["variants"].items()
+        },
+        "paired": replay_summary["paired"],
+        "bucket_counts": replay_summary["bucket_counts"],
+    }
     aggregate_fields = ("variants", "paired", "bucket_counts")
     aggregate_changed = [
         field for field in aggregate_fields
-        if baseline_summary.get(field) != replay_summary.get(field)
+        if baseline_stable.get(field) != replay_stable.get(field)
     ]
     return {
         "ok": not mismatches and not aggregate_changed,

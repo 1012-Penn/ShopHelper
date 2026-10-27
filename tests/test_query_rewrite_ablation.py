@@ -241,3 +241,21 @@ def test_compare_run_files_detects_constructed_query_drift(tmp_path):
         "variant": "safe",
         "fields": ["constructed_query"],
     }]
+
+
+def test_compare_run_files_ignores_cache_latency_and_cost_changes(tmp_path):
+    baseline = tmp_path / "baseline.jsonl"
+    replay = tmp_path / "replay.jsonl"
+    row = _variant("A", "safe", coverage5=True, coverage10=True, latency=1000.0)
+    row["constructed_query"] = {"text": "SH-E300 续航多久？"}
+    baseline.write_text(json.dumps(row, ensure_ascii=False) + "\n", encoding="utf-8")
+    replay.write_text(json.dumps({
+        **row,
+        "latency_ms": 5.0,
+        "cost_usd": 0.0,
+    }, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    result = compare_run_files(baseline, replay)
+
+    assert result["ok"] is True
+    assert result["aggregate_changed"] == []

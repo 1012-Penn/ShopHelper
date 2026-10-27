@@ -1,0 +1,190 @@
+{
+  "variants": {
+    "legacy": {
+      "cases": 20,
+      "complete_at_5": {
+        "numerator": 20,
+        "denominator": 20
+      },
+      "complete_at_10": {
+        "numerator": 20,
+        "denominator": 20
+      },
+      "mrr_at_10": 0.804167,
+      "intent_preserved": {
+        "numerator": 17,
+        "denominator": 20
+      },
+      "wrong_entity": 0,
+      "latency_ms": {
+        "p50": 49.038,
+        "p95": 77.412
+      },
+      "cost_estimate_usd": 0.0,
+      "failures": 0
+    },
+    "raw": {
+      "cases": 20,
+      "complete_at_5": {
+        "numerator": 17,
+        "denominator": 20
+      },
+      "complete_at_10": {
+        "numerator": 18,
+        "denominator": 20
+      },
+      "mrr_at_10": 0.666667,
+      "intent_preserved": {
+        "numerator": 15,
+        "denominator": 20
+      },
+      "wrong_entity": 0,
+      "latency_ms": {
+        "p50": 28.397,
+        "p95": 39.824
+      },
+      "cost_estimate_usd": 0.0,
+      "failures": 0
+    },
+    "safe": {
+      "cases": 20,
+      "complete_at_5": {
+        "numerator": 20,
+        "denominator": 20
+      },
+      "complete_at_10": {
+        "numerator": 20,
+        "denominator": 20
+      },
+      "mrr_at_10": 0.776667,
+      "intent_preserved": {
+        "numerator": 20,
+        "denominator": 20
+      },
+      "wrong_entity": 0,
+      "latency_ms": {
+        "p50": 45.994,
+        "p95": 72.358
+      },
+      "cost_estimate_usd": 0.0,
+      "failures": 0
+    }
+  },
+  "paired": {
+    "legacy_vs_raw": {
+      "pairs": 20,
+      "complete_at_5": {
+        "gains": 3,
+        "losses": 0,
+        "ties": 17
+      },
+      "complete_at_10": {
+        "gains": 2,
+        "losses": 0,
+        "ties": 18
+      },
+      "intent_preserved": {
+        "gains": 5,
+        "losses": 3,
+        "ties": 12
+      }
+    },
+    "safe_vs_raw": {
+      "pairs": 20,
+      "complete_at_5": {
+        "gains": 3,
+        "losses": 0,
+        "ties": 17
+      },
+      "complete_at_10": {
+        "gains": 2,
+        "losses": 0,
+        "ties": 18
+      },
+      "intent_preserved": {
+        "gains": 5,
+        "losses": 0,
+        "ties": 15
+      }
+    },
+    "safe_vs_legacy": {
+      "pairs": 20,
+      "complete_at_5": {
+        "gains": 0,
+        "losses": 0,
+        "ties": 20
+      },
+      "complete_at_10": {
+        "gains": 0,
+        "losses": 0,
+        "ties": 20
+      },
+      "intent_preserved": {
+        "gains": 3,
+        "losses": 0,
+        "ties": 17
+      }
+    }
+  },
+  "bucket_counts": {
+    "entity_mismatch": 2,
+    "multi_constraint": 5,
+    "multi_hop": 4,
+    "single_hop": 9
+  },
+  "budget": {
+    "allow_paid": true,
+    "pricing_verified": true,
+    "pricing_version": "2026-10-26",
+    "pricing_currency": "USD",
+    "run_spent_usd": 0.0,
+    "run_limit_usd": 2.0,
+    "ledger_total_usd": 0.116715,
+    "ledger_limit_usd": 2.0,
+    "calls": 0,
+    "api_attempts": 0,
+    "paid_api_attempts": 0
+  },
+  "query_stage_stats": {
+    "legacy_resolve": {
+      "calls": 20,
+      "failures": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 188.694
+    },
+    "legacy_rewrite": {
+      "calls": 20,
+      "failures": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 195.122
+    },
+    "safe_resolve": {
+      "calls": 20,
+      "failures": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 176.213
+    },
+    "safe_rewrite": {
+      "calls": 20,
+      "failures": 0,
+      "cost_usd": 0.0,
+      "latency_ms": 173.134
+    }
+  },
+  "estimate": {
+    "case_count": 20,
+    "variants": [
+      "raw",
+      "legacy",
+      "safe"
+    ],
+    "max_logical_query_calls_before_retry": 80,
+    "max_attempts_with_one_repair": 160,
+    "estimate_usd": 0.20544,
+    "hard_limit_usd": 2.0,
+    "within_limit": true,
+    "notes": "upper-bound planning estimate; cache hits and actual token usage can lower it"
+  },
+  "answer_generation_calls": 0,
+  "judge_calls": 0
+}
